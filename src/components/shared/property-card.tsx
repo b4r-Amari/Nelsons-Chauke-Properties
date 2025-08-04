@@ -33,6 +33,15 @@ export function PropertyCard({ property }: PropertyCardProps) {
     setIsFavorite(!isFavorite);
   };
   
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-ZA', {
+      style: 'currency',
+      currency: 'ZAR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+  }
+
   return (
     <Card className="overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 group">
       <CardHeader className="p-0 relative">
@@ -45,7 +54,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
           className="w-full h-[200px] object-cover group-hover:scale-105 transition-transform duration-300"
         />
         <Badge className="absolute bottom-2 left-2 bg-[#d4af37] text-black font-bold text-sm">
-          ${property.price.toLocaleString()}
+          {formatPrice(property.price)}
         </Badge>
         <Button 
           variant="ghost" 
@@ -72,7 +81,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
         <div className="flex items-center gap-2 text-sm">
           <Ruler className="h-4 w-4 text-primary" />
-          <span>{property.sqft} sqft</span>
+          <span>{property.sqft} m²</span>
         </div>
       </CardFooter>
     </Card>

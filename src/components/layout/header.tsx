@@ -11,6 +11,8 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { href: "/", label: "Home" },
+  { href: "/properties", label: "Buy" },
+  { href: "/sell", label: "Sell" },
   { href: "/about-us", label: "About Us" },
   { href: "/contact-us", label: "Contact Us" },
 ];
