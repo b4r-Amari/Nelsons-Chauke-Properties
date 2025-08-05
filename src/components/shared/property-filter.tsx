@@ -85,7 +85,7 @@ export function PropertyFilter() {
 
           <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" className="w-full justify-center gap-2 text-brand-bright hover:bg-muted">
+              <Button variant="ghost" className="w-full justify-center gap-2 text-brand-bright hover:bg-muted hover:text-brand-bright">
                 <ChevronsUpDown className="h-4 w-4" />
                 <span>{isAdvancedOpen ? "Hide" : "Show"} More Filters</span>
               </Button>
