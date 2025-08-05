@@ -3,8 +3,8 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, MoreHorizontal, Pencil, Trash2, Users } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { PlusCircle, MoreHorizontal, Pencil, Trash2, Users, ChevronLeft, ChevronRight } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -40,6 +40,14 @@ const formatPrice = (price: number, status: 'for-sale' | 'to-let' | 'sold') => {
 export default function AdminPropertiesPage() {
   const [propertyList, setPropertyList] = useState(properties);
   const { toast } = useToast();
+  const [currentPage, setCurrentPage] = useState(1);
+  const propertiesPerPage = 10;
+
+  const indexOfLastProperty = currentPage * propertiesPerPage;
+  const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
+  const currentProperties = propertyList.slice(indexOfFirstProperty, indexOfLastProperty);
+  const totalPages = Math.ceil(propertyList.length / propertiesPerPage);
+
 
   const handleAgentAssigned = (propertyId: string, newAgentId: string) => {
     setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentId: newAgentId } : p));
@@ -54,6 +62,19 @@ export default function AdminPropertiesPage() {
   const getAgentById = (agentId: string) => {
     return agents.find(agent => agent.id === agentId);
   }
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
 
   return (
     <div>
@@ -83,7 +104,7 @@ export default function AdminPropertiesPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {propertyList.map((property) => {
+              {currentProperties.map((property) => {
                 const agent = getAgentById(property.agentId);
                 return (
                   <TableRow key={property.id}>
@@ -140,6 +161,21 @@ export default function AdminPropertiesPage() {
             </TableBody>
           </Table>
         </CardContent>
+        <CardFooter>
+            <div className="text-xs text-muted-foreground">
+                Showing <strong>{indexOfFirstProperty + 1}-{Math.min(indexOfLastProperty, propertyList.length)}</strong> of <strong>{propertyList.length}</strong> properties
+            </div>
+            <div className="flex items-center space-x-2 ml-auto">
+                <Button variant="outline" size="sm" onClick={handlePrevPage} disabled={currentPage === 1}>
+                    <ChevronLeft className="h-4 w-4" />
+                    Previous
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleNextPage} disabled={currentPage === totalPages}>
+                    Next
+                    <ChevronRight className="h-4 w-4" />
+                </Button>
+            </div>
+        </CardFooter>
       </Card>
     </div>
   );
@@ -194,3 +230,4 @@ function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; 
     </Dialog>
   );
 }
+
