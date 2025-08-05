@@ -15,7 +15,7 @@ export type Property = {
   baths: number;
   sqft: number;
   isFavorite: boolean;
-  status: 'for-sale' | 'sold';
+  status: 'for-sale' | 'to-let' | 'sold';
   type: string;
   location: string;
   description: string;
@@ -30,17 +30,19 @@ type PropertyCardProps = {
 export function PropertyCard({ property }: PropertyCardProps) {
   
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-ZA', {
+    const isRental = property.status === 'to-let';
+    const formattedPrice = new Intl.NumberFormat('en-ZA', {
       style: 'currency',
       currency: 'ZAR',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(price);
+    return isRental ? `${formattedPrice} /month` : formattedPrice;
   }
 
   return (
     <Link href={`/properties/${property.id}`} className="block group">
-        <Card className="w-full max-w-[350px] min-h-[480px] h-full rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col mx-auto cursor-pointer overflow-hidden">
+        <Card className="w-full max-w-[300px] min-h-[480px] h-full rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col mx-auto cursor-pointer overflow-hidden">
         <div className="relative w-full h-[250px] overflow-hidden">
             <Image
             src={property.imageUrl}
