@@ -232,22 +232,30 @@ function CtaTabCard({ title, description, buttonText, imageSrc, imageHint }: { t
 
 
 function NewsletterSection() {
-  const [bgImage, setBgImage] = useState('/images/backgrounds/mail-image.webp');
   const mailImages = [
-    '/images/backgrounds/mail-image.webp',
-    '/images/backgrounds/mail-image-2.webp',
-    '/images/backgrounds/mail-image-3.webp',
-    '/images/backgrounds/mail-image-4.webp'
+    'url("/images/backgrounds/mail-image.webp")',
+    'url("/images/backgrounds/mail-image-2.webp")',
+    'url("/images/backgrounds/mail-image-3.webp")',
+    'url("/images/backgrounds/mail-image-4.webp")',
   ];
+  
+  const [bgImages, setBgImages] = useState(mailImages.slice(0,3).join(', '));
 
   useEffect(() => {
-    setBgImage(mailImages[Math.floor(Math.random() * mailImages.length)]);
+    // Shuffle and pick 3 random images to use
+    const shuffled = [...mailImages].sort(() => 0.5 - Math.random());
+    setBgImages(shuffled.slice(0, 3).join(', '));
   }, []);
 
   return (
     <section 
-      className="py-24 bg-card relative bg-cover bg-center"
-      style={{ backgroundImage: `url(${bgImage})` }}
+      className="py-24 bg-card relative"
+      style={{
+        backgroundImage: bgImages,
+        backgroundSize: '300px, 250px, 200px',
+        backgroundPosition: 'right bottom, left top, center center',
+        backgroundRepeat: 'no-repeat',
+      }}
     >
       <div className="absolute inset-0 bg-black/50" />
       <div className="container relative">
@@ -259,7 +267,7 @@ function NewsletterSection() {
           <CardContent>
             <form className="flex flex-col sm:flex-row gap-4">
               <Input type="email" placeholder="Enter your email address" className="flex-grow h-12" />
-              <Button type="submit" size="lg" className="h-12 bg-brand-deep hover:bg-brand-bright transition-colors">Subscribe</Button>
+              <Button type="submit" size="lg" className="h-12 bg-brand-bright hover:bg-brand-deep transition-colors">Subscribe</Button>
             </form>
           </CardContent>
         </Card>
