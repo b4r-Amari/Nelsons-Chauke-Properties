@@ -96,6 +96,7 @@ export default function AdminPropertiesPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-[50px]">ID</TableHead>
                 <TableHead>Address</TableHead>
                 <TableHead className="hidden lg:table-cell">Agent</TableHead>
                 <TableHead className="hidden sm:table-cell">Price</TableHead>
@@ -108,6 +109,7 @@ export default function AdminPropertiesPage() {
                 const agent = getAgentById(property.agentId);
                 return (
                   <TableRow key={property.id}>
+                    <TableCell className="font-mono text-xs">{property.id}</TableCell>
                     <TableCell className="font-medium">{property.address}</TableCell>
                     <TableCell className="hidden lg:table-cell">
                       {agent ? (
@@ -230,4 +232,3 @@ function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; 
     </Dialog>
   );
 }
-
