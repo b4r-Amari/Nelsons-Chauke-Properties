@@ -18,6 +18,12 @@ export type Property = {
   baths: number;
   sqft: number;
   isFavorite: boolean;
+  status: 'for-sale' | 'sold';
+  type: string;
+  location: string;
+  description: string;
+  features: string[];
+  yearBuilt: number;
 };
 
 type PropertyCardProps = {
@@ -65,10 +71,13 @@ export function PropertyCard({ property }: PropertyCardProps) {
         >
           <Heart className={cn("h-5 w-5 text-gray-500", isFavorite ? "fill-red-500 text-red-500" : "hover:text-red-500")} />
         </Button>
+         {property.status === 'sold' && (
+          <Badge variant="destructive" className="absolute top-2 left-2">SOLD</Badge>
+        )}
       </CardHeader>
       <CardContent className="p-4">
         <h3 className="font-bold font-headline text-lg truncate">{property.address}</h3>
-        <p className="text-sm text-muted-foreground">{property.address.split(',').slice(1).join(', ').trim()}</p>
+        <p className="text-sm text-muted-foreground">{property.location}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-around bg-muted/50">
         <div className="flex items-center gap-2 text-sm">
@@ -87,3 +96,5 @@ export function PropertyCard({ property }: PropertyCardProps) {
     </Card>
   );
 }
+
+    

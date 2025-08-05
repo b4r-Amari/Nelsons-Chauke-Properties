@@ -5,18 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
+import propertiesData from '@/data/properties.json';
 
-const allProperties: Property[] = [
-  { id: '1', imageUrl: 'https://placehold.co/300x200', imageHint: 'modern house sandton', price: 7200000, address: '12 Sandhurst, Sandton', beds: 4, baths: 3, sqft: 350, isFavorite: true },
-  { id: '2', imageUrl: 'https://placehold.co/300x200', imageHint: 'sea point apartment', price: 5100000, address: '45 Ocean View Dr, Sea Point', beds: 3, baths: 2, sqft: 180, isFavorite: false },
-  { id: '3', imageUrl: 'https://placehold.co/300x200', imageHint: 'umhlanga apartment', price: 4800000, address: '78 Marine Way, Umhlanga', beds: 2, baths: 2, sqft: 125, isFavorite: false },
-  { id: '4', imageUrl: 'https://placehold.co/300x200', imageHint: 'stellenbosch villa', price: 15000000, address: '101 Wine Estate, Stellenbosch', beds: 5, baths: 5, sqft: 500, isFavorite: true },
-  { id: '5', imageUrl: 'https://placehold.co/300x200', imageHint: 'constantia home', price: 9500000, address: '212 Forest Drive, Constantia', beds: 3, baths: 3, sqft: 280, isFavorite: false },
-  { id: '6', imageUrl: 'https://placehold.co/300x200', imageHint: 'pretoria east house', price: 3400000, address: '55 Silver Lakes, Pretoria East', beds: 4, baths: 2, sqft: 310, isFavorite: false },
-  { id: '7', imageUrl: 'https://placehold.co/300x200', imageHint: 'durbanville home', price: 2900000, address: '88 Aurora, Durbanville', beds: 3, baths: 2, sqft: 220, isFavorite: false },
-  { id: '8', imageUrl: 'https://placehold.co/300x200', imageHint: 'joburg city loft', price: 1800000, address: 'Maboneng Precinct, Johannesburg', beds: 1, baths: 1, sqft: 90, isFavorite: true },
-  { id: '9', imageUrl: 'https://placehold.co/300x200', imageHint: 'cape town cbd apartment', price: 2500000, address: 'Bree Street, Cape Town CBD', beds: 2, baths: 1, sqft: 100, isFavorite: false },
-];
+const allProperties: Property[] = propertiesData.filter(p => p.status === 'for-sale');
 
 export default function PropertiesPage() {
   return (
@@ -116,3 +107,5 @@ export default function PropertiesPage() {
     </>
   );
 }
+
+    

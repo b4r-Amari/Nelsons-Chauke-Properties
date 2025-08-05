@@ -10,14 +10,9 @@ import { ArrowRight, Search } from 'lucide-react';
 import { PropertyCard } from '@/components/shared/property-card';
 import type { Property } from '@/components/shared/property-card';
 import Link from 'next/link';
+import propertiesData from '@/data/properties.json';
 
-const featuredProperties: Property[] = [
-  { id: '1', imageUrl: 'https://placehold.co/300x200', imageHint: 'modern house sandton', price: 7200000, address: '12 Sandhurst, Sandton', beds: 4, baths: 3, sqft: 350, isFavorite: true },
-  { id: '2', imageUrl: 'https://placehold.co/300x200', imageHint: 'sea point apartment', price: 5100000, address: '45 Ocean View Dr, Sea Point', beds: 3, baths: 2, sqft: 180, isFavorite: false },
-  { id: '3', imageUrl: 'https://placehold.co/300x200', imageHint: 'umhlanga apartment', price: 4800000, address: '78 Marine Way, Umhlanga', beds: 2, baths: 2, sqft: 125, isFavorite: false },
-  { id: '4', imageUrl: 'https://placehold.co/300x200', imageHint: 'stellenbosch villa', price: 15000000, address: '101 Wine Estate, Stellenbosch', beds: 5, baths: 5, sqft: 500, isFavorite: true },
-  { id: '5', imageUrl: 'https://placehold.co/300x200', imageHint: 'constantia home', price: 9500000, address: '212 Forest Drive, Constantia', beds: 3, baths: 3, sqft: 280, isFavorite: false },
-];
+const featuredProperties: Property[] = propertiesData.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 5);
 
 export default function Home() {
   return (
@@ -193,3 +188,5 @@ function NewsletterSection() {
     </section>
   );
 }
+
+    
