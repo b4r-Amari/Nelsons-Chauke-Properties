@@ -245,20 +245,20 @@ function PropertyAlertForm() {
 function CtaTabsSection() {
   const buyerOptions = [
     { id: 'property-alerts', title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "notification bell" },
-    { id: 'sold-prices', title: "Sold Prices", description: "Research the value of any property in South Africa to make informed decisions.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "price tag" },
-    { id: 'buying-guides', title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "open book" },
+    { id: 'sold-prices', title: "Sold Prices", description: "Research the value of any property in South Africa to make informed decisions.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "price tag", href: "/properties/sold" },
+    { id: 'buying-guides', title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "open book", href: "/blog" },
   ];
 
   const renterOptions = [
-    { title: "Find Letting Agents", description: "Connect with trusted and experienced letting agents in your desired area.", buttonText: "Search Agents", imageSrc: "/images/backgrounds/find-letting-agents.webp", imageHint: "handshake professional" },
-    { title: "Rental Alerts", description: "Be the first to know about new rental properties as soon as they hit the market.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "email notification" },
-    { title: "Renter's Advice", description: "Navigate the rental market with confidence using our collection of helpful articles.", buttonText: "Read Articles", imageSrc: "/images/backgrounds/rental-advice.webp", imageHint: "lightbulb idea" },
+    { title: "Find Letting Agents", description: "Connect with trusted and experienced letting agents in your desired area.", buttonText: "Search Agents", imageSrc: "/images/backgrounds/find-letting-agents.webp", imageHint: "handshake professional", href: "/about-us" },
+    { id: 'property-alerts', title: "Rental Alerts", description: "Be the first to know about new rental properties as soon as they hit the market.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "email notification" },
+    { title: "Renter's Advice", description: "Navigate the rental market with confidence using our collection of helpful articles.", buttonText: "Read Articles", imageSrc: "/images/backgrounds/rental-advice.webp", imageHint: "lightbulb idea", href: "/blog" },
   ];
 
   const sellerOptions = [
-    { title: "Free Property Valuation", description: "Get a free, instant, and accurate valuation for your property.", buttonText: "Get Started", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "valuation chart" },
-    { title: "Sold Prices", description: "Understand market trends by viewing the latest sold prices in your neighbourhood.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "house price" },
-    { title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "checklist clipboard" },
+    { title: "Free Property Valuation", description: "Get a free, instant, and accurate valuation for your property.", buttonText: "Get Started", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "valuation chart", href: "/sell" },
+    { id: 'sold-prices', title: "Sold Prices", description: "Understand market trends by viewing the latest sold prices in your neighbourhood.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "house price", href: "/properties/sold" },
+    { id: 'selling-guides', title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "checklist clipboard", href: "/blog" },
   ];
 
   return (
@@ -302,11 +302,11 @@ function CtaTabsSection() {
 }
 
 
-function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint }: { id?:string, title: string, description: string, buttonText: string, imageSrc: string, imageHint: string }) {
+function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, href }: { id?:string, title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string }) {
   const isAlertForm = id === 'property-alerts';
-  
-  return (
-    <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card">
+
+  const cardContent = (
+    <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card h-full">
       <CardContent className="p-6 flex-grow flex flex-col items-center">
         <Image src={imageSrc} data-ai-hint={imageHint} alt={title} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
         <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep">{title}</h3>
@@ -321,6 +321,12 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint }:
       </CardContent>
     </Card>
   );
+  
+  if (href && !isAlertForm) {
+    return <Link href={href} className="block h-full">{cardContent}</Link>
+  }
+
+  return cardContent;
 }
 
 
