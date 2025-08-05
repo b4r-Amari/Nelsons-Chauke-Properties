@@ -43,9 +43,7 @@ export default function AdminLoginPage() {
         title: "Admin Login Successful",
         description: "Redirecting to the admin dashboard...",
         });
-        // We don't have a dashboard page yet, so we'll just log this.
-        // In the future, you would router.push('/admin/dashboard');
-        console.log("Redirecting to admin dashboard...");
+        router.push('/admin/dashboard');
         setIsLoading(false);
     }, 1500);
   }
