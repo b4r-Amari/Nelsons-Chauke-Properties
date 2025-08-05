@@ -77,7 +77,7 @@ function FeaturedPropertiesSection() {
         <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties in South Africa, offering the perfect blend of luxury, comfort, and style.</p>
         <Carousel opts={{ align: "start", loop: true }} className="w-full">
-          <CarouselContent className="-ml-2">
+          <CarouselContent className="-ml-4">
             {featuredProperties.map((prop) => (
               <CarouselItem key={prop.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
                 <PropertyCard property={prop} />
