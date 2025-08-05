@@ -1,6 +1,18 @@
 
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import propertiesData from '@/data/properties.json';
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Recently Sold Properties | NC Properties Success Stories',
+  description: 'Explore a showcase of properties recently sold by NC Properties. See our track record of success in the South African real estate market.',
+  openGraph: {
+    title: 'Recently Sold Properties | NC Properties Success Stories',
+    description: 'Explore a showcase of properties recently sold by NC Properties. See our track record of success in the South African real estate market.',
+    type: 'website',
+    url: '/properties/sold',
+  },
+};
 
 const soldProperties: Property[] = propertiesData.filter(p => p.status === 'sold');
 
@@ -14,7 +26,7 @@ export default function SoldPropertiesPage() {
         </div>
       </section>
 
-      <section className="py-16 bg-background">
+      <main className="py-16 bg-background">
         <div className="container">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {soldProperties.map((prop) => (
@@ -22,7 +34,7 @@ export default function SoldPropertiesPage() {
             ))}
           </div>
         </div>
-      </section>
+      </main>
     </>
   );
 }

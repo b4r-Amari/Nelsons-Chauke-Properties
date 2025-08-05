@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { PropertyCard, type Property } from '@/components/shared/property-card';
 import propertiesData from '@/data/properties.json';
+import type { Metadata } from 'next';
 
 
 type Agent = (typeof agentsData)[0];
@@ -17,14 +18,46 @@ type Agent = (typeof agentsData)[0];
 const agents: Agent[] = agentsData;
 const allProperties: Property[] = propertiesData;
 
+function getAgent(slug: string) {
+  return agents.find((agent) => agent.slug === slug);
+}
+
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const agent = getAgent(params.slug);
+
+  if (!agent) {
+    return {
+      title: 'Agent Not Found',
+      description: 'The requested agent could not be found.',
+    };
+  }
+
+  return {
+    title: `${agent.name} - ${agent.role} | NC Properties`,
+    description: `View the profile and active listings for ${agent.name}, a dedicated real estate agent at NC Properties. Contact ${agent.name.split(' ')[0]} for expert property advice.`,
+    openGraph: {
+        title: `${agent.name} - ${agent.role} | NC Properties`,
+        description: `View the profile and active listings for ${agent.name}, a dedicated real estate agent at NC Properties. Contact ${agent.name.split(' ')[0]} for expert property advice.`,
+        type: 'profile',
+        url: `/agents/${agent.slug}`,
+        images: [
+            {
+            url: agent.imageUrl,
+            width: 200,
+            height: 200,
+            alt: `Portrait of ${agent.name}`,
+            },
+        ],
+    }
+  };
+}
+
+
 export async function generateStaticParams() {
   return agents.map((agent) => ({
     slug: agent.slug,
   }));
-}
-
-function getAgent(slug: string) {
-  return agents.find((agent) => agent.slug === slug);
 }
 
 export default function AgentProfilePage({ params }: { params: { slug: string } }) {
@@ -40,7 +73,7 @@ export default function AgentProfilePage({ params }: { params: { slug: string } 
 
   return (
     <div className="bg-background">
-      <div className="container py-12 md:py-24">
+      <main className="container py-12 md:py-24">
         <div className="mb-8">
             <Link href="/about-us" className="inline-flex items-center text-brand-deep hover:text-brand-bright transition-colors font-semibold">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -55,7 +88,7 @@ export default function AgentProfilePage({ params }: { params: { slug: string } 
                         <Image 
                             src={agent.imageUrl} 
                             data-ai-hint={agent.imageHint} 
-                            alt={`Portrait of ${agent.name}`} 
+                            alt={`Professional portrait of ${agent.name}, ${agent.role}`} 
                             width={200} 
                             height={200} 
                             className="rounded-full mx-auto mb-6 border-4 border-white shadow-xl object-cover w-[200px] h-[200px]" 
@@ -82,7 +115,7 @@ export default function AgentProfilePage({ params }: { params: { slug: string } 
                 </Card>
             </aside>
 
-            <main className="lg:col-span-2">
+            <article className="lg:col-span-2">
                 <div className="prose prose-lg dark:prose-invert max-w-none prose-h2:font-headline prose-h2:text-brand-deep">
                     <h2>About {agent.name}</h2>
                     <div dangerouslySetInnerHTML={{ __html: agent.bio }} />
@@ -101,9 +134,9 @@ export default function AgentProfilePage({ params }: { params: { slug: string } 
                         ))}
                     </div>
                  )}
-            </main>
+            </article>
         </div>
-      </div>
+      </main>
     </div>
   );
 }

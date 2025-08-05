@@ -1,7 +1,8 @@
 
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { BedDouble, Bath, Home, LandPlot, Building, User, Mail, Phone, MapPin, CheckCircle } from 'lucide-react';
+import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle } from 'lucide-react';
+import type { Metadata } from 'next';
 
 import propertiesData from '@/data/properties.json';
 import { type Property } from '@/components/shared/property-card';
@@ -13,16 +14,59 @@ import { Separator } from '@/components/ui/separator';
 import agentsData from '@/data/agents.json';
 
 const properties: Property[] = propertiesData;
+const agents = agentsData;
+
+function getProperty(id: string) {
+  return properties.find((p) => p.id.toString() === id);
+}
+
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const property = getProperty(params.id);
+
+  if (!property) {
+    return {
+      title: 'Property Not Found',
+      description: 'The requested property could not be found.',
+    };
+  }
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-ZA', {
+      style: 'currency',
+      currency: 'ZAR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(price);
+  };
+
+  const title = `${property.beds} Bed ${property.type} for Sale in ${property.location} | NC Properties`;
+  const description = `View details for ${property.address}. A ${property.beds} bedroom, ${property.baths} bathroom ${property.type} listed for ${formatPrice(property.price)}. ${property.description.substring(0, 120)}...`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'product',
+      url: `/properties/${property.id}`,
+      images: [
+        {
+          url: property.imageUrl,
+          width: 300,
+          height: 200,
+          alt: `Exterior view of ${property.address}`,
+        },
+      ],
+    }
+  };
+}
 
 // This function tells Next.js which dynamic pages to pre-render at build time.
 export async function generateStaticParams() {
   return properties.map((property) => ({
     id: property.id.toString(),
   }));
-}
-
-function getProperty(id: string) {
-  return properties.find((p) => p.id.toString() === id);
 }
 
 export default function PropertyDetailPage({ params }: { params: { id: string } }) {
@@ -32,8 +76,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     notFound();
   }
   
-  // In a real app, properties would have an agentId. For now, we'll assign one.
-  const agent = agentsData.find(a => a.id === property.agentId)!;
+  const agent = agents.find(a => a.id === property.agentId)!;
 
   const formatPrice = (price: number) => {
     const isRental = property.status === 'to-let';
@@ -49,20 +92,73 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
   // Dummy gallery images. In a real app, these would be specific to the property.
   const galleryImages = [
     property.imageUrl,
-    "https://placehold.co/1200x800",
-    "https://placehold.co/1200x800",
-    "https://placehold.co/1200x800",
+    "https://placehold.co/1200x800.png",
+    "https://placehold.co/1200x800.png",
+    "https://placehold.co/1200x800.png",
   ];
+
+  const realEstateListingSchema = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    "name": property.address,
+    "description": property.description,
+    "image": property.imageUrl,
+    "url": `https://nelson-chauke-prop.web.app/properties/${property.id}`,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": property.address,
+      "addressLocality": property.location.split(',')[0],
+      "addressRegion": property.location.split(',')[1],
+      "addressCountry": "ZA"
+    },
+    "numberOfBedrooms": property.beds,
+    "numberOfBathroomsTotal": property.baths,
+    "floorSize": {
+      "@type": "QuantitativeValue",
+      "value": property.sqft,
+      "unitCode": "MTK"
+    },
+    ...(property.status === 'for-sale' && {
+      "offers": {
+        "@type": "Offer",
+        "price": property.price,
+        "priceCurrency": "ZAR",
+        "availability": "https://schema.org/InStock"
+      }
+    }),
+    ...(property.status === 'to-let' && {
+      "leaseLength": {
+        "@type": "QuantitativeValue",
+        "value": 12,
+        "unitText": "MONTH"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": property.price,
+        "priceCurrency": "ZAR",
+        "priceSpecification": {
+          "@type": "PriceSpecification",
+          "price": property.price,
+          "priceCurrency": "ZAR",
+          "unitText": "monthly"
+        }
+      }
+    })
+  };
 
   return (
     <div className="bg-background">
+       <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateListingSchema) }}
+        />
       <div className="container py-12 md:py-16">
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Left Column: Gallery and Details */}
-          <div className="lg:col-span-2">
+          <main className="lg:col-span-2">
             <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} />
             
-            <div className="mt-8">
+            <article className="mt-8">
               <header className="mb-6">
                 <div className="flex justify-between items-start">
                     <div>
@@ -107,16 +203,16 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
               <Separator className="my-8" />
 
-              <div>
+              <section>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Property Description</h2>
                 <div className="prose prose-lg dark:prose-invert max-w-none">
                     <p>{property.description}</p>
                 </div>
-              </div>
+              </section>
               
                <Separator className="my-8" />
 
-              <div>
+              <section>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Features</h2>
                  <ul className="grid grid-cols-2 gap-x-8 gap-y-4">
                   {property.features.map((feature, index) => (
@@ -126,10 +222,10 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                     </li>
                   ))}
                 </ul>
-              </div>
+              </section>
 
-            </div>
-          </div>
+            </article>
+          </main>
           
           {/* Right Column: Enquiry and Agent */}
           <aside className="lg:col-span-1">

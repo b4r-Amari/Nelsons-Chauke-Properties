@@ -2,10 +2,23 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import type { Metadata } from 'next';
 
 import { Button } from '@/components/ui/button';
 import { BlogCard, type BlogPost } from '@/components/shared/blog-card';
 import blogData from '@/data/blog.json';
+
+export const metadata: Metadata = {
+  title: 'Property News & Real Estate Insights | NC Properties Blog',
+  description: 'Stay informed with the latest property news, real estate trends, and expert advice from the NC Properties blog. Your source for buying, selling, and investment tips.',
+  openGraph: {
+    title: 'Property News & Real Estate Insights | NC Properties Blog',
+    description: 'Stay informed with the latest property news, real estate trends, and expert advice from the NC Properties blog. Your source for buying, selling, and investment tips.',
+    type: 'website',
+    url: '/blog',
+  },
+};
+
 
 const allPosts: BlogPost[] = blogData as BlogPost[];
 const featuredPost = allPosts[0];
@@ -21,10 +34,10 @@ export default function BlogPage() {
         </div>
       </section>
       
-      <section className="py-24 bg-background">
+      <main className="py-24 bg-background">
         <div className="container">
           {/* Featured Post */}
-          <div className="mb-20">
+          <article className="mb-20">
             <Link href={`/blog/${featuredPost.slug}`} className="group block">
               <div className="grid lg:grid-cols-2 gap-12 items-center bg-card p-8 rounded-lg shadow-lg transition-shadow hover:shadow-2xl">
                 <div className="relative aspect-video rounded-md overflow-hidden">
@@ -34,6 +47,7 @@ export default function BlogPage() {
                     data-ai-hint={featuredPost.imageHint}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    priority
                   />
                 </div>
                 <div>
@@ -51,7 +65,7 @@ export default function BlogPage() {
                 </div>
               </div>
             </Link>
-          </div>
+          </article>
           
           {/* Other Posts */}
           <h2 className="text-3xl font-bold text-center font-headline mb-12">More Articles</h2>
@@ -61,7 +75,7 @@ export default function BlogPage() {
             ))}
           </div>
         </div>
-      </section>
+      </main>
     </>
   );
 }

@@ -7,9 +7,46 @@ import { ArrowLeft, User, Calendar } from 'lucide-react';
 import blogData from '@/data/blog.json';
 import { type BlogPost } from '@/components/shared/blog-card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import type { Metadata } from 'next';
 
 const posts: BlogPost[] = blogData as BlogPost[];
+
+function getPost(slug: string) {
+  return posts.find((post) => post.slug === slug);
+}
+
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const post = getPost(params.slug);
+
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+      description: 'The requested blog post could not be found.',
+    };
+  }
+
+  return {
+    title: `${post.title} | NC Properties Blog`,
+    description: post.excerpt,
+    openGraph: {
+        title: `${post.title} | NC Properties Blog`,
+        description: post.excerpt,
+        type: 'article',
+        url: `/blog/${post.slug}`,
+        images: [
+            {
+            url: post.imageUrl,
+            width: 800,
+            height: 450,
+            alt: post.title,
+            },
+        ],
+        authors: [post.author],
+        publishedTime: new Date(post.date).toISOString(),
+    }
+  };
+}
+
 
 export async function generateStaticParams() {
   return posts.map((post) => ({
@@ -17,19 +54,45 @@ export async function generateStaticParams() {
   }));
 }
 
-function getPost(slug: string) {
-  return posts.find((post) => post.slug === slug);
-}
-
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
+export default function BlogPostPage({ params }: { params: { slug:string } }) {
   const post = getPost(params.slug);
 
   if (!post) {
     notFound();
   }
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://nelson-chauke-prop.web.app/blog/${post.slug}`
+    },
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": post.imageUrl,
+    "author": {
+      "@type": "Person",
+      "name": post.author
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "NC Properties Redefined",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nelson-chauke-prop.web.app/images/logo.png"
+      }
+    },
+    "datePublished": post.date
+  };
+
+
   return (
     <div className="bg-background">
+       <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
       <div className="container py-12 md:py-24">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
@@ -63,6 +126,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                 data-ai-hint={post.imageHint}
                 fill
                 className="object-cover"
+                priority
               />
             </div>
 

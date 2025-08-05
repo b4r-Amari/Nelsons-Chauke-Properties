@@ -22,7 +22,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { logOut } from "@/lib/firebase/auth";
@@ -80,7 +79,7 @@ export function Header() {
         </div>
         
         <div className="hidden md:flex flex-1 justify-center items-center">
-          <nav className="flex items-center space-x-1 text-sm font-medium font-headline">
+          <nav className="flex items-center space-x-1 text-sm font-medium font-headline" aria-label="Main Navigation">
             {navLinks.map((item) => (
               item.isDropdown && item.links ? (
                 <DropdownMenu key={item.label}>
@@ -117,6 +116,7 @@ export function Header() {
                     "group relative transition-colors px-3 py-2",
                     pathname === item.href ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright"
                   )}
+                  aria-current={pathname === item.href ? 'page' : undefined}
                 >
                   {item.label}
                   <span className={cn(
@@ -132,7 +132,7 @@ export function Header() {
         <div className="flex items-center justify-end space-x-2">
            <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
+              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
                 onClick={() => {
                   if (!user) {
                     setIsAuthDialogOpen(true);
@@ -156,7 +156,7 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full" aria-label="Open user menu">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${user.uid}`} alt="User avatar" />
                     <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
@@ -188,7 +188,7 @@ export function Header() {
           ) : (
             <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
               <DialogTrigger asChild>
-                 <Button variant="ghost" size="icon" aria-label="User Profile" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
+                 <Button variant="ghost" size="icon" aria-label="Login or sign up" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
                     <User className="h-5 w-5" />
                   </Button>
               </DialogTrigger>
@@ -205,7 +205,7 @@ export function Header() {
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open menu">
+                <Button variant="ghost" size="icon" aria-label="Open mobile menu">
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
@@ -214,12 +214,12 @@ export function Header() {
                   <div className="p-4 flex justify-between items-center border-b border-white/10">
                     <Logo className="text-white" />
                     <SheetClose asChild>
-                       <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white">
+                       <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" aria-label="Close mobile menu">
                          <X className="h-6 w-6"/>
                        </Button>
                     </SheetClose>
                   </div>
-                  <nav className="flex-grow p-4">
+                  <nav className="flex-grow p-4" aria-label="Mobile Navigation">
                     <ul className="space-y-2">
                       {mobileNavLinks.map((link) => (
                         <li key={link.href}>

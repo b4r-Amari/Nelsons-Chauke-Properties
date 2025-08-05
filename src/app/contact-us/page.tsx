@@ -1,47 +1,37 @@
-"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { useToast } from "@/hooks/use-toast"
 import { Mail, Phone, MapPin } from "lucide-react"
+import type { Metadata } from "next";
+import { ContactForm } from "@/components/shared/contact-form";
 
-const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  subject: z.string().min(5, { message: "Subject must be at least 5 characters." }),
-  message: z.string().min(10, { message: "Message must be at least 10 characters." }),
-})
+export const metadata: Metadata = {
+    title: 'Contact NC Properties | Get In Touch',
+    description: 'Contact NC Properties for all your real estate needs. Send us a message, find our office, or give us a call. We are here to help you.',
+    openGraph: {
+        title: 'Contact NC Properties | Get In Touch',
+        description: 'Contact NC Properties for all your real estate needs. Send us a message, find our office, or give us a call. We are here to help you.',
+        type: 'website',
+        url: '/contact-us',
+    },
+};
 
 export default function ContactUsPage() {
-  const { toast } = useToast()
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      subject: "",
-      message: "",
-    },
-  })
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We will get back to you shortly.",
-    })
-    form.reset()
-  }
+  const contactPointSchema = {
+    "@context": "https://schema.org",
+    "@type": "ContactPoint",
+    "telephone": "+1-123-456-7890",
+    "contactType": "customer service",
+    "areaServed": "ZA",
+    "availableLanguage": "en"
+  };
 
   return (
     <>
+      <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPointSchema) }}
+      />
       <section className="bg-brand-deep text-white py-16">
         <div className="container text-center">
           <h1 className="text-4xl font-bold font-headline">Get In Touch</h1>
@@ -49,7 +39,7 @@ export default function ContactUsPage() {
         </div>
       </section>
 
-      <section className="py-24 bg-background">
+      <main className="py-24 bg-background">
         <div className="container">
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2">
@@ -59,63 +49,7 @@ export default function ContactUsPage() {
                   <CardDescription>Fill out the form below and we'll get back to you as soon as possible.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                      <FormField
-                        control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Full Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="John Doe" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email Address</FormLabel>
-                            <FormControl>
-                              <Input type="email" placeholder="you@example.com" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="subject"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Subject</FormLabel>
-                            <FormControl>
-                              <Input placeholder="e.g., Property Inquiry" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="message"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Message</FormLabel>
-                            <FormControl>
-                              <Textarea placeholder="Your message here..." className="min-h-[150px]" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg">Submit Message</Button>
-                    </form>
-                  </Form>
+                  <ContactForm />
                 </CardContent>
               </Card>
             </div>
@@ -153,7 +87,7 @@ export default function ContactUsPage() {
             </div>
           </div>
         </div>
-      </section>
+      </main>
     </>
   )
 }
