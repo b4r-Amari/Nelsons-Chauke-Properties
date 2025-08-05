@@ -6,7 +6,7 @@ import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import propertiesData from '@/data/properties.json';
 
-const allProperties: Property[] = propertiesData as Property[];
+const allProperties: Property[] = (propertiesData as Property[]).filter(p => p.status !== 'sold');
 
 export default function PropertiesPage() {
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(allProperties);

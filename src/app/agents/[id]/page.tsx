@@ -27,8 +27,8 @@ const agents: Agent[] = agentsData as Agent[];
 const allProperties: Property[] = propertiesData as Property[];
 
 // In a real app, you'd likely have a mapping of agents to properties.
-// For this demo, we'll just assign a few properties to the main agent for display.
-const agentProperties = allProperties.filter(p => p.id === '1' || p.id === '4' || p.id === '11' || p.id === '19');
+// For this demo, we'll just assign a few active properties to the main agent for display.
+const agentProperties = allProperties.filter(p => (p.id === '1' || p.id === '4' || p.id === '11' || p.id === '19') && p.status !== 'sold');
 
 
 export async function generateStaticParams() {
@@ -98,14 +98,14 @@ export default function AgentProfilePage({ params }: { params: { id: string } })
                     <div dangerouslySetInnerHTML={{ __html: agent.bio }} />
 
                     {/* Only show listings for the main agent as an example */}
-                    {agent.id === 'natalia-cromwell' && (
+                    {agent.id === 'natalia-cromwell' && agentProperties.length > 0 && (
                         <>
                             <Separator className="my-12" />
-                            <h2>{agent.name.split(' ')[0]}'s Listings</h2>
+                            <h2>{agent.name.split(' ')[0]}'s Active Listings</h2>
                         </>
                     )}
                 </div>
-                 {agent.id === 'natalia-cromwell' && (
+                 {agent.id === 'natalia-cromwell' && agentProperties.length > 0 && (
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                         {agentProperties.map(prop => (
                             <PropertyCard key={prop.id} property={prop} />
