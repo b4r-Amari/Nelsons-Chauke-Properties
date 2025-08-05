@@ -86,8 +86,8 @@ function FeaturedPropertiesSection() {
       <div className="container">
         <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties in South Africa, offering the perfect blend of luxury, comfort, and style.</p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
-            {featuredProperties.slice(0, 4).map((prop) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
+            {featuredProperties.slice(0, 3).map((prop) => (
                  <PropertyCard key={prop.id} property={prop} />
             ))}
         </div>
@@ -160,23 +160,21 @@ function CtaTabsSection() {
               <Handshake className="h-5 w-5" /> Selling
             </TabsTrigger>
           </TabsList>
-          <div className="pt-12 bg-card mt-[-2rem] rounded-xl shadow-lg px-6 pb-10">
-            <TabsContent value="buying">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-2">
-                {buyerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
-              </div>
-            </TabsContent>
-            <TabsContent value="renting">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-2">
-                {renterOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
-              </div>
-            </TabsContent>
-            <TabsContent value="selling">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-2">
-                {sellerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
-              </div>
-            </TabsContent>
-          </div>
+          <TabsContent value="buying" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {buyerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
+            </div>
+          </TabsContent>
+          <TabsContent value="renting" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {renterOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
+            </div>
+          </TabsContent>
+          <TabsContent value="selling" className="mt-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {sellerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     </section>
@@ -186,7 +184,7 @@ function CtaTabsSection() {
 
 function CtaTabCard({ title, description, buttonText, imageSrc, imageHint }: { title: string, description: string, buttonText: string, imageSrc: string, imageHint: string }) {
   return (
-    <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-background">
+    <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card">
       <CardContent className="p-6 flex-grow flex flex-col items-center">
         <Image src={imageSrc} data-ai-hint={imageHint} alt={title} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
         <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep">{title}</h3>
