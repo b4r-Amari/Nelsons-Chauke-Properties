@@ -1,9 +1,11 @@
+
 "use client"
 
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { BedDouble, Bath, Ruler, MapPin } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
 
 export type Property = {
   id: string;
@@ -21,6 +23,7 @@ export type Property = {
   description: string;
   features: string[];
   yearBuilt: number;
+  onShow?: boolean;
 };
 
 type PropertyCardProps = {
@@ -51,8 +54,13 @@ export function PropertyCard({ property }: PropertyCardProps) {
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
             />
-            <div className="absolute top-4 left-4 bg-black/70 text-white px-4 py-1.5 rounded-md font-roboto font-bold text-lg">
-            {formatPrice(property.price)}
+             <div className="absolute top-4 left-4 flex flex-col gap-2">
+              <div className="bg-black/70 text-white px-4 py-1.5 rounded-md font-roboto font-bold text-lg w-fit">
+                {formatPrice(property.price)}
+              </div>
+              {property.onShow && (
+                 <Badge className="bg-brand-bright text-white border-none w-fit">On Show</Badge>
+              )}
             </div>
             {property.status === 'sold' && (
             <div className="absolute top-4 right-4 bg-destructive text-destructive-foreground px-3 py-1 rounded-md font-semibold text-sm">

@@ -7,16 +7,27 @@ import { useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Menu, Heart, User, X } from 'lucide-react';
+import { Menu, Heart, User, X, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
-const navLinks = [
+const mainNavLinks = [
   { href: "/", label: "Home" },
-  { href: "/properties", label: "Buy" },
-  { href: "/sell", label: "Sell" },
   { href: "/blog", label: "Blog" },
   { href: "/about-us", label: "About Us" },
   { href: "/contact-us", label: "Contact Us" },
+];
+
+const propertiesLinks = [
+  { href: "/properties", label: "Buy" },
+  { href: "/sell", label: "Sell" },
+  { href: "/properties/sold", label: "Sold" },
+  { href: "/properties/on-show", label: "On Show" },
 ];
 
 export function Header() {
@@ -34,21 +45,37 @@ export function Header() {
           <Logo />
         </div>
 
-        <nav className="hidden md:flex items-center space-x-6 text-sm font-medium font-headline">
-          {navLinks.map((link) => (
+        <nav className="hidden md:flex items-center space-x-1 text-sm font-medium font-headline">
+          {mainNavLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "relative transition-colors hover:text-primary",
-                pathname.startsWith(link.href) && link.href !== "/" || pathname === link.href ? "text-primary" : "text-muted-foreground",
-                "after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-brand-bright after:transition-all after:duration-300 hover:after:w-full",
-                (pathname.startsWith(link.href) && link.href !== "/" || pathname === link.href) && "after:w-full"
+                "relative transition-colors hover:text-primary px-3 py-2 rounded-md",
+                pathname === link.href ? "text-primary bg-accent/20" : "text-muted-foreground",
               )}
             >
               {link.label}
             </Link>
           ))}
+           <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className={cn(
+                "flex items-center gap-1 px-3 py-2 text-sm font-medium font-headline",
+                pathname.startsWith('/properties') || pathname === '/sell' ? "text-primary bg-accent/20" : "text-muted-foreground",
+                "hover:text-primary"
+                )}>
+                Properties <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-48">
+              {propertiesLinks.map(link => (
+                <DropdownMenuItem key={link.href} asChild>
+                  <Link href={link.href}>{link.label}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
 
         <div className="flex flex-1 items-center justify-end space-x-2">
@@ -78,7 +105,7 @@ export function Header() {
                   </div>
                   <nav className="flex-grow p-4">
                     <ul className="space-y-2">
-                      {navLinks.map((link) => (
+                      {[...mainNavLinks, ...propertiesLinks].map((link) => (
                         <li key={link.href}>
                           <Link
                             href={link.href}

@@ -15,7 +15,8 @@
     "imageHint": "modern house sandton",
     "isFavorite": true,
     "features": ["Swimming Pool", "Garden", "2 Garages", "Security Estate"],
-    "yearBuilt": 2018
+    "yearBuilt": 2018,
+    "onShow": true
   },
   {
     "id": "2",
@@ -66,7 +67,8 @@
     "imageHint": "stellenbosch villa",
     "isFavorite": true,
     "features": ["Private Vineyard", "Wine Cellar", "Infinity Pool", "Helipad"],
-    "yearBuilt": 2015
+    "yearBuilt": 2015,
+    "onShow": true
   },
   {
     "id": "5",
@@ -100,7 +102,8 @@
     "imageHint": "pretoria east house",
     "isFavorite": false,
     "features": ["Golf Course Access", "Clubhouse", "24/7 Security"],
-    "yearBuilt": 2005
+    "yearBuilt": 2005,
+    "onShow": true
   },
   {
     "id": "7",
@@ -236,7 +239,8 @@
     "imageHint": "knysna island home",
     "isFavorite": true,
     "features": ["Private Jetty", "Canal Access", "Island Security"],
-    "yearBuilt": 2008
+    "yearBuilt": 2008,
+    "onShow": true
   },
   {
     "id": "15",
@@ -304,7 +308,8 @@
     "imageHint": "hermanus coastal home",
     "isFavorite": true,
     "features": ["Sea Views", "Close to beach", "Whale Watching"],
-    "yearBuilt": 2002
+    "yearBuilt": 2002,
+    "onShow": true
   },
   {
     "id": "19",
@@ -851,5 +856,3 @@
     "yearBuilt": 1985
   }
 ]
-
-    
