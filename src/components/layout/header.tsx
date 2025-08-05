@@ -64,16 +64,19 @@ export function Header() {
               item.isDropdown && item.links ? (
                 <DropdownMenu key={item.label}>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className={cn(
-                      "group relative px-3 py-2 text-sm font-medium font-headline transition-colors hover:bg-transparent",
-                      isPropertiesActive ? "text-primary" : "text-muted-foreground hover:text-brand-bright",
-                      "focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-                      )}>
+                    <Button 
+                      variant="ghost" 
+                      className={cn(
+                        "group relative px-3 py-2 text-sm font-medium font-headline transition-colors hover:bg-transparent",
+                        isPropertiesActive ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright",
+                        "focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                      )}
+                    >
                       <span>{item.label}</span>
                       <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                       <span className={cn(
                         'absolute bottom-0 left-0 h-0.5 transition-all duration-300',
-                        isPropertiesActive ? 'w-full bg-primary' : 'w-0 group-hover:w-full bg-brand-bright'
+                        isPropertiesActive ? 'w-full bg-brand-deep' : 'w-0 group-hover:w-full bg-brand-bright'
                       )}></span>
                     </Button>
                   </DropdownMenuTrigger>
@@ -91,13 +94,13 @@ export function Header() {
                   href={item.href!}
                   className={cn(
                     "group relative transition-colors px-3 py-2",
-                    pathname === item.href ? "text-primary" : "text-muted-foreground hover:text-brand-bright"
+                    pathname === item.href ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright"
                   )}
                 >
                   {item.label}
                   <span className={cn(
                     'absolute bottom-0 left-0 h-0.5 transition-all duration-300',
-                    pathname === item.href ? 'w-full bg-primary' : 'w-0 group-hover:w-full bg-brand-bright'
+                    pathname === item.href ? 'w-full bg-brand-deep' : 'w-0 group-hover:w-full bg-brand-bright'
                   )}></span>
                 </Link>
               )
