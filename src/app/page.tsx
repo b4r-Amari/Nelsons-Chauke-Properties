@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowRight, Search, Building, KeyRound, Handshake } from 'lucide-react';
 import { PropertyCard } from '@/components/shared/property-card';
@@ -87,17 +86,11 @@ function FeaturedPropertiesSection() {
       <div className="container">
         <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties in South Africa, offering the perfect blend of luxury, comfort, and style.</p>
-        <Carousel opts={{ align: "start", loop: true }} className="w-full">
-          <CarouselContent className="-ml-4">
-            {featuredProperties.map((prop) => (
-              <CarouselItem key={prop.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
-                 <PropertyCard property={prop} />
-              </CarouselItem>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
+            {featuredProperties.slice(0, 4).map((prop) => (
+                 <PropertyCard key={prop.id} property={prop} />
             ))}
-          </CarouselContent>
-          <CarouselPrevious className="bg-brand-deep text-white hover:bg-brand-deep/90 border-none -left-4" />
-          <CarouselNext className="bg-brand-deep text-white hover:bg-brand-deep/90 border-none -right-4" />
-        </Carousel>
+        </div>
         <div className="text-center mt-12">
           <Link href="/properties">
             <Button size="lg" className="bg-brand-bright hover:bg-brand-deep transition-colors">
@@ -167,19 +160,19 @@ function CtaTabsSection() {
               <Handshake className="h-5 w-5" /> Selling
             </TabsTrigger>
           </TabsList>
-          <div className="pt-12">
+          <div className="pt-12 bg-card mt-[-2rem] rounded-xl shadow-lg px-6 pb-10">
             <TabsContent value="buying">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-2">
                 {buyerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
               </div>
             </TabsContent>
             <TabsContent value="renting">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-2">
                 {renterOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
               </div>
             </TabsContent>
             <TabsContent value="selling">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-2">
                 {sellerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
               </div>
             </TabsContent>
@@ -193,7 +186,7 @@ function CtaTabsSection() {
 
 function CtaTabCard({ title, description, buttonText, imageSrc, imageHint }: { title: string, description: string, buttonText: string, imageSrc: string, imageHint: string }) {
   return (
-    <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+    <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-background">
       <CardContent className="p-6 flex-grow flex flex-col items-center">
         <Image src={imageSrc} data-ai-hint={imageHint} alt={title} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
         <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep">{title}</h3>
