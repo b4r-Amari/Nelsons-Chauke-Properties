@@ -88,7 +88,7 @@ function FeaturedPropertiesSection() {
         <Carousel opts={{ align: "start", loop: true }} className="w-full">
           <CarouselContent className="-ml-4">
             {featuredProperties.map((prop) => (
-              <CarouselItem key={prop.id} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3 xl:basis-1/4">
+              <CarouselItem key={prop.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/4">
                  <PropertyCard property={prop} />
               </CarouselItem>
             ))}

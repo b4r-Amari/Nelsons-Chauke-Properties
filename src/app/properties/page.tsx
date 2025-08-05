@@ -95,11 +95,9 @@ export default function PropertiesPage() {
               </Card>
             </aside>
             <main className="lg:col-span-3">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-6 gap-y-0">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {allProperties.map((prop) => (
-                        <div key={prop.id} className="p-2">
-                            <PropertyCard property={prop} />
-                        </div>
+                        <PropertyCard key={prop.id} property={prop} />
                     ))}
                 </div>
             </main>
