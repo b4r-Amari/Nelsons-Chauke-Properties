@@ -20,9 +20,9 @@ export default function AdminLayout({
     <AuthProvider>
       <WishlistProvider>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
+          <div className="flex min-h-screen w-full">
             <AdminSidebar />
-            <main className="flex flex-col p-4 sm:p-6 md:p-8">
+            <main className="flex-1 flex flex-col p-4 sm:p-6 md:p-8">
               {children}
             </main>
           </div>
