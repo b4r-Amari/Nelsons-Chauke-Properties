@@ -121,14 +121,14 @@ export function PropertyFilter({ properties, onFilterChange }: PropertyFilterPro
   }
 
   return (
-    <Card className="sticky top-24 shadow-lg flex flex-col h-[calc(100vh-7rem)]">
+    <Card className="lg:sticky top-24 shadow-lg lg:flex lg:flex-col lg:h-[calc(100vh-7rem)]">
       <CardHeader>
         <CardTitle className="font-headline text-2xl flex items-center gap-3">
             <SlidersHorizontal className="h-6 w-6 text-brand-bright"/>
             Filter Properties
         </CardTitle>
       </CardHeader>
-      <ScrollArea className="flex-grow overflow-y-auto">
+      <ScrollArea className="lg:flex-grow lg:overflow-y-auto">
         <CardContent>
             <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
             <div>
