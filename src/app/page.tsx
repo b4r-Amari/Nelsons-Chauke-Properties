@@ -10,6 +10,7 @@ import type { Property } from '@/components/shared/property-card';
 import Link from 'next/link';
 import propertiesData from '@/data/properties.json';
 import { Separator } from '@/components/ui/separator';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const featuredProperties: Property[] = propertiesData.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 8);
 
@@ -44,12 +45,12 @@ function HeroSection() {
         <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
           Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
         </p>
-        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-white/20 backdrop-blur-sm border-white/20">
+        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-white backdrop-blur-sm border-white/20">
           <CardContent className="p-4">
             <form className="grid md:grid-cols-12 gap-4 items-center">
               <div className="md:col-span-3">
                 <Select defaultValue="for-sale">
-                  <SelectTrigger className="h-14 text-base bg-white text-black border-0 focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
+                  <SelectTrigger className="h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
                     <SelectValue placeholder="For Sale" />
                   </SelectTrigger>
                   <SelectContent>
@@ -62,7 +63,7 @@ function HeroSection() {
                 <Input
                   type="text"
                   placeholder="Enter city, suburb or area"
-                  className="h-14 text-base bg-white text-black border-0 focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 placeholder:text-gray-600"
+                  className="h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 placeholder:text-gray-600"
                 />
               </div>
               <div className="md:col-span-3">
@@ -86,11 +87,25 @@ function FeaturedPropertiesSection() {
       <div className="container">
         <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties in South Africa, offering the perfect blend of luxury, comfort, and style.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-            {featuredProperties.slice(0, 3).map((prop) => (
-                 <PropertyCard key={prop.id} property={prop} />
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent>
+            {featuredProperties.map((prop) => (
+              <CarouselItem key={prop.id} className="sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                <div className="p-1 h-full">
+                  <PropertyCard property={prop} />
+                </div>
+              </CarouselItem>
             ))}
-        </div>
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
         <div className="text-center mt-12">
           <Link href="/properties">
             <Button size="lg" className="bg-brand-bright hover:bg-brand-deep transition-colors">
