@@ -66,14 +66,14 @@ export function Header() {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className={cn(
                       "group relative px-3 py-2 text-sm font-medium font-headline transition-colors",
-                      isPropertiesActive ? "text-primary" : "text-muted-foreground",
-                      "hover:text-primary hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                      isPropertiesActive ? "text-primary" : "text-muted-foreground hover:text-brand-bright",
+                      "focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                       )}>
                       <span>{item.label}</span>
                       <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                       <span className={cn(
-                        'absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300',
-                        isPropertiesActive ? 'w-full' : 'w-0 group-hover:w-full'
+                        'absolute bottom-0 left-0 h-0.5 transition-all duration-300',
+                        isPropertiesActive ? 'w-full bg-primary' : 'w-0 group-hover:w-full bg-brand-bright'
                       )}></span>
                     </Button>
                   </DropdownMenuTrigger>
@@ -90,14 +90,14 @@ export function Header() {
                   key={item.href}
                   href={item.href!}
                   className={cn(
-                    "group relative transition-colors hover:text-primary px-3 py-2",
+                    "group relative transition-colors hover:text-brand-bright px-3 py-2",
                     pathname === item.href ? "text-primary" : "text-muted-foreground"
                   )}
                 >
                   {item.label}
                   <span className={cn(
-                    'absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300',
-                    pathname === item.href ? 'w-full' : 'w-0 group-hover:w-full'
+                    'absolute bottom-0 left-0 h-0.5 transition-all duration-300',
+                    pathname === item.href ? 'w-full bg-primary' : 'w-0 group-hover:w-full bg-brand-bright'
                   )}></span>
                 </Link>
               )
@@ -106,10 +106,10 @@ export function Header() {
         </div>
 
         <div className="flex items-center justify-end space-x-2">
-          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden md:inline-flex text-muted-foreground hover:bg-primary hover:text-white transition-colors">
+          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
             <Heart className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="User Profile" className="hidden md:inline-flex text-muted-foreground hover:bg-primary hover:text-white transition-colors">
+          <Button variant="ghost" size="icon" aria-label="User Profile" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
             <User className="h-5 w-5" />
           </Button>
 
