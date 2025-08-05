@@ -15,6 +15,13 @@ import Link from 'next/link';
 import propertiesData from '@/data/properties.json';
 import { Separator } from '@/components/ui/separator';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogFooter } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { useToast } from '@/hooks/use-toast';
+
 
 const featuredProperties: Property[] = propertiesData.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 8);
 const heroBanners = [
@@ -155,11 +162,91 @@ function ShortAboutSection() {
   );
 }
 
+const alertFormSchema = z.object({
+  fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+});
+
+function PropertyAlertForm() {
+  const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof alertFormSchema>>({
+    resolver: zodResolver(alertFormSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof alertFormSchema>) {
+    console.log(values);
+    toast({
+      title: "Subscribed!",
+      description: "You've been signed up for property alerts.",
+    });
+    form.reset();
+    setIsOpen(false);
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors w-full mt-auto">
+          Sign Up Now
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="font-headline text-2xl">Property Alerts</DialogTitle>
+          <DialogDescription>
+            Get notified about new properties that match your criteria. Fill out your details below.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="you@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <DialogFooter>
+                <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep">Send</Button>
+             </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+
 function CtaTabsSection() {
   const buyerOptions = [
-    { title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "notification bell" },
-    { title: "Sold Prices", description: "Research the value of any property in South Africa to make informed decisions.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "price tag" },
-    { title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "open book" },
+    { id: 'property-alerts', title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "notification bell" },
+    { id: 'sold-prices', title: "Sold Prices", description: "Research the value of any property in South Africa to make informed decisions.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "price tag" },
+    { id: 'buying-guides', title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "open book" },
   ];
 
   const renterOptions = [
@@ -215,16 +302,22 @@ function CtaTabsSection() {
 }
 
 
-function CtaTabCard({ title, description, buttonText, imageSrc, imageHint }: { title: string, description: string, buttonText: string, imageSrc: string, imageHint: string }) {
+function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint }: { id?:string, title: string, description: string, buttonText: string, imageSrc: string, imageHint: string }) {
+  const isAlertForm = id === 'property-alerts';
+  
   return (
     <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card">
       <CardContent className="p-6 flex-grow flex flex-col items-center">
         <Image src={imageSrc} data-ai-hint={imageHint} alt={title} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
         <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep">{title}</h3>
         <p className="text-muted-foreground flex-grow mb-6">{description}</p>
-        <Button variant="outline" className="border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors w-full mt-auto">
-          {buttonText}
-        </Button>
+        {isAlertForm ? (
+          <PropertyAlertForm />
+        ) : (
+          <Button variant="outline" className="border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors w-full mt-auto">
+            {buttonText}
+          </Button>
+        )}
       </CardContent>
     </Card>
   );
@@ -275,5 +368,3 @@ function NewsletterSection() {
     </section>
   );
 }
-
-    
