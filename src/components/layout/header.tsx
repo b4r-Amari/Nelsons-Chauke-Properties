@@ -67,7 +67,7 @@ export function Header() {
                     <Button variant="ghost" className={cn(
                       "group relative px-3 py-2 text-sm font-medium font-headline transition-colors",
                       isPropertiesActive ? "text-primary" : "text-muted-foreground",
-                      "hover:text-primary hover:bg-transparent focus-visible:bg-transparent"
+                      "hover:text-primary hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                       )}>
                       <span>{item.label}</span>
                       <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
