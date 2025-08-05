@@ -46,10 +46,10 @@ function HeroSection() {
         <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
           Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
         </p>
-        <Card className="w-full max-w-5xl mx-auto shadow-2xl bg-white/50 backdrop-blur-sm border-white/20">
+        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-white/50 backdrop-blur-sm border-white/20">
           <CardContent className="p-4">
             <form className="grid md:grid-cols-12 gap-4 items-center">
-              <div className="md:col-span-3">
+              <div className="md:col-span-4">
                 <Select defaultValue="for-sale">
                   <SelectTrigger className="h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
                     <SelectValue placeholder="For Sale" />
@@ -60,24 +60,7 @@ function HeroSection() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="md:col-span-3">
-                <Select defaultValue="residential">
-                  <SelectTrigger className="h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
-                    <SelectValue placeholder="Property Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="residential">Residential</SelectItem>
-                    <SelectItem value="residential-development">Residential Development</SelectItem>
-                    <SelectItem value="residential-estate">Residential Estate</SelectItem>
-                    <SelectItem value="residential-vacant-land">Residential Vacant Land</SelectItem>
-                    <SelectItem value="commercial">Commercial</SelectItem>
-                    <SelectItem value="industrial">Industrial</SelectItem>
-                    <SelectItem value="agricultural">Agricultural</SelectItem>
-                    <SelectItem value="farms-small-holdings">Farms & Small Holdings</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="md:col-span-4">
+              <div className="md:col-span-6">
                 <Input
                   type="text"
                   placeholder="Enter city, suburb or area"
@@ -114,7 +97,7 @@ function FeaturedPropertiesSection() {
         >
           <CarouselContent>
             {featuredProperties.map((prop) => (
-              <CarouselItem key={prop.id} className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+              <CarouselItem key={prop.id} className="basis-full sm:basis-1/2 md:basis-1/3 xl:basis-1/4">
                 <div className="p-1 h-full">
                   <PropertyCard property={prop} />
                 </div>
