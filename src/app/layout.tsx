@@ -5,6 +5,7 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/context/auth-context';
+import { WishlistProvider } from '@/context/wishlist-context';
 
 export const metadata: Metadata = {
   title: 'NC Properties Redefined',
@@ -25,14 +26,16 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased text-foreground/90">
         <AuthProvider>
-          <div className="flex flex-col min-h-screen">
-            <Header />
-            <main className="flex-grow">
-              {children}
-            </main>
-            <Footer />
-          </div>
-          <Toaster />
+          <WishlistProvider>
+            <div className="flex flex-col min-h-screen">
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </div>
+            <Toaster />
+          </WishlistProvider>
         </AuthProvider>
       </body>
     </html>

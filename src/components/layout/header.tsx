@@ -88,8 +88,8 @@ export function Header() {
                     <Button 
                       variant="ghost" 
                       className={cn(
-                        "group relative px-3 py-2 text-sm font-medium font-headline transition-colors hover:bg-transparent hover:text-brand-bright",
-                        isPropertiesActive ? "text-brand-deep" : "text-muted-foreground",
+                        "group relative px-3 py-2 text-sm font-medium font-headline transition-colors hover:bg-transparent focus:bg-transparent",
+                        isPropertiesActive ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright",
                         "focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                       )}
                     >
@@ -130,9 +130,28 @@ export function Header() {
         </div>
 
         <div className="flex items-center justify-end space-x-2">
-          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
-            <Heart className="h-5 w-5" />
-          </Button>
+           <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
+                onClick={() => {
+                  if (!user) {
+                    setIsAuthDialogOpen(true);
+                  }
+                }}
+              >
+                <Link href={user ? "/my-account/wishlist" : "#"} className="w-full h-full flex items-center justify-center">
+                  <Heart className="h-5 w-5" />
+                </Link>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl font-headline text-center">Authentication Required</DialogTitle>
+                </DialogHeader>
+                <p className="text-center text-muted-foreground">Please sign in or create an account to use the wishlist feature.</p>
+                <AuthForm onAuthSuccess={() => setIsAuthDialogOpen(false)} />
+            </DialogContent>
+          </Dialog>
           
           {user ? (
             <DropdownMenu>
@@ -156,6 +175,9 @@ export function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/my-account"><LayoutDashboard className="mr-2 h-4 w-4" /> My Account</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/my-account/wishlist"><Heart className="mr-2 h-4 w-4" /> My Wishlist</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => logOut()}>
                    <LogOut className="mr-2 h-4 w-4" />

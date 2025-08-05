@@ -1,10 +1,15 @@
+
 "use client"
 
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { BedDouble, Bath, Home, LandPlot } from 'lucide-react';
+import { BedDouble, Bath, Home, LandPlot, Heart } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
+import { useWishlist } from "@/context/wishlist-context";
+import { useAuth } from "@/context/auth-context";
+import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
 
 export type Property = {
   id: string;
@@ -31,6 +36,26 @@ type PropertyCardProps = {
 };
 
 export function PropertyCard({ property }: PropertyCardProps) {
+  const { user } = useAuth();
+  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
+  const isWishlisted = wishlist.includes(property.id);
+
+  const handleWishlistClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent navigating to property page
+    e.stopPropagation();
+
+    if (!user) {
+      // In a real app, you would probably trigger a login modal here
+      alert("Please log in to use the wishlist feature.");
+      return;
+    }
+
+    if (isWishlisted) {
+      removeFromWishlist(property.id);
+    } else {
+      addToWishlist(property.id);
+    }
+  };
   
   const formatPrice = (price: number) => {
     const isRental = property.status === 'to-let';
@@ -62,10 +87,23 @@ export function PropertyCard({ property }: PropertyCardProps) {
                  <Badge className="bg-brand-bright text-white border-none w-fit">On Show</Badge>
               )}
             </div>
+            {property.status !== 'sold' && (
+              <Button
+                size="icon"
+                className={cn(
+                  "absolute top-4 right-4 rounded-full bg-white/80 hover:bg-white text-brand-deep transition-all duration-300 scale-100 hover:scale-110",
+                  { "text-red-500": isWishlisted }
+                )}
+                onClick={handleWishlistClick}
+                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
+              >
+                <Heart className={cn("h-6 w-6", { "fill-current": isWishlisted })} />
+              </Button>
+            )}
             {property.status === 'sold' && (
-            <div className="absolute top-4 right-4 bg-destructive text-destructive-foreground px-3 py-1 rounded-md font-semibold text-sm">
-                SOLD
-            </div>
+              <div className="absolute top-4 right-4 bg-destructive text-destructive-foreground px-3 py-1 rounded-md font-semibold text-sm">
+                  SOLD
+              </div>
             )}
         </div>
         <CardContent className="p-6 bg-white flex flex-col flex-grow">
