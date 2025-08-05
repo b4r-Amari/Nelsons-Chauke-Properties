@@ -29,6 +29,7 @@ export type Property = {
   features: string[];
   yearBuilt: number;
   onShow?: boolean;
+  agentId: string;
 };
 
 type PropertyCardProps = {

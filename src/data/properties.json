@@ -17,7 +17,8 @@
     "isFavorite": true,
     "features": ["Swimming Pool", "Landscaped Garden", "Double Garage", "Secure Estate", "Covered Patio", "Gourmet Kitchen", "Close to Sandton City"],
     "yearBuilt": 2018,
-    "onShow": true
+    "onShow": true,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "2",
@@ -35,7 +36,8 @@
     "imageHint": "sea point apartment",
     "isFavorite": false,
     "features": ["Uninterrupted Sea View", "Large Balcony", "24/7 Manned Security", "2 Underground Parking Bays", "Walking distance to Promenade"],
-    "yearBuilt": 2020
+    "yearBuilt": 2020,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "3",
@@ -53,7 +55,8 @@
     "imageHint": "umhlanga apartment",
     "isFavorite": false,
     "features": ["Communal Pool", "Residents' Gym", "Direct Beach Access", "Holiday Letting Potential", "Walk to restaurants"],
-    "yearBuilt": 2019
+    "yearBuilt": 2019,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "4",
@@ -72,7 +75,8 @@
     "isFavorite": true,
     "features": ["Private Vineyard", "Wine Cellar", "Infinity Pool", "Helipad", "Panoramic Views", "High Security"],
     "yearBuilt": 2015,
-    "onShow": true
+    "onShow": true,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "5",
@@ -90,7 +94,8 @@
     "imageHint": "constantia home",
     "isFavorite": false,
     "features": ["Large Mature Garden", "Borehole Irrigation", "Mountain Views", "Swimming Pool", "Close to Top Schools"],
-    "yearBuilt": 1998
+    "yearBuilt": 1998,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "6",
@@ -109,7 +114,8 @@
     "isFavorite": false,
     "features": ["Golf Course Access", "Clubhouse", "24/7 Security", "Tennis Courts", "Walking Trails", "Family-friendly"],
     "yearBuilt": 2005,
-    "onShow": true
+    "onShow": true,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "7",
@@ -127,7 +133,8 @@
     "imageHint": "durbanville home",
     "isFavorite": false,
     "features": ["Covered Braai Area", "Established Garden", "Quiet Street", "Double Garage", "Close to schools and amenities"],
-    "yearBuilt": 1995
+    "yearBuilt": 1995,
+    "agentId": "james-anderson"
   },
   {
     "id": "8",
@@ -145,7 +152,8 @@
     "imageHint": "joburg city loft",
     "isFavorite": true,
     "features": ["Rooftop Bar Access", "Surrounded by Art Galleries", "High Ceilings", "Industrial Finishes", "Vibrant Nightlife"],
-    "yearBuilt": 2012
+    "yearBuilt": 2012,
+    "agentId": "david-lee"
   },
   {
     "id": "9",
@@ -163,7 +171,8 @@
     "imageHint": "cape town cbd apartment",
     "isFavorite": false,
     "features": ["City Views", "Secure Parking", "Modern Finishes", "Prime Location", "High Rental Demand"],
-    "yearBuilt": 2017
+    "yearBuilt": 2017,
+    "agentId": "david-lee"
   },
   {
     "id": "10",
@@ -181,7 +190,8 @@
     "imageHint": "ballito townhouse",
     "isFavorite": false,
     "features": ["Simbithi Eco Estate", "Community Centre with Pool", "Catch and Release Fishing", "Nature Trails", "High Security"],
-    "yearBuilt": 2016
+    "yearBuilt": 2016,
+    "agentId": "james-anderson"
   },
   {
     "id": "11",
@@ -199,7 +209,8 @@
     "imageHint": "franschhoek home",
     "isFavorite": true,
     "features": ["Gourmet Kitchen", "Walk-in Wine Cellar", "Separate Guest Cottage", "Swimming Pool", "Walk to Main Road"],
-    "yearBuilt": 2010
+    "yearBuilt": 2010,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "12",
@@ -217,7 +228,8 @@
     "imageHint": "midrand estate house",
     "isFavorite": false,
     "features": ["Equestrian Facilities", "Private Cinema", "Smart Home Automation", "1-Hectare Stand", "Top Security"],
-    "yearBuilt": 2018
+    "yearBuilt": 2018,
+    "agentId": "james-anderson"
   },
   {
     "id": "13",
@@ -235,7 +247,8 @@
     "imageHint": "green point apartment",
     "isFavorite": false,
     "features": ["Stadium Views", "Communal Gym", "Walking distance to V&A Waterfront", "Secure Parking", "Modern building"],
-    "yearBuilt": 2014
+    "yearBuilt": 2014,
+    "agentId": "david-lee"
   },
   {
     "id": "14",
@@ -254,7 +267,8 @@
     "isFavorite": true,
     "features": ["Private Jetty", "Direct Canal Access", "Thesen Islands Security", "Waterfront Living", "Close to Knysna Waterfront"],
     "yearBuilt": 2008,
-    "onShow": true
+    "onShow": true,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "15",
@@ -272,7 +286,8 @@
     "imageHint": "bryanston family home",
     "isFavorite": false,
     "features": ["Tennis Court", "Borehole", "Staff Quarters", "Large Stand", "Boomed-off Area", "Swimming Pool"],
-    "yearBuilt": 1992
+    "yearBuilt": 1992,
+    "agentId": "james-anderson"
   },
   {
     "id": "16",
@@ -290,7 +305,8 @@
     "imageHint": "somerset west golf estate",
     "isFavorite": false,
     "features": ["Golf Membership Included", "On-site Spa", "Spectacular Mountain Views", "Clubhouse and Restaurants", "High Security"],
-    "yearBuilt": 2011
+    "yearBuilt": 2011,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "17",
@@ -308,7 +324,8 @@
     "imageHint": "rosebank modern apartment",
     "isFavorite": false,
     "features": ["Concierge Service", "Standby Generator", "Direct Gautrain Access", "Walk to Rosebank Mall", "Modern Finishes"],
-    "yearBuilt": 2021
+    "yearBuilt": 2021,
+    "agentId": "david-lee"
   },
   {
     "id": "18",
@@ -327,7 +344,8 @@
     "isFavorite": true,
     "features": ["Prime Sea Views", "Close to the beach", "World-class Whale Watching", "Cliff Path Access", "Deck with Braai"],
     "yearBuilt": 2002,
-    "onShow": true
+    "onShow": true,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "19",
@@ -345,7 +363,8 @@
     "imageHint": "camps bay luxury villa",
     "isFavorite": true,
     "features": ["Infinity Pool", "Unbeatable Sunset Views", "Home Cinema", "Glass Elevator", "Prime Camps Bay Location"],
-    "yearBuilt": 2019
+    "yearBuilt": 2019,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "20",
@@ -363,7 +382,8 @@
     "imageHint": "melrose arch apartment",
     "isFavorite": false,
     "features": ["24/7 Precinct Security", "European-style Piazza", "Integrated Living", "Fine Dining and Retail", "Secure underground parking"],
-    "yearBuilt": 2013
+    "yearBuilt": 2013,
+    "agentId": "david-lee"
   },
   {
     "id": "21",
@@ -381,7 +401,8 @@
     "imageHint": "paarl estate home",
     "isFavorite": false,
     "features": ["Polo Fields", "On-site Vineyards", "Wellness Centre", "Top Security", "Multiple Restaurants", "Jack Nicklaus Golf Course"],
-    "yearBuilt": 2017
+    "yearBuilt": 2017,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "22",
@@ -399,7 +420,8 @@
     "imageHint": "fourways townhouse",
     "isFavorite": false,
     "features": ["Clubhouse with Pool", "Tennis Courts", "Fishing Dams", "Secure Estate", "Close to Fourways Mall"],
-    "yearBuilt": 2006
+    "yearBuilt": 2006,
+    "agentId": "james-anderson"
   },
   {
     "id": "23",
@@ -417,7 +439,8 @@
     "imageHint": "george golf estate",
     "isFavorite": false,
     "features": ["3 Championship Golf Courses", "Luxury Spa", "Multiple Restaurants", "Secure Estate", "Garden Route Lifestyle"],
-    "yearBuilt": 2009
+    "yearBuilt": 2009,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "24",
@@ -435,7 +458,8 @@
     "imageHint": "woodstock loft apartment",
     "isFavorite": false,
     "features": ["Industrial Chic Design", "Design District Location", "Next to Old Biscuit Mill Market", "Close to CBD", "Secure Building"],
-    "yearBuilt": 2011
+    "yearBuilt": 2011,
+    "agentId": "david-lee"
   },
   {
     "id": "25",
@@ -453,7 +477,8 @@
     "imageHint": "bedfordview house view",
     "isFavorite": true,
     "features": ["Panoramic Johannesburg Views", "Indoor Swimming Pool", "High Security Area", "Home Bar", "Staff Quarters"],
-    "yearBuilt": 2013
+    "yearBuilt": 2013,
+    "agentId": "james-anderson"
   },
   {
     "id": "26",
@@ -471,7 +496,8 @@
     "imageHint": "plettenberg bay beach house",
     "isFavorite": true,
     "features": ["Direct Beach Access", "Swimming Pool", "Multiple Decks", "Uninterrupted Sea Views", "Prime Location"],
-    "yearBuilt": 2016
+    "yearBuilt": 2016,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "27",
@@ -489,7 +515,8 @@
     "imageHint": "century city apartment",
     "isFavorite": false,
     "features": ["Access to Hotel Amenities", "Direct Canal Walk Access", "Conference Facilities", "High Security", "Modern Finishes"],
-    "yearBuilt": 2010
+    "yearBuilt": 2010,
+    "agentId": "david-lee"
   },
   {
     "id": "28",
@@ -507,7 +534,8 @@
     "imageHint": "hartbeespoort dam house",
     "isFavorite": false,
     "features": ["Hartbeespoort Dam Views", "Boating Club", "Jack Nicklaus Golf Course", "Clubhouse", "Secure Estate"],
-    "yearBuilt": 2007
+    "yearBuilt": 2007,
+    "agentId": "james-anderson"
   },
   {
     "id": "29",
@@ -525,7 +553,8 @@
     "imageHint": "hout bay family home",
     "isFavorite": false,
     "features": ["Beautiful Mountain Views", "Separate Cottage", "Large Plot with Pool", "Quiet and Secure Area", "Double Garage"],
-    "yearBuilt": 2000
+    "yearBuilt": 2000,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "30",
@@ -543,7 +572,8 @@
     "imageHint": "zimbali luxury villa",
     "isFavorite": true,
     "features": ["Lush Forest Views", "Private Pool and Deck", "Full Resort Access", "On-site Spa and Restaurants", "Direct Beach Access"],
-    "yearBuilt": 2014
+    "yearBuilt": 2014,
+    "agentId": "james-anderson"
   },
   {
     "id": "31",
@@ -561,7 +591,8 @@
     "imageHint": "roodepoort townhouse",
     "isFavorite": false,
     "features": ["Adjoins Nature Reserve", "Clubhouse with amenities", "Walking and Biking Trails", "High Security", "Family Park"],
-    "yearBuilt": 2010
+    "yearBuilt": 2010,
+    "agentId": "james-anderson"
   },
   {
     "id": "32",
@@ -579,7 +610,8 @@
     "imageHint": "sandown modern apartment",
     "isFavorite": false,
     "features": ["Concierge Service", "On-site Restaurant", "Swimming Pool", "Gym", "Close to Sandton CBD"],
-    "yearBuilt": 2022
+    "yearBuilt": 2022,
+    "agentId": "david-lee"
   },
   {
     "id": "33",
@@ -597,7 +629,8 @@
     "imageHint": "bloubergstrand house view",
     "isFavorite": true,
     "features": ["Iconic Table Mountain View", "Direct Beach Access", "Prime Kite Surfing Location", "Large entertainment patio", "Guest Suite"],
-    "yearBuilt": 2005
+    "yearBuilt": 2005,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "34",
@@ -615,7 +648,8 @@
     "imageHint": "meyersdal eco estate home",
     "isFavorite": false,
     "features": ["Private Nature Reserve", "Hiking/Biking Trails", "High Security", "Free-roaming game", "Modern architectural design"],
-    "yearBuilt": 2012
+    "yearBuilt": 2012,
+    "agentId": "james-anderson"
   },
   {
     "id": "35",
@@ -633,7 +667,8 @@
     "imageHint": "morningside penthouse",
     "isFavorite": false,
     "features": ["Penthouse Apartment", "Rooftop Pool", "Private Spa", "Concierge", "Spectacular Views"],
-    "yearBuilt": 2011
+    "yearBuilt": 2011,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "36",
@@ -651,7 +686,8 @@
     "imageHint": "waterkloof townhouse",
     "isFavorite": false,
     "features": ["Prestigious Embassy Suburb", "High Security Complex", "Private Garden", "Modern Finishes", "Close to Pretoria Country Club"],
-    "yearBuilt": 2015
+    "yearBuilt": 2015,
+    "agentId": "james-anderson"
   },
   {
     "id": "37",
@@ -669,7 +705,8 @@
     "imageHint": "claremont family home",
     "isFavorite": false,
     "features": ["Close to Top Schools", "Established Garden", "Swimming Pool", "Prestigious Area", "Double Garage"],
-    "yearBuilt": 1988
+    "yearBuilt": 1988,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "38",
@@ -687,7 +724,8 @@
     "imageHint": "durban waterfront apartment",
     "isFavorite": false,
     "features": ["Canal and Harbour Views", "24/7 Security", "Close to uShaka Marine World", "Waterfront Promenade", "Secure Parking"],
-    "yearBuilt": 2018
+    "yearBuilt": 2018,
+    "agentId": "david-lee"
   },
   {
     "id": "39",
@@ -705,7 +743,8 @@
     "imageHint": "parkhurst renovated house",
     "isFavorite": false,
     "features": ["Beautifully Renovated", "Original Pressed Ceilings", "Walk to Restaurants and Shops", "Vibrant Atmosphere", "Private Garden"],
-    "yearBuilt": 1955
+    "yearBuilt": 1955,
+    "agentId": "james-anderson"
   },
   {
     "id": "40",
@@ -723,7 +762,8 @@
     "imageHint": "bantry bay opulent villa",
     "isFavorite": true,
     "features": ["Wind-Free Location", "Private Home Cinema", "Fully-Equipped Gym", "Glass Elevator", "Infinity Pool", "Unrivaled Sea Views"],
-    "yearBuilt": 2020
+    "yearBuilt": 2020,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "41",
@@ -741,7 +781,8 @@
     "imageHint": "southbroom golf house",
     "isFavorite": false,
     "features": ["Lush Tropical Garden", "Golf Course Access", "Distant Sea Views", "Large Patio", "Secure and Peaceful"],
-    "yearBuilt": 1999
+    "yearBuilt": 1999,
+    "agentId": "james-anderson"
   },
   {
     "id": "42",
@@ -759,7 +800,8 @@
     "imageHint": "illovo luxury apartment",
     "isFavorite": false,
     "features": ["Fine-Dining Restaurant", "State-of-the-art Gym", "Swimming Pool", "Concierge Service", "Prime Location"],
-    "yearBuilt": 2019
+    "yearBuilt": 2019,
+    "agentId": "david-lee"
   },
   {
     "id": "43",
@@ -777,7 +819,8 @@
     "imageHint": "hyde park cluster home",
     "isFavorite": false,
     "features": ["High Security Complex", "Private Pool", "Exclusive Suburb", "Modern Interiors", "Close to Hyde Park Corner"],
-    "yearBuilt": 2016
+    "yearBuilt": 2016,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "44",
@@ -795,7 +838,8 @@
     "imageHint": "bishopscourt residence",
     "isFavorite": true,
     "features": ["Floodlit Tennis Court", "Direct Mountain Views", "Separate Guest House", "Library & Wine Cellar", "One-Acre Estate"],
-    "yearBuilt": 2003
+    "yearBuilt": 2003,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "45",
@@ -813,7 +857,8 @@
     "imageHint": "waterfall apartment",
     "isFavorite": false,
     "features": ["Full Lifestyle Centre", "Camelot Spa", "Private Cinema", "La-Pizzeria", "SMEG Appliances Included"],
-    "yearBuilt": 2020
+    "yearBuilt": 2020,
+    "agentId": "david-lee"
   },
   {
     "id": "46",
@@ -831,7 +876,8 @@
     "imageHint": "langebaan country estate",
     "isFavorite": false,
     "features": ["Gary Player Designed Golf Course", "Lagoon Access for Watersports", "Fynbos Walking Trails", "Clubhouse", "Secure Estate"],
-    "yearBuilt": 2011
+    "yearBuilt": 2011,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "47",
@@ -849,7 +895,8 @@
     "imageHint": "centurion country home",
     "isFavorite": false,
     "features": ["Large Stand", "Country Lifestyle", "On-site Cornwall Hill College", "High Security", "River frontage"],
-    "yearBuilt": 2004
+    "yearBuilt": 2004,
+    "agentId": "james-anderson"
   },
   {
     "id": "48",
@@ -867,7 +914,8 @@
     "imageHint": "newlands townhouse",
     "isFavorite": false,
     "features": ["Direct Mountain Views", "Kirstenbosch Nearby", "Secure Gated Complex", "Close to UCT", "Private Courtyard"],
-    "yearBuilt": 1997
+    "yearBuilt": 1997,
+    "agentId": "natalia-cromwell"
   },
   {
     "id": "49",
@@ -885,7 +933,8 @@
     "imageHint": "menlyn maine apartment",
     "isFavorite": true,
     "features": ["South Africa's First Green City", "Rooftop Pool", "Retail and Dining On-site", "Sun Casino Nearby", "High-speed fibre"],
-    "yearBuilt": 2018
+    "yearBuilt": 2018,
+    "agentId": "david-lee"
   },
   {
     "id": "50",
@@ -903,6 +952,7 @@
     "imageHint": "clifton beach bungalow",
     "isFavorite": true,
     "features": ["Direct Access to Clifton 4th Beach", "Unrivaled, Exclusive Location", "Spectacular Sunset Views", "Sheltered from the wind", "Highly Secure"],
-    "yearBuilt": 1985
+    "yearBuilt": 1985,
+    "agentId": "natalia-cromwell"
   }
 ]

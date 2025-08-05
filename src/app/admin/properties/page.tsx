@@ -1,16 +1,28 @@
 
+"use client"
+
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { PlusCircle, MoreHorizontal, Pencil, Trash2, Users } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from '@/components/ui/label';
+import { useToast } from '@/hooks/use-toast';
 
 import propertiesData from '@/data/properties.json';
+import agentsData from '@/data/agents.json';
 import { type Property } from '@/components/shared/property-card';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 
 const properties: Property[] = propertiesData;
+const agents = agentsData;
 
 const formatPrice = (price: number, status: 'for-sale' | 'to-let' | 'sold') => {
     const isRental = status === 'to-let';
@@ -25,6 +37,23 @@ const formatPrice = (price: number, status: 'for-sale' | 'to-let' | 'sold') => {
 
 
 export default function AdminPropertiesPage() {
+  const [propertyList, setPropertyList] = useState(properties);
+  const { toast } = useToast();
+
+  const handleAgentAssigned = (propertyId: string, newAgentId: string) => {
+    setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentId: newAgentId } : p));
+    const agentName = agents.find(a => a.id === newAgentId)?.name;
+    const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
+    toast({
+      title: "Agent Reassigned",
+      description: `${agentName} has been assigned to ${propertyAddress}.`,
+    });
+  };
+  
+  const getAgentById = (agentId: string) => {
+    return agents.find(agent => agent.id === agentId);
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -37,61 +66,128 @@ export default function AdminPropertiesPage() {
       <Card>
         <CardHeader>
           <CardTitle>Property List</CardTitle>
-          <CardDescription>Here you can view, edit, and delete properties.</CardDescription>
+          <CardDescription>Here you can view, edit, assign, and delete properties.</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Address</TableHead>
-                <TableHead className="hidden md:table-cell">Location</TableHead>
+                <TableHead className="hidden lg:table-cell">Agent</TableHead>
                 <TableHead className="hidden sm:table-cell">Price</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {properties.map((property) => (
-                <TableRow key={property.id}>
-                  <TableCell className="font-medium">{property.address}</TableCell>
-                  <TableCell className="hidden md:table-cell">{property.location}</TableCell>
-                  <TableCell className="hidden sm:table-cell">{formatPrice(property.price, property.status)}</TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={property.status === 'sold' ? 'destructive' : 'default'}
-                      className={cn(
-                        property.status === 'for-sale' && 'bg-green-600',
-                        property.status === 'to-let' && 'bg-blue-600'
+              {propertyList.map((property) => {
+                const agent = getAgentById(property.agentId);
+                return (
+                  <TableRow key={property.id}>
+                    <TableCell className="font-medium">{property.address}</TableCell>
+                    <TableCell className="hidden lg:table-cell">
+                      {agent ? (
+                        <div className="flex items-center gap-2">
+                           <Avatar className="h-8 w-8">
+                                <AvatarImage src={agent.imageUrl} alt={agent.name} />
+                                <AvatarFallback>{agent.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                           <span>{agent.name}</span>
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground">Unassigned</span>
                       )}
-                    >
-                      {property.status.replace('-', ' ')}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
-                            <MoreHorizontal className="h-4 w-4" />
-                            <span className="sr-only">Toggle menu</span>
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuItem>
-                            <Pencil className="mr-2 h-4 w-4" /> Edit
+                    </TableCell>
+                    <TableCell className="hidden sm:table-cell">{formatPrice(property.price, property.status)}</TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant={property.status === 'sold' ? 'destructive' : 'default'}
+                        className={cn(
+                          property.status === 'for-sale' && 'bg-green-600',
+                          property.status === 'to-let' && 'bg-blue-600'
+                        )}
+                      >
+                        {property.status.replace('-', ' ')}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                       <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button aria-haspopup="true" size="icon" variant="ghost">
+                              <MoreHorizontal className="h-4 w-4" />
+                              <span className="sr-only">Toggle menu</span>
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem>
+                              <Pencil className="mr-2 h-4 w-4" /> Edit
+                              </DropdownMenuItem>
+                            <DropdownMenuItem>
+                              <Trash2 className="mr-2 h-4 w-4" /> Delete
                             </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+                            <DropdownMenuSeparator />
+                             <AssignAgentDialog property={property} onAgentAssigned={handleAgentAssigned} />
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                )
+            })}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+
+function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; onAgentAssigned: (propertyId: string, agentId: string) => void; }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(property.agentId);
+
+  const handleSubmit = () => {
+    if (selectedAgentId) {
+      onAgentAssigned(property.id, selectedAgentId);
+      setIsOpen(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <button className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
+            <Users className="mr-2 h-4 w-4" /> Reassign Agent
+        </button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Reassign Agent</DialogTitle>
+          <DialogDescription>
+            Assign a new agent to the property: <span className="font-semibold">{property.address}</span>
+          </DialogDescription>
+        </DialogHeader>
+        <div className="py-4">
+            <Label htmlFor="agent-select">Select Agent</Label>
+            <Select value={selectedAgentId} onValueChange={setSelectedAgentId}>
+                <SelectTrigger id="agent-select">
+                    <SelectValue placeholder="Select an agent" />
+                </SelectTrigger>
+                <SelectContent>
+                    {agents.map(agent => (
+                        <SelectItem key={agent.id} value={agent.id}>
+                            {agent.name}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
+          <Button onClick={handleSubmit} disabled={!selectedAgentId}>Assign</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
