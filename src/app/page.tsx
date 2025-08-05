@@ -63,7 +63,7 @@ function HeroSection() {
         <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
           Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
         </p>
-        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-black/20 backdrop-blur-md border border-white/10">
+        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-black/20 backdrop-blur-md border border-white/20">
           <CardContent className="p-4">
             <form className="grid md:grid-cols-12 gap-4 items-center">
               <div className="md:col-span-4">
@@ -157,21 +157,21 @@ function ShortAboutSection() {
 
 function CtaTabsSection() {
   const buyerOptions = [
-    { title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: "/images/cta/property-alerts.webp", imageHint: "notification bell" },
-    { title: "Sold Prices", description: "Research the value of any property in South Africa to make informed decisions.", buttonText: "View Sold Prices", imageSrc: "/images/cta/sold.webp", imageHint: "price tag" },
-    { title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "/images/cta/buying-guides.webp", imageHint: "open book" },
+    { title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "notification bell" },
+    { title: "Sold Prices", description: "Research the value of any property in South Africa to make informed decisions.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "price tag" },
+    { title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "open book" },
   ];
 
   const renterOptions = [
-    { title: "Find Letting Agents", description: "Connect with trusted and experienced letting agents in your desired area.", buttonText: "Search Agents", imageSrc: "/images/cta/letting-agents.webp", imageHint: "handshake professional" },
-    { title: "Rental Alerts", description: "Be the first to know about new rental properties as soon as they hit the market.", buttonText: "Sign Up Now", imageSrc: "/images/cta/rental-alerts.webp", imageHint: "email notification" },
-    { title: "Renter's Advice", description: "Navigate the rental market with confidence using our collection of helpful articles.", buttonText: "Read Articles", imageSrc: "/images/cta/renters-advice.webp", imageHint: "lightbulb idea" },
+    { title: "Find Letting Agents", description: "Connect with trusted and experienced letting agents in your desired area.", buttonText: "Search Agents", imageSrc: "/images/backgrounds/find-letting-agents.webp", imageHint: "handshake professional" },
+    { title: "Rental Alerts", description: "Be the first to know about new rental properties as soon as they hit the market.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "email notification" },
+    { title: "Renter's Advice", description: "Navigate the rental market with confidence using our collection of helpful articles.", buttonText: "Read Articles", imageSrc: "/images/backgrounds/rental-advice.webp", imageHint: "lightbulb idea" },
   ];
 
   const sellerOptions = [
-    { title: "Free Property Valuation", description: "Get a free, instant, and accurate valuation for your property.", buttonText: "Get Started", imageSrc: "/images/cta/valuation.webp", imageHint: "valuation chart" },
-    { title: "Sold Prices", description: "Understand market trends by viewing the latest sold prices in your neighbourhood.", buttonText: "View Sold Prices", imageSrc: "/images/cta/sold.webp", imageHint: "house price" },
-    { title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: "/images/cta/selling-guides.webp", imageHint: "checklist clipboard" },
+    { title: "Free Property Valuation", description: "Get a free, instant, and accurate valuation for your property.", buttonText: "Get Started", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "valuation chart" },
+    { title: "Sold Prices", description: "Understand market trends by viewing the latest sold prices in your neighbourhood.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "house price" },
+    { title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "checklist clipboard" },
   ];
 
   return (
@@ -232,10 +232,22 @@ function CtaTabCard({ title, description, buttonText, imageSrc, imageHint }: { t
 
 
 function NewsletterSection() {
+  const [bgImage, setBgImage] = useState('/images/backgrounds/mail-image.webp');
+  const mailImages = [
+    '/images/backgrounds/mail-image.webp',
+    '/images/backgrounds/mail-image-2.webp',
+    '/images/backgrounds/mail-image-3.webp',
+    '/images/backgrounds/mail-image-4.webp'
+  ];
+
+  useEffect(() => {
+    setBgImage(mailImages[Math.floor(Math.random() * mailImages.length)]);
+  }, []);
+
   return (
     <section 
       className="py-24 bg-card relative bg-cover bg-center"
-      style={{ backgroundImage: "url('/images/backgrounds/newsletter-bg.jpg')" }}
+      style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="absolute inset-0 bg-black/50" />
       <div className="container relative">

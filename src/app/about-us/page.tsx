@@ -12,9 +12,9 @@ const timelineEvents = [
 ];
 
 const teamMembers = [
-  { name: 'Natalia Cromwell', role: 'Founder & CEO', imageUrl: '/images/agents/agent-natalia-cromwell.jpg', imageHint: 'professional woman' },
-  { name: 'James Anderson', role: 'Head of Sales', imageUrl: '/images/agents/agent-james-anderson.jpg', imageHint: 'professional man' },
-  { name: 'Patricia Williams', role: 'Lead Rental Agent', imageUrl: '/images/agents/agent-patricia-williams.jpg', imageHint: 'smiling woman' },
+  { name: 'Natalia Cromwell', role: 'Founder & CEO', imageUrl: '/images/agents/Maria.webp', imageHint: 'professional woman' },
+  { name: 'James Anderson', role: 'Head of Sales', imageUrl: '/images/agents/james.webp', imageHint: 'professional man' },
+  { name: 'David Lee', role: 'Lead Rental Agent', imageUrl: '/images/agents/david.webp', imageHint: 'smiling man' },
 ];
 
 export default function AboutUsPage() {
@@ -22,7 +22,7 @@ export default function AboutUsPage() {
     <>
       <section 
         className="bg-brand-deep text-white py-20 bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/backgrounds/about-hero.jpg')"}}
+        style={{ backgroundImage: "url('/images/backgrounds/about.webp')"}}
       >
         <div className="absolute inset-0 bg-black/50" />
         <div className="container relative text-center">
@@ -44,7 +44,7 @@ export default function AboutUsPage() {
               </Button>
             </div>
             <div>
-              <Image src="/images/backgrounds/about-us-office.jpg" alt="Modern office interior" data-ai-hint="modern office" width={600} height={400} className="rounded-lg shadow-lg" />
+              <Image src="https://placehold.co/600x400.png" alt="Modern office interior" data-ai-hint="modern office" width={600} height={400} className="rounded-lg shadow-lg" />
             </div>
           </div>
         </div>
