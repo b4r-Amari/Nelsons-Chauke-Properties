@@ -58,7 +58,7 @@ export function PropertyFilter({ properties, onFilterChange }: PropertyFilterPro
         if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
 
         // Selects
-        if (propertyType !== 'any' && p.type.toLowerCase() !== propertyType) return false;
+        if (propertyType !== 'any' && p.type !== propertyType) return false;
         if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
         if (minBaths !== 'any' && p.baths < parseInt(minBaths)) return false;
         if (minParking !== 'any' && (p.features.find(f => f.toLowerCase().includes('garage') || f.toLowerCase().includes('parking'))?.split(' ')[0] || 0) < minParking) return false;
