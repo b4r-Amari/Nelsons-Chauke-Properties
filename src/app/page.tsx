@@ -55,7 +55,7 @@ function HeroSection() {
         className="object-cover"
         priority
       />
-      <div className="absolute inset-0 bg-black/10" />
+      <div className="absolute inset-0 bg-black/25" />
       <div className="relative z-10 container text-center flex flex-col items-center">
         <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">
           We have space for you
@@ -257,7 +257,7 @@ function NewsletterSection() {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      <div className="absolute inset-0 bg-black/10" />
+      <div className="absolute inset-0 bg-black/20" />
       <div className="container relative">
         <Card className="max-w-2xl mx-auto shadow-xl bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">
