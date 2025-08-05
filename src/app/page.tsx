@@ -26,40 +26,53 @@ export default function Home() {
 
 function HeroSection() {
   return (
-    <section className="py-12 md:py-20 bg-background">
-      <div className="container">
-        <div className="bg-white rounded-lg shadow-xl p-8 md:p-12 text-center">
-            <div className="max-w-3xl mx-auto">
-              <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-brand-deep">We have space for you</h1>
-              <p className="text-lg md:text-xl text-muted-foreground mb-8">Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.</p>
-            </div>
-            <Card className="w-full max-w-4xl mx-auto shadow-lg border-none bg-background">
-              <CardContent className="p-4">
-                <form className="grid md:grid-cols-12 gap-4 items-center">
-                  <div className="md:col-span-3">
-                     <Select defaultValue="for-sale">
-                      <SelectTrigger className="h-14 text-base border-0 focus:ring-0 shadow-none">
-                        <SelectValue placeholder="For Sale" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="for-sale">For Sale</SelectItem>
-                        <SelectItem value="to-let">To Let</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                   <div className="md:col-span-6">
-                    <Input type="text" placeholder="Enter city, suburb or area" className="h-14 text-base border-0 focus-visible:ring-offset-0 focus-visible:ring-2" />
-                  </div>
-                  <div className="md:col-span-3">
-                    <Button type="submit" size="lg" className="w-full h-14 bg-brand-bright hover:bg-brand-deep transition-colors duration-300 text-lg">
-                      <Search className="mr-2 h-6 w-6" />
-                      Search
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-        </div>
+    <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center text-white">
+      <Image
+        src="https://placehold.co/1920x1080"
+        alt="Modern home interior"
+        data-ai-hint="modern home interior"
+        fill
+        className="object-cover"
+        priority
+      />
+      <div className="absolute inset-0 bg-black/60" />
+      <div className="relative z-10 container text-center flex flex-col items-center">
+        <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">
+          We have space for you
+        </h1>
+        <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
+          Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
+        </p>
+        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-white/10 backdrop-blur-sm border-white/20">
+          <CardContent className="p-4">
+            <form className="grid md:grid-cols-12 gap-4 items-center">
+              <div className="md:col-span-3">
+                <Select defaultValue="for-sale">
+                  <SelectTrigger className="h-14 text-base bg-white/80 text-black border-0 focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
+                    <SelectValue placeholder="For Sale" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="for-sale">For Sale</SelectItem>
+                    <SelectItem value="to-let">To Let</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="md:col-span-6">
+                <Input
+                  type="text"
+                  placeholder="Enter city, suburb or area"
+                  className="h-14 text-base bg-white/80 text-black border-0 focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 placeholder:text-gray-600"
+                />
+              </div>
+              <div className="md:col-span-3">
+                <Button type="submit" size="lg" className="w-full h-14 bg-brand-bright hover:bg-brand-deep transition-colors duration-300 text-lg">
+                  <Search className="mr-2 h-6 w-6" />
+                  Search
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );
