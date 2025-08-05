@@ -35,7 +35,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
           <div className="mb-8">
             <Link href="/blog" className="inline-flex items-center text-brand-deep hover:text-brand-bright transition-colors font-semibold">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Blog
+              Back to Property News
             </Link>
           </div>
           <article>

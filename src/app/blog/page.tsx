@@ -16,7 +16,7 @@ export default function BlogPage() {
     <>
       <section className="bg-brand-deep text-white py-16">
         <div className="container text-center">
-          <h1 className="text-4xl font-bold font-headline">The NC Properties Blog</h1>
+          <h1 className="text-4xl font-bold font-headline">Property News</h1>
           <p className="text-lg mt-2 text-white/80">Insights, tips, and stories from the world of real estate.</p>
         </div>
       </section>

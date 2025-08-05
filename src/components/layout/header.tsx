@@ -16,73 +16,98 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-const mainNavLinks = [
+const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/blog", label: "Blog" },
+  { 
+    label: "Properties",
+    isDropdown: true,
+    links: [
+      { href: "/properties", label: "Buy" },
+      { href: "/sell", label: "Sell" },
+      { href: "/properties/sold", label: "Sold" },
+      { href: "/properties/on-show", label: "On Show" },
+    ]
+  },
+  { href: "/blog", label: "Property News" },
   { href: "/about-us", label: "About Us" },
   { href: "/contact-us", label: "Contact Us" },
 ];
 
-const propertiesLinks = [
+const mobileNavLinks = [
+  { href: "/", label: "Home" },
   { href: "/properties", label: "Buy" },
   { href: "/sell", label: "Sell" },
   { href: "/properties/sold", label: "Sold" },
   { href: "/properties/on-show", label: "On Show" },
-];
+  { href: "/blog", label: "Property News" },
+  { href: "/about-us", label: "About Us" },
+  { href: "/contact-us", label: "Contact Us" },
+]
+
 
 export function Header() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const isPropertiesActive = pathname.startsWith('/properties') || pathname === '/sell';
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <div className="mr-4 hidden md:flex">
+        <div className="flex items-center">
           <Logo />
         </div>
         
-        <div className="md:hidden mr-auto">
-          <Logo />
-        </div>
-
-        <nav className="hidden md:flex items-center space-x-1 text-sm font-medium font-headline">
-          {mainNavLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "relative transition-colors hover:text-primary px-3 py-2 rounded-md",
-                pathname === link.href ? "text-primary bg-accent/20" : "text-muted-foreground",
-              )}
-            >
-              {link.label}
-            </Link>
+        <nav className="hidden md:flex flex-1 justify-center items-center space-x-1 text-sm font-medium font-headline">
+          {navLinks.map((item) => (
+            item.isDropdown && item.links ? (
+              <DropdownMenu key={item.label}>
+                <DropdownMenuTrigger asChild>
+                   <Button variant="ghost" className={cn(
+                    "group relative px-3 py-2 text-sm font-medium font-headline transition-colors",
+                    isPropertiesActive ? "text-primary" : "text-muted-foreground",
+                    "hover:text-primary"
+                    )}>
+                    <span>{item.label}</span>
+                    <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                    <span className={cn(
+                      'absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300',
+                      isPropertiesActive ? 'w-full' : 'w-0 group-hover:w-full'
+                    )}></span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48">
+                  {item.links.map(link => (
+                    <DropdownMenuItem key={link.href} asChild>
+                      <Link href={link.href}>{link.label}</Link>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href!}
+                className={cn(
+                  "group relative transition-colors hover:text-primary px-3 py-2",
+                  pathname === item.href ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                {item.label}
+                 <span className={cn(
+                  'absolute bottom-0 left-0 h-0.5 bg-primary transition-all duration-300',
+                  pathname === item.href ? 'w-full' : 'w-0 group-hover:w-full'
+                )}></span>
+              </Link>
+            )
           ))}
-           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className={cn(
-                "flex items-center gap-1 px-3 py-2 text-sm font-medium font-headline",
-                pathname.startsWith('/properties') || pathname === '/sell' ? "text-primary bg-accent/20" : "text-muted-foreground",
-                "hover:text-primary"
-                )}>
-                Properties <ChevronDown className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-48">
-              {propertiesLinks.map(link => (
-                <DropdownMenuItem key={link.href} asChild>
-                  <Link href={link.href}>{link.label}</Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
         </nav>
 
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hover:text-red-500">
+        <div className="flex items-center justify-end space-x-2">
+          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden md:inline-flex hover:text-red-500">
             <Heart className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="User Profile" className="hover:text-primary">
+          <Button variant="ghost" size="icon" aria-label="User Profile" className="hidden md:inline-flex hover:text-primary">
             <User className="h-5 w-5" />
           </Button>
 
@@ -105,14 +130,16 @@ export function Header() {
                   </div>
                   <nav className="flex-grow p-4">
                     <ul className="space-y-2">
-                      {[...mainNavLinks, ...propertiesLinks].map((link) => (
+                      {mobileNavLinks.map((link) => (
                         <li key={link.href}>
                           <Link
                             href={link.href}
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={cn(
                               "block rounded-md px-3 py-2 text-lg font-headline transition-colors",
-                              pathname.startsWith(link.href) && link.href !== "/" || pathname === link.href ? "bg-brand-bright" : "hover:bg-white/10"
+                               pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
+                                ? "bg-brand-bright"
+                                : "hover:bg-white/10"
                             )}
                           >
                             {link.label}
