@@ -43,7 +43,7 @@ function HeroSection() {
         <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
           Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
         </p>
-        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-white/10 backdrop-blur-sm border-white/20">
+        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-white/20 backdrop-blur-sm border-white/20">
           <CardContent className="p-4">
             <form className="grid md:grid-cols-12 gap-4 items-center">
               <div className="md:col-span-3">
@@ -88,7 +88,7 @@ function FeaturedPropertiesSection() {
         <Carousel opts={{ align: "start", loop: true }} className="w-full">
           <CarouselContent className="-ml-4">
             {featuredProperties.map((prop) => (
-              <CarouselItem key={prop.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/4">
+              <CarouselItem key={prop.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
                  <PropertyCard property={prop} />
               </CarouselItem>
             ))}
