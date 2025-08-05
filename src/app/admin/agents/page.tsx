@@ -24,13 +24,16 @@ type Agent = {
     propertyCount: number;
 }
 
-const agentsWithPropertyCount: Agent[] = agentsData.map(agent => ({
+const agents: typeof agentsData = agentsData;
+const properties: Property[] = propertiesData;
+
+const agentsWithPropertyCount: Agent[] = agents.map(agent => ({
     ...agent,
-    propertyCount: propertiesData.filter((p: Property) => p.agentId === agent.id).length
+    propertyCount: properties.filter((p: Property) => p.agentId === agent.id).length
 }));
 
 export default function AdminAgentsPage() {
-  const [sortConfig, setSortConfig] = useState<{ key: keyof Agent, direction: 'asc' | 'desc' } | null>(null);
+  const [sortConfig, setSortConfig] = useState<{ key: keyof Agent, direction: 'asc' | 'desc' } | null>({ key: 'id', direction: 'asc' });
 
   const sortedAgents = useMemo(() => {
     let sortableAgents = [...agentsWithPropertyCount];
