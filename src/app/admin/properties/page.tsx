@@ -128,7 +128,12 @@ export default function AdminPropertiesPage() {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[50px]">ID</TableHead>
+                <TableHead>
+                     <Button variant="ghost" onClick={() => requestSort('id')}>
+                        ID
+                        {getSortIndicator('id')}
+                    </Button>
+                </TableHead>
                 <TableHead>
                     <Button variant="ghost" onClick={() => requestSort('address')}>
                         Address
@@ -279,3 +284,4 @@ function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; 
     </Dialog>
   );
 }
+
