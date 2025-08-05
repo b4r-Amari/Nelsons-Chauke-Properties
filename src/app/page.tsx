@@ -18,10 +18,10 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 
 const featuredProperties: Property[] = propertiesData.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 8);
 const heroBanners = [
-  '/images/backgrounds/hero-banner-1.jpg',
-  '/images/backgrounds/hero-banner-2.jpg',
-  '/images/backgrounds/hero-banner-3.jpg',
-  '/images/backgrounds/hero-banner-4.jpg'
+  '/images/backgrounds/hero-banner-1.webp',
+  '/images/backgrounds/hero-banner-2.webp',
+  '/images/backgrounds/hero-banner-3.webp',
+  '/images/backgrounds/hero-banner-4.webp'
 ];
 
 
