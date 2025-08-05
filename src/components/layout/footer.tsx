@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Logo } from "@/components/shared/logo";
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
@@ -18,15 +19,15 @@ export function Footer() {
               <li><Link href="/" className="hover:text-white transition-colors">Home</Link></li>
               <li><Link href="/about-us" className="hover:text-white transition-colors">About Us</Link></li>
               <li><Link href="/contact-us" className="hover:text-white transition-colors">Contact Us</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">Blog</Link></li>
+              <li><Link href="/blog" className="hover:text-white transition-colors">Blog</Link></li>
             </ul>
           </div>
 
           <div>
             <h4 className="font-headline font-semibold text-white mb-4">Properties</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="hover:text-white transition-colors">For Sale</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors">For Rent</Link></li>
+              <li><Link href="/properties" className="hover:text-white transition-colors">For Sale</Link></li>
+              <li><Link href="/properties" className="hover:text-white transition-colors">For Rent</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">New Developments</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors">Commercial</Link></li>
             </ul>

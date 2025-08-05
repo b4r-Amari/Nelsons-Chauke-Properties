@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link";
@@ -13,6 +14,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/properties", label: "Buy" },
   { href: "/sell", label: "Sell" },
+  { href: "/blog", label: "Blog" },
   { href: "/about-us", label: "About Us" },
   { href: "/contact-us", label: "Contact Us" },
 ];
@@ -39,9 +41,9 @@ export function Header() {
               href={link.href}
               className={cn(
                 "relative transition-colors hover:text-primary",
-                pathname === link.href ? "text-primary" : "text-muted-foreground",
+                pathname.startsWith(link.href) && link.href !== "/" || pathname === link.href ? "text-primary" : "text-muted-foreground",
                 "after:content-[''] after:absolute after:bottom-[-2px] after:left-0 after:h-[2px] after:w-0 after:bg-brand-bright after:transition-all after:duration-300 hover:after:w-full",
-                pathname === link.href && "after:w-full"
+                (pathname.startsWith(link.href) && link.href !== "/" || pathname === link.href) && "after:w-full"
               )}
             >
               {link.label}
@@ -83,7 +85,7 @@ export function Header() {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={cn(
                               "block rounded-md px-3 py-2 text-lg font-headline transition-colors",
-                              pathname === link.href ? "bg-brand-bright" : "hover:bg-white/10"
+                              pathname.startsWith(link.href) && link.href !== "/" || pathname === link.href ? "bg-brand-bright" : "hover:bg-white/10"
                             )}
                           >
                             {link.label}
