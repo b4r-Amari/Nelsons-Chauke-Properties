@@ -284,7 +284,7 @@ export function PropertyFilter({ properties, onFilterChange }: PropertyFilterPro
         </CardContent>
       </ScrollArea>
        <CardFooter className="flex-col gap-4 pt-6 border-t">
-          <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg">
+          <Button className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg">
               <Search className="mr-2 h-5 w-5"/>
               Search {filteredCount} {filteredCount === 1 ? 'property' : 'properties'}
           </Button>

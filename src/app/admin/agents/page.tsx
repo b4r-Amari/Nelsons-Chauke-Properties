@@ -23,7 +23,7 @@ export default function AdminAgentsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold font-headline">Manage Agents</h1>
-        <Button>
+        <Button className="bg-brand-bright hover:bg-brand-deep">
           <PlusCircle className="mr-2 h-5 w-5" />
           Add New Agent
         </Button>

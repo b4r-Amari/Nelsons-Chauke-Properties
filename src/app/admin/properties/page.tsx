@@ -58,7 +58,7 @@ export default function AdminPropertiesPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold font-headline">Manage Properties</h1>
-        <Button>
+        <Button className="bg-brand-bright hover:bg-brand-deep">
           <PlusCircle className="mr-2 h-5 w-5" />
           Add New Property
         </Button>
@@ -185,7 +185,7 @@ function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; 
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
-          <Button onClick={handleSubmit} disabled={!selectedAgentId}>Assign</Button>
+          <Button onClick={handleSubmit} disabled={!selectedAgentId} className="bg-brand-bright hover:bg-brand-deep">Assign</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

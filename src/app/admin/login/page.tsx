@@ -87,7 +87,7 @@ export default function AdminLoginPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full bg-brand-deep hover:bg-brand-bright transition-colors" disabled={isLoading}>
+              <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Sign In
               </Button>
