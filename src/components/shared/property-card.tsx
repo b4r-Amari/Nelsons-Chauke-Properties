@@ -4,7 +4,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { BedDouble, Bath, Ruler, MapPin } from 'lucide-react';
+import { BedDouble, Bath, Home, LandPlot } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 
 export type Property = {
@@ -16,6 +16,7 @@ export type Property = {
   beds: number;
   baths: number;
   sqft: number;
+  erfSize: number;
   isFavorite: boolean;
   status: 'for-sale' | 'to-let' | 'sold';
   type: string;
@@ -70,31 +71,32 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
         <CardContent className="p-6 bg-white flex flex-col flex-grow">
             <h3 className="font-headline text-brand-deep font-semibold text-xl mb-2 truncate">{property.address}</h3>
-            <div className="flex items-center gap-2 text-gray-600 mb-4">
-              <MapPin className="h-4 w-4" />
-              <p className="text-sm">{property.location}</p>
-            </div>
+            <p className="text-sm text-muted-foreground mb-4">{property.location}</p>
             
             <div className="grid grid-cols-4 gap-2 border-y border-gray-200 py-4 my-auto">
                 <div className="text-center flex flex-col items-center gap-1">
                     <BedDouble className="h-5 w-5 text-brand-bright"/>
-                    <span className="text-sm text-gray-600">{property.beds} Beds</span>
+                    <span className="text-sm text-gray-600">{property.beds}</span>
+                    <span className="text-xs text-gray-500">Beds</span>
                 </div>
                 <div className="text-center flex flex-col items-center gap-1">
                     <Bath className="h-5 w-5 text-brand-bright"/>
-                    <span className="text-sm text-gray-600">{property.baths} Baths</span>
+                    <span className="text-sm text-gray-600">{property.baths}</span>
+                    <span className="text-xs text-gray-500">Baths</span>
                 </div>
                 <div className="text-center flex flex-col items-center gap-1">
-                    <Ruler className="h-5 w-5 text-brand-bright"/>
+                    <Home className="h-5 w-5 text-brand-bright"/>
                     <span className="text-sm text-gray-600">{property.sqft} m²</span>
+                     <span className="text-xs text-gray-500">House</span>
                 </div>
-                <div className="text-center flex flex-col items-center gap-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-brand-bright"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
-                    <span className="text-sm text-gray-600">{property.yearBuilt}</span>
+                 <div className="text-center flex flex-col items-center gap-1">
+                    <LandPlot className="h-5 w-5 text-brand-bright"/>
+                    <span className="text-sm text-gray-600">{property.erfSize} m²</span>
+                    <span className="text-xs text-gray-500">Erf</span>
                 </div>
             </div>
 
-            <p className="text-[15px] text-gray-700 leading-relaxed my-4 h-[60px] overflow-hidden text-ellipsis">
+            <p className="text-[15px] text-gray-700 leading-relaxed mt-4 h-[60px] overflow-hidden text-ellipsis">
               {property.description}
             </p>
 
