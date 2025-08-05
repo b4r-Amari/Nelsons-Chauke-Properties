@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { signIn, signUp, signInWithGoogle } from "@/lib/firebase/auth";
 import { Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -109,9 +110,19 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
 
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="signin">Sign In</TabsTrigger>
-        <TabsTrigger value="signup">Sign Up</TabsTrigger>
+      <TabsList className="grid w-full grid-cols-2 p-1 h-auto bg-muted rounded-lg">
+        <TabsTrigger 
+          value="signin"
+          className="data-[state=active]:bg-brand-bright data-[state=active]:text-white rounded-md data-[state=inactive]:bg-muted hover:data-[state=inactive]:bg-background/80 transition-colors"
+        >
+          Sign In
+        </TabsTrigger>
+        <TabsTrigger 
+          value="signup"
+          className="data-[state=active]:bg-brand-bright data-[state=active]:text-white rounded-md data-[state=inactive]:bg-muted hover:data-[state=inactive]:bg-background/80 transition-colors"
+        >
+          Sign Up
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="signin">
         <AuthFormContent form={form} onSubmit={onSubmit} isLoading={isLoading} buttonText="Sign In" onGoogleSignIn={handleGoogleSignIn} />
