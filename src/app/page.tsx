@@ -48,7 +48,7 @@ function HeroSection() {
             <form className="grid md:grid-cols-12 gap-4 items-center">
               <div className="md:col-span-3">
                 <Select defaultValue="for-sale">
-                  <SelectTrigger className="h-14 text-base bg-white/80 text-black border-0 focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
+                  <SelectTrigger className="h-14 text-base bg-white text-black border-0 focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
                     <SelectValue placeholder="For Sale" />
                   </SelectTrigger>
                   <SelectContent>
@@ -61,7 +61,7 @@ function HeroSection() {
                 <Input
                   type="text"
                   placeholder="Enter city, suburb or area"
-                  className="h-14 text-base bg-white/80 text-black border-0 focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 placeholder:text-gray-600"
+                  className="h-14 text-base bg-white text-black border-0 focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 placeholder:text-gray-600"
                 />
               </div>
               <div className="md:col-span-3">
