@@ -106,10 +106,10 @@ export function Header() {
         </div>
 
         <div className="flex items-center justify-end space-x-2">
-          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden md:inline-flex hover:text-red-500">
+          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden md:inline-flex text-muted-foreground hover:bg-primary hover:text-white transition-colors">
             <Heart className="h-5 w-5" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label="User Profile" className="hidden md:inline-flex hover:text-primary">
+          <Button variant="ghost" size="icon" aria-label="User Profile" className="hidden md:inline-flex text-muted-foreground hover:bg-primary hover:text-white transition-colors">
             <User className="h-5 w-5" />
           </Button>
 
