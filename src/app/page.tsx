@@ -1,5 +1,8 @@
 
+"use client";
+
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,6 +17,13 @@ import { Separator } from '@/components/ui/separator';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 
 const featuredProperties: Property[] = propertiesData.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 8);
+const heroBanners = [
+  '/images/backgrounds/hero-banner-1.jpg',
+  '/images/backgrounds/hero-banner-2.jpg',
+  '/images/backgrounds/hero-banner-3.jpg',
+  '/images/backgrounds/hero-banner-4.jpg'
+];
+
 
 export default function Home() {
   return (
@@ -28,10 +38,17 @@ export default function Home() {
 }
 
 function HeroSection() {
+  const [bannerImage, setBannerImage] = useState(heroBanners[0]);
+
+  useEffect(() => {
+    const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
+    setBannerImage(randomBanner);
+  }, []);
+
   return (
     <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center text-white">
       <Image
-        src="https://placehold.co/1920x1080"
+        src={bannerImage}
         alt="Modern home interior"
         data-ai-hint="modern home interior"
         fill
@@ -46,7 +63,7 @@ function HeroSection() {
         <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
           Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
         </p>
-        <Card className="w-full max-w-4xl mx-auto shadow-xl bg-white/30 backdrop-blur-sm border border-white/20">
+        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-black/20 backdrop-blur-md border border-white/10">
           <CardContent className="p-4">
             <form className="grid md:grid-cols-12 gap-4 items-center">
               <div className="md:col-span-4">
@@ -140,21 +157,21 @@ function ShortAboutSection() {
 
 function CtaTabsSection() {
   const buyerOptions = [
-    { title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: "https://placehold.co/150x150", imageHint: "notification bell" },
-    { title: "Sold Prices", description: "Research the value of any property in South Africa to make informed decisions.", buttonText: "View Sold Prices", imageSrc: "https://placehold.co/150x150", imageHint: "price tag" },
-    { title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "https://placehold.co/150x150", imageHint: "open book" },
+    { title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: "/images/cta/property-alerts.webp", imageHint: "notification bell" },
+    { title: "Sold Prices", description: "Research the value of any property in South Africa to make informed decisions.", buttonText: "View Sold Prices", imageSrc: "/images/cta/sold.webp", imageHint: "price tag" },
+    { title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "/images/cta/buying-guides.webp", imageHint: "open book" },
   ];
 
   const renterOptions = [
-    { title: "Find Letting Agents", description: "Connect with trusted and experienced letting agents in your desired area.", buttonText: "Search Agents", imageSrc: "https://placehold.co/150x150", imageHint: "handshake professional" },
-    { title: "Rental Alerts", description: "Be the first to know about new rental properties as soon as they hit the market.", buttonText: "Sign Up Now", imageSrc: "https://placehold.co/150x150", imageHint: "email notification" },
-    { title: "Renter's Advice", description: "Navigate the rental market with confidence using our collection of helpful articles.", buttonText: "Read Articles", imageSrc: "https://placehold.co/150x150", imageHint: "lightbulb idea" },
+    { title: "Find Letting Agents", description: "Connect with trusted and experienced letting agents in your desired area.", buttonText: "Search Agents", imageSrc: "/images/cta/letting-agents.webp", imageHint: "handshake professional" },
+    { title: "Rental Alerts", description: "Be the first to know about new rental properties as soon as they hit the market.", buttonText: "Sign Up Now", imageSrc: "/images/cta/rental-alerts.webp", imageHint: "email notification" },
+    { title: "Renter's Advice", description: "Navigate the rental market with confidence using our collection of helpful articles.", buttonText: "Read Articles", imageSrc: "/images/cta/renters-advice.webp", imageHint: "lightbulb idea" },
   ];
 
   const sellerOptions = [
-    { title: "Free Property Valuation", description: "Get a free, instant, and accurate valuation for your property.", buttonText: "Get Started", imageSrc: "https://placehold.co/150x150", imageHint: "valuation chart" },
-    { title: "Sold Prices", description: "Understand market trends by viewing the latest sold prices in your neighbourhood.", buttonText: "View Sold Prices", imageSrc: "https://placehold.co/150x150", imageHint: "house price" },
-    { title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: "https://placehold.co/150x150", imageHint: "checklist clipboard" },
+    { title: "Free Property Valuation", description: "Get a free, instant, and accurate valuation for your property.", buttonText: "Get Started", imageSrc: "/images/cta/valuation.webp", imageHint: "valuation chart" },
+    { title: "Sold Prices", description: "Understand market trends by viewing the latest sold prices in your neighbourhood.", buttonText: "View Sold Prices", imageSrc: "/images/cta/sold.webp", imageHint: "house price" },
+    { title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: "/images/cta/selling-guides.webp", imageHint: "checklist clipboard" },
   ];
 
   return (
@@ -216,15 +233,11 @@ function CtaTabCard({ title, description, buttonText, imageSrc, imageHint }: { t
 
 function NewsletterSection() {
   return (
-    <section className="py-24 bg-card relative">
-       <Image
-          src="https://placehold.co/1920x400"
-          alt="Abstract background"
-          data-ai-hint="abstract geometric"
-          fill
-          style={{objectFit:"cover"}}
-          className="opacity-10"
-        />
+    <section 
+      className="py-24 bg-card relative bg-cover bg-center"
+      style={{ backgroundImage: "url('/images/backgrounds/newsletter-bg.jpg')" }}
+    >
+      <div className="absolute inset-0 bg-black/50" />
       <div className="container relative">
         <Card className="max-w-2xl mx-auto shadow-xl bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">

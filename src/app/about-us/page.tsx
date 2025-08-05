@@ -12,16 +12,20 @@ const timelineEvents = [
 ];
 
 const teamMembers = [
-  { name: 'Natalia Cromwell', role: 'Founder & CEO', imageUrl: 'https://placehold.co/200x200', imageHint: 'professional woman' },
-  { name: 'James Anderson', role: 'Head of Sales', imageUrl: 'https://placehold.co/200x200', imageHint: 'professional man' },
-  { name: 'Patricia Williams', role: 'Lead Rental Agent', imageUrl: 'https://placehold.co/200x200', imageHint: 'smiling woman' },
+  { name: 'Natalia Cromwell', role: 'Founder & CEO', imageUrl: '/images/agents/agent-natalia-cromwell.jpg', imageHint: 'professional woman' },
+  { name: 'James Anderson', role: 'Head of Sales', imageUrl: '/images/agents/agent-james-anderson.jpg', imageHint: 'professional man' },
+  { name: 'Patricia Williams', role: 'Lead Rental Agent', imageUrl: '/images/agents/agent-patricia-williams.jpg', imageHint: 'smiling woman' },
 ];
 
 export default function AboutUsPage() {
   return (
     <>
-      <section className="bg-brand-deep text-white py-16">
-        <div className="container text-center">
+      <section 
+        className="bg-brand-deep text-white py-20 bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/backgrounds/about-hero.jpg')"}}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="container relative text-center">
           <h1 className="text-4xl font-bold font-headline">About NC Properties</h1>
           <p className="text-lg mt-2 text-white/80">Our Story, Our Mission, Our Team</p>
         </div>
@@ -40,7 +44,7 @@ export default function AboutUsPage() {
               </Button>
             </div>
             <div>
-              <Image src="https://placehold.co/600x400" alt="Modern office interior" data-ai-hint="modern office" width={600} height={400} className="rounded-lg shadow-lg" />
+              <Image src="/images/backgrounds/about-us-office.jpg" alt="Modern office interior" data-ai-hint="modern office" width={600} height={400} className="rounded-lg shadow-lg" />
             </div>
           </div>
         </div>
@@ -83,7 +87,7 @@ export default function AboutUsPage() {
             {teamMembers.map((member) => (
               <Card key={member.name} className="text-center shadow-lg transition-transform duration-300 hover:-translate-y-2">
                 <CardContent className="p-6">
-                  <Image src={member.imageUrl} data-ai-hint={member.imageHint} alt={`Portrait of ${member.name}`} width={200} height={200} className="rounded-full mx-auto mb-4 border-4 border-white shadow-md" />
+                  <Image src={member.imageUrl} data-ai-hint={member.imageHint} alt={`Portrait of ${member.name}`} width={200} height={200} className="rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover w-[200px] h-[200px]" />
                   <h3 className="text-xl font-bold font-headline text-brand-bright">{member.name}</h3>
                   <p className="text-brand-deep font-semibold">{member.role}</p>
                 </CardContent>
