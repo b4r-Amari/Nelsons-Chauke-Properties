@@ -9,7 +9,6 @@ import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/context/auth-context';
 import { WishlistProvider } from '@/context/wishlist-context';
 import { usePathname } from 'next/navigation';
-import { ThemeProvider } from '@/context/theme-provider';
 
 const metadata: Metadata = {
   title: 'NC Properties Redefined',
@@ -24,6 +23,10 @@ export default function RootLayout({
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
 
+  if (isAdminPage) {
+    return <>{children}</>;
+  }
+
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
@@ -32,20 +35,18 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased text-foreground/90">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <AuthProvider>
-            <WishlistProvider>
-              <div className="flex flex-col min-h-screen">
-                {!isAdminPage && <Header />}
-                <main className="flex-grow">
-                  {children}
-                </main>
-                {!isAdminPage && <Footer />}
-              </div>
-              <Toaster />
-            </WishlistProvider>
-          </AuthProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <WishlistProvider>
+            <div className="flex flex-col min-h-screen">
+              {!isAdminPage && <Header />}
+              <main className="flex-grow">
+                {children}
+              </main>
+              {!isAdminPage && <Footer />}
+            </div>
+            <Toaster />
+          </WishlistProvider>
+        </AuthProvider>
       </body>
     </html>
   );
