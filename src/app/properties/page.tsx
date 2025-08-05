@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import propertiesData from '@/data/properties.json';
 
-const allProperties: Property[] = propertiesData.filter(p => p.status === 'for-sale');
+const allProperties: Property[] = propertiesData;
 
 export default function PropertiesPage() {
   return (
@@ -95,7 +95,7 @@ export default function PropertiesPage() {
               </Card>
             </aside>
             <main className="lg:col-span-3">
-                <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-6">
                     {allProperties.map((prop) => (
                         <PropertyCard key={prop.id} property={prop} />
                     ))}
@@ -107,5 +107,3 @@ export default function PropertiesPage() {
     </>
   );
 }
-
-    

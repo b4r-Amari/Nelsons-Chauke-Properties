@@ -1,11 +1,9 @@
 "use client"
 
 import Image from "next/image";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { BedDouble, Bath, Ruler, Heart } from 'lucide-react';
-import { cn } from "@/lib/utils";
+import { BedDouble, Bath, Ruler, MapPin } from 'lucide-react';
 import { useState } from "react";
 
 export type Property = {
@@ -49,52 +47,58 @@ export function PropertyCard({ property }: PropertyCardProps) {
   }
 
   return (
-    <Card className="overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 group">
-      <CardHeader className="p-0 relative">
+    <Card className="w-full max-w-[350px] h-[480px] rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 group flex flex-col mx-auto my-4 hover:-translate-y-1">
+      <div className="relative w-full h-[250px] overflow-hidden rounded-t-lg">
         <Image
           src={property.imageUrl}
           alt={`View of ${property.address}`}
           data-ai-hint={property.imageHint}
-          width={300}
-          height={200}
-          className="w-full h-[200px] object-cover group-hover:scale-105 transition-transform duration-300"
+          fill
+          className="object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
         />
-        <Badge className="absolute bottom-2 left-2 bg-[#d4af37] text-black font-bold text-sm">
+        <div className="absolute top-4 left-4 bg-black/70 text-white px-4 py-2 rounded-md font-roboto font-bold text-lg">
           {formatPrice(property.price)}
-        </Badge>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="absolute top-2 right-2 rounded-full bg-white/80 hover:bg-white"
-          onClick={toggleFavorite}
-          aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-        >
-          <Heart className={cn("h-5 w-5 text-gray-500", isFavorite ? "fill-red-500 text-red-500" : "hover:text-red-500")} />
-        </Button>
-         {property.status === 'sold' && (
-          <Badge variant="destructive" className="absolute top-2 left-2">SOLD</Badge>
+        </div>
+        {property.status === 'sold' && (
+          <div className="absolute top-4 right-4 bg-destructive text-destructive-foreground px-3 py-1 rounded-md font-semibold text-sm">
+            SOLD
+          </div>
         )}
-      </CardHeader>
-      <CardContent className="p-4">
-        <h3 className="font-bold font-headline text-lg truncate">{property.address}</h3>
-        <p className="text-sm text-muted-foreground">{property.location}</p>
+      </div>
+      <CardContent className="p-6 bg-white flex flex-col flex-grow rounded-b-lg">
+        <h3 className="font-headline text-brand-deep font-semibold text-xl mb-2 truncate">{property.address}</h3>
+        <div className="flex items-center gap-2 text-muted-foreground mb-4">
+          <MapPin className="h-4 w-4" />
+          <p className="text-sm">{property.location}</p>
+        </div>
+        
+        <div className="grid grid-cols-4 gap-2 border-y py-4 my-auto">
+            <div className="text-center flex flex-col items-center">
+                <BedDouble className="h-5 w-5 text-brand-bright"/>
+                <span className="text-sm text-muted-foreground mt-1">{property.beds} Beds</span>
+            </div>
+            <div className="text-center flex flex-col items-center">
+                <Bath className="h-5 w-5 text-brand-bright"/>
+                <span className="text-sm text-muted-foreground mt-1">{property.baths} Baths</span>
+            </div>
+             <div className="text-center flex flex-col items-center">
+                <Ruler className="h-5 w-5 text-brand-bright"/>
+                <span className="text-sm text-muted-foreground mt-1">{property.sqft} m²</span>
+            </div>
+            <div className="text-center flex flex-col items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-brand-bright"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+                <span className="text-sm text-muted-foreground mt-1">{property.yearBuilt}</span>
+            </div>
+        </div>
+
+        <p className="text-[15px] text-foreground/80 leading-relaxed my-4 h-[60px] overflow-hidden">
+          {property.description}
+        </p>
+
+        <Button variant="outline" className="w-full mt-auto border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors duration-300 font-medium text-[15px] py-6">
+            View Details
+        </Button>
       </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-around bg-muted/50">
-        <div className="flex items-center gap-2 text-sm">
-          <BedDouble className="h-4 w-4 text-primary" />
-          <span>{property.beds} Beds</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <Bath className="h-4 w-4 text-primary" />
-          <span>{property.baths} Baths</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <Ruler className="h-4 w-4 text-primary" />
-          <span>{property.sqft} m²</span>
-        </div>
-      </CardFooter>
     </Card>
   );
 }
-
-    

@@ -12,7 +12,7 @@ import type { Property } from '@/components/shared/property-card';
 import Link from 'next/link';
 import propertiesData from '@/data/properties.json';
 
-const featuredProperties: Property[] = propertiesData.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 5);
+const featuredProperties: Property[] = propertiesData.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 8);
 
 export default function Home() {
   return (
@@ -32,7 +32,7 @@ function HeroSection() {
         src="https://placehold.co/1920x550"
         alt="A beautiful modern house in South Africa"
         data-ai-hint="beautiful house south africa"
-        layout="fill"
+        fill
         objectFit="cover"
         className="brightness-50"
       />
@@ -77,12 +77,10 @@ function FeaturedPropertiesSection() {
         <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties in South Africa, offering the perfect blend of luxury, comfort, and style.</p>
         <Carousel opts={{ align: "start", loop: true }} className="w-full">
-          <CarouselContent>
+          <CarouselContent className="-ml-2">
             {featuredProperties.map((prop) => (
-              <CarouselItem key={prop.id} className="md:basis-1/2 lg:basis-1/3">
-                <div className="p-1">
-                  <PropertyCard property={prop} />
-                </div>
+              <CarouselItem key={prop.id} className="pl-4 basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+                <PropertyCard property={prop} />
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -167,7 +165,7 @@ function NewsletterSection() {
           src="https://placehold.co/1920x400"
           alt="Abstract background"
           data-ai-hint="abstract geometric"
-          layout="fill"
+          fill
           objectFit="cover"
           className="opacity-10"
         />
@@ -188,5 +186,3 @@ function NewsletterSection() {
     </section>
   );
 }
-
-    
