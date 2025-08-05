@@ -22,6 +22,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { logOut } from "@/lib/firebase/auth";
