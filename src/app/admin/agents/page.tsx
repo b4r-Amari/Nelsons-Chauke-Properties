@@ -1,12 +1,17 @@
 
+"use client"
+
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { PlusCircle, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Pencil, Trash2, ArrowUpDown } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import agentsData from '@/data/agents.json';
+import propertiesData from '@/data/properties.json';
 import Link from 'next/link';
+import { type Property } from '@/components/shared/property-card';
 
 type Agent = {
     id: string;
@@ -15,11 +20,52 @@ type Agent = {
     imageUrl: string;
     imageHint: string;
     email: string;
+    propertyCount: number;
 }
 
-const agents: Agent[] = agentsData;
+const agentsWithPropertyCount: Agent[] = agentsData.map(agent => ({
+    ...agent,
+    propertyCount: propertiesData.filter((p: Property) => p.agentId === agent.id).length
+}));
 
 export default function AdminAgentsPage() {
+  const [sortConfig, setSortConfig] = useState<{ key: keyof Agent, direction: 'asc' | 'desc' } | null>(null);
+
+  const sortedAgents = useMemo(() => {
+    let sortableAgents = [...agentsWithPropertyCount];
+    if (sortConfig !== null) {
+      sortableAgents.sort((a, b) => {
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+
+        if (aValue < bValue) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableAgents;
+  }, [sortConfig]);
+
+  const requestSort = (key: keyof Agent) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIndicator = (key: keyof Agent) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return <ArrowUpDown className="ml-2 h-4 w-4 opacity-30" />;
+    }
+    return sortConfig.direction === 'asc' ? '▲' : '▼';
+  };
+
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -40,15 +86,34 @@ export default function AdminAgentsPage() {
            <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Role</TableHead>
+                <TableHead>
+                    <Button variant="ghost" onClick={() => requestSort('id')}>
+                        ID {getSortIndicator('id')}
+                    </Button>
+                </TableHead>
+                <TableHead>
+                    <Button variant="ghost" onClick={() => requestSort('name')}>
+                        Name {getSortIndicator('name')}
+                    </Button>
+                </TableHead>
+                <TableHead>
+                     <Button variant="ghost" onClick={() => requestSort('role')}>
+                        Role {getSortIndicator('role')}
+                    </Button>
+                </TableHead>
                 <TableHead className="hidden md:table-cell">Email</TableHead>
+                <TableHead>
+                    <Button variant="ghost" onClick={() => requestSort('propertyCount')}>
+                        Assigned Properties {getSortIndicator('propertyCount')}
+                    </Button>
+                </TableHead>
                 <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {agents.map((agent) => (
+              {sortedAgents.map((agent) => (
                 <TableRow key={agent.id}>
+                  <TableCell className="font-mono text-xs">{agent.id}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-4">
                         <Avatar className="hidden h-9 w-9 sm:flex">
@@ -60,6 +125,7 @@ export default function AdminAgentsPage() {
                   </TableCell>
                   <TableCell>{agent.role}</TableCell>
                   <TableCell className="hidden md:table-cell">{agent.email}</TableCell>
+                   <TableCell className="text-center">{agent.propertyCount}</TableCell>
                   <TableCell>
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>
