@@ -1,7 +1,10 @@
+
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Download } from 'lucide-react';
+import agentsData from '@/data/agents.json';
+import Link from 'next/link';
 
 const timelineEvents = [
   { year: '2010', title: 'Foundation', description: 'NC Properties was founded with a mission to simplify the home-buying process.' },
@@ -11,11 +14,7 @@ const timelineEvents = [
   { year: 'Today', title: 'Industry Leader', description: 'Recognized as a leading property firm in the region, serving thousands of happy clients.' },
 ];
 
-const teamMembers = [
-  { name: 'Natalia Cromwell', role: 'Founder & CEO', imageUrl: '/images/agents/Maria.webp', imageHint: 'professional woman' },
-  { name: 'James Anderson', role: 'Head of Sales', imageUrl: '/images/agents/james.webp', imageHint: 'professional man' },
-  { name: 'David Lee', role: 'Lead Rental Agent', imageUrl: '/images/agents/david.webp', imageHint: 'smiling man' },
-];
+const teamMembers = agentsData;
 
 export default function AboutUsPage() {
   return (
@@ -85,13 +84,15 @@ export default function AboutUsPage() {
           <h2 className="text-3xl font-bold text-center font-headline mb-12">Meet Our Team</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {teamMembers.map((member) => (
-              <Card key={member.name} className="text-center shadow-lg transition-transform duration-300 hover:-translate-y-2">
-                <CardContent className="p-6">
-                  <Image src={member.imageUrl} data-ai-hint={member.imageHint} alt={`Portrait of ${member.name}`} width={200} height={200} className="rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover w-[200px] h-[200px]" />
-                  <h3 className="text-xl font-bold font-headline text-brand-bright">{member.name}</h3>
-                  <p className="text-brand-deep font-semibold">{member.role}</p>
-                </CardContent>
-              </Card>
+              <Link href={`/agents/${member.id}`} key={member.id} className="group block">
+                <Card className="text-center shadow-lg transition-transform duration-300 hover:-translate-y-2 h-full">
+                  <CardContent className="p-6">
+                    <Image src={member.imageUrl} data-ai-hint={member.imageHint} alt={`Portrait of ${member.name}`} width={200} height={200} className="rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover w-[200px] h-[200px]" />
+                    <h3 className="text-xl font-bold font-headline text-brand-deep group-hover:text-brand-bright transition-colors">{member.name}</h3>
+                    <p className="text-brand-deep font-semibold">{member.role}</p>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>

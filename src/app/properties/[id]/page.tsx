@@ -10,6 +10,7 @@ import { EnquiryForm } from '@/components/shared/enquiry-form';
 import { PropertyImageGallery } from '@/components/shared/property-image-gallery';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import agentsData from '@/data/agents.json';
 
 const properties: Property[] = propertiesData as Property[];
 
@@ -24,15 +25,8 @@ function getProperty(id: string) {
   return properties.find((p) => p.id === id);
 }
 
-// Dummy data for agent - in a real app this would come from a database.
-const agent = {
-  name: 'Natalia Cromwell',
-  role: 'Lead Property Consultant',
-  imageUrl: '/images/agents/Maria.webp',
-  imageHint: 'professional woman',
-  phone: '(123) 456-7890',
-  email: 'natalia.c@ncproperties.com',
-};
+// In a real app, properties would have an agentId. For now, we'll assign one.
+const agent = agentsData.find(a => a.id === 'natalia-cromwell')!;
 
 export default function PropertyDetailPage({ params }: { params: { id: string } }) {
   const property = getProperty(params.id);
