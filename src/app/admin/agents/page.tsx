@@ -14,7 +14,8 @@ import Link from 'next/link';
 import { type Property } from '@/components/shared/property-card';
 
 type Agent = {
-    id: string;
+    id: number;
+    slug: string;
     name: string;
     role: string;
     imageUrl: string;

@@ -12,7 +12,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 export type Property = {
-  id: string;
+  id: number;
+  slug: string;
   imageUrl: string;
   imageHint: string;
   price: number;
@@ -29,7 +30,7 @@ export type Property = {
   features: string[];
   yearBuilt: number;
   onShow?: boolean;
-  agentId: string;
+  agentId: number;
 };
 
 type PropertyCardProps = {
@@ -39,7 +40,7 @@ type PropertyCardProps = {
 export function PropertyCard({ property }: PropertyCardProps) {
   const { user } = useAuth();
   const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
-  const isWishlisted = wishlist.includes(property.id);
+  const isWishlisted = wishlist.includes(property.id.toString());
 
   const handleWishlistClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent navigating to property page
@@ -52,9 +53,9 @@ export function PropertyCard({ property }: PropertyCardProps) {
     }
 
     if (isWishlisted) {
-      removeFromWishlist(property.id);
+      removeFromWishlist(property.id.toString());
     } else {
-      addToWishlist(property.id);
+      addToWishlist(property.id.toString());
     }
   };
   

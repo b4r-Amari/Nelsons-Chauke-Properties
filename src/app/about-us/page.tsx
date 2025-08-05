@@ -84,7 +84,7 @@ export default function AboutUsPage() {
           <h2 className="text-3xl font-bold text-center font-headline mb-12">Meet Our Team</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {teamMembers.map((member) => (
-              <Link href={`/agents/${member.id}`} key={member.id} className="group block">
+              <Link href={`/agents/${member.slug}`} key={member.id} className="group block">
                 <Card className="text-center shadow-lg transition-transform duration-300 hover:-translate-y-2 h-full">
                   <CardContent className="p-6">
                     <Image src={member.imageUrl} data-ai-hint={member.imageHint} alt={`Portrait of ${member.name}`} width={200} height={200} className="rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover w-[200px] h-[200px]" />

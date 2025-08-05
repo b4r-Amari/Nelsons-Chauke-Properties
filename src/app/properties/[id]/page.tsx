@@ -12,21 +12,18 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import agentsData from '@/data/agents.json';
 
-const properties: Property[] = propertiesData as Property[];
+const properties: Property[] = propertiesData;
 
 // This function tells Next.js which dynamic pages to pre-render at build time.
 export async function generateStaticParams() {
   return properties.map((property) => ({
-    id: property.id,
+    id: property.id.toString(),
   }));
 }
 
 function getProperty(id: string) {
-  return properties.find((p) => p.id === id);
+  return properties.find((p) => p.id.toString() === id);
 }
-
-// In a real app, properties would have an agentId. For now, we'll assign one.
-const agent = agentsData.find(a => a.id === 'natalia-cromwell')!;
 
 export default function PropertyDetailPage({ params }: { params: { id: string } }) {
   const property = getProperty(params.id);
@@ -35,6 +32,9 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     notFound();
   }
   
+  // In a real app, properties would have an agentId. For now, we'll assign one.
+  const agent = agentsData.find(a => a.id === property.agentId)!;
+
   const formatPrice = (price: number) => {
     const isRental = property.status === 'to-let';
     const formattedPrice = new Intl.NumberFormat('en-ZA', {
@@ -135,7 +135,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           <aside className="lg:col-span-1">
             <div className="sticky top-24 space-y-8">
               <EnquiryForm />
-              <AgentCard agent={agent} />
+              {agent && <AgentCard agent={agent} />}
             </div>
           </aside>
         </div>

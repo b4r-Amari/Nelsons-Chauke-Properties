@@ -12,41 +12,31 @@ import { PropertyCard, type Property } from '@/components/shared/property-card';
 import propertiesData from '@/data/properties.json';
 
 
-type Agent = {
-  id: string;
-  name: string;
-  role: string;
-  imageUrl: string;
-  imageHint: string;
-  phone: string;
-  email: string;
-  bio: string;
-};
+type Agent = (typeof agentsData)[0];
 
-const agents: Agent[] = agentsData as Agent[];
-const allProperties: Property[] = propertiesData as Property[];
-
-// In a real app, you'd likely have a mapping of agents to properties.
-// For this demo, we'll just assign a few active properties to the main agent for display.
-const agentProperties = allProperties.filter(p => (p.id === '1' || p.id === '4' || p.id === '11' || p.id === '19') && p.status !== 'sold');
-
+const agents: Agent[] = agentsData;
+const allProperties: Property[] = propertiesData;
 
 export async function generateStaticParams() {
   return agents.map((agent) => ({
-    id: agent.id,
+    slug: agent.slug,
   }));
 }
 
-function getAgent(id: string) {
-  return agents.find((agent) => agent.id === id);
+function getAgent(slug: string) {
+  return agents.find((agent) => agent.slug === slug);
 }
 
-export default function AgentProfilePage({ params }: { params: { id: string } }) {
-  const agent = getAgent(params.id);
+export default function AgentProfilePage({ params }: { params: { slug: string } }) {
+  const agent = getAgent(params.slug);
 
   if (!agent) {
     notFound();
   }
+
+  // In a real app, you'd likely have a mapping of agents to properties.
+  // For this demo, we'll just assign a few active properties to the main agent for display.
+  const agentProperties = allProperties.filter(p => p.agentId === agent.id && p.status !== 'sold');
 
   return (
     <div className="bg-background">
@@ -97,15 +87,14 @@ export default function AgentProfilePage({ params }: { params: { id: string } })
                     <h2>About {agent.name}</h2>
                     <div dangerouslySetInnerHTML={{ __html: agent.bio }} />
 
-                    {/* Only show listings for the main agent as an example */}
-                    {agent.id === 'natalia-cromwell' && agentProperties.length > 0 && (
+                    {agentProperties.length > 0 && (
                         <>
                             <Separator className="my-12" />
                             <h2>{agent.name.split(' ')[0]}'s Active Listings</h2>
                         </>
                     )}
                 </div>
-                 {agent.id === 'natalia-cromwell' && agentProperties.length > 0 && (
+                 {agentProperties.length > 0 && (
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
                         {agentProperties.map(prop => (
                             <PropertyCard key={prop.id} property={prop} />

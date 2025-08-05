@@ -6,7 +6,8 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 
 type Agent = {
-  id: string;
+  id: number;
+  slug: string;
   name: string;
   role: string;
   imageUrl: string;
@@ -21,7 +22,7 @@ type AgentCardProps = {
 
 export function AgentCard({ agent }: AgentCardProps) {
   return (
-    <Link href={`/agents/${agent.id}`} className="group block">
+    <Link href={`/agents/${agent.slug}`} className="group block">
         <Card className="shadow-lg hover:shadow-xl transition-shadow duration-300">
         <CardContent className="p-4">
             <div className="flex flex-col items-center text-center gap-4">

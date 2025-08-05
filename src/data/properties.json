@@ -1,7 +1,8 @@
 
 [
   {
-    "id": "1",
+    "id": 1,
+    "slug": "12-sandhurst-drive-sandhurst",
     "status": "for-sale",
     "type": "House",
     "location": "Sandton, Gauteng",
@@ -18,10 +19,11 @@
     "features": ["Swimming Pool", "Landscaped Garden", "Double Garage", "Secure Estate", "Covered Patio", "Gourmet Kitchen", "Close to Sandton City"],
     "yearBuilt": 2018,
     "onShow": true,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "2",
+    "id": 2,
+    "slug": "45-ocean-view-drive-sea-point",
     "status": "to-let",
     "type": "Apartment",
     "location": "Sea Point, Western Cape",
@@ -37,10 +39,11 @@
     "isFavorite": false,
     "features": ["Uninterrupted Sea View", "Large Balcony", "24/7 Manned Security", "2 Underground Parking Bays", "Walking distance to Promenade"],
     "yearBuilt": 2020,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "3",
+    "id": 3,
+    "slug": "78-marine-way-umhlanga-rocks",
     "status": "sold",
     "type": "Apartment",
     "location": "Umhlanga, KwaZulu-Natal",
@@ -56,10 +59,11 @@
     "isFavorite": false,
     "features": ["Communal Pool", "Residents' Gym", "Direct Beach Access", "Holiday Letting Potential", "Walk to restaurants"],
     "yearBuilt": 2019,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "4",
+    "id": 4,
+    "slug": "101-wine-estate-devon-valley",
     "status": "for-sale",
     "type": "Villa",
     "location": "Stellenbosch, Western Cape",
@@ -76,10 +80,11 @@
     "features": ["Private Vineyard", "Wine Cellar", "Infinity Pool", "Helipad", "Panoramic Views", "High Security"],
     "yearBuilt": 2015,
     "onShow": true,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "5",
+    "id": 5,
+    "slug": "212-forest-drive-constantia-upper",
     "status": "to-let",
     "type": "House",
     "location": "Constantia, Western Cape",
@@ -95,10 +100,11 @@
     "isFavorite": false,
     "features": ["Large Mature Garden", "Borehole Irrigation", "Mountain Views", "Swimming Pool", "Close to Top Schools"],
     "yearBuilt": 1998,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "6",
+    "id": 6,
+    "slug": "55-silver-lakes-silver-lakes-golf-estate",
     "status": "for-sale",
     "type": "House",
     "location": "Pretoria, Gauteng",
@@ -115,10 +121,11 @@
     "features": ["Golf Course Access", "Clubhouse", "24/7 Security", "Tennis Courts", "Walking Trails", "Family-friendly"],
     "yearBuilt": 2005,
     "onShow": true,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "7",
+    "id": 7,
+    "slug": "88-aurora-durbanville",
     "status": "sold",
     "type": "House",
     "location": "Durbanville, Western Cape",
@@ -134,10 +141,11 @@
     "isFavorite": false,
     "features": ["Covered Braai Area", "Established Garden", "Quiet Street", "Double Garage", "Close to schools and amenities"],
     "yearBuilt": 1995,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "8",
+    "id": 8,
+    "slug": "maboneng-precinct-cbd",
     "status": "to-let",
     "type": "Apartment",
     "location": "Johannesburg, Gauteng",
@@ -153,10 +161,11 @@
     "isFavorite": true,
     "features": ["Rooftop Bar Access", "Surrounded by Art Galleries", "High Ceilings", "Industrial Finishes", "Vibrant Nightlife"],
     "yearBuilt": 2012,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "9",
+    "id": 9,
+    "slug": "bree-street-cape-town-cbd",
     "status": "for-sale",
     "type": "Apartment",
     "location": "Cape Town, Western Cape",
@@ -172,10 +181,11 @@
     "isFavorite": false,
     "features": ["City Views", "Secure Parking", "Modern Finishes", "Prime Location", "High Rental Demand"],
     "yearBuilt": 2017,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "10",
+    "id": 10,
+    "slug": "15-dolphin-coast-simbithi-eco-estate",
     "status": "for-sale",
     "type": "Townhouse",
     "location": "Ballito, KwaZulu-Natal",
@@ -191,10 +201,11 @@
     "isFavorite": false,
     "features": ["Simbithi Eco Estate", "Community Centre with Pool", "Catch and Release Fishing", "Nature Trails", "High Security"],
     "yearBuilt": 2016,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "11",
+    "id": 11,
+    "slug": "22-huguenot-road-franschhoek",
     "status": "for-sale",
     "type": "House",
     "location": "Franschhoek, Western Cape",
@@ -210,10 +221,11 @@
     "isFavorite": true,
     "features": ["Gourmet Kitchen", "Walk-in Wine Cellar", "Separate Guest Cottage", "Swimming Pool", "Walk to Main Road"],
     "yearBuilt": 2010,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "12",
+    "id": 12,
+    "slug": "77-waterfall-equestrian-estate-waterfall-city",
     "status": "sold",
     "type": "House",
     "location": "Midrand, Gauteng",
@@ -229,10 +241,11 @@
     "isFavorite": false,
     "features": ["Equestrian Facilities", "Private Cinema", "Smart Home Automation", "1-Hectare Stand", "Top Security"],
     "yearBuilt": 2018,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "13",
+    "id": 13,
+    "slug": "10-somerset-road-green-point",
     "status": "to-let",
     "type": "Apartment",
     "location": "Green Point, Western Cape",
@@ -248,10 +261,11 @@
     "isFavorite": false,
     "features": ["Stadium Views", "Communal Gym", "Walking distance to V&A Waterfront", "Secure Parking", "Modern building"],
     "yearBuilt": 2014,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "14",
+    "id": 14,
+    "slug": "4-thesen-islands-knysna",
     "status": "for-sale",
     "type": "House",
     "location": "Knysna, Western Cape",
@@ -268,10 +282,11 @@
     "features": ["Private Jetty", "Direct Canal Access", "Thesen Islands Security", "Waterfront Living", "Close to Knysna Waterfront"],
     "yearBuilt": 2008,
     "onShow": true,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "15",
+    "id": 15,
+    "slug": "33-eccleston-crescent-bryanston",
     "status": "for-sale",
     "type": "House",
     "location": "Bryanston, Gauteng",
@@ -287,10 +302,11 @@
     "isFavorite": false,
     "features": ["Tennis Court", "Borehole", "Staff Quarters", "Large Stand", "Boomed-off Area", "Swimming Pool"],
     "yearBuilt": 1992,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "16",
+    "id": 16,
+    "slug": "100-erinvale-golf-estate-somerset-west",
     "status": "sold",
     "type": "Townhouse",
     "location": "Somerset West, Western Cape",
@@ -306,10 +322,11 @@
     "isFavorite": false,
     "features": ["Golf Membership Included", "On-site Spa", "Spectacular Mountain Views", "Clubhouse and Restaurants", "High Security"],
     "yearBuilt": 2011,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "17",
+    "id": 17,
+    "slug": "the-tyrwhitt-rosebank",
     "status": "to-let",
     "type": "Apartment",
     "location": "Rosebank, Gauteng",
@@ -325,10 +342,11 @@
     "isFavorite": false,
     "features": ["Concierge Service", "Standby Generator", "Direct Gautrain Access", "Walk to Rosebank Mall", "Modern Finishes"],
     "yearBuilt": 2021,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "18",
+    "id": 18,
+    "slug": "1-voelklip-hermanus",
     "status": "for-sale",
     "type": "House",
     "location": "Hermanus, Western Cape",
@@ -345,10 +363,11 @@
     "features": ["Prime Sea Views", "Close to the beach", "World-class Whale Watching", "Cliff Path Access", "Deck with Braai"],
     "yearBuilt": 2002,
     "onShow": true,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "19",
+    "id": 19,
+    "slug": "2-victoria-road-camps-bay",
     "status": "for-sale",
     "type": "Villa",
     "location": "Camps Bay, Western Cape",
@@ -364,10 +383,11 @@
     "isFavorite": true,
     "features": ["Infinity Pool", "Unbeatable Sunset Views", "Home Cinema", "Glass Elevator", "Prime Camps Bay Location"],
     "yearBuilt": 2019,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "20",
+    "id": 20,
+    "slug": "40-melrose-boulevard-melrose-arch",
     "status": "sold",
     "type": "Apartment",
     "location": "Melrose Arch, Gauteng",
@@ -383,10 +403,11 @@
     "isFavorite": false,
     "features": ["24/7 Precinct Security", "European-style Piazza", "Integrated Living", "Fine Dining and Retail", "Secure underground parking"],
     "yearBuilt": 2013,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "21",
+    "id": 21,
+    "slug": "val-de-vie-estate-paarl",
     "status": "for-sale",
     "type": "House",
     "location": "Paarl, Western Cape",
@@ -402,10 +423,11 @@
     "isFavorite": false,
     "features": ["Polo Fields", "On-site Vineyards", "Wellness Centre", "Top Security", "Multiple Restaurants", "Jack Nicklaus Golf Course"],
     "yearBuilt": 2017,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "22",
+    "id": 22,
+    "slug": "cedar-lakes-fourways",
     "status": "to-let",
     "type": "Townhouse",
     "location": "Fourways, Gauteng",
@@ -421,10 +443,11 @@
     "isFavorite": false,
     "features": ["Clubhouse with Pool", "Tennis Courts", "Fishing Dams", "Secure Estate", "Close to Fourways Mall"],
     "yearBuilt": 2006,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "23",
+    "id": 23,
+    "slug": "fancourt-golf-estate-george",
     "status": "sold",
     "type": "House",
     "location": "George, Western Cape",
@@ -440,10 +463,11 @@
     "isFavorite": false,
     "features": ["3 Championship Golf Courses", "Luxury Spa", "Multiple Restaurants", "Secure Estate", "Garden Route Lifestyle"],
     "yearBuilt": 2009,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "24",
+    "id": 24,
+    "slug": "the-old-biscuit-mill-woodstock",
     "status": "to-let",
     "type": "Apartment",
     "location": "Woodstock, Western Cape",
@@ -459,10 +483,11 @@
     "isFavorite": false,
     "features": ["Industrial Chic Design", "Design District Location", "Next to Old Biscuit Mill Market", "Close to CBD", "Secure Building"],
     "yearBuilt": 2011,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "25",
+    "id": 25,
+    "slug": "1-linksfield-ridge-bedfordview",
     "status": "for-sale",
     "type": "House",
     "location": "Bedfordview, Gauteng",
@@ -478,10 +503,11 @@
     "isFavorite": true,
     "features": ["Panoramic Johannesburg Views", "Indoor Swimming Pool", "High Security Area", "Home Bar", "Staff Quarters"],
     "yearBuilt": 2013,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "26",
+    "id": 26,
+    "slug": "1-robberg-beach-plettenberg-bay",
     "status": "for-sale",
     "type": "House",
     "location": "Plettenberg Bay, Western Cape",
@@ -497,10 +523,11 @@
     "isFavorite": true,
     "features": ["Direct Beach Access", "Swimming Pool", "Multiple Decks", "Uninterrupted Sea Views", "Prime Location"],
     "yearBuilt": 2016,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "27",
+    "id": 27,
+    "slug": "crystal-towers-century-city",
     "status": "sold",
     "type": "Apartment",
     "location": "Century City, Western Cape",
@@ -516,10 +543,11 @@
     "isFavorite": false,
     "features": ["Access to Hotel Amenities", "Direct Canal Walk Access", "Conference Facilities", "High Security", "Modern Finishes"],
     "yearBuilt": 2010,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "28",
+    "id": 28,
+    "slug": "pecanwood-estate-hartbeespoort",
     "status": "to-let",
     "type": "House",
     "location": "Hartbeespoort, North West",
@@ -535,10 +563,11 @@
     "isFavorite": false,
     "features": ["Hartbeespoort Dam Views", "Boating Club", "Jack Nicklaus Golf Course", "Clubhouse", "Secure Estate"],
     "yearBuilt": 2007,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "29",
+    "id": 29,
+    "slug": "15-scott-estate-hout-bay",
     "status": "for-sale",
     "type": "House",
     "location": "Hout Bay, Western Cape",
@@ -554,10 +583,11 @@
     "isFavorite": false,
     "features": ["Beautiful Mountain Views", "Separate Cottage", "Large Plot with Pool", "Quiet and Secure Area", "Double Garage"],
     "yearBuilt": 2000,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "30",
+    "id": 30,
+    "slug": "1-zimbali-coastal-estate-ballito",
     "status": "for-sale",
     "type": "Villa",
     "location": "Zimbali, KwaZulu-Natal",
@@ -573,10 +603,11 @@
     "isFavorite": true,
     "features": ["Lush Forest Views", "Private Pool and Deck", "Full Resort Access", "On-site Spa and Restaurants", "Direct Beach Access"],
     "yearBuilt": 2014,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "31",
+    "id": 31,
+    "slug": "featherbrooke-estate-roodepoort",
     "status": "sold",
     "type": "Townhouse",
     "location": "Roodepoort, Gauteng",
@@ -592,10 +623,11 @@
     "isFavorite": false,
     "features": ["Adjoins Nature Reserve", "Clubhouse with amenities", "Walking and Biking Trails", "High Security", "Family Park"],
     "yearBuilt": 2010,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "32",
+    "id": 32,
+    "slug": "the-capital-sandown",
     "status": "to-let",
     "type": "Apartment",
     "location": "Sandown, Gauteng",
@@ -611,10 +643,11 @@
     "isFavorite": false,
     "features": ["Concierge Service", "On-site Restaurant", "Swimming Pool", "Gym", "Close to Sandton CBD"],
     "yearBuilt": 2022,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "33",
+    "id": 33,
+    "slug": "11-otto-du-plessis-drive-bloubergstrand",
     "status": "for-sale",
     "type": "House",
     "location": "Bloubergstrand, Western Cape",
@@ -630,10 +663,11 @@
     "isFavorite": true,
     "features": ["Iconic Table Mountain View", "Direct Beach Access", "Prime Kite Surfing Location", "Large entertainment patio", "Guest Suite"],
     "yearBuilt": 2005,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "34",
+    "id": 34,
+    "slug": "meyersdal-eco-estate",
     "status": "for-sale",
     "type": "House",
     "location": "Meyersdal, Gauteng",
@@ -649,10 +683,11 @@
     "isFavorite": false,
     "features": ["Private Nature Reserve", "Hiking/Biking Trails", "High Security", "Free-roaming game", "Modern architectural design"],
     "yearBuilt": 2012,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "35",
+    "id": 35,
+    "slug": "the-regent-morningside",
     "status": "sold",
     "type": "Apartment",
     "location": "Morningside, Gauteng",
@@ -668,10 +703,11 @@
     "isFavorite": false,
     "features": ["Penthouse Apartment", "Rooftop Pool", "Private Spa", "Concierge", "Spectacular Views"],
     "yearBuilt": 2011,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "36",
+    "id": 36,
+    "slug": "waterkloof-ridge-pretoria",
     "status": "to-let",
     "type": "Townhouse",
     "location": "Waterkloof, Gauteng",
@@ -687,10 +723,11 @@
     "isFavorite": false,
     "features": ["Prestigious Embassy Suburb", "High Security Complex", "Private Garden", "Modern Finishes", "Close to Pretoria Country Club"],
     "yearBuilt": 2015,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "37",
+    "id": 37,
+    "slug": "hen-and-chicken-estate-claremont-upper",
     "status": "for-sale",
     "type": "House",
     "location": "Claremont, Western Cape",
@@ -706,10 +743,11 @@
     "isFavorite": false,
     "features": ["Close to Top Schools", "Established Garden", "Swimming Pool", "Prestigious Area", "Double Garage"],
     "yearBuilt": 1988,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "38",
+    "id": 38,
+    "slug": "the-point-waterfront-durban",
     "status": "to-let",
     "type": "Apartment",
     "location": "Durban, KwaZulu-Natal",
@@ -725,10 +763,11 @@
     "isFavorite": false,
     "features": ["Canal and Harbour Views", "24/7 Security", "Close to uShaka Marine World", "Waterfront Promenade", "Secure Parking"],
     "yearBuilt": 2018,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "39",
+    "id": 39,
+    "slug": "4th-avenue-parkhurst",
     "status": "sold",
     "type": "House",
     "location": "Parkhurst, Gauteng",
@@ -744,10 +783,11 @@
     "isFavorite": false,
     "features": ["Beautifully Renovated", "Original Pressed Ceilings", "Walk to Restaurants and Shops", "Vibrant Atmosphere", "Private Garden"],
     "yearBuilt": 1955,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "40",
+    "id": 40,
+    "slug": "301-ocean-view-drive-bantry-bay",
     "status": "for-sale",
     "type": "Villa",
     "location": "Bantry Bay, Western Cape",
@@ -763,10 +803,11 @@
     "isFavorite": true,
     "features": ["Wind-Free Location", "Private Home Cinema", "Fully-Equipped Gym", "Glass Elevator", "Infinity Pool", "Unrivaled Sea Views"],
     "yearBuilt": 2020,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "41",
+    "id": 41,
+    "slug": "southbroom-golf-estate",
     "status": "for-sale",
     "type": "House",
     "location": "Southbroom, KwaZulu-Natal",
@@ -782,10 +823,11 @@
     "isFavorite": false,
     "features": ["Lush Tropical Garden", "Golf Course Access", "Distant Sea Views", "Large Patio", "Secure and Peaceful"],
     "yearBuilt": 1999,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "42",
+    "id": 42,
+    "slug": "one-hyde-park-illovo",
     "status": "to-let",
     "type": "Apartment",
     "location": "Illovo, Gauteng",
@@ -801,10 +843,11 @@
     "isFavorite": false,
     "features": ["Fine-Dining Restaurant", "State-of-the-art Gym", "Swimming Pool", "Concierge Service", "Prime Location"],
     "yearBuilt": 2019,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "43",
+    "id": 43,
+    "slug": "44-morsim-road-hyde-park",
     "status": "sold",
     "type": "Townhouse",
     "location": "Hyde Park, Gauteng",
@@ -820,10 +863,11 @@
     "isFavorite": false,
     "features": ["High Security Complex", "Private Pool", "Exclusive Suburb", "Modern Interiors", "Close to Hyde Park Corner"],
     "yearBuilt": 2016,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "44",
+    "id": 44,
+    "slug": "1-canterbury-drive-bishopscourt",
     "status": "for-sale",
     "type": "House",
     "location": "Bishopscourt, Western Cape",
@@ -839,10 +883,11 @@
     "isFavorite": true,
     "features": ["Floodlit Tennis Court", "Direct Mountain Views", "Separate Guest House", "Library & Wine Cellar", "One-Acre Estate"],
     "yearBuilt": 2003,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "45",
+    "id": 45,
+    "slug": "the-polofields-waterfall-city",
     "status": "to-let",
     "type": "Apartment",
     "location": "Waterfall, Gauteng",
@@ -858,10 +903,11 @@
     "isFavorite": false,
     "features": ["Full Lifestyle Centre", "Camelot Spa", "Private Cinema", "La-Pizzeria", "SMEG Appliances Included"],
     "yearBuilt": 2020,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "46",
+    "id": 46,
+    "slug": "langebaan-country-estate",
     "status": "for-sale",
     "type": "House",
     "location": "Langebaan, Western Cape",
@@ -877,10 +923,11 @@
     "isFavorite": false,
     "features": ["Gary Player Designed Golf Course", "Lagoon Access for Watersports", "Fynbos Walking Trails", "Clubhouse", "Secure Estate"],
     "yearBuilt": 2011,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "47",
+    "id": 47,
+    "slug": "cornwall-hill-country-estate",
     "status": "sold",
     "type": "House",
     "location": "Centurion, Gauteng",
@@ -896,10 +943,11 @@
     "isFavorite": false,
     "features": ["Large Stand", "Country Lifestyle", "On-site Cornwall Hill College", "High Security", "River frontage"],
     "yearBuilt": 2004,
-    "agentId": "james-anderson"
+    "agentId": 2
   },
   {
-    "id": "48",
+    "id": 48,
+    "slug": "fernwood-estate-newlands",
     "status": "to-let",
     "type": "Townhouse",
     "location": "Newlands, Western Cape",
@@ -915,10 +963,11 @@
     "isFavorite": false,
     "features": ["Direct Mountain Views", "Kirstenbosch Nearby", "Secure Gated Complex", "Close to UCT", "Private Courtyard"],
     "yearBuilt": 1997,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   },
   {
-    "id": "49",
+    "id": 49,
+    "slug": "menlyn-maine-residences-pretoria",
     "status": "for-sale",
     "type": "Apartment",
     "location": "Pretoria, Gauteng",
@@ -934,10 +983,11 @@
     "isFavorite": true,
     "features": ["South Africa's First Green City", "Rooftop Pool", "Retail and Dining On-site", "Sun Casino Nearby", "High-speed fibre"],
     "yearBuilt": 2018,
-    "agentId": "david-lee"
+    "agentId": 3
   },
   {
-    "id": "50",
+    "id": 50,
+    "slug": "4th-beach-clifton",
     "status": "for-sale",
     "type": "House",
     "location": "Clifton, Western Cape",
@@ -953,6 +1003,6 @@
     "isFavorite": true,
     "features": ["Direct Access to Clifton 4th Beach", "Unrivaled, Exclusive Location", "Spectacular Sunset Views", "Sheltered from the wind", "Highly Secure"],
     "yearBuilt": 1985,
-    "agentId": "natalia-cromwell"
+    "agentId": 1
   }
 ]

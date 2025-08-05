@@ -1,7 +1,8 @@
 
 [
   {
-    "id": "natalia-cromwell",
+    "id": 1,
+    "slug": "natalia-cromwell",
     "name": "Natalia Cromwell",
     "role": "Founder & CEO",
     "imageUrl": "/images/agents/Maria.webp",
@@ -11,7 +12,8 @@
     "bio": "<p>With over 15 years of experience in the South African real estate market, Natalia founded NC Properties with a vision to create a client-centric firm built on integrity, transparency, and unparalleled market knowledge. Her passion for property and dedication to her clients have been the driving force behind the company's success.</p><p>Natalia specializes in luxury residential properties in the greater Sandton and Cape Town Atlantic Seaboard areas. She has a deep understanding of market trends and a strong network that allows her to connect buyers with their dream homes and help sellers achieve premium prices. Under her leadership, NC Properties has grown into a trusted name in the industry, known for its professionalism and outstanding results.</p>"
   },
   {
-    "id": "james-anderson",
+    "id": 2,
+    "slug": "james-anderson",
     "name": "James Anderson",
     "role": "Head of Sales",
     "imageUrl": "/images/agents/james.webp",
@@ -21,7 +23,8 @@
     "bio": "<p>James is a results-driven leader with a decade of experience in high-end property sales. As the Head of Sales, he is responsible for mentoring our team of agents and developing strategies that ensure our clients' properties are positioned for success. His analytical approach to market data and his exceptional negotiation skills make him an invaluable asset to both our team and our clients.</p><p>He believes that a successful sale is about more than just numbers; it's about building lasting relationships and ensuring a seamless, stress-free experience for everyone involved.</p>"
   },
   {
-    "id": "david-lee",
+    "id": 3,
+    "slug": "david-lee",
     "name": "David Lee",
     "role": "Lead Rental Agent",
     "imageUrl": "/images/agents/david.webp",

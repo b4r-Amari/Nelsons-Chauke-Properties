@@ -81,7 +81,7 @@ export default function AdminPropertiesPage() {
   };
 
 
-  const handleAgentAssigned = (propertyId: string, newAgentId: string) => {
+  const handleAgentAssigned = (propertyId: number, newAgentId: number) => {
     setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentId: newAgentId } : p));
     const agentName = agents.find(a => a.id === newAgentId)?.name;
     const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
@@ -91,7 +91,7 @@ export default function AdminPropertiesPage() {
     });
   };
   
-  const getAgentById = (agentId: string) => {
+  const getAgentById = (agentId: number) => {
     return agents.find(agent => agent.id === agentId);
   }
 
@@ -236,9 +236,9 @@ export default function AdminPropertiesPage() {
 }
 
 
-function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; onAgentAssigned: (propertyId: string, agentId: string) => void; }) {
+function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; onAgentAssigned: (propertyId: number, agentId: number) => void; }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(property.agentId);
+  const [selectedAgentId, setSelectedAgentId] = useState<number | undefined>(property.agentId);
 
   const handleSubmit = () => {
     if (selectedAgentId) {
@@ -263,13 +263,13 @@ function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; 
         </DialogHeader>
         <div className="py-4">
             <Label htmlFor="agent-select">Select Agent</Label>
-            <Select value={selectedAgentId} onValueChange={setSelectedAgentId}>
+            <Select value={selectedAgentId?.toString()} onValueChange={(value) => setSelectedAgentId(parseInt(value))}>
                 <SelectTrigger id="agent-select">
                     <SelectValue placeholder="Select an agent" />
                 </SelectTrigger>
                 <SelectContent>
                     {agents.map(agent => (
-                        <SelectItem key={agent.id} value={agent.id}>
+                        <SelectItem key={agent.id} value={agent.id.toString()}>
                             {agent.name}
                         </SelectItem>
                     ))}
@@ -284,4 +284,3 @@ function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; 
     </Dialog>
   );
 }
-

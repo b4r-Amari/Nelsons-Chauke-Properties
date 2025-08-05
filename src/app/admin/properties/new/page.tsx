@@ -30,7 +30,7 @@ const formSchema = z.object({
   description: z.string().min(20, "Description must be at least 20 characters."),
   features: z.array(z.string()).optional().default([]),
   onShow: z.boolean().default(false),
-  agentId: z.string({ required_error: "Please assign an agent." }),
+  agentId: z.coerce.number({ required_error: "Please assign an agent." }),
   imageUrl: z.string().url({ message: "Please enter a valid URL." }),
   imageHint: z.string().min(2, { message: "Image hint must be at least 2 characters." }),
 })
@@ -53,7 +53,7 @@ export default function NewPropertyPage() {
       description: "",
       features: ["Swimming Pool", "Garden", "Secure Estate"],
       onShow: false,
-      agentId: "",
+      agentId: 0,
       imageUrl: "https://placehold.co/300x200",
       imageHint: "modern house exterior",
     },
@@ -157,7 +157,7 @@ export default function NewPropertyPage() {
                         )} />
                     </div>
                      <FormField control={form.control} name="agentId" render={({ field }) => (
-                        <FormItem><FormLabel>Assign Agent</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue placeholder="Select an agent to assign" /></SelectTrigger></FormControl><SelectContent>{agentsData.map(agent => <SelectItem key={agent.id} value={agent.id}>{agent.name}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Assign Agent</FormLabel><Select onValueChange={(value) => field.onChange(parseInt(value))}><FormControl><SelectTrigger><SelectValue placeholder="Select an agent to assign" /></SelectTrigger></FormControl><SelectContent>{agentsData.map(agent => <SelectItem key={agent.id} value={agent.id.toString()}>{agent.name}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>
                     )} />
                 </div>
 
