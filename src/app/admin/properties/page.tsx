@@ -1,10 +1,10 @@
 
 "use client"
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
-import { PlusCircle, MoreHorizontal, Pencil, Trash2, Users, ChevronLeft, ChevronRight } from 'lucide-react';
+import { PlusCircle, MoreHorizontal, Pencil, Trash2, Users, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -42,11 +42,43 @@ export default function AdminPropertiesPage() {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const propertiesPerPage = 10;
+  const [sortConfig, setSortConfig] = useState<{ key: keyof Property, direction: 'asc' | 'desc' } | null>(null);
+
+  const sortedProperties = useMemo(() => {
+    let sortableProperties = [...propertyList];
+    if (sortConfig !== null) {
+      sortableProperties.sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableProperties;
+  }, [propertyList, sortConfig]);
 
   const indexOfLastProperty = currentPage * propertiesPerPage;
   const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
-  const currentProperties = propertyList.slice(indexOfFirstProperty, indexOfLastProperty);
+  const currentProperties = sortedProperties.slice(indexOfFirstProperty, indexOfLastProperty);
   const totalPages = Math.ceil(propertyList.length / propertiesPerPage);
+
+  const requestSort = (key: keyof Property) => {
+    let direction: 'asc' | 'desc' = 'asc';
+    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortIndicator = (key: keyof Property) => {
+    if (!sortConfig || sortConfig.key !== key) {
+      return <ArrowUpDown className="ml-2 h-4 w-4" />;
+    }
+    return sortConfig.direction === 'asc' ? '▲' : '▼';
+  };
 
 
   const handleAgentAssigned = (propertyId: string, newAgentId: string) => {
@@ -97,10 +129,25 @@ export default function AdminPropertiesPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[50px]">ID</TableHead>
-                <TableHead>Address</TableHead>
+                <TableHead>
+                    <Button variant="ghost" onClick={() => requestSort('address')}>
+                        Address
+                        {getSortIndicator('address')}
+                    </Button>
+                </TableHead>
                 <TableHead className="hidden lg:table-cell">Agent</TableHead>
-                <TableHead className="hidden sm:table-cell">Price</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="hidden sm:table-cell">
+                     <Button variant="ghost" onClick={() => requestSort('price')}>
+                        Price
+                        {getSortIndicator('price')}
+                    </Button>
+                </TableHead>
+                <TableHead>
+                     <Button variant="ghost" onClick={() => requestSort('status')}>
+                        Status
+                        {getSortIndicator('status')}
+                    </Button>
+                </TableHead>
                 <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>
             </TableHeader>
