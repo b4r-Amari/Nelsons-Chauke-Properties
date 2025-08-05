@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { BedDouble, Bath, Ruler, MapPin } from 'lucide-react';
-import { useState } from "react";
 
 export type Property = {
   id: string;
@@ -29,13 +28,6 @@ type PropertyCardProps = {
 };
 
 export function PropertyCard({ property }: PropertyCardProps) {
-  const [isFavorite, setIsFavorite] = useState(property.isFavorite);
-
-  const toggleFavorite = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsFavorite(!isFavorite);
-  };
   
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-ZA', {
@@ -47,9 +39,9 @@ export function PropertyCard({ property }: PropertyCardProps) {
   }
 
   return (
-    <Link href={`/properties/${property.id}`} className="block">
-        <Card className="w-full max-w-[350px] h-[450px] rounded-lg shadow-md hover:shadow-xl transition-all duration-300 group flex flex-col mx-auto my-4 hover:-translate-y-1 cursor-pointer">
-        <div className="relative w-full h-[250px] overflow-hidden rounded-t-lg">
+    <Link href={`/properties/${property.id}`} className="block group">
+        <Card className="w-full max-w-[350px] min-h-[480px] h-full rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col mx-auto cursor-pointer overflow-hidden">
+        <div className="relative w-full h-[250px] overflow-hidden">
             <Image
             src={property.imageUrl}
             alt={`View of ${property.address}`}
@@ -66,34 +58,34 @@ export function PropertyCard({ property }: PropertyCardProps) {
             </div>
             )}
         </div>
-        <CardContent className="p-6 bg-white flex flex-col flex-grow rounded-b-lg">
+        <CardContent className="p-6 bg-white flex flex-col flex-grow">
             <h3 className="font-headline text-brand-deep font-semibold text-xl mb-2 truncate">{property.address}</h3>
-            <div className="flex items-center gap-2 text-muted-foreground mb-4">
-            <MapPin className="h-4 w-4" />
-            <p className="text-sm">{property.location}</p>
+            <div className="flex items-center gap-2 text-gray-600 mb-4">
+              <MapPin className="h-4 w-4" />
+              <p className="text-sm">{property.location}</p>
             </div>
             
-            <div className="grid grid-cols-4 gap-2 border-y py-3 my-auto">
+            <div className="grid grid-cols-4 gap-2 border-y border-gray-200 py-4 my-auto">
                 <div className="text-center flex flex-col items-center gap-1">
                     <BedDouble className="h-5 w-5 text-brand-bright"/>
-                    <span className="text-xs text-muted-foreground">{property.beds} Beds</span>
+                    <span className="text-sm text-gray-600">{property.beds} Beds</span>
                 </div>
                 <div className="text-center flex flex-col items-center gap-1">
                     <Bath className="h-5 w-5 text-brand-bright"/>
-                    <span className="text-xs text-muted-foreground">{property.baths} Baths</span>
+                    <span className="text-sm text-gray-600">{property.baths} Baths</span>
                 </div>
                 <div className="text-center flex flex-col items-center gap-1">
                     <Ruler className="h-5 w-5 text-brand-bright"/>
-                    <span className="text-xs text-muted-foreground">{property.sqft} m²</span>
+                    <span className="text-sm text-gray-600">{property.sqft} m²</span>
                 </div>
                 <div className="text-center flex flex-col items-center gap-1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-brand-bright"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
-                    <span className="text-xs text-muted-foreground">{property.yearBuilt}</span>
+                    <span className="text-sm text-gray-600">{property.yearBuilt}</span>
                 </div>
             </div>
 
-            <p className="text-[15px] text-foreground/80 leading-relaxed my-4 h-[45px] overflow-hidden text-ellipsis">
-            {property.description}
+            <p className="text-[15px] text-gray-700 leading-relaxed my-4 h-[60px] overflow-hidden text-ellipsis">
+              {property.description}
             </p>
 
         </CardContent>

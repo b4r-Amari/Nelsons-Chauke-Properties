@@ -26,41 +26,43 @@ export default function Home() {
 
 function HeroSection() {
   return (
-    <section className="relative h-[550px] w-full">
+    <section className="relative h-[600px] w-full bg-black">
       <Image
-        src="https://placehold.co/1920x550"
+        src="https://placehold.co/1920x600"
         alt="A beautiful modern house in South Africa"
         data-ai-hint="beautiful house south africa"
         fill
-        objectFit="cover"
-        className="brightness-50"
+        style={{objectFit:"cover"}}
+        className="opacity-50"
       />
-      <div className="relative container h-full flex flex-col items-center justify-center text-center text-white">
-        <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4">Find Your Dream Home</h1>
-        <p className="text-lg md:text-xl max-w-2xl mb-8">With NC Properties, your next chapter starts here. Unforgettable homes, unparalleled service.</p>
-        <Card className="absolute -bottom-16 w-full max-w-4xl mx-auto shadow-2xl">
-          <CardContent className="p-6">
-            <form className="grid md:grid-cols-4 gap-4 items-center">
-              <div className="md:col-span-2">
-                <Input type="text" placeholder="Enter a location (e.g., 'Sandton')" className="h-14 text-lg" />
-              </div>
-              <div>
-                <Select>
-                  <SelectTrigger className="h-14 text-lg">
-                    <SelectValue placeholder="Property Type" />
+      <div className="relative container h-full flex flex-col items-center justify-center text-center">
+        <div className="text-white max-w-3xl">
+          <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight">We have space for you</h1>
+          <p className="text-lg md:text-xl text-white/80 mb-8">Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.</p>
+        </div>
+        <Card className="w-full max-w-4xl shadow-2xl bg-white/90 backdrop-blur-sm">
+          <CardContent className="p-4">
+            <form className="grid md:grid-cols-12 gap-4 items-center">
+              <div className="md:col-span-3">
+                 <Select defaultValue="for-sale">
+                  <SelectTrigger className="h-14 text-base border-0 focus:ring-0 shadow-none">
+                    <SelectValue placeholder="For Sale" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="house">House</SelectItem>
-                    <SelectItem value="apartment">Apartment</SelectItem>
-                    <SelectItem value="villa">Villa</SelectItem>
-                    <SelectItem value="townhouse">Townhouse</SelectItem>
+                    <SelectItem value="for-sale">For Sale</SelectItem>
+                    <SelectItem value="to-let">To Let</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              <Button type="submit" size="lg" className="w-full h-14 bg-brand-bright hover:bg-brand-deep transition-colors duration-300 text-lg">
-                <Search className="mr-2 h-6 w-6" />
-                Search
-              </Button>
+               <div className="md:col-span-6">
+                <Input type="text" placeholder="Enter city, suburb or area" className="h-14 text-base border-0 focus-visible:ring-offset-0 focus-visible:ring-2" />
+              </div>
+              <div className="md:col-span-3">
+                <Button type="submit" size="lg" className="w-full h-14 bg-brand-bright hover:bg-brand-deep transition-colors duration-300 text-lg">
+                  <Search className="mr-2 h-6 w-6" />
+                  Search
+                </Button>
+              </div>
             </form>
           </CardContent>
         </Card>
@@ -69,9 +71,10 @@ function HeroSection() {
   );
 }
 
+
 function FeaturedPropertiesSection() {
   return (
-    <section className="py-24 bg-background pt-40">
+    <section className="py-24 bg-background">
       <div className="container">
         <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties in South Africa, offering the perfect blend of luxury, comfort, and style.</p>
@@ -184,7 +187,7 @@ function NewsletterSection() {
           alt="Abstract background"
           data-ai-hint="abstract geometric"
           fill
-          objectFit="cover"
+          style={{objectFit:"cover"}}
           className="opacity-10"
         />
       <div className="container relative">
