@@ -10,6 +10,7 @@ import { PropertyCard } from '@/components/shared/property-card';
 import type { Property } from '@/components/shared/property-card';
 import Link from 'next/link';
 import propertiesData from '@/data/properties.json';
+import { Separator } from '@/components/ui/separator';
 
 const featuredProperties: Property[] = propertiesData.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 8);
 
@@ -18,6 +19,7 @@ export default function Home() {
     <div className="flex flex-col bg-background">
       <HeroSection />
       <FeaturedPropertiesSection />
+      <ShortAboutSection />
       <CtaTabsSection />
       <NewsletterSection />
     </div>
@@ -88,7 +90,7 @@ function FeaturedPropertiesSection() {
         <Carousel opts={{ align: "start", loop: true }} className="w-full">
           <CarouselContent className="-ml-4">
             {featuredProperties.map((prop) => (
-              <CarouselItem key={prop.id} className="pl-4 basis-full md:basis-1/2 lg:basis-1/3">
+              <CarouselItem key={prop.id} className="pl-4 md:basis-1/2 lg:basis-1/3">
                  <PropertyCard property={prop} />
               </CarouselItem>
             ))}
@@ -102,6 +104,25 @@ function FeaturedPropertiesSection() {
               View All Properties <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ShortAboutSection() {
+  return (
+    <section className="py-24 bg-card">
+      <div className="container">
+        <div className="text-center max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold font-headline text-brand-deep">Welcome to NC Properties</h2>
+          <Separator className="w-24 h-1 bg-brand-bright mx-auto my-6" />
+          <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground space-y-4">
+            <p>At NC Properties, we pride ourselves on offering a personalised and professional real estate experience tailored to your needs. Whether you're buying, selling, or renting, we are here to make your property journey seamless, rewarding, and stress-free.</p>
+            <p>Our dedicated team brings extensive market knowledge, local expertise, and a genuine passion for property to every client we serve. We take the time to truly understand your goals, ensuring that each recommendation we make is aligned with your lifestyle and vision.</p>
+            <p>With a commitment to integrity, excellence, and outstanding customer care, NC Properties has become a trusted name in the industry. From first-time buyers to seasoned investors, we offer guidance, support, and top-tier service throughout the entire process.</p>
+            <p>Thank you for choosing NC Properties. We look forward to helping you discover your next home, investment, or dream property, with confidence and peace of mind.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -128,7 +149,7 @@ function CtaTabsSection() {
   ];
 
   return (
-    <section className="py-24 bg-card">
+    <section className="py-24 bg-background">
       <div className="container">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold font-headline">Discover All Things Property</h2>
@@ -188,7 +209,7 @@ function CtaTabCard({ title, description, buttonText, imageSrc, imageHint }: { t
 
 function NewsletterSection() {
   return (
-    <section className="py-24 bg-background relative">
+    <section className="py-24 bg-card relative">
        <Image
           src="https://placehold.co/1920x400"
           alt="Abstract background"
