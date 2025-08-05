@@ -20,7 +20,7 @@ export default function AboutUsPage() {
   return (
     <>
       <section 
-        className="bg-brand-deep text-white py-20 bg-cover bg-center"
+        className="relative bg-brand-deep text-white py-20 bg-cover bg-center"
         style={{ backgroundImage: "url('/images/backgrounds/about.webp')"}}
       >
         <div className="absolute inset-0 bg-black/50" />
@@ -28,7 +28,7 @@ export default function AboutUsPage() {
           <h1 className="text-4xl font-bold font-headline">About NC Properties</h1>
           <p className="text-lg mt-2 text-white/80">Our Story, Our Mission, Our Team</p>
         </div>
-      </section>
+      </section> 
 
       <section className="py-24 bg-background">
         <div className="container">
