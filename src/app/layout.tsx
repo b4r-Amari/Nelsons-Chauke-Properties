@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import './globals.css';
@@ -8,14 +9,10 @@ import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/context/auth-context';
 import { WishlistProvider } from '@/context/wishlist-context';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { cn } from '@/lib/utils';
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+function LayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -23,7 +20,7 @@ export default function RootLayout({
   if (isAdminPage) {
     return <>{children}</>;
   }
-
+  
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <head>
@@ -50,4 +47,16 @@ export default function RootLayout({
       </body>
     </html>
   );
+}
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <Suspense>
+      <LayoutContent>{children}</LayoutContent>
+    </Suspense>
+  )
 }

@@ -1,7 +1,8 @@
 
+
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import propertiesData from '@/data/properties.json';
@@ -9,17 +10,47 @@ import { Button } from "../ui/button";
 import { SlidersHorizontal } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { ScrollArea } from "../ui/scroll-area";
+import { useSearchParams } from "next/navigation";
 
 interface PropertyListingsProps {
-  status: 'for-sale' | 'on-show';
+  status: 'for-sale' | 'on-show' | 'to-let';
 }
 
-const allProperties: Property[] = (propertiesData as Property[]).filter(p => p.status !== 'sold');
-const onShowProperties: Property[] = allProperties.filter(p => p.onShow);
+const allProperties: Property[] = (propertiesData as Property[]);
 
 export function PropertyListings({ status }: PropertyListingsProps) {
-  const initialProperties = status === 'on-show' ? onShowProperties : allProperties;
+  const searchParams = useSearchParams();
+  const locationSearch = searchParams.get('location');
+
+  const getInitialProperties = () => {
+    let properties = allProperties;
+    if (status === 'for-sale') {
+      properties = properties.filter(p => p.status === 'for-sale');
+    } else if (status === 'to-let') {
+      properties = properties.filter(p => p.status === 'to-let');
+    } else if (status === 'on-show') {
+      properties = properties.filter(p => p.onShow && p.status !== 'sold');
+    }
+
+    if (locationSearch) {
+      return properties.filter(p => 
+        p.location.toLowerCase().includes(locationSearch.toLowerCase()) || 
+        p.address.toLowerCase().includes(locationSearch.toLowerCase())
+      );
+    }
+    return properties;
+  }
+  
+  const [initialProperties, setInitialProperties] = useState(getInitialProperties());
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(initialProperties);
+
+  useEffect(() => {
+    const newInitialProperties = getInitialProperties();
+    setInitialProperties(newInitialProperties);
+    setFilteredProperties(newInitialProperties);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams, status]);
+
 
   return (
     <section className="py-16 bg-background">

@@ -1,4 +1,5 @@
 
+
 import type { Metadata } from 'next';
 import { PropertyListings } from '@/components/sections/property-listings';
 

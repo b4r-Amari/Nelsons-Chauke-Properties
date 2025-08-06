@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useState, useEffect, useCallback } from "react";
@@ -14,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import type { Property } from "./property-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 type PropertyFilterProps = {
   properties: Property[];
@@ -49,8 +51,11 @@ const initialFilters = {
 };
 
 export function PropertyFilter({ properties, onFilterChange, isMobile = false }: PropertyFilterProps) {
+  const searchParams = useSearchParams();
+  const locationSearch = searchParams.get('location');
+
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-  const [filters, setFilters] = useState(initialFilters);
+  const [filters, setFilters] = useState({...initialFilters, location: locationSearch || ""});
   const [filteredCount, setFilteredCount] = useState(properties.length);
 
   const handleFilterChange = useCallback(() => {
@@ -99,6 +104,10 @@ export function PropertyFilter({ properties, onFilterChange, isMobile = false }:
   useEffect(() => {
     handleFilterChange();
   }, [filters, handleFilterChange]);
+
+  useEffect(() => {
+    setFilters(prev => ({...prev, location: locationSearch || ""}));
+  }, [locationSearch]);
   
   const handleInputChange = (field: string, value: string | number) => {
     setFilters(prev => ({ ...prev, [field]: value }));
