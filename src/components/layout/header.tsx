@@ -84,7 +84,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
           <Logo />
         </div>
         
-        <nav className="hidden md:flex flex-1 items-center space-x-1 text-sm font-medium font-headline" aria-label="Main Navigation">
+        <nav className="hidden md:flex flex-1 items-center justify-center space-x-1 text-sm font-medium font-headline" aria-label="Main Navigation">
             {navLinks.map((item) => (
               item.isDropdown && item.links ? (
                 <DropdownMenu key={item.label}>
@@ -133,7 +133,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
             ))}
           </nav>
 
-        <div className="flex flex-1 items-center justify-end space-x-2">
+        <div className="flex items-center justify-end space-x-2">
            <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
@@ -222,7 +222,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                             <span className="sr-only">Close</span>
                         </SheetClose>
                     </div>
-                    <nav className="flex-grow p-4 flex items-center justify-center" aria-label="Mobile Navigation">
+                    <nav className="flex-grow p-4" aria-label="Mobile Navigation">
                         <ul className="space-y-2 w-full">
                         {mobileNavLinks.map((link) => (
                             <li key={link.href}>
