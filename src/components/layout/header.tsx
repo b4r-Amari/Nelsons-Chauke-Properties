@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Menu, Heart, User, X, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
@@ -22,7 +22,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { logOut } from "@/lib/firebase/auth";
@@ -139,7 +138,7 @@ export function Header() {
                 }}
               >
                 <Link href={user ? "/my-account/wishlist" : "#"} className="w-full h-full flex items-center justify-center">
-                  <Heart className="h-6 w-6" />
+                  <Heart className="h-7 w-7" />
                 </Link>
               </Button>
             </DialogTrigger>
@@ -155,8 +154,8 @@ export function Header() {
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full" aria-label="Open user menu">
-                  <Avatar className="h-8 w-8">
+                <Button variant="ghost" className="relative h-9 w-9 rounded-full" aria-label="Open user menu">
+                  <Avatar className="h-9 w-9">
                     <AvatarImage src={`https://api.dicebear.com/7.x/pixel-art/svg?seed=${user.uid}`} alt="User avatar" />
                     <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
                   </Avatar>
@@ -188,7 +187,7 @@ export function Header() {
             <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
               <DialogTrigger asChild>
                  <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
-                    <User className="h-6 w-6" />
+                    <User className="h-7 w-7" />
                   </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
@@ -204,20 +203,25 @@ export function Header() {
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open mobile menu">
-                  <Menu className="h-7 w-7" />
+                  <Menu className="h-8 w-8" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[280px] bg-brand-deep text-white p-0">
+              <SheetContent side="left" className="w-[280px] bg-[#03132b] text-white p-0" hideClose>
                 <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="p-4 flex justify-between items-center border-b border-white/10">
                     <Logo className="text-white" />
+                     <SheetTrigger asChild>
+                        <Button variant="ghost" size="icon" aria-label="Close mobile menu" className="text-white hover:bg-white/10 hover:text-white">
+                            <X className="h-8 w-8" />
+                        </Button>
+                    </SheetTrigger>
                   </div>
                   <nav className="flex-grow p-4" aria-label="Mobile Navigation">
                     <ul className="space-y-2">
                       {mobileNavLinks.map((link) => (
                         <li key={link.href}>
-                            <SheetClose asChild>
+                            <SheetTrigger asChild>
                               <Link
                                 href={link.href}
                                 className={cn(
@@ -229,7 +233,7 @@ export function Header() {
                               >
                                 {link.label}
                               </Link>
-                            </SheetClose>
+                            </SheetTrigger>
                         </li>
                       ))}
                     </ul>
