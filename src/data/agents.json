@@ -32,5 +32,38 @@
     "phone": "(123) 777-5678",
     "email": "david.l@ncproperties.com",
     "bio": "<p>David leads our dynamic rental division with energy and expertise. He has a comprehensive understanding of the rental market across Gauteng and the Western Cape, enabling him to provide landlords with sound investment advice and help tenants find the perfect home. David is known for his meticulous attention to detail, exceptional communication skills, and his ability to match the right tenant with the right property.</p><p>He is committed to making the rental process as smooth and efficient as possible for both landlords and tenants, ensuring all parties are satisfied and well-cared for.</p>"
+  },
+  {
+    "id": 4,
+    "slug": "sandra-chen",
+    "name": "Sandra Chen",
+    "role": "Luxury Property Specialist",
+    "imageUrl": "/images/agents/sandra.webp",
+    "imageHint": "professional asian woman",
+    "phone": "(123) 888-9012",
+    "email": "sandra.c@ncproperties.com",
+    "bio": "<p>Sandra is a specialist in the luxury market, with a focus on architectural masterpieces and exclusive estates. Her discerning eye for quality and her profound understanding of the affluent buyer's needs make her a formidable force in high-value transactions. Sandra's clients appreciate her discretion, dedication, and her ability to navigate complex negotiations with grace and expertise.</p><p>She has built a reputation for representing some of the most prestigious properties in the country, consistently achieving record-breaking sales.</p>"
+  },
+  {
+    "id": 5,
+    "slug": "michael-brown",
+    "name": "Michael Brown",
+    "role": "Commercial Property Advisor",
+    "imageUrl": "/images/agents/michael.webp",
+    "imageHint": "man in suit",
+    "phone": "(123) 222-3344",
+    "email": "michael.b@ncproperties.com",
+    "bio": "<p>Michael heads our commercial property division, bringing a wealth of knowledge in investment analysis, portfolio management, and corporate real estate services. He works with a diverse range of clients, from individual investors to large corporations, helping them achieve their strategic objectives in the commercial property sector.</p><p>His analytical mindset and deep understanding of market dynamics allow him to identify opportunities and mitigate risks, ensuring his clients make sound investment decisions that deliver long-term value.</p>"
+  },
+  {
+    "id": 6,
+    "slug": "chloe-williams",
+    "name": "Chloe Williams",
+    "role": "New Developments Agent",
+    "imageUrl": "/images/agents/chloe.webp",
+    "imageHint": "young professional woman",
+    "phone": "(123) 999-8765",
+    "email": "chloe.w@ncproperties.com",
+    "bio": "<p>Chloe specializes in off-plan and new residential developments, working closely with developers to bring exciting new projects to the market. She has a passion for modern architecture and sustainable design, and her energy and enthusiasm are contagious.</p><p>She provides buyers with early access to some of the most anticipated new homes, guiding them through the process from initial deposit to final handover. Her expertise in this niche market makes her an invaluable resource for anyone looking to invest in the future of residential living.</p>"
   }
 ]

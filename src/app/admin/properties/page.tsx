@@ -82,7 +82,7 @@ export default function AdminPropertiesPage() {
 
 
   const handleAgentAssigned = (propertyId: number, newAgentId: number) => {
-    setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentId: newAgentId } : p));
+    setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentIds: [newAgentId] } : p));
     const agentName = agents.find(a => a.id === newAgentId)?.name;
     const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
     toast({
@@ -141,7 +141,7 @@ export default function AdminPropertiesPage() {
                           {getSortIndicator('address')}
                       </Button>
                   </TableHead>
-                  <TableHead className="hidden lg:table-cell">Agent</TableHead>
+                  <TableHead className="hidden lg:table-cell">Agent(s)</TableHead>
                   <TableHead className="hidden sm:table-cell">
                       <Button variant="ghost" onClick={() => requestSort('price')}>
                           Price
@@ -159,19 +159,20 @@ export default function AdminPropertiesPage() {
               </TableHeader>
               <TableBody>
                 {currentProperties.map((property) => {
-                  const agent = getAgentById(property.agentId);
+                  const propertyAgents = agents.filter(agent => property.agentIds.includes(agent.id));
                   return (
                     <TableRow key={property.id}>
                       <TableCell className="font-mono text-xs">{property.id}</TableCell>
                       <TableCell className="font-medium">{property.address}</TableCell>
                       <TableCell className="hidden lg:table-cell">
-                        {agent ? (
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-8 w-8">
-                                  <AvatarImage src={agent.imageUrl} alt={agent.name} />
-                                  <AvatarFallback>{agent.name.charAt(0)}</AvatarFallback>
-                              </Avatar>
-                            <span>{agent.name}</span>
+                        {propertyAgents.length > 0 ? (
+                          <div className="flex items-center -space-x-2">
+                            {propertyAgents.map(agent => (
+                               <Avatar key={agent.id} className="h-8 w-8 border-2 border-white">
+                                    <AvatarImage src={agent.imageUrl} alt={agent.name} />
+                                    <AvatarFallback>{agent.name.charAt(0)}</AvatarFallback>
+                                </Avatar>
+                            ))}
                           </div>
                         ) : (
                           <span className="text-muted-foreground">Unassigned</span>
@@ -241,7 +242,7 @@ export default function AdminPropertiesPage() {
 
 function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; onAgentAssigned: (propertyId: number, agentId: number) => void; }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedAgentId, setSelectedAgentId] = useState<number | undefined>(property.agentId);
+  const [selectedAgentId, setSelectedAgentId] = useState<number | undefined>(property.agentIds[0]);
 
   const handleSubmit = () => {
     if (selectedAgentId) {

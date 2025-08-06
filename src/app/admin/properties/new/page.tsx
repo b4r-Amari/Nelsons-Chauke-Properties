@@ -30,7 +30,7 @@ const formSchema = z.object({
   description: z.string().min(20, "Description must be at least 20 characters."),
   features: z.array(z.string()).optional().default([]),
   onShow: z.boolean().default(false),
-  agentId: z.coerce.number({ required_error: "Please assign an agent." }),
+  agentIds: z.array(z.coerce.number()).min(1, { message: "Please assign at least one agent." }),
   imageUrl: z.string().url({ message: "Please enter a valid URL." }),
   imageHint: z.string().min(2, { message: "Image hint must be at least 2 characters." }),
 })
@@ -53,7 +53,7 @@ export default function NewPropertyPage() {
       description: "",
       features: ["Swimming Pool", "Garden", "Secure Estate"],
       onShow: false,
-      agentId: 0,
+      agentIds: [],
       imageUrl: "https://placehold.co/300x200",
       imageHint: "modern house exterior",
     },
@@ -156,9 +156,51 @@ export default function NewPropertyPage() {
                             <FormItem><FormLabel>Image Hint</FormLabel><FormControl><Input placeholder="e.g. modern house exterior" {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                     </div>
-                     <FormField control={form.control} name="agentId" render={({ field }) => (
-                        <FormItem><FormLabel>Assign Agent</FormLabel><Select onValueChange={(value) => field.onChange(parseInt(value))}><FormControl><SelectTrigger><SelectValue placeholder="Select an agent to assign" /></SelectTrigger></FormControl><SelectContent>{agentsData.map(agent => <SelectItem key={agent.id} value={agent.id.toString()}>{agent.name}</SelectItem>)}</SelectContent></Select><FormMessage /></FormItem>
-                    )} />
+                    <FormField
+                      control={form.control}
+                      name="agentIds"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Assign Agent(s)</FormLabel>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                            {agentsData.map((agent) => (
+                              <FormField
+                                key={agent.id}
+                                control={form.control}
+                                name="agentIds"
+                                render={({ field }) => {
+                                  return (
+                                    <FormItem
+                                      key={agent.id}
+                                      className="flex flex-row items-start space-x-3 space-y-0"
+                                    >
+                                      <FormControl>
+                                        <Checkbox
+                                          checked={field.value?.includes(agent.id)}
+                                          onCheckedChange={(checked) => {
+                                            return checked
+                                              ? field.onChange([...(field.value || []), agent.id])
+                                              : field.onChange(
+                                                  field.value?.filter(
+                                                    (value) => value !== agent.id
+                                                  )
+                                                )
+                                          }}
+                                        />
+                                      </FormControl>
+                                      <FormLabel className="font-normal">
+                                        {agent.name}
+                                      </FormLabel>
+                                    </FormItem>
+                                  )
+                                }}
+                              />
+                            ))}
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                 </div>
 
                 {/* Other */}

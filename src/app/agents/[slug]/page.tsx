@@ -69,7 +69,7 @@ export default function AgentProfilePage({ params }: { params: { slug: string } 
 
   // In a real app, you'd likely have a mapping of agents to properties.
   // For this demo, we'll just assign a few active properties to the main agent for display.
-  const agentProperties = allProperties.filter(p => p.agentId === agent.id && p.status !== 'sold');
+  const agentProperties = allProperties.filter(p => p.agentIds.includes(agent.id) && p.status !== 'sold');
 
   return (
     <div className="bg-background">

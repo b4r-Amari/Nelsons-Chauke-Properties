@@ -78,7 +78,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
     notFound();
   }
   
-  const agent = agents.find(a => a.id === property.agentId)!;
+  const propertyAgents = agents.filter(a => property.agentIds.includes(a.id));
 
   const formatPrice = (price: number) => {
     const isRental = property.status === 'to-let';
@@ -237,7 +237,9 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           {/* Right Column: Enquiry and Agent */}
           <aside className="lg:col-span-1">
             <div className="sticky top-24 space-y-8">
-              {agent && <AgentCard agent={agent} />}
+              {propertyAgents.map(agent => (
+                <AgentCard key={agent.id} agent={agent} />
+              ))}
               <EnquiryForm />
             </div>
           </aside>

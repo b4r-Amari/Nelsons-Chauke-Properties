@@ -19,7 +19,7 @@
     "features": ["Swimming Pool", "Landscaped Garden", "Double Garage", "Secure Estate", "Covered Patio", "Gourmet Kitchen", "Close to Sandton City"],
     "yearBuilt": 2018,
     "onShow": true,
-    "agentId": 1
+    "agentIds": [1, 4]
   },
   {
     "id": 2,
@@ -39,7 +39,7 @@
     "isFavorite": false,
     "features": ["Uninterrupted Sea View", "Large Balcony", "24/7 Manned Security", "2 Underground Parking Bays", "Walking distance to Promenade"],
     "yearBuilt": 2020,
-    "agentId": 1
+    "agentIds": [3]
   },
   {
     "id": 3,
@@ -59,7 +59,7 @@
     "isFavorite": false,
     "features": ["Communal Pool", "Residents' Gym", "Direct Beach Access", "Holiday Letting Potential", "Walk to restaurants"],
     "yearBuilt": 2019,
-    "agentId": 1
+    "agentIds": [2]
   },
   {
     "id": 4,
@@ -80,7 +80,7 @@
     "features": ["Private Vineyard", "Wine Cellar", "Infinity Pool", "Helipad", "Panoramic Views", "High Security"],
     "yearBuilt": 2015,
     "onShow": true,
-    "agentId": 1
+    "agentIds": [1, 4]
   },
   {
     "id": 5,
@@ -100,7 +100,7 @@
     "isFavorite": false,
     "features": ["Large Mature Garden", "Borehole Irrigation", "Mountain Views", "Swimming Pool", "Close to Top Schools"],
     "yearBuilt": 1998,
-    "agentId": 1
+    "agentIds": [3]
   },
   {
     "id": 6,
@@ -121,7 +121,7 @@
     "features": ["Golf Course Access", "Clubhouse", "24/7 Security", "Tennis Courts", "Walking Trails", "Family-friendly"],
     "yearBuilt": 2005,
     "onShow": true,
-    "agentId": 1
+    "agentIds": [2, 5]
   },
   {
     "id": 7,
@@ -141,7 +141,7 @@
     "isFavorite": false,
     "features": ["Covered Braai Area", "Established Garden", "Quiet Street", "Double Garage", "Close to schools and amenities"],
     "yearBuilt": 1995,
-    "agentId": 2
+    "agentIds": [2]
   },
   {
     "id": 8,
@@ -161,7 +161,7 @@
     "isFavorite": true,
     "features": ["Rooftop Bar Access", "Surrounded by Art Galleries", "High Ceilings", "Industrial Finishes", "Vibrant Nightlife"],
     "yearBuilt": 2012,
-    "agentId": 3
+    "agentIds": [3]
   },
   {
     "id": 9,
@@ -181,7 +181,7 @@
     "isFavorite": false,
     "features": ["City Views", "Secure Parking", "Modern Finishes", "Prime Location", "High Rental Demand"],
     "yearBuilt": 2017,
-    "agentId": 3
+    "agentIds": [3]
   },
   {
     "id": 10,
@@ -201,7 +201,7 @@
     "isFavorite": false,
     "features": ["Simbithi Eco Estate", "Community Centre with Pool", "Catch and Release Fishing", "Nature Trails", "High Security"],
     "yearBuilt": 2016,
-    "agentId": 2
+    "agentIds": [2, 6]
   },
   {
     "id": 11,
@@ -221,7 +221,7 @@
     "isFavorite": true,
     "features": ["Gourmet Kitchen", "Walk-in Wine Cellar", "Separate Guest Cottage", "Swimming Pool", "Walk to Main Road"],
     "yearBuilt": 2010,
-    "agentId": 1
+    "agentIds": [1]
   },
   {
     "id": 12,
@@ -241,7 +241,7 @@
     "isFavorite": false,
     "features": ["Equestrian Facilities", "Private Cinema", "Smart Home Automation", "1-Hectare Stand", "Top Security"],
     "yearBuilt": 2018,
-    "agentId": 2
+    "agentIds": [4]
   },
   {
     "id": 13,
@@ -261,7 +261,7 @@
     "isFavorite": false,
     "features": ["Stadium Views", "Communal Gym", "Walking distance to V&A Waterfront", "Secure Parking", "Modern building"],
     "yearBuilt": 2014,
-    "agentId": 3
+    "agentIds": [3]
   },
   {
     "id": 14,
@@ -282,7 +282,7 @@
     "features": ["Private Jetty", "Direct Canal Access", "Thesen Islands Security", "Waterfront Living", "Close to Knysna Waterfront"],
     "yearBuilt": 2008,
     "onShow": true,
-    "agentId": 1
+    "agentIds": [1, 6]
   },
   {
     "id": 15,
@@ -302,7 +302,7 @@
     "isFavorite": false,
     "features": ["Tennis Court", "Borehole", "Staff Quarters", "Large Stand", "Boomed-off Area", "Swimming Pool"],
     "yearBuilt": 1992,
-    "agentId": 2
+    "agentIds": [2, 5]
   },
   {
     "id": 16,
@@ -322,7 +322,7 @@
     "isFavorite": false,
     "features": ["Golf Membership Included", "On-site Spa", "Spectacular Mountain Views", "Clubhouse and Restaurants", "High Security"],
     "yearBuilt": 2011,
-    "agentId": 1
+    "agentIds": [1]
   },
   {
     "id": 17,
@@ -342,7 +342,7 @@
     "isFavorite": false,
     "features": ["Concierge Service", "Standby Generator", "Direct Gautrain Access", "Walk to Rosebank Mall", "Modern Finishes"],
     "yearBuilt": 2021,
-    "agentId": 3
+    "agentIds": [3]
   },
   {
     "id": 18,
@@ -363,7 +363,7 @@
     "features": ["Prime Sea Views", "Close to the beach", "World-class Whale Watching", "Cliff Path Access", "Deck with Braai"],
     "yearBuilt": 2002,
     "onShow": true,
-    "agentId": 1
+    "agentIds": [1, 6]
   },
   {
     "id": 19,
@@ -383,7 +383,7 @@
     "isFavorite": true,
     "features": ["Infinity Pool", "Unbeatable Sunset Views", "Home Cinema", "Glass Elevator", "Prime Camps Bay Location"],
     "yearBuilt": 2019,
-    "agentId": 1
+    "agentIds": [1, 4]
   },
   {
     "id": 20,
@@ -403,7 +403,7 @@
     "isFavorite": false,
     "features": ["24/7 Precinct Security", "European-style Piazza", "Integrated Living", "Fine Dining and Retail", "Secure underground parking"],
     "yearBuilt": 2013,
-    "agentId": 3
+    "agentIds": [5]
   },
   {
     "id": 21,
@@ -423,7 +423,7 @@
     "isFavorite": false,
     "features": ["Polo Fields", "On-site Vineyards", "Wellness Centre", "Top Security", "Multiple Restaurants", "Jack Nicklaus Golf Course"],
     "yearBuilt": 2017,
-    "agentId": 1
+    "agentIds": [1]
   },
   {
     "id": 22,
@@ -443,7 +443,7 @@
     "isFavorite": false,
     "features": ["Clubhouse with Pool", "Tennis Courts", "Fishing Dams", "Secure Estate", "Close to Fourways Mall"],
     "yearBuilt": 2006,
-    "agentId": 2
+    "agentIds": [3]
   },
   {
     "id": 23,
@@ -463,7 +463,7 @@
     "isFavorite": false,
     "features": ["3 Championship Golf Courses", "Luxury Spa", "Multiple Restaurants", "Secure Estate", "Garden Route Lifestyle"],
     "yearBuilt": 2009,
-    "agentId": 1
+    "agentIds": [6]
   },
   {
     "id": 24,
@@ -483,7 +483,7 @@
     "isFavorite": false,
     "features": ["Industrial Chic Design", "Design District Location", "Next to Old Biscuit Mill Market", "Close to CBD", "Secure Building"],
     "yearBuilt": 2011,
-    "agentId": 3
+    "agentIds": [3]
   },
   {
     "id": 25,
@@ -503,7 +503,7 @@
     "isFavorite": true,
     "features": ["Panoramic Johannesburg Views", "Indoor Swimming Pool", "High Security Area", "Home Bar", "Staff Quarters"],
     "yearBuilt": 2013,
-    "agentId": 2
+    "agentIds": [2, 4]
   },
   {
     "id": 26,
@@ -523,7 +523,7 @@
     "isFavorite": true,
     "features": ["Direct Beach Access", "Swimming Pool", "Multiple Decks", "Uninterrupted Sea Views", "Prime Location"],
     "yearBuilt": 2016,
-    "agentId": 1
+    "agentIds": [1, 6]
   },
   {
     "id": 27,
@@ -543,7 +543,7 @@
     "isFavorite": false,
     "features": ["Access to Hotel Amenities", "Direct Canal Walk Access", "Conference Facilities", "High Security", "Modern Finishes"],
     "yearBuilt": 2010,
-    "agentId": 3
+    "agentIds": [5]
   },
   {
     "id": 28,
@@ -563,7 +563,7 @@
     "isFavorite": false,
     "features": ["Hartbeespoort Dam Views", "Boating Club", "Jack Nicklaus Golf Course", "Clubhouse", "Secure Estate"],
     "yearBuilt": 2007,
-    "agentId": 2
+    "agentIds": [2]
   },
   {
     "id": 29,
@@ -583,7 +583,7 @@
     "isFavorite": false,
     "features": ["Beautiful Mountain Views", "Separate Cottage", "Large Plot with Pool", "Quiet and Secure Area", "Double Garage"],
     "yearBuilt": 2000,
-    "agentId": 1
+    "agentIds": [1]
   },
   {
     "id": 30,
@@ -603,7 +603,7 @@
     "isFavorite": true,
     "features": ["Lush Forest Views", "Private Pool and Deck", "Full Resort Access", "On-site Spa and Restaurants", "Direct Beach Access"],
     "yearBuilt": 2014,
-    "agentId": 2
+    "agentIds": [2, 6]
   },
   {
     "id": 31,
@@ -623,7 +623,7 @@
     "isFavorite": false,
     "features": ["Adjoins Nature Reserve", "Clubhouse with amenities", "Walking and Biking Trails", "High Security", "Family Park"],
     "yearBuilt": 2010,
-    "agentId": 2
+    "agentIds": [5]
   },
   {
     "id": 32,
@@ -643,7 +643,7 @@
     "isFavorite": false,
     "features": ["Concierge Service", "On-site Restaurant", "Swimming Pool", "Gym", "Close to Sandton CBD"],
     "yearBuilt": 2022,
-    "agentId": 3
+    "agentIds": [3]
   },
   {
     "id": 33,
@@ -663,7 +663,7 @@
     "isFavorite": true,
     "features": ["Iconic Table Mountain View", "Direct Beach Access", "Prime Kite Surfing Location", "Large entertainment patio", "Guest Suite"],
     "yearBuilt": 2005,
-    "agentId": 1
+    "agentIds": [1, 6]
   },
   {
     "id": 34,
@@ -683,7 +683,7 @@
     "isFavorite": false,
     "features": ["Private Nature Reserve", "Hiking/Biking Trails", "High Security", "Free-roaming game", "Modern architectural design"],
     "yearBuilt": 2012,
-    "agentId": 2
+    "agentIds": [2, 5]
   },
   {
     "id": 35,
@@ -703,7 +703,7 @@
     "isFavorite": false,
     "features": ["Penthouse Apartment", "Rooftop Pool", "Private Spa", "Concierge", "Spectacular Views"],
     "yearBuilt": 2011,
-    "agentId": 1
+    "agentIds": [4]
   },
   {
     "id": 36,
@@ -723,7 +723,7 @@
     "isFavorite": false,
     "features": ["Prestigious Embassy Suburb", "High Security Complex", "Private Garden", "Modern Finishes", "Close to Pretoria Country Club"],
     "yearBuilt": 2015,
-    "agentId": 2
+    "agentIds": [2]
   },
   {
     "id": 37,
@@ -743,7 +743,7 @@
     "isFavorite": false,
     "features": ["Close to Top Schools", "Established Garden", "Swimming Pool", "Prestigious Area", "Double Garage"],
     "yearBuilt": 1988,
-    "agentId": 1
+    "agentIds": [1]
   },
   {
     "id": 38,
@@ -763,7 +763,7 @@
     "isFavorite": false,
     "features": ["Canal and Harbour Views", "24/7 Security", "Close to uShaka Marine World", "Waterfront Promenade", "Secure Parking"],
     "yearBuilt": 2018,
-    "agentId": 3
+    "agentIds": [3]
   },
   {
     "id": 39,
@@ -783,7 +783,7 @@
     "isFavorite": false,
     "features": ["Beautifully Renovated", "Original Pressed Ceilings", "Walk to Restaurants and Shops", "Vibrant Atmosphere", "Private Garden"],
     "yearBuilt": 1955,
-    "agentId": 2
+    "agentIds": [2]
   },
   {
     "id": 40,
@@ -803,7 +803,7 @@
     "isFavorite": true,
     "features": ["Wind-Free Location", "Private Home Cinema", "Fully-Equipped Gym", "Glass Elevator", "Infinity Pool", "Unrivaled Sea Views"],
     "yearBuilt": 2020,
-    "agentId": 1
+    "agentIds": [1, 4]
   },
   {
     "id": 41,
@@ -823,7 +823,7 @@
     "isFavorite": false,
     "features": ["Lush Tropical Garden", "Golf Course Access", "Distant Sea Views", "Large Patio", "Secure and Peaceful"],
     "yearBuilt": 1999,
-    "agentId": 2
+    "agentIds": [6]
   },
   {
     "id": 42,
@@ -843,7 +843,7 @@
     "isFavorite": false,
     "features": ["Fine-Dining Restaurant", "State-of-the-art Gym", "Swimming Pool", "Concierge Service", "Prime Location"],
     "yearBuilt": 2019,
-    "agentId": 3
+    "agentIds": [3]
   },
   {
     "id": 43,
@@ -863,7 +863,7 @@
     "isFavorite": false,
     "features": ["High Security Complex", "Private Pool", "Exclusive Suburb", "Modern Interiors", "Close to Hyde Park Corner"],
     "yearBuilt": 2016,
-    "agentId": 1
+    "agentIds": [1]
   },
   {
     "id": 44,
@@ -883,7 +883,7 @@
     "isFavorite": true,
     "features": ["Floodlit Tennis Court", "Direct Mountain Views", "Separate Guest House", "Library & Wine Cellar", "One-Acre Estate"],
     "yearBuilt": 2003,
-    "agentId": 1
+    "agentIds": [1, 4]
   },
   {
     "id": 45,
@@ -903,7 +903,7 @@
     "isFavorite": false,
     "features": ["Full Lifestyle Centre", "Camelot Spa", "Private Cinema", "La-Pizzeria", "SMEG Appliances Included"],
     "yearBuilt": 2020,
-    "agentId": 3
+    "agentIds": [3]
   },
   {
     "id": 46,
@@ -923,7 +923,7 @@
     "isFavorite": false,
     "features": ["Gary Player Designed Golf Course", "Lagoon Access for Watersports", "Fynbos Walking Trails", "Clubhouse", "Secure Estate"],
     "yearBuilt": 2011,
-    "agentId": 1
+    "agentIds": [6]
   },
   {
     "id": 47,
@@ -943,7 +943,7 @@
     "isFavorite": false,
     "features": ["Large Stand", "Country Lifestyle", "On-site Cornwall Hill College", "High Security", "River frontage"],
     "yearBuilt": 2004,
-    "agentId": 2
+    "agentIds": [5]
   },
   {
     "id": 48,
@@ -963,7 +963,7 @@
     "isFavorite": false,
     "features": ["Direct Mountain Views", "Kirstenbosch Nearby", "Secure Gated Complex", "Close to UCT", "Private Courtyard"],
     "yearBuilt": 1997,
-    "agentId": 1
+    "agentIds": [1]
   },
   {
     "id": 49,
@@ -983,7 +983,7 @@
     "isFavorite": true,
     "features": ["South Africa's First Green City", "Rooftop Pool", "Retail and Dining On-site", "Sun Casino Nearby", "High-speed fibre"],
     "yearBuilt": 2018,
-    "agentId": 3
+    "agentIds": [5]
   },
   {
     "id": 50,
@@ -1003,6 +1003,6 @@
     "isFavorite": true,
     "features": ["Direct Access to Clifton 4th Beach", "Unrivaled, Exclusive Location", "Spectacular Sunset Views", "Sheltered from the wind", "Highly Secure"],
     "yearBuilt": 1985,
-    "agentId": 1
+    "agentIds": [1, 4]
   }
 ]

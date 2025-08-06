@@ -29,7 +29,7 @@ const properties: Property[] = propertiesData;
 
 const agentsWithPropertyCount: Agent[] = agents.map(agent => ({
     ...agent,
-    propertyCount: properties.filter((p: Property) => p.agentId === agent.id).length
+    propertyCount: properties.filter((p: Property) => p.agentIds.includes(agent.id)).length
 }));
 
 export default function AdminAgentsPage() {
