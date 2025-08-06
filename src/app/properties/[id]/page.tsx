@@ -154,8 +154,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateListingSchema) }}
         />
-      <div className="container py-12 md:py-16">
-        <div className="mb-8">
+      <div className="container py-8 md:py-16">
+        <div className="mb-6">
             <BackButton>Back to Listings</BackButton>
         </div>
         <div className="grid lg:grid-cols-3 gap-12">
@@ -165,44 +165,46 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             
             <article className="mt-8">
               <header className="mb-6">
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                     <div>
-                        <h1 className="text-4xl font-bold font-headline text-brand-deep">{property.address}</h1>
-                        <p className="text-lg text-muted-foreground mt-1 flex items-center gap-2">
+                        <h1 className="text-3xl md:text-4xl font-bold font-headline text-brand-deep">{property.address}</h1>
+                        <p className="text-md md:text-lg text-muted-foreground mt-1 flex items-center gap-2">
                             <MapPin className="h-5 w-5 text-brand-bright" />
                             {property.location}
                         </p>
                     </div>
-                    <div className="text-right flex-shrink-0 ml-4">
+                    <div className="text-left sm:text-right flex-shrink-0">
                         <p className="text-3xl font-bold text-brand-bright">{formatPrice(property.price)}</p>
-                        {property.onShow && <Badge className="mt-2 bg-brand-bright text-white border-none">On Show</Badge>}
-                        {property.status === 'sold' && <Badge variant="destructive" className="mt-2">SOLD</Badge>}
+                        <div className="flex gap-2 mt-2">
+                            {property.onShow && <Badge className="bg-brand-bright text-white border-none">On Show</Badge>}
+                            {property.status === 'sold' && <Badge variant="destructive">SOLD</Badge>}
+                        </div>
                     </div>
                 </div>
               </header>
 
               <Separator className="my-8" />
               
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-center border rounded-lg p-6 bg-card">
-                 <div className="flex flex-col items-center gap-2">
-                    <BedDouble className="h-8 w-8 text-brand-bright"/>
-                    <span className="font-semibold text-lg">{property.beds}</span>
-                    <span className="text-sm text-muted-foreground">Bedrooms</span>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center border rounded-lg p-4 md:p-6 bg-card">
+                 <div className="flex flex-col items-center gap-1 md:gap-2">
+                    <BedDouble className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
+                    <span className="font-semibold text-md md:text-lg">{property.beds}</span>
+                    <span className="text-xs md:text-sm text-muted-foreground">Bedrooms</span>
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                    <Bath className="h-8 w-8 text-brand-bright"/>
-                    <span className="font-semibold text-lg">{property.baths}</span>
-                    <span className="text-sm text-muted-foreground">Bathrooms</span>
+                <div className="flex flex-col items-center gap-1 md:gap-2">
+                    <Bath className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
+                    <span className="font-semibold text-md md:text-lg">{property.baths}</span>
+                    <span className="text-xs md:text-sm text-muted-foreground">Bathrooms</span>
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                    <Home className="h-8 w-8 text-brand-bright"/>
-                    <span className="font-semibold text-lg">{property.sqft} m²</span>
-                     <span className="text-sm text-muted-foreground">House Size</span>
+                <div className="flex flex-col items-center gap-1 md:gap-2">
+                    <Home className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
+                    <span className="font-semibold text-md md:text-lg">{property.sqft} m²</span>
+                     <span className="text-xs md:text-sm text-muted-foreground">House Size</span>
                 </div>
-                 <div className="flex flex-col items-center gap-2">
-                    <LandPlot className="h-8 w-8 text-brand-bright"/>
-                    <span className="font-semibold text-lg">{property.erfSize} m²</span>
-                    <span className="text-sm text-muted-foreground">Erf Size</span>
+                 <div className="flex flex-col items-center gap-1 md:gap-2">
+                    <LandPlot className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
+                    <span className="font-semibold text-md md:text-lg">{property.erfSize} m²</span>
+                    <span className="text-xs md:text-sm text-muted-foreground">Erf Size</span>
                 </div>
               </div>
 
@@ -219,10 +221,10 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
 
               <section>
                 <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Features</h2>
-                 <ul className="grid grid-cols-2 gap-x-8 gap-y-4">
+                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
                   {property.features.map((feature, index) => (
                     <li key={index} className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600" />
+                      <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
                       <span className="text-muted-foreground">{feature}</span>
                     </li>
                   ))}

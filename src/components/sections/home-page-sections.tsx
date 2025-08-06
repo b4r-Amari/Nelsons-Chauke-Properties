@@ -34,7 +34,7 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center text-white">
+    <section className="relative h-[70vh] min-h-[550px] flex items-center justify-center text-white">
       <Image
         src={bannerImage}
         alt="A beautiful, modern home interior, representing the quality properties offered by NC Properties."
@@ -53,10 +53,10 @@ export function HeroSection() {
         </p>
         <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-black/20 backdrop-blur-md border border-white/20">
           <CardContent className="p-4">
-            <form className="grid md:grid-cols-12 gap-4 items-center">
+            <form className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
               <div className="md:col-span-4">
                 <Select defaultValue="for-sale">
-                  <SelectTrigger className="h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
+                  <SelectTrigger className="h-12 md:h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
                     <SelectValue placeholder="For Sale" />
                   </SelectTrigger>
                   <SelectContent>
@@ -69,11 +69,11 @@ export function HeroSection() {
                 <Input
                   type="text"
                   placeholder="Enter city, suburb or area"
-                  className="h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 placeholder:text-gray-600"
+                  className="h-12 md:h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 placeholder:text-gray-600"
                 />
               </div>
               <div className="md:col-span-2">
-                <Button type="submit" size="lg" className="w-full h-14 bg-brand-bright hover:bg-brand-deep transition-colors duration-300 text-lg">
+                <Button type="submit" size="lg" className="w-full h-12 md:h-14 bg-brand-bright hover:bg-brand-deep transition-colors duration-300 text-lg">
                   <Search className="mr-2 h-6 w-6" />
                   Search
                 </Button>
@@ -169,7 +169,7 @@ function PropertyAlertForm() {
 function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, href }: { id?:string, title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string }) {
   const isAlertForm = id === 'property-alerts';
 
-  return (
+  const CardBody = (
     <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card h-full group">
       <CardContent className="p-6 flex-grow flex flex-col items-center">
         <Image src={imageSrc} data-ai-hint={imageHint} alt={`${title} - NC Properties feature`} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
@@ -185,6 +185,8 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, h
       </CardContent>
     </Card>
   );
+
+  return href && !isAlertForm ? <Link href={href} className="block h-full group">{CardBody}</Link> : CardBody;
 }
 
 export function CtaTabsSection() {
@@ -291,6 +293,3 @@ export function NewsletterSection() {
     </section>
   );
 }
-
-    
-    

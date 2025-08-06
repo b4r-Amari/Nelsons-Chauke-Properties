@@ -110,7 +110,7 @@ export default function NewPropertyPage() {
                 {/* Property Specs */}
                 <div className="space-y-4 p-4 border rounded-lg">
                     <h3 className="text-lg font-semibold font-headline">Property Specifications</h3>
-                    <div className="grid md:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                          <FormField control={form.control} name="beds" render={({ field }) => (
                             <FormItem><FormLabel>Bedrooms</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                          )} />

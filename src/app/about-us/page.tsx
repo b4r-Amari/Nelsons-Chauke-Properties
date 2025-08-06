@@ -86,12 +86,12 @@ export default function AboutUsPage() {
           <div className="container">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">Our Journey</h2>
             <div className="relative">
-              <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-brand-bright/30" aria-hidden="true"></div>
+              <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-brand-bright/30 md:left-1/2 md:-translate-x-1/2" aria-hidden="true"></div>
               {timelineEvents.map((event, index) => (
-                <div key={index} className="relative mb-12">
-                  <div className="flex items-center" style={{ flexDirection: index % 2 === 0 ? 'row' : 'row-reverse' }}>
-                    <div className="w-1/2 px-8">
-                      <Card className="shadow-lg">
+                <div key={index} className="relative mb-12 group">
+                  <div className="flex items-center md:group-even:flex-row-reverse">
+                    <div className="md:w-1/2 md:pr-8">
+                       <Card className="shadow-lg md:group-even:text-left md:text-right">
                         <CardHeader>
                           <p className="text-sm text-brand-bright font-bold">{event.year}</p>
                           <CardTitle className="font-headline">{event.title}</CardTitle>
@@ -104,7 +104,7 @@ export default function AboutUsPage() {
                     <div className="absolute left-1/2 -translate-x-1/2 w-8 h-8 bg-background rounded-full border-4 border-brand-bright flex items-center justify-center" aria-hidden="true">
                       <div className="w-3 h-3 bg-brand-bright rounded-full"></div>
                     </div>
-                    <div className="w-1/2"></div>
+                    <div className="md:w-1/2"></div>
                   </div>
                 </div>
               ))}

@@ -5,6 +5,9 @@ import { useState } from "react";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import propertiesData from '@/data/properties.json';
+import { Button } from "../ui/button";
+import { SlidersHorizontal } from "lucide-react";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 
 interface PropertyListingsProps {
   status: 'for-sale' | 'on-show';
@@ -20,8 +23,24 @@ export function PropertyListings({ status }: PropertyListingsProps) {
   return (
     <section className="py-16 bg-background">
       <div className="container">
+        <div className="lg:hidden mb-6">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" className="w-full">
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                Filter Properties
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0">
+                <PropertyFilter 
+                  properties={initialProperties} 
+                  onFilterChange={setFilteredProperties}
+                />
+            </SheetContent>
+          </Sheet>
+        </div>
         <div className="grid lg:grid-cols-4 gap-8">
-          <aside className="lg:col-span-1">
+          <aside className="lg:col-span-1 hidden lg:block">
             <PropertyFilter 
               properties={initialProperties} 
               onFilterChange={setFilteredProperties}
@@ -29,7 +48,7 @@ export function PropertyListings({ status }: PropertyListingsProps) {
           </aside>
           <main className="lg:col-span-3">
             {filteredProperties.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProperties.map((prop) => (
                   <PropertyCard key={prop.id} property={prop} />
                 ))}

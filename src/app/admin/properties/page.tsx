@@ -125,107 +125,110 @@ export default function AdminPropertiesPage() {
           <CardDescription>Here you can view, edit, assign, and delete properties.</CardDescription>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>
-                     <Button variant="ghost" onClick={() => requestSort('id')}>
-                        ID
-                        {getSortIndicator('id')}
-                    </Button>
-                </TableHead>
-                <TableHead>
-                    <Button variant="ghost" onClick={() => requestSort('address')}>
-                        Address
-                        {getSortIndicator('address')}
-                    </Button>
-                </TableHead>
-                <TableHead className="hidden lg:table-cell">Agent</TableHead>
-                <TableHead className="hidden sm:table-cell">
-                     <Button variant="ghost" onClick={() => requestSort('price')}>
-                        Price
-                        {getSortIndicator('price')}
-                    </Button>
-                </TableHead>
-                <TableHead>
-                     <Button variant="ghost" onClick={() => requestSort('status')}>
-                        Status
-                        {getSortIndicator('status')}
-                    </Button>
-                </TableHead>
-                <TableHead><span className="sr-only">Actions</span></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentProperties.map((property) => {
-                const agent = getAgentById(property.agentId);
-                return (
-                  <TableRow key={property.id}>
-                    <TableCell className="font-mono text-xs">{property.id}</TableCell>
-                    <TableCell className="font-medium">{property.address}</TableCell>
-                    <TableCell className="hidden lg:table-cell">
-                      {agent ? (
-                        <div className="flex items-center gap-2">
-                           <Avatar className="h-8 w-8">
-                                <AvatarImage src={agent.imageUrl} alt={agent.name} />
-                                <AvatarFallback>{agent.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                           <span>{agent.name}</span>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">Unassigned</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="hidden sm:table-cell">{formatPrice(property.price, property.status)}</TableCell>
-                    <TableCell>
-                      <Badge 
-                        variant={property.status === 'sold' ? 'destructive' : 'default'}
-                        className={cn(
-                          property.status === 'for-sale' && 'bg-green-600',
-                          property.status === 'to-let' && 'bg-blue-600'
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>
+                      <Button variant="ghost" onClick={() => requestSort('id')}>
+                          ID
+                          {getSortIndicator('id')}
+                      </Button>
+                  </TableHead>
+                  <TableHead>
+                      <Button variant="ghost" onClick={() => requestSort('address')}>
+                          Address
+                          {getSortIndicator('address')}
+                      </Button>
+                  </TableHead>
+                  <TableHead className="hidden lg:table-cell">Agent</TableHead>
+                  <TableHead className="hidden sm:table-cell">
+                      <Button variant="ghost" onClick={() => requestSort('price')}>
+                          Price
+                          {getSortIndicator('price')}
+                      </Button>
+                  </TableHead>
+                  <TableHead>
+                      <Button variant="ghost" onClick={() => requestSort('status')}>
+                          Status
+                          {getSortIndicator('status')}
+                      </Button>
+                  </TableHead>
+                  <TableHead><span className="sr-only">Actions</span></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentProperties.map((property) => {
+                  const agent = getAgentById(property.agentId);
+                  return (
+                    <TableRow key={property.id}>
+                      <TableCell className="font-mono text-xs">{property.id}</TableCell>
+                      <TableCell className="font-medium">{property.address}</TableCell>
+                      <TableCell className="hidden lg:table-cell">
+                        {agent ? (
+                          <div className="flex items-center gap-2">
+                            <Avatar className="h-8 w-8">
+                                  <AvatarImage src={agent.imageUrl} alt={agent.name} />
+                                  <AvatarFallback>{agent.name.charAt(0)}</AvatarFallback>
+                              </Avatar>
+                            <span>{agent.name}</span>
+                          </div>
+                        ) : (
+                          <span className="text-muted-foreground">Unassigned</span>
                         )}
-                      >
-                        {property.status.replace('-', ' ')}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                       <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button aria-haspopup="true" size="icon" variant="ghost">
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Toggle menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>
-                              <Pencil className="mr-2 h-4 w-4" /> Edit
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">{formatPrice(property.price, property.status)}</TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={property.status === 'sold' ? 'destructive' : 'default'}
+                          className={cn(
+                            'whitespace-nowrap',
+                            property.status === 'for-sale' && 'bg-green-600',
+                            property.status === 'to-let' && 'bg-blue-600'
+                          )}
+                        >
+                          {property.status.replace('-', ' ')}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button aria-haspopup="true" size="icon" variant="ghost">
+                                <MoreHorizontal className="h-4 w-4" />
+                                <span className="sr-only">Toggle menu</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem>
+                                <Pencil className="mr-2 h-4 w-4" /> Edit
+                                </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete
                               </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Trash2 className="mr-2 h-4 w-4" /> Delete
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                             <AssignAgentDialog property={property} onAgentAssigned={handleAgentAssigned} />
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                )
-            })}
-            </TableBody>
-          </Table>
+                              <DropdownMenuSeparator />
+                              <AssignAgentDialog property={property} onAgentAssigned={handleAgentAssigned} />
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  )
+              })}
+              </TableBody>
+            </Table>
+          </div>
         </CardContent>
-        <CardFooter>
-            <div className="text-xs text-muted-foreground">
+        <CardFooter className="flex-col sm:flex-row items-center">
+            <div className="text-xs text-muted-foreground mb-4 sm:mb-0">
                 Showing <strong>{indexOfFirstProperty + 1}-{Math.min(indexOfLastProperty, propertyList.length)}</strong> of <strong>{propertyList.length}</strong> properties
             </div>
             <div className="flex items-center space-x-2 ml-auto">
                 <Button variant="outline" size="sm" onClick={handlePrevPage} disabled={currentPage === 1}>
                     <ChevronLeft className="h-4 w-4" />
-                    Previous
+                    <span className="hidden sm:inline">Previous</span>
                 </Button>
                 <Button variant="outline" size="sm" onClick={handleNextPage} disabled={currentPage === totalPages}>
-                    Next
+                    <span className="hidden sm:inline">Next</span>
                     <ChevronRight className="h-4 w-4" />
                 </Button>
             </div>
