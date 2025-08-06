@@ -223,7 +223,7 @@ export function Header() {
                                       className={cn(
                                       "block rounded-md px-3 py-2 text-lg font-headline transition-colors w-full text-left",
                                       (pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href)))
-                                          ? "bg-brand-bright text-white"
+                                          ? "bg-muted text-foreground"
                                           : "hover:bg-muted"
                                       )}
                                   >
