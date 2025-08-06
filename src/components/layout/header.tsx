@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Menu, Heart, User, X, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
@@ -22,7 +22,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { logOut } from "@/lib/firebase/auth";
@@ -213,7 +212,7 @@ export function Header() {
                   <div className="p-4 flex justify-between items-center border-b border-border">
                     <Logo />
                      <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" aria-label="Close mobile menu" className="text-foreground hover:bg-white">
+                        <Button variant="ghost" size="icon" aria-label="Close mobile menu" className="text-foreground hover:bg-destructive hover:text-destructive-foreground">
                             <X className="h-8 w-8" />
                         </Button>
                     </SheetTrigger>
