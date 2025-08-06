@@ -25,6 +25,7 @@ type PropertyFilterProps = {
 
 const initialFilters = {
     location: "",
+    status: "any",
     propertyType: "any",
     minBeds: "any",
     minBaths: "any",
@@ -53,17 +54,21 @@ const initialFilters = {
 export function PropertyFilter({ properties, onFilterChange, isMobile = false }: PropertyFilterProps) {
   const searchParams = useSearchParams();
   const locationSearch = searchParams.get('location');
+  const statusSearch = searchParams.get('status');
 
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-  const [filters, setFilters] = useState({...initialFilters, location: locationSearch || ""});
+  const [filters, setFilters] = useState({...initialFilters, location: locationSearch || "", status: statusSearch || "any" });
   const [filteredCount, setFilteredCount] = useState(properties.length);
 
   const handleFilterChange = useCallback(() => {
     const filtered = properties.filter(p => {
-        const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, minParking, minFloorSize, maxFloorSize, minErfSize, maxErfSize, features, other } = filters;
+        const { location, status, propertyType, minBeds, minBaths, minPrice, maxPrice, minParking, minFloorSize, maxFloorSize, minErfSize, maxErfSize, features, other } = filters;
 
         // Text search
         if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
+        
+        // Status filter
+        if (status !== 'any' && p.status !== status) return false;
 
         // Selects
         if (propertyType !== 'any' && p.type !== propertyType) return false;
@@ -104,10 +109,10 @@ export function PropertyFilter({ properties, onFilterChange, isMobile = false }:
   useEffect(() => {
     handleFilterChange();
   }, [filters, handleFilterChange]);
-
+  
   useEffect(() => {
-    setFilters(prev => ({...prev, location: locationSearch || ""}));
-  }, [locationSearch]);
+    setFilters(prev => ({...prev, location: locationSearch || "", status: statusSearch || "any"}));
+  }, [locationSearch, statusSearch]);
   
   const handleInputChange = (field: string, value: string | number) => {
     setFilters(prev => ({ ...prev, [field]: value }));
@@ -153,6 +158,19 @@ export function PropertyFilter({ properties, onFilterChange, isMobile = false }:
             <div>
                 <Label htmlFor="location">Location</Label>
                 <Input id="location" placeholder="e.g. 'Cape Town'" value={filters.location} onChange={(e) => handleInputChange('location', e.target.value)} />
+            </div>
+            <div>
+                <Label htmlFor="listing-type">Listing Type</Label>
+                <Select value={filters.status} onValueChange={(value) => handleSelectChange('status', value)}>
+                <SelectTrigger id="listing-type">
+                    <SelectValue placeholder="Any" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="any">Any</SelectItem>
+                    <SelectItem value="for-sale">For Sale</SelectItem>
+                    <SelectItem value="to-let">To Let</SelectItem>
+                </SelectContent>
+                </Select>
             </div>
             <div>
                 <Label htmlFor="property-type">Property Type</Label>
@@ -306,7 +324,7 @@ export function PropertyFilter({ properties, onFilterChange, isMobile = false }:
         "flex-col gap-4 pt-6 border-t",
         isMobile && "sticky bottom-0 bg-background"
        )}>
-          <Button className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg">
+          <Button className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg" onClick={handleFilterChange}>
               <Search className="mr-2 h-5 w-5"/>
               Search {filteredCount} {filteredCount === 1 ? 'property' : 'properties'}
           </Button>

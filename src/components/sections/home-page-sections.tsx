@@ -55,17 +55,25 @@ export function HeroSection() {
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const basePath = searchStatus === 'to-let' ? '/properties/to-let' : '/properties';
-    const queryString = searchLocation ? `?location=${encodeURIComponent(searchLocation)}` : '';
-    router.push(`${basePath}${queryString}`);
+    const params = new URLSearchParams();
+    if(searchLocation) {
+        params.set('location', searchLocation);
+    }
+    if(searchStatus) {
+        params.set('status', searchStatus);
+    }
+    router.push(`/properties?${params.toString()}`);
   };
 
   const handleSelectLocation = (location: string) => {
     setSearchLocation(location);
     setIsPopoverOpen(false);
-    const basePath = searchStatus === 'to-let' ? '/properties/to-let' : '/properties';
-    const queryString = `?location=${encodeURIComponent(location)}`;
-    router.push(`${basePath}${queryString}`);
+    const params = new URLSearchParams();
+    params.set('location', location);
+    if (searchStatus) {
+      params.set('status', searchStatus);
+    }
+    router.push(`/properties?${params.toString()}`);
   }
 
   return (

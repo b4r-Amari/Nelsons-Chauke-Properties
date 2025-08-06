@@ -12,44 +12,33 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { ScrollArea } from "../ui/scroll-area";
 import { useSearchParams } from "next/navigation";
 
-interface PropertyListingsProps {
-  status: 'for-sale' | 'on-show' | 'to-let';
-}
+const allProperties: Property[] = (propertiesData as Property[]).filter(p => p.status !== 'sold');
 
-const allProperties: Property[] = (propertiesData as Property[]);
-
-export function PropertyListings({ status }: PropertyListingsProps) {
+export function PropertyListings() {
   const searchParams = useSearchParams();
   const locationSearch = searchParams.get('location');
+  const statusSearch = searchParams.get('status');
 
   const getInitialProperties = () => {
     let properties = allProperties;
-    if (status === 'for-sale') {
-      properties = properties.filter(p => p.status === 'for-sale');
-    } else if (status === 'to-let') {
-      properties = properties.filter(p => p.status === 'to-let');
-    } else if (status === 'on-show') {
-      properties = properties.filter(p => p.onShow && p.status !== 'sold');
-    }
 
-    if (locationSearch) {
-      return properties.filter(p => 
-        p.location.toLowerCase().includes(locationSearch.toLowerCase()) || 
-        p.address.toLowerCase().includes(locationSearch.toLowerCase())
-      );
+    if (locationSearch || statusSearch) {
+      return properties.filter(p => {
+        const locationMatch = locationSearch ? p.location.toLowerCase().includes(locationSearch.toLowerCase()) || p.address.toLowerCase().includes(locationSearch.toLowerCase()) : true;
+        const statusMatch = statusSearch ? p.status === statusSearch : true;
+        return locationMatch && statusMatch;
+      });
     }
     return properties;
   }
   
-  const [initialProperties, setInitialProperties] = useState(getInitialProperties());
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>(initialProperties);
+  const [initialProperties] = useState(allProperties);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>(getInitialProperties());
 
   useEffect(() => {
-    const newInitialProperties = getInitialProperties();
-    setInitialProperties(newInitialProperties);
-    setFilteredProperties(newInitialProperties);
+    setFilteredProperties(getInitialProperties());
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams, status]);
+  }, [searchParams]);
 
 
   return (
