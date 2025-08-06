@@ -2,13 +2,13 @@
 "use client";
 
 import Image from 'next/image';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Building, KeyRound, Handshake, Check, ChevronsUpDown } from 'lucide-react';
+import { Search, Building, KeyRound, Handshake } from 'lucide-react';
 import Link from 'next/link';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -16,11 +16,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
-import propertiesData from '@/data/properties.json';
-import { type Property } from '../shared/property-card';
-import { cn } from '@/lib/utils';
 import * as z from "zod";
 
 
@@ -35,40 +30,26 @@ export function HeroSection() {
   const [bannerImage, setBannerImage] = useState(heroBanners[0]);
   const [searchLocation, setSearchLocation] = useState('');
   const [searchStatus, setSearchStatus] = useState('for-sale');
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const router = useRouter();
 
-  const locations = useMemo(() => {
-    const allLocations = (propertiesData as Property[]).map(p => p.location);
-    return [...new Set(allLocations)];
-  }, []);
 
   useEffect(() => {
     const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
     setBannerImage(randomBanner);
   }, []);
   
-  const navigateToProperties = (location: string) => {
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
     const params = new URLSearchParams();
-    if (location) {
-      params.set('location', location);
+    if (searchLocation) {
+      params.set('location', searchLocation);
     }
     if (searchStatus) {
       params.set('status', searchStatus);
     }
     router.push(`/properties?${params.toString()}`);
-  }
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    navigateToProperties(searchLocation);
   };
 
-  const handleLocationSelect = (location: string) => {
-    setSearchLocation(location);
-    setIsPopoverOpen(false);
-    navigateToProperties(location);
-  };
 
   return (
     <section className="relative h-[70vh] min-h-[550px] flex items-center justify-center text-white">
@@ -103,46 +84,13 @@ export function HeroSection() {
                 </Select>
               </div>
               <div className="md:col-span-6">
-                 <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={isPopoverOpen}
-                      className="w-full justify-between h-12 md:h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 hover:bg-white"
-                    >
-                      {searchLocation
-                        ? locations.find((location) => location.toLowerCase() === searchLocation.toLowerCase())
-                        : "Enter city, suburb or area"}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
-                    <Command>
-                      <CommandInput placeholder="Search location..." onValueChange={setSearchLocation} />
-                      <CommandList>
-                        <CommandEmpty>No results found.</CommandEmpty>
-                        <CommandGroup>
-                          {locations.filter(loc => loc.toLowerCase().includes(searchLocation.toLowerCase())).map((location) => (
-                            <CommandItem
-                              key={location}
-                              value={location}
-                              onSelect={() => handleLocationSelect(location)}
-                            >
-                              <Check
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  searchLocation.toLowerCase() === location.toLowerCase() ? "opacity-100" : "opacity-0"
-                                )}
-                              />
-                              {location}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
+                <Input
+                  type="text"
+                  placeholder="Enter city, suburb or area"
+                  className="w-full h-12 md:h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0"
+                  value={searchLocation}
+                  onChange={(e) => setSearchLocation(e.target.value)}
+                />
               </div>
               <div className="md:col-span-2">
                 <Button type="submit" size="lg" className="w-full h-12 md:h-14 bg-brand-bright hover:bg-brand-deep transition-colors duration-300 text-lg">

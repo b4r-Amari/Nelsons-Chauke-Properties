@@ -92,7 +92,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                     <Button 
                       variant="ghost" 
                       className={cn(
-                        "group relative px-3 py-2 text-sm font-medium font-headline transition-colors hover:bg-transparent focus:bg-transparent",
+                        "group relative px-3 py-2 text-sm font-medium font-headline transition-colors",
                         isPropertiesActive ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright",
                         "focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                       )}
@@ -133,7 +133,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
             ))}
           </nav>
 
-        <div className="flex flex-1 items-center justify-end space-x-2 md:flex-initial">
+        <div className="flex items-center justify-end space-x-2">
            <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
