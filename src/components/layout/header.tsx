@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
 import { Menu, Heart, User, X, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
@@ -211,6 +211,7 @@ export function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[280px] bg-brand-deep text-white p-0">
+                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="p-4 flex justify-between items-center border-b border-white/10">
                     <Logo className="text-white" />
@@ -249,3 +250,5 @@ export function Header() {
     </header>
   );
 }
+
+    
