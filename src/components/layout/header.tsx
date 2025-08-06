@@ -22,7 +22,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { logOut } from "@/lib/firebase/auth";
@@ -74,7 +74,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
+      <div className="container flex h-20 items-center">
         <div className="flex items-center md:mr-6">
           <Logo />
         </div>
@@ -185,7 +185,7 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+             <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
               <DialogTrigger asChild>
                  <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
                     <User className="h-7 w-7" />
@@ -203,38 +203,38 @@ export function Header() {
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open mobile menu" className="ml-auto">
-                  <Menu className="h-8 w-8" />
+                <Button variant="ghost" size="icon" aria-label="Open mobile menu">
+                  <Menu className="h-7 w-7" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[280px] bg-background text-foreground p-0">
-                 <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
-                <div className="flex flex-col h-full">
-                  <div className="p-4 flex justify-between items-center border-b border-border">
-                    <Logo />
+               <SheetContent side="left" className="w-[280px] bg-background text-foreground p-0">
+                  <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+                  <div className="flex flex-col h-full">
+                      <div className="p-4 flex justify-between items-center border-b border-border">
+                          <Logo />
+                      </div>
+                      <nav className="flex-grow p-4" aria-label="Mobile Navigation">
+                          <ul className="space-y-2">
+                          {mobileNavLinks.map((link) => (
+                              <li key={link.href}>
+                                  <SheetClose asChild>
+                                  <Link
+                                      href={link.href}
+                                      className={cn(
+                                      "block rounded-md px-3 py-2 text-lg font-headline transition-colors w-full text-left",
+                                      (pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href)))
+                                          ? "bg-brand-bright text-white"
+                                          : "hover:bg-muted"
+                                      )}
+                                  >
+                                      {link.label}
+                                  </Link>
+                                  </SheetClose>
+                              </li>
+                          ))}
+                          </ul>
+                      </nav>
                   </div>
-                  <nav className="flex-grow p-4" aria-label="Mobile Navigation">
-                    <ul className="space-y-2">
-                      {mobileNavLinks.map((link) => (
-                        <li key={link.href}>
-                            <SheetClose asChild>
-                              <Link
-                                href={link.href}
-                                className={cn(
-                                  "block rounded-md px-3 py-2 text-lg font-headline transition-colors w-full text-left",
-                                   (pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href)))
-                                    ? "bg-brand-bright text-white"
-                                    : "hover:bg-muted"
-                                )}
-                              >
-                                {link.label}
-                              </Link>
-                            </SheetClose>
-                        </li>
-                      ))}
-                    </ul>
-                  </nav>
-                </div>
               </SheetContent>
             </Sheet>
           </div>
