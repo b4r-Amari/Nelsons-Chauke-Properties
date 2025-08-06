@@ -1,7 +1,7 @@
 
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle } from 'lucide-react';
+import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
 
 import propertiesData from '@/data/properties.json';
@@ -12,6 +12,8 @@ import { PropertyImageGallery } from '@/components/shared/property-image-gallery
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import agentsData from '@/data/agents.json';
+import { BackButton } from '@/components/shared/back-button';
+import Link from 'next/link';
 
 const properties: Property[] = propertiesData;
 const agents = agentsData;
@@ -153,6 +155,9 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateListingSchema) }}
         />
       <div className="container py-12 md:py-16">
+        <div className="mb-8">
+            <BackButton>Back to Listings</BackButton>
+        </div>
         <div className="grid lg:grid-cols-3 gap-12">
           {/* Left Column: Gallery and Details */}
           <main className="lg:col-span-2">
