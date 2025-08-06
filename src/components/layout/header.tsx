@@ -203,11 +203,11 @@ export function Header() {
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open mobile menu">
+                <Button variant="ghost" size="icon" aria-label="Open mobile menu" className="ml-auto">
                   <Menu className="h-8 w-8" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[280px] bg-background text-foreground p-0" hideClose>
+              <SheetContent side="left" className="w-[280px] bg-background/80 text-foreground p-0 backdrop-blur-sm" hideClose>
                 <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="p-4 flex justify-between items-center border-b border-border">
