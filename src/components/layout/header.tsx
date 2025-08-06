@@ -22,7 +22,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { logOut } from "@/lib/firebase/auth";
@@ -136,7 +136,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
         <div className="flex flex-1 items-center justify-end space-x-2">
            <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:text-white"
+              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
                 onClick={(e) => {
                   if (!user) {
                     e.preventDefault();
@@ -193,7 +193,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
           ) : (
              <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
               <DialogTrigger asChild>
-                 <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:text-white">
+                 <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
                     <User className="h-12 w-12 md:h-7 md:w-7" />
                   </Button>
               </DialogTrigger>
