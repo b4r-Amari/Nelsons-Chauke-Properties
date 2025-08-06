@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
-import { Menu, Heart, User, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, Heart, User, ChevronDown, LogOut, LayoutDashboard, X } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -218,12 +218,12 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                     <div className="flex h-20 items-center justify-between border-b px-4">
                         <Logo />
                         <SheetClose className="rounded-md p-2 opacity-70 ring-offset-background transition-all hover:opacity-100 data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:bg-brand-bright hover:text-white">
-                            <Menu className="h-6 w-6" />
+                            <X className="h-6 w-6" />
                             <span className="sr-only">Close</span>
                         </SheetClose>
                     </div>
-                    <nav className="flex-grow p-4" aria-label="Mobile Navigation">
-                        <ul className="space-y-2">
+                    <nav className="flex-grow p-4 flex items-center justify-center" aria-label="Mobile Navigation">
+                        <ul className="space-y-2 w-full">
                         {mobileNavLinks.map((link) => (
                             <li key={link.href}>
                                 <SheetClose asChild>
