@@ -207,16 +207,11 @@ export function Header() {
                   <Menu className="h-8 w-8" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[280px] bg-background/80 text-foreground p-0 backdrop-blur-sm">
-                <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
+              <SheetContent side="left" className="w-[280px] bg-background text-foreground p-0">
+                 <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="p-4 flex justify-between items-center border-b border-border">
                     <Logo />
-                     <SheetClose asChild>
-                        <Button variant="ghost" size="icon" aria-label="Close mobile menu" className="text-foreground hover:bg-destructive hover:text-destructive-foreground">
-                            <X className="h-8 w-8" />
-                        </Button>
-                    </SheetClose>
                   </div>
                   <nav className="flex-grow p-4" aria-label="Mobile Navigation">
                     <ul className="space-y-2">
