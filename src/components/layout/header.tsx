@@ -223,7 +223,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                                 <span className="sr-only">Close</span>
                             </SheetClose>
                         </div>
-                        <nav className="p-4 mt-auto" aria-label="Mobile Navigation">
+                        <nav className="p-4" aria-label="Mobile Navigation">
                             <ul className="space-y-2 w-full">
                             {mobileNavLinks.map((link) => (
                                 <li key={link.href}>
