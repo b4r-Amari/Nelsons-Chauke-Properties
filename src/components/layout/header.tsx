@@ -213,7 +213,7 @@ export function Header() {
                   <div className="p-4 flex justify-between items-center border-b border-border">
                     <Logo />
                      <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" aria-label="Close mobile menu" className="text-foreground hover:bg-muted">
+                        <Button variant="ghost" size="icon" aria-label="Close mobile menu" className="text-foreground hover:bg-white">
                             <X className="h-8 w-8" />
                         </Button>
                     </SheetTrigger>
