@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
 import { Menu, Heart, User, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
@@ -69,6 +69,13 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen?: Dispatch<Set
   const getInitials = (email: string | null | undefined) => {
     if (!email) return "U";
     return email.substring(0, 2).toUpperCase();
+  };
+
+  const handleMobileMenuToggle = (open: boolean) => {
+    setIsMobileMenuOpen(open);
+    if (setMobileMenuOpen) {
+      setMobileMenuOpen(open);
+    }
   };
 
 
@@ -202,10 +209,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen?: Dispatch<Set
           )}
 
           <div className="md:hidden">
-             <Sheet open={isMobileMenuOpen} onOpenChange={(open) => {
-                setIsMobileMenuOpen(open)
-                setMobileMenuOpen?.(open)
-            }}>
+             <Sheet open={isMobileMenuOpen} onOpenChange={handleMobileMenuToggle}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open mobile menu">
                   <Menu className="h-12 w-12" />
