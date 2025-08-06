@@ -4,6 +4,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 type PropertyImageGalleryProps = {
   images: string[];
@@ -21,20 +22,35 @@ export function PropertyImageGallery({ images, mainImageHint }: PropertyImageGal
 
   return (
     <div>
-      <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg mb-4">
-        <Image
-          src={mainImage}
-          alt="Main property view"
-          data-ai-hint={mainImage === images[0] ? mainImageHint : "property interior"}
-          fill
-          className={cn(
-            "object-cover transition-opacity duration-500",
-            mainImageLoading ? "opacity-50" : "opacity-100"
-          )}
-          onLoad={() => setMainImageLoading(false)}
-          priority
-        />
-      </div>
+      <Dialog>
+        <DialogTrigger asChild>
+           <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg mb-4 cursor-pointer">
+            <Image
+              src={mainImage}
+              alt="Main property view"
+              data-ai-hint={mainImage === images[0] ? mainImageHint : "property interior"}
+              fill
+              className={cn(
+                "object-cover transition-opacity duration-500",
+                mainImageLoading ? "opacity-50" : "opacity-100"
+              )}
+              onLoad={() => setMainImageLoading(false)}
+              priority
+            />
+          </div>
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl p-2 bg-transparent border-none">
+            <div className="relative aspect-video w-full">
+                <Image
+                    src={mainImage}
+                    alt="Main property view enlarged"
+                    fill
+                    className="object-contain"
+                />
+            </div>
+        </DialogContent>
+      </Dialog>
+     
       <div className="grid grid-cols-4 gap-4">
         {images.map((image, index) => (
           <div
