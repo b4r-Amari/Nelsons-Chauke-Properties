@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from 'next/image';
@@ -169,7 +168,7 @@ function PropertyAlertForm() {
 function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, href }: { id?:string, title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string }) {
   const isAlertForm = id === 'property-alerts';
 
-  const CardBody = (
+  return (
     <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card h-full group">
       <CardContent className="p-6 flex-grow flex flex-col items-center">
         <Image src={imageSrc} data-ai-hint={imageHint} alt={`${title} - NC Properties feature`} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
@@ -178,15 +177,13 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, h
         {isAlertForm ? (
           <PropertyAlertForm />
         ) : (
-          <Button asChild variant="outline" className="border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors w-full mt-auto">
-            <Link href={href || '#'}>{buttonText}</Link>
-          </Button>
+          <Link href={href || '#'}><Button variant="outline" className="border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors w-full mt-auto">
+             {buttonText}
+          </Button></Link>
         )}
       </CardContent>
     </Card>
   );
-
-  return href && !isAlertForm ? <Link href={href} className="block h-full group">{CardBody}</Link> : CardBody;
 }
 
 export function CtaTabsSection() {
