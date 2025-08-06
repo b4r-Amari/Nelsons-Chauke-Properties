@@ -213,7 +213,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                   <Menu className="h-12 w-12" />
                 </Button>
               </SheetTrigger>
-               <SheetContent side="left" className="w-full max-w-[320px] bg-background text-foreground p-0 flex flex-col">
+               <SheetContent side="left" className="w-full max-w-[320px] bg-background text-foreground p-0 flex flex-col" hideClose>
                   <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                     <div className="flex h-20 items-center justify-between border-b px-4">
                         <Logo />
