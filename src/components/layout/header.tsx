@@ -131,15 +131,9 @@ export function Header() {
         <div className="flex flex-1 items-center justify-end space-x-2">
            <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
-                onClick={() => {
-                  if (!user) {
-                    setIsAuthDialogOpen(true);
-                  }
-                }}
-              >
+              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
                 <Link href={user ? "/my-account/wishlist" : "#"} className="w-full h-full flex items-center justify-center">
-                  <Heart className="h-10 w-10 md:h-7 md:w-7" />
+                  <Heart className="h-12 w-12 md:h-7 md:w-7" />
                 </Link>
               </Button>
             </DialogTrigger>
@@ -188,7 +182,7 @@ export function Header() {
              <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
               <DialogTrigger asChild>
                  <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
-                    <User className="h-10 w-10 md:h-7 md:w-7" />
+                    <User className="h-12 w-12 md:h-7 md:w-7" />
                   </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
@@ -204,7 +198,7 @@ export function Header() {
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open mobile menu">
-                  <Menu className="h-10 w-10" />
+                  <Menu className="h-12 w-12" />
                 </Button>
               </SheetTrigger>
                <SheetContent side="left" className="w-[280px] bg-background text-foreground p-0">
