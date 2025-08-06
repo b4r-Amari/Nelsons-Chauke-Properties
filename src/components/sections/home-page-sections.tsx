@@ -2,7 +2,7 @@
 "use client";
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import propertiesData from '@/data/properties.json';
+import { type Property } from '../shared/property-card';
+
 
 const heroBanners = [
   '/images/backgrounds/hero-banner-1.webp',
@@ -26,12 +32,41 @@ const heroBanners = [
 
 export function HeroSection() {
   const [bannerImage, setBannerImage] = useState(heroBanners[0]);
+  const [searchLocation, setSearchLocation] = useState('');
+  const [searchStatus, setSearchStatus] = useState('for-sale');
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const router = useRouter();
+
+  const locations = useMemo(() => {
+    const allLocations = (propertiesData as Property[]).map(p => p.location);
+    return [...new Set(allLocations)];
+  }, []);
+
+  const filteredLocations = useMemo(() => {
+    if (!searchLocation) return locations;
+    return locations.filter(loc => loc.toLowerCase().includes(searchLocation.toLowerCase()));
+  }, [searchLocation, locations]);
 
   useEffect(() => {
     // This effect runs only on the client, after hydration
     const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
     setBannerImage(randomBanner);
   }, []);
+  
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const basePath = searchStatus === 'to-let' ? '/properties/to-let' : '/properties';
+    const queryString = searchLocation ? `?location=${encodeURIComponent(searchLocation)}` : '';
+    router.push(`${basePath}${queryString}`);
+  };
+
+  const handleSelectLocation = (location: string) => {
+    setSearchLocation(location);
+    setIsPopoverOpen(false);
+    const basePath = searchStatus === 'to-let' ? '/properties/to-let' : '/properties';
+    const queryString = `?location=${encodeURIComponent(location)}`;
+    router.push(`${basePath}${queryString}`);
+  }
 
   return (
     <section className="relative h-[70vh] min-h-[550px] flex items-center justify-center text-white">
@@ -53,9 +88,9 @@ export function HeroSection() {
         </p>
         <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-black/20 backdrop-blur-md border border-white/20">
           <CardContent className="p-4">
-            <form className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
+            <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
               <div className="md:col-span-4">
-                <Select defaultValue="for-sale">
+                <Select value={searchStatus} onValueChange={setSearchStatus}>
                   <SelectTrigger className="h-12 md:h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
                     <SelectValue placeholder="For Sale" />
                   </SelectTrigger>
@@ -66,11 +101,39 @@ export function HeroSection() {
                 </Select>
               </div>
               <div className="md:col-span-6">
-                <Input
-                  type="text"
-                  placeholder="Enter city, suburb or area"
-                  className="h-12 md:h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 placeholder:text-gray-600"
-                />
+                <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+                    <PopoverTrigger asChild>
+                         <Input
+                          type="text"
+                          placeholder="Enter city, suburb or area"
+                          className="h-12 md:h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0 placeholder:text-gray-600"
+                          value={searchLocation}
+                          onChange={(e) => {
+                            setSearchLocation(e.target.value);
+                            if (!isPopoverOpen) setIsPopoverOpen(true);
+                          }}
+                        />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" onOpenAutoFocus={(e) => e.preventDefault()}>
+                       <Command>
+                          <CommandInput placeholder="Search location..." />
+                          <CommandList>
+                            <CommandEmpty>No results found.</CommandEmpty>
+                            <CommandGroup>
+                              {filteredLocations.map((location) => (
+                                <CommandItem
+                                  key={location}
+                                  value={location}
+                                  onSelect={() => handleSelectLocation(location)}
+                                >
+                                  {location}
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                    </PopoverContent>
+                </Popover>
               </div>
               <div className="md:col-span-2">
                 <Button type="submit" size="lg" className="w-full h-12 md:h-14 bg-brand-bright hover:bg-brand-deep transition-colors duration-300 text-lg">
