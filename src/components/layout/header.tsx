@@ -75,12 +75,11 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <div className="flex items-center">
+        <div className="flex items-center md:mr-6">
           <Logo />
         </div>
         
-        <div className="hidden md:flex flex-1 justify-center items-center">
-          <nav className="flex items-center space-x-1 text-sm font-medium font-headline" aria-label="Main Navigation">
+        <nav className="hidden md:flex flex-1 items-center space-x-1 text-sm font-medium font-headline" aria-label="Main Navigation">
             {navLinks.map((item) => (
               item.isDropdown && item.links ? (
                 <DropdownMenu key={item.label}>
@@ -128,12 +127,11 @@ export function Header() {
               )
             ))}
           </nav>
-        </div>
 
-        <div className="flex items-center justify-end space-x-2">
+        <div className="flex flex-1 items-center justify-end space-x-2">
            <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
+              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
                 onClick={() => {
                   if (!user) {
                     setIsAuthDialogOpen(true);
@@ -141,7 +139,7 @@ export function Header() {
                 }}
               >
                 <Link href={user ? "/my-account/wishlist" : "#"} className="w-full h-full flex items-center justify-center">
-                  <Heart className="h-5 w-5" />
+                  <Heart className="h-6 w-6" />
                 </Link>
               </Button>
             </DialogTrigger>
@@ -189,8 +187,8 @@ export function Header() {
           ) : (
             <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
               <DialogTrigger asChild>
-                 <Button variant="ghost" size="icon" aria-label="Login or sign up" className="hidden md:inline-flex text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
-                    <User className="h-5 w-5" />
+                 <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
+                    <User className="h-6 w-6" />
                   </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
@@ -202,12 +200,11 @@ export function Header() {
             </Dialog>
           )}
 
-
           <div className="md:hidden">
             <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open mobile menu">
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-7 w-7" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[280px] bg-brand-deep text-white p-0">
