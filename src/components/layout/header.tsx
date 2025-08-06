@@ -207,13 +207,13 @@ export function Header() {
                   <Menu className="h-8 w-8" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[280px] bg-[#03132b] text-white p-0" hideClose>
+              <SheetContent side="left" className="w-[280px] bg-background text-foreground p-0" hideClose>
                 <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col h-full">
-                  <div className="p-4 flex justify-between items-center border-b border-white/10">
-                    <Logo className="text-white" />
+                  <div className="p-4 flex justify-between items-center border-b border-border">
+                    <Logo />
                      <SheetTrigger asChild>
-                        <Button variant="ghost" size="icon" aria-label="Close mobile menu" className="text-white hover:bg-white/10 hover:text-white">
+                        <Button variant="ghost" size="icon" aria-label="Close mobile menu" className="text-foreground hover:bg-muted">
                             <X className="h-8 w-8" />
                         </Button>
                     </SheetTrigger>
@@ -227,9 +227,9 @@ export function Header() {
                                 href={link.href}
                                 className={cn(
                                   "block rounded-md px-3 py-2 text-lg font-headline transition-colors w-full text-left",
-                                   pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
-                                    ? "bg-brand-bright"
-                                    : "hover:bg-white/10"
+                                   (pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href)))
+                                    ? "bg-brand-bright text-white"
+                                    : "hover:bg-muted"
                                 )}
                               >
                                 {link.label}
