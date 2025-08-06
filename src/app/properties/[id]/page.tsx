@@ -154,7 +154,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateListingSchema) }}
         />
-      <div className="container py-8 md:py-16">
+      <div className="container py-8">
         <div className="mb-6">
             <BackButton>Back to Listings</BackButton>
         </div>
