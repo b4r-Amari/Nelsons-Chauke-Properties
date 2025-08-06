@@ -169,7 +169,7 @@ function PropertyAlertForm() {
 function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, href }: { id?:string, title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string }) {
   const isAlertForm = id === 'property-alerts';
 
-  const cardContent = (
+  return (
     <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card h-full">
       <CardContent className="p-6 flex-grow flex flex-col items-center">
         <Image src={imageSrc} data-ai-hint={imageHint} alt={`${title} - NC Properties feature`} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
@@ -185,12 +185,6 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, h
       </CardContent>
     </Card>
   );
-  
-  if (href && !isAlertForm) {
-    return <Link href={href} className="block h-full">{cardContent}</Link>
-  }
-
-  return cardContent;
 }
 
 export function CtaTabsSection() {
