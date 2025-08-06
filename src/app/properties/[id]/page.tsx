@@ -237,8 +237,8 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
           {/* Right Column: Enquiry and Agent */}
           <aside className="lg:col-span-1">
             <div className="sticky top-24 space-y-8">
-              <EnquiryForm />
               {agent && <AgentCard agent={agent} />}
+              <EnquiryForm />
             </div>
           </aside>
         </div>
