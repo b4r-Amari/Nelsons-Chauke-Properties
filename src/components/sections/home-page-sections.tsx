@@ -21,6 +21,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import propertiesData from '@/data/properties.json';
 import { type Property } from '../shared/property-card';
 import { cn } from '@/lib/utils';
+import * as z from "zod";
 
 
 const heroBanners = [
@@ -47,10 +48,10 @@ export function HeroSection() {
     setBannerImage(randomBanner);
   }, []);
   
-  const navigateToProperties = () => {
+  const navigateToProperties = (location: string) => {
     const params = new URLSearchParams();
-    if (searchLocation) {
-      params.set('location', searchLocation);
+    if (location) {
+      params.set('location', location);
     }
     if (searchStatus) {
       params.set('status', searchStatus);
@@ -60,22 +61,13 @@ export function HeroSection() {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    navigateToProperties();
+    navigateToProperties(searchLocation);
   };
 
   const handleLocationSelect = (location: string) => {
     setSearchLocation(location);
     setIsPopoverOpen(false);
-    
-    // Programmatically navigate
-    const params = new URLSearchParams();
-    if (location) {
-      params.set('location', location);
-    }
-    if (searchStatus) {
-      params.set('status', searchStatus);
-    }
-    router.push(`/properties?${params.toString()}`);
+    navigateToProperties(location);
   };
 
   return (
@@ -371,4 +363,3 @@ export function NewsletterSection() {
     </section>
   );
 }
-
