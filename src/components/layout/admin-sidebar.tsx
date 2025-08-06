@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Building, Users, LogOut, Settings } from "lucide-react";
+import { Home, Building, Users, LogOut, Settings, Newspaper } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
@@ -14,6 +14,7 @@ const sidebarLinks = [
   { href: "/admin/dashboard", label: "Dashboard", icon: Home },
   { href: "/admin/properties", label: "Properties", icon: Building },
   { href: "/admin/agents", label: "Agents", icon: Users },
+  { href: "/admin/blogs", label: "Blogs", icon: Newspaper },
 ];
 
 export function AdminSidebar() {

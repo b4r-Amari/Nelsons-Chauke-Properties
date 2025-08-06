@@ -1,13 +1,16 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Building, Users, DollarSign, Handshake } from 'lucide-react';
+import { Building, Users, DollarSign, Handshake, Newspaper } from 'lucide-react';
 import Link from 'next/link';
+import propertiesData from '@/data/properties.json';
+import agentsData from '@/data/agents.json';
+import blogData from '@/data/blog.json';
 
 const stats = [
-  { title: "Total Properties", value: "50", icon: Building, description: "All properties listed" },
-  { title: "For Sale", value: "27", icon: DollarSign, description: "Properties currently for sale" },
-  { title: "Sold Properties", value: "10", icon: Handshake, description: "Successfully sold properties" },
-  { title: "Total Agents", value: "3", icon: Users, description: "Active real estate agents" },
+  { title: "Total Properties", value: propertiesData.length, icon: Building, description: "All properties listed" },
+  { title: "For Sale", value: propertiesData.filter(p => p.status === 'for-sale').length, icon: DollarSign, description: "Properties currently for sale" },
+  { title: "Total Agents", value: agentsData.length, icon: Users, description: "Active real estate agents" },
+  { title: "Blog Posts", value: blogData.length, icon: Newspaper, description: "Published articles" },
 ];
 
 export default function AdminDashboardPage() {
@@ -44,6 +47,14 @@ export default function AdminDashboardPage() {
                     <div>
                         <Users className="h-8 w-8 mx-auto text-brand-deep mb-2" />
                         <p className="font-semibold">Add New Agent</p>
+                    </div>
+                </Card>
+            </Link>
+            <Link href="/admin/blogs/new">
+                <Card className="flex items-center justify-center p-6 text-center hover:bg-muted transition-colors cursor-pointer">
+                    <div>
+                        <Newspaper className="h-8 w-8 mx-auto text-brand-deep mb-2" />
+                        <p className="font-semibold">Add New Blog Post</p>
                     </div>
                 </Card>
             </Link>
