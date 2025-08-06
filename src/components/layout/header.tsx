@@ -215,28 +215,24 @@ export function Header() {
                 <div className="flex flex-col h-full">
                   <div className="p-4 flex justify-between items-center border-b border-white/10">
                     <Logo className="text-white" />
-                    <SheetClose asChild>
-                       <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white" aria-label="Close mobile menu">
-                         <X className="h-6 w-6"/>
-                       </Button>
-                    </SheetClose>
                   </div>
                   <nav className="flex-grow p-4" aria-label="Mobile Navigation">
                     <ul className="space-y-2">
                       {mobileNavLinks.map((link) => (
                         <li key={link.href}>
-                          <Link
-                            href={link.href}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className={cn(
-                              "block rounded-md px-3 py-2 text-lg font-headline transition-colors",
-                               pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
-                                ? "bg-brand-bright"
-                                : "hover:bg-white/10"
-                            )}
-                          >
-                            {link.label}
-                          </Link>
+                            <SheetClose asChild>
+                              <Link
+                                href={link.href}
+                                className={cn(
+                                  "block rounded-md px-3 py-2 text-lg font-headline transition-colors w-full text-left",
+                                   pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href))
+                                    ? "bg-brand-bright"
+                                    : "hover:bg-white/10"
+                                )}
+                              >
+                                {link.label}
+                              </Link>
+                            </SheetClose>
                         </li>
                       ))}
                     </ul>
@@ -250,5 +246,3 @@ export function Header() {
     </header>
   );
 }
-
-    
