@@ -13,10 +13,12 @@ import { Search, ChevronsUpDown, SlidersHorizontal, X } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import type { Property } from "./property-card";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 type PropertyFilterProps = {
   properties: Property[];
   onFilterChange: (filteredProperties: Property[]) => void;
+  isMobile?: boolean;
 };
 
 const initialFilters = {
@@ -46,7 +48,7 @@ const initialFilters = {
     },
 };
 
-export function PropertyFilter({ properties, onFilterChange }: PropertyFilterProps) {
+export function PropertyFilter({ properties, onFilterChange, isMobile = false }: PropertyFilterProps) {
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [filters, setFilters] = useState(initialFilters);
   const [filteredCount, setFilteredCount] = useState(properties.length);
@@ -119,17 +121,25 @@ export function PropertyFilter({ properties, onFilterChange }: PropertyFilterPro
   const clearFilters = () => {
     setFilters(initialFilters);
   }
+  
+  const FilterWrapper = isMobile ? 'div' : Card;
+  const ContentWrapper = isMobile ? 'div' : ScrollArea;
+
 
   return (
-    <Card className="lg:sticky top-24 shadow-lg lg:flex lg:flex-col lg:h-[calc(100vh-7rem)]">
-      <CardHeader>
-        <CardTitle className="font-headline text-2xl flex items-center gap-3">
-            <SlidersHorizontal className="h-6 w-6 text-brand-bright"/>
-            Filter Properties
-        </CardTitle>
-      </CardHeader>
-      <ScrollArea className="lg:flex-grow lg:overflow-y-auto">
-        <CardContent>
+    <FilterWrapper className={cn(
+        !isMobile && "lg:sticky top-24 shadow-lg lg:flex lg:flex-col lg:h-[calc(100vh-7rem)]"
+    )}>
+      {!isMobile && (
+         <CardHeader>
+            <CardTitle className="font-headline text-2xl flex items-center gap-3">
+                <SlidersHorizontal className="h-6 w-6 text-brand-bright"/>
+                Filter Properties
+            </CardTitle>
+        </CardHeader>
+      )}
+      <ContentWrapper className={cn(!isMobile && "lg:flex-grow lg:overflow-y-auto")}>
+        <CardContent className={cn(isMobile && "p-6")}>
             <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
             <div>
                 <Label htmlFor="location">Location</Label>
@@ -282,8 +292,11 @@ export function PropertyFilter({ properties, onFilterChange }: PropertyFilterPro
             </Collapsible>
             </form>
         </CardContent>
-      </ScrollArea>
-       <CardFooter className="flex-col gap-4 pt-6 border-t">
+      </ContentWrapper>
+       <CardFooter className={cn(
+        "flex-col gap-4 pt-6 border-t",
+        isMobile && "sticky bottom-0 bg-background"
+       )}>
           <Button className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg">
               <Search className="mr-2 h-5 w-5"/>
               Search {filteredCount} {filteredCount === 1 ? 'property' : 'properties'}
@@ -293,6 +306,6 @@ export function PropertyFilter({ properties, onFilterChange }: PropertyFilterPro
               Clear Filters
           </Button>
       </CardFooter>
-    </Card>
+    </FilterWrapper>
   );
 }

@@ -8,6 +8,7 @@ import propertiesData from '@/data/properties.json';
 import { Button } from "../ui/button";
 import { SlidersHorizontal } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface PropertyListingsProps {
   status: 'for-sale' | 'on-show';
@@ -31,11 +32,23 @@ export function PropertyListings({ status }: PropertyListingsProps) {
                 Filter Properties
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0">
-                <PropertyFilter 
-                  properties={initialProperties} 
-                  onFilterChange={setFilteredProperties}
-                />
+            <SheetContent side="left" className="p-0 flex flex-col">
+                <SheetHeader className="p-6 pb-2">
+                    <SheetTitle className="font-headline text-2xl flex items-center gap-3">
+                         <SlidersHorizontal className="h-6 w-6 text-brand-bright"/>
+                         Filter Properties
+                    </SheetTitle>
+                    <SheetDescription>
+                        Refine your search to find the perfect property.
+                    </SheetDescription>
+                </SheetHeader>
+                <ScrollArea className="flex-grow">
+                    <PropertyFilter 
+                        properties={initialProperties} 
+                        onFilterChange={setFilteredProperties}
+                        isMobile={true}
+                    />
+                </ScrollArea>
             </SheetContent>
           </Sheet>
         </div>
