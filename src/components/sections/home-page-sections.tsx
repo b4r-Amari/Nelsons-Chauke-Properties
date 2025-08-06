@@ -4,7 +4,7 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -169,11 +169,11 @@ function PropertyAlertForm() {
 function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, href }: { id?:string, title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string }) {
   const isAlertForm = id === 'property-alerts';
 
-  return (
+  const cardContent = (
     <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card h-full">
       <CardContent className="p-6 flex-grow flex flex-col items-center">
         <Image src={imageSrc} data-ai-hint={imageHint} alt={`${title} - NC Properties feature`} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
-        <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep">{title}</h3>
+        <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep group-hover:text-brand-bright transition-colors">{title}</h3>
         <p className="text-muted-foreground flex-grow mb-6">{description}</p>
         {isAlertForm ? (
           <PropertyAlertForm />
@@ -185,6 +185,17 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, h
       </CardContent>
     </Card>
   );
+
+  // If the card is not a form, wrap the whole thing in a link for better UX
+  if (!isAlertForm && href) {
+    return (
+      <Link href={href} className="block h-full group">
+        {cardContent}
+      </Link>
+    );
+  }
+
+  return cardContent;
 }
 
 export function CtaTabsSection() {
@@ -291,3 +302,5 @@ export function NewsletterSection() {
     </section>
   );
 }
+
+    
