@@ -4,7 +4,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 type PropertyImageGalleryProps = {
   images: string[];
@@ -40,6 +40,7 @@ export function PropertyImageGallery({ images, mainImageHint }: PropertyImageGal
           </div>
         </DialogTrigger>
         <DialogContent className="max-w-4xl p-2 bg-transparent border-none">
+            <DialogTitle className="sr-only">Enlarged Property Image</DialogTitle>
             <div className="relative aspect-video w-full">
                 <Image
                     src={mainImage}
