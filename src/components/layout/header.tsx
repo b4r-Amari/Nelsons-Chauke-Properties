@@ -22,6 +22,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { logOut } from "@/lib/firebase/auth";
@@ -206,22 +207,22 @@ export function Header() {
                   <Menu className="h-8 w-8" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[280px] bg-background/80 text-foreground p-0 backdrop-blur-sm" hideClose>
+              <SheetContent side="left" className="w-[280px] bg-background/80 text-foreground p-0 backdrop-blur-sm">
                 <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
                 <div className="flex flex-col h-full">
                   <div className="p-4 flex justify-between items-center border-b border-border">
                     <Logo />
-                     <SheetTrigger asChild>
+                     <SheetClose asChild>
                         <Button variant="ghost" size="icon" aria-label="Close mobile menu" className="text-foreground hover:bg-destructive hover:text-destructive-foreground">
                             <X className="h-8 w-8" />
                         </Button>
-                    </SheetTrigger>
+                    </SheetClose>
                   </div>
                   <nav className="flex-grow p-4" aria-label="Mobile Navigation">
                     <ul className="space-y-2">
                       {mobileNavLinks.map((link) => (
                         <li key={link.href}>
-                            <SheetTrigger asChild>
+                            <SheetClose asChild>
                               <Link
                                 href={link.href}
                                 className={cn(
@@ -233,7 +234,7 @@ export function Header() {
                               >
                                 {link.label}
                               </Link>
-                            </SheetTrigger>
+                            </SheetClose>
                         </li>
                       ))}
                     </ul>
