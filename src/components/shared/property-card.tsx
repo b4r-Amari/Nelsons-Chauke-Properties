@@ -69,10 +69,11 @@ export function PropertyCard({ property }: PropertyCardProps) {
     }).format(price);
     return isRental ? `${formattedPrice} /month` : formattedPrice;
   }
+  //<Card className="w-full max-w-[320px] min-h-[480px] h-full rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col mx-auto cursor-pointer overflow-hidden">
 
   return (
     <Link href={`/properties/${property.id}`} className="block group">
-        <Card className="w-[350px] min-h-[480px] h-full rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col mx-auto cursor-pointer overflow-hidden">
+        <Card className="w-full max-w-[350px] min-h-[480px] h-full rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col mx-auto cursor-pointer overflow-hidden">
         <div className="relative w-full h-[250px] overflow-hidden">
             <Image
             src={property.imageUrl}
