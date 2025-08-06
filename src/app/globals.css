@@ -88,7 +88,4 @@ body {
   .container {
     @apply max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8;
   }
-  body[data-state='open'] {
-    @apply pr-[var(--removed-scroll-width,0px)] overflow-hidden;
-  }
 }

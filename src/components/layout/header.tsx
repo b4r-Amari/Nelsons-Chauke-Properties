@@ -3,11 +3,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from "@/components/ui/sheet";
-import { Menu, Heart, User, X, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Menu, Heart, User, ChevronDown, LogOut, LayoutDashboard } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -58,7 +58,7 @@ const mobileNavLinks = [
 ]
 
 
-export function Header() {
+export function Header({ setMobileMenuOpen }: { setMobileMenuOpen?: Dispatch<SetStateAction<boolean>> }) {
   const pathname = usePathname();
   const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -131,7 +131,14 @@ export function Header() {
         <div className="flex flex-1 items-center justify-end space-x-2">
            <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
+              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:text-white"
+                onClick={(e) => {
+                  if (!user) {
+                    e.preventDefault();
+                    setIsAuthDialogOpen(true);
+                  }
+                }}
+              >
                 <Link href={user ? "/my-account/wishlist" : "#"} className="w-full h-full flex items-center justify-center">
                   <Heart className="h-12 w-12 md:h-7 md:w-7" />
                 </Link>
@@ -181,7 +188,7 @@ export function Header() {
           ) : (
              <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
               <DialogTrigger asChild>
-                 <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
+                 <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:text-white">
                     <User className="h-12 w-12 md:h-7 md:w-7" />
                   </Button>
               </DialogTrigger>
@@ -195,7 +202,10 @@ export function Header() {
           )}
 
           <div className="md:hidden">
-            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
+             <Sheet open={isMobileMenuOpen} onOpenChange={(open) => {
+                setIsMobileMenuOpen(open)
+                setMobileMenuOpen?.(open)
+            }}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open mobile menu">
                   <Menu className="h-12 w-12" />
