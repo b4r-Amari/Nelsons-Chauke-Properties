@@ -14,7 +14,6 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -48,21 +47,36 @@ export function HeroSection() {
     setBannerImage(randomBanner);
   }, []);
   
+  const navigateToProperties = () => {
+    const params = new URLSearchParams();
+    if (searchLocation) {
+      params.set('location', searchLocation);
+    }
+    if (searchStatus) {
+      params.set('status', searchStatus);
+    }
+    router.push(`/properties?${params.toString()}`);
+  }
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     navigateToProperties();
   };
 
-  const navigateToProperties = (location = searchLocation, status = searchStatus) => {
+  const handleLocationSelect = (location: string) => {
+    setSearchLocation(location);
+    setIsPopoverOpen(false);
+    
+    // Programmatically navigate
     const params = new URLSearchParams();
     if (location) {
       params.set('location', location);
     }
-    if (status) {
-      params.set('status', status);
+    if (searchStatus) {
+      params.set('status', searchStatus);
     }
     router.push(`/properties?${params.toString()}`);
-  }
+  };
 
   return (
     <section className="relative h-[70vh] min-h-[550px] flex items-center justify-center text-white">
@@ -121,12 +135,7 @@ export function HeroSection() {
                             <CommandItem
                               key={location}
                               value={location}
-                              onSelect={(currentValue) => {
-                                const newLocation = currentValue === searchLocation ? "" : currentValue;
-                                setSearchLocation(newLocation);
-                                setIsPopoverOpen(false);
-                                navigateToProperties(newLocation, searchStatus);
-                              }}
+                              onSelect={() => handleLocationSelect(location)}
                             >
                               <Check
                                 className={cn(
@@ -362,3 +371,4 @@ export function NewsletterSection() {
     </section>
   );
 }
+
