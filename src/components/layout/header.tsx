@@ -58,7 +58,7 @@ const mobileNavLinks = [
 ]
 
 
-export function Header({ setMobileMenuOpen }: { setMobileMenuOpen?: Dispatch<SetStateAction<boolean>> }) {
+export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetStateAction<boolean>> }) {
   const pathname = usePathname();
   const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -73,9 +73,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen?: Dispatch<Set
 
   const handleMobileMenuToggle = (open: boolean) => {
     setIsMobileMenuOpen(open);
-    if (setMobileMenuOpen) {
-      setMobileMenuOpen(open);
-    }
+    setMobileMenuOpen(open);
   };
 
 

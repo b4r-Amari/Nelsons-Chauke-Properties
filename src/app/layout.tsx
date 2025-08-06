@@ -33,7 +33,7 @@ export default function RootLayout({
       </head>
       <body className={cn(
         "font-body antialiased text-foreground/90",
-        mobileMenuOpen && "pr-[var(--removed-scroll-width,0px)] overflow-hidden"
+        mobileMenuOpen && "overflow-hidden"
       )}>
         <AuthProvider>
           <WishlistProvider>
