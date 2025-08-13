@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription as FormDesc } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
@@ -96,8 +96,11 @@ export default function NewBlogPage() {
                                 <FormItem>
                                     <FormLabel>Full Post Content</FormLabel>
                                     <FormControl>
-                                    <Textarea placeholder="Write the full blog post content here. You can use Markdown for formatting." className="min-h-[400px]" {...field} />
+                                      <Textarea placeholder="Write the full blog post content here..." className="min-h-[400px]" {...field} />
                                     </FormControl>
+                                     <FormDesc>
+                                        You can use Markdown for formatting and standard HTML to embed images (&lt;img src="..."&gt;) or videos (&lt;iframe...&gt;).
+                                    </FormDesc>
                                     <FormMessage />
                                 </FormItem>
                                 )}
