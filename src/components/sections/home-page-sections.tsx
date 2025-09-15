@@ -233,34 +233,36 @@ export function CtaTabsSection() {
           <h2 className="text-3xl font-bold font-headline">Discover All Things Property</h2>
           <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Whether you're buying, renting, or selling, we have the tools and resources to help you succeed.</p>
         </div>
-        <Tabs defaultValue="buying" className="w-full">
-          <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3 bg-muted p-1 h-12 rounded-full">
-            <TabsTrigger value="buying" className="rounded-full text-md data-[state=active]:bg-brand-bright data-[state=active]:text-white transition-all duration-300 flex items-center gap-2">
-              <Building className="h-5 w-5" /> Buying
-            </TabsTrigger>
-            <TabsTrigger value="renting" className="rounded-full text-md data-[state=active]:bg-brand-bright data-[state=active]:text-white transition-all duration-300 flex items-center gap-2">
-              <KeyRound className="h-5 w-5" /> Renting
-            </TabsTrigger>
-            <TabsTrigger value="selling" className="rounded-full text-md data-[state=active]:bg-brand-bright data-[state=active]:text-white transition-all duration-300 flex items-center gap-2">
-              <Handshake className="h-5 w-5" /> Selling
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="buying" className="mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {buyerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
-            </div>
-          </TabsContent>
-          <TabsContent value="renting" className="mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {renterOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
-            </div>
-          </TabsContent>
-          <TabsContent value="selling" className="mt-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {sellerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
-            </div>
-          </TabsContent>
-        </Tabs>
+        <div className="bg-card p-4 sm:p-8 rounded-lg shadow-lg">
+          <Tabs defaultValue="buying" className="w-full">
+            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3 bg-muted p-1 h-12 rounded-full">
+              <TabsTrigger value="buying" className="rounded-full text-md data-[state=active]:bg-brand-bright data-[state=active]:text-white transition-all duration-300 flex items-center gap-2">
+                <Building className="h-5 w-5" /> Buying
+              </TabsTrigger>
+              <TabsTrigger value="renting" className="rounded-full text-md data-[state=active]:bg-brand-bright data-[state=active]:text-white transition-all duration-300 flex items-center gap-2">
+                <KeyRound className="h-5 w-5" /> Renting
+              </TabsTrigger>
+              <TabsTrigger value="selling" className="rounded-full text-md data-[state=active]:bg-brand-bright data-[state=active]:text-white transition-all duration-300 flex items-center gap-2">
+                <Handshake className="h-5 w-5" /> Selling
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="buying" className="mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {buyerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
+              </div>
+            </TabsContent>
+            <TabsContent value="renting" className="mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {renterOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
+              </div>
+            </TabsContent>
+            <TabsContent value="selling" className="mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {sellerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </section>
   );
