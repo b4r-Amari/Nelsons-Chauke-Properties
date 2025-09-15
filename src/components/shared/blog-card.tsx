@@ -31,7 +31,7 @@ export function BlogCard({ post }: BlogCardProps) {
           <div className="relative aspect-video">
             <Image
               src={post.imageUrl}
-              alt={post.title}
+              alt={`Featured image for blog post titled: ${post.title}`}
               data-ai-hint={post.imageHint}
               fill
               className="object-cover group-hover:scale-105 transition-transform duration-500"

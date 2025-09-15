@@ -43,7 +43,7 @@ export default function BlogPage() {
                 <div className="relative aspect-video rounded-md overflow-hidden">
                   <Image 
                     src={featuredPost.imageUrl}
-                    alt={featuredPost.title}
+                    alt={`Featured image for blog post titled: ${featuredPost.title}`}
                     data-ai-hint={featuredPost.imageHint}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"

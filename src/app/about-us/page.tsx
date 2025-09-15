@@ -76,7 +76,7 @@ export default function AboutUsPage() {
                 </Button>
               </article>
               <div>
-                <Image src="https://placehold.co/600x400.png" alt="The modern and bright office interior of NC Properties." data-ai-hint="modern office" width={600} height={400} className="rounded-lg shadow-lg" />
+                <Image src="https://placehold.co/600x400.png" alt="The modern and bright office interior of NC Properties with team members collaborating." data-ai-hint="modern office" width={600} height={400} className="rounded-lg shadow-lg" />
               </div>
             </div>
           </div>
@@ -120,7 +120,7 @@ export default function AboutUsPage() {
                 <Link href={`/agents/${member.slug}`} key={member.id} className="group block">
                   <Card className="text-center shadow-lg transition-transform duration-300 hover:-translate-y-2 h-full">
                     <CardContent className="p-6">
-                      <Image src={member.imageUrl} data-ai-hint={member.imageHint} alt={`Portrait of ${member.name}, ${member.role} at NC Properties`} width={200} height={200} className="rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover w-[200px] h-[200px]" />
+                      <Image src={member.imageUrl} data-ai-hint={member.imageHint} alt={`Portrait of ${member.name}, ${member.role} at NC Properties.`} width={200} height={200} className="rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover w-[200px] h-[200px]" />
                       <h3 className="text-xl font-bold font-headline text-brand-deep group-hover:text-brand-bright transition-colors">{member.name}</h3>
                       <p className="text-brand-deep font-semibold">{member.role}</p>
                     </CardContent>

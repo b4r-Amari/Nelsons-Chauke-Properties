@@ -326,7 +326,7 @@ export function PropertyFilter({ properties, onFilterChange, isMobile = false }:
        )}>
           <Button className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg" onClick={handleFilterChange}>
               <Search className="mr-2 h-5 w-5"/>
-              Search {filteredCount} {filteredCount === 1 ? 'property' : 'properties'}
+              Show {filteredCount} {filteredCount === 1 ? 'property' : 'properties'}
           </Button>
           <Button type="reset" variant="link" className="w-full text-muted-foreground flex items-center" onClick={clearFilters}>
               <X className="mr-2 h-4 w-4" />

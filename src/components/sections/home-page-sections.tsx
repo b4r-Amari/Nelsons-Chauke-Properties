@@ -14,9 +14,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import * as z from "zod";
 
 
 const heroBanners = [
@@ -192,7 +192,7 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, h
   return (
     <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card h-full group">
       <CardContent className="p-6 flex-grow flex flex-col items-center">
-        <Image src={imageSrc} data-ai-hint={imageHint} alt={`${title} - NC Properties feature`} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
+        <Image src={imageSrc} data-ai-hint={imageHint} alt={description} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
         <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep group-hover:text-brand-bright transition-colors">{title}</h3>
         <p className="text-muted-foreground flex-grow mb-6">{description}</p>
         {isAlertForm ? (

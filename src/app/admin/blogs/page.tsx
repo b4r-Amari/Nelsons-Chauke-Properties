@@ -68,7 +68,7 @@ export default function AdminBlogsPage() {
                 <TableRow key={post.slug}>
                   <TableCell className="hidden sm:table-cell">
                     <Image
-                      alt={post.title}
+                      alt={`Featured image for blog post titled: ${post.title}`}
                       className="aspect-square rounded-md object-cover"
                       height="64"
                       src={post.imageUrl}

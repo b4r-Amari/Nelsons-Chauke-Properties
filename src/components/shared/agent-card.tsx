@@ -29,7 +29,7 @@ export function AgentCard({ agent }: AgentCardProps) {
             <div className="relative h-24 w-24 shrink-0">
                 <Image
                 src={agent.imageUrl}
-                alt={`Portrait of ${agent.name}`}
+                alt={`Professional portrait of ${agent.name}, ${agent.role} at NC Properties.`}
                 data-ai-hint={agent.imageHint}
                 fill
                 className="rounded-full object-cover border-4 border-white shadow-md"

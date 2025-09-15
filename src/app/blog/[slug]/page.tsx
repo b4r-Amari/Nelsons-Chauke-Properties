@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             url: post.imageUrl,
             width: 800,
             height: 450,
-            alt: post.title,
+            alt: `Featured image for blog post titled: ${post.title}`,
             },
         ],
         authors: [post.author],
@@ -122,7 +122,7 @@ export default function BlogPostPage({ params }: { params: { slug:string } }) {
             <div className="relative aspect-video w-full rounded-lg overflow-hidden my-8 shadow-lg">
               <Image
                 src={post.imageUrl}
-                alt={post.title}
+                alt={`Featured image for blog post titled: ${post.title}`}
                 data-ai-hint={post.imageHint}
                 fill
                 className="object-cover"

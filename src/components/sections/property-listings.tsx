@@ -2,7 +2,7 @@
 
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import propertiesData from '@/data/properties.json';
@@ -14,7 +14,7 @@ import { useSearchParams } from "next/navigation";
 
 const allProperties: Property[] = (propertiesData as Property[]).filter(p => p.status !== 'sold');
 
-export function PropertyListings() {
+function PropertyListingsComponent() {
   const searchParams = useSearchParams();
   const locationSearch = searchParams.get('location');
   const statusSearch = searchParams.get('status');
@@ -96,4 +96,12 @@ export function PropertyListings() {
       </div>
     </section>
   );
+}
+
+export function PropertyListings() {
+  return (
+    <Suspense>
+      <PropertyListingsComponent />
+    </Suspense>
+  )
 }

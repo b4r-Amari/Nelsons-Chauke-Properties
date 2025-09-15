@@ -46,7 +46,7 @@ export function PropertyImageGallery({ images, mainImageHint }: PropertyImageGal
        <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg mb-4">
         <Image
           src={mainImage}
-          alt="Main property view"
+          alt={`Main image of the property, showing the ${mainImage === images[0] ? mainImageHint : "property interior"}.`}
           data-ai-hint={mainImage === images[0] ? mainImageHint : "property interior"}
           fill
           className={cn(
@@ -88,7 +88,7 @@ export function PropertyImageGallery({ images, mainImageHint }: PropertyImageGal
                                 <div className="relative aspect-video w-full">
                                     <Image
                                         src={img}
-                                        alt={`Property gallery image ${i + 1}`}
+                                        alt={`Full-size view of property image ${i + 1}`}
                                         fill
                                         className="object-contain"
                                     />
