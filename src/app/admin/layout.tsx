@@ -34,7 +34,7 @@ export default function AdminLayout({
               <div className="relative flex min-h-screen w-full bg-background">
                 {!isLoginPage && <AdminSidebar />}
                 <main className={cn(
-                  "flex-1 flex-col",
+                  "flex-1",
                   !isLoginPage && "p-4 sm:p-6 md:p-8 md:ml-[220px] lg:ml-[280px]"
                 )}>
                   {children}

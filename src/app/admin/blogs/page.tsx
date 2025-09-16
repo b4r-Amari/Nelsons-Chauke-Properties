@@ -59,7 +59,7 @@ export default function AdminBlogsPage() {
                 <TableHead>Title</TableHead>
                 <TableHead className="hidden md:table-cell">Author</TableHead>
                 <TableHead className="hidden md:table-cell">Category</TableHead>
-                <TableHead className="hidden md:table-cell">Date</TableHead>
+                <TableHead className="hidden lg:table-cell">Date</TableHead>
                 <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>
             </TableHeader>
@@ -80,7 +80,7 @@ export default function AdminBlogsPage() {
                   <TableCell className="hidden md:table-cell">
                     <Badge variant="outline">{post.category}</Badge>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell">{post.date}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{post.date}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

@@ -94,7 +94,7 @@ export default function NewPropertyPage() {
                     <FormField control={form.control} name="location" render={({ field }) => (
                         <FormItem><FormLabel>Location / Suburb</FormLabel><FormControl><Input placeholder="e.g. Sandton, Gauteng" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <FormField control={form.control} name="price" render={({ field }) => (
                             <FormItem><FormLabel>Price (ZAR)</FormLabel><FormControl><Input type="number" placeholder="2500000" {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
@@ -148,7 +148,7 @@ export default function NewPropertyPage() {
                  {/* Image & Agent */}
                 <div className="space-y-4 p-4 border rounded-lg">
                     <h3 className="text-lg font-semibold font-headline">Media & Assignment</h3>
-                     <div className="grid md:grid-cols-2 gap-6">
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField control={form.control} name="imageUrl" render={({ field }) => (
                             <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input placeholder="https://example.com/image.png" {...field} /></FormControl><FormMessage /></FormItem>
                         )} />

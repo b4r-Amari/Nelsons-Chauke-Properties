@@ -90,7 +90,7 @@ export default function AdminAgentsPage() {
            <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>
+                <TableHead className="hidden sm:table-cell">
                     <Button variant="ghost" onClick={() => requestSort('id')}>
                         ID {getSortIndicator('id')}
                     </Button>
@@ -106,9 +106,9 @@ export default function AdminAgentsPage() {
                     </Button>
                 </TableHead>
                 <TableHead className="hidden md:table-cell">Email</TableHead>
-                <TableHead>
+                <TableHead className="hidden sm:table-cell">
                     <Button variant="ghost" onClick={() => requestSort('propertyCount')}>
-                        Assigned Properties {getSortIndicator('propertyCount')}
+                        Properties {getSortIndicator('propertyCount')}
                     </Button>
                 </TableHead>
                 <TableHead><span className="sr-only">Actions</span></TableHead>
@@ -117,7 +117,7 @@ export default function AdminAgentsPage() {
             <TableBody>
               {sortedAgents.map((agent) => (
                 <TableRow key={agent.id}>
-                  <TableCell className="font-mono text-xs">{agent.id}</TableCell>
+                  <TableCell className="font-mono text-xs hidden sm:table-cell">{agent.id}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-4">
                         <Avatar className="hidden h-9 w-9 sm:flex">
@@ -129,7 +129,7 @@ export default function AdminAgentsPage() {
                   </TableCell>
                   <TableCell>{agent.role}</TableCell>
                   <TableCell className="hidden md:table-cell">{agent.email}</TableCell>
-                   <TableCell className="text-center">{agent.propertyCount}</TableCell>
+                   <TableCell className="text-center hidden sm:table-cell">{agent.propertyCount}</TableCell>
                   <TableCell>
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>

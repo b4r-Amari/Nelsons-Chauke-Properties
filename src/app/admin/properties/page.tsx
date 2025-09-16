@@ -129,7 +129,7 @@ export default function AdminPropertiesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>
+                  <TableHead className="hidden sm:table-cell">
                       <Button variant="ghost" onClick={() => requestSort('id')}>
                           ID
                           {getSortIndicator('id')}
@@ -142,7 +142,7 @@ export default function AdminPropertiesPage() {
                       </Button>
                   </TableHead>
                   <TableHead className="hidden lg:table-cell">Agent(s)</TableHead>
-                  <TableHead className="hidden sm:table-cell">
+                  <TableHead className="hidden md:table-cell">
                       <Button variant="ghost" onClick={() => requestSort('price')}>
                           Price
                           {getSortIndicator('price')}
@@ -162,7 +162,7 @@ export default function AdminPropertiesPage() {
                   const propertyAgents = agents.filter(agent => property.agentIds.includes(agent.id));
                   return (
                     <TableRow key={property.id}>
-                      <TableCell className="font-mono text-xs">{property.id}</TableCell>
+                      <TableCell className="font-mono text-xs hidden sm:table-cell">{property.id}</TableCell>
                       <TableCell className="font-medium">{property.address}</TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {propertyAgents.length > 0 ? (
@@ -178,7 +178,7 @@ export default function AdminPropertiesPage() {
                           <span className="text-muted-foreground">Unassigned</span>
                         )}
                       </TableCell>
-                      <TableCell className="hidden sm:table-cell">{formatPrice(property.price, property.status)}</TableCell>
+                      <TableCell className="hidden md:table-cell">{formatPrice(property.price, property.status)}</TableCell>
                       <TableCell>
                         <Badge 
                           variant={property.status === 'sold' ? 'destructive' : 'default'}
