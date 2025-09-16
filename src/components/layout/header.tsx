@@ -62,7 +62,9 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
   const pathname = usePathname();
   const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthDialogOpen, setIsAuthDialogOpen] = useState(false);
+  const [isWishlistAuthDialogOpen, setIsWishlistAuthDialogOpen] = useState(false);
+  const [isUserAuthDialogOpen, setIsUserAuthDialogOpen] = useState(false);
+
 
   const isPropertiesActive = pathname.startsWith('/properties') || pathname === '/sell';
   
@@ -136,13 +138,13 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
         </div>
 
         <div className="ml-auto flex items-center space-x-2">
-           <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+           <Dialog open={isWishlistAuthDialogOpen} onOpenChange={setIsWishlistAuthDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
                 onClick={(e) => {
                   if (!user) {
                     e.preventDefault();
-                    setIsAuthDialogOpen(true);
+                    setIsWishlistAuthDialogOpen(true);
                   }
                 }}
               >
@@ -156,7 +158,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                   <DialogTitle className="text-2xl font-headline text-center">Authentication Required</DialogTitle>
                 </DialogHeader>
                 <p className="text-center text-muted-foreground">Please sign in or create an account to use the wishlist feature.</p>
-                <AuthForm onAuthSuccess={() => setIsAuthDialogOpen(false)} />
+                <AuthForm onAuthSuccess={() => setIsWishlistAuthDialogOpen(false)} />
             </DialogContent>
           </Dialog>
           
@@ -193,7 +195,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-             <Dialog open={isAuthDialogOpen} onOpenChange={setIsAuthDialogOpen}>
+             <Dialog open={isUserAuthDialogOpen} onOpenChange={setIsUserAuthDialogOpen}>
               <DialogTrigger asChild>
                  <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
                     <User className="h-12 w-12 md:h-7 md:w-7" />
@@ -203,7 +205,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                 <DialogHeader>
                   <DialogTitle className="text-2xl font-headline text-center">Welcome</DialogTitle>
                 </DialogHeader>
-                <AuthForm onAuthSuccess={() => setIsAuthDialogOpen(false)} />
+                <AuthForm onAuthSuccess={() => setIsUserAuthDialogOpen(false)} />
               </DialogContent>
             </Dialog>
           )}
@@ -255,3 +257,5 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
     </header>
   );
 }
+
+    
