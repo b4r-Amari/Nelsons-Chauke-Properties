@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import { useState } from "react";
@@ -62,6 +61,11 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
     defaultValues: { email: "", password: "" },
   });
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    form.reset(); // Reset form fields when switching tabs
+  };
+
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
@@ -70,7 +74,6 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
       toast({ title: "Signed In", description: "Welcome!" });
       onAuthSuccess?.();
     } catch (error: any) {
-      // Don't show an error toast if the user closes the pop-up
       if (error.code !== 'auth/popup-closed-by-user') {
         toast({
           variant: "destructive",
@@ -98,12 +101,25 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
       onAuthSuccess?.();
     } catch (error: any) {
       const errorCode = error.code;
-      let errorMessage = "An unexpected error occurred.";
-      if (errorCode === "auth/user-not-found" || errorCode === "auth/wrong-password" || errorCode === "auth/invalid-credential") {
-        errorMessage = "Invalid email or password.";
-      } else if (errorCode === "auth/email-already-in-use") {
-        errorMessage = "This email is already associated with an account.";
+      let errorMessage = "An unexpected error occurred. Please try again.";
+      
+      switch (errorCode) {
+        case "auth/user-not-found":
+        case "auth/wrong-password":
+        case "auth/invalid-credential":
+          errorMessage = "Invalid email or password. Please try again.";
+          break;
+        case "auth/email-already-in-use":
+          errorMessage = "This email address is already in use by another account.";
+          break;
+        case "auth/weak-password":
+            errorMessage = "The password is too weak. Please use at least 8 characters.";
+            break;
+        case "auth/invalid-email":
+            errorMessage = "The email address is not valid.";
+            break;
       }
+      
       toast({
         variant: "destructive",
         title: "Authentication Failed",
@@ -115,7 +131,7 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+    <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
       <TabsList className="grid w-full grid-cols-2 p-1 h-auto bg-muted rounded-lg">
         <TabsTrigger 
           value="signin"
@@ -143,20 +159,6 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
 function AuthFormContent({ form, onSubmit, isLoading, buttonText, onGoogleSignIn }: { form: any, onSubmit: (values: AuthFormData) => void, isLoading: boolean, buttonText: string, onGoogleSignIn: () => void }) {
   return (
     <>
-        <div className="relative my-4">
-            <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
-                </span>
-            </div>
-        </div>
-         <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={isLoading}>
-            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2" />}
-            Google
-        </Button>
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pt-4">
                 <FormField
@@ -191,6 +193,20 @@ function AuthFormContent({ form, onSubmit, isLoading, buttonText, onGoogleSignIn
                 </Button>
             </form>
         </Form>
+        <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                Or continue with
+                </span>
+            </div>
+        </div>
+         <Button variant="outline" className="w-full" onClick={onGoogleSignIn} disabled={isLoading}>
+            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon className="mr-2" />}
+            Google
+        </Button>
     </>
   )
 }
