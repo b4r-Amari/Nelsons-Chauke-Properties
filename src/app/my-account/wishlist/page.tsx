@@ -3,18 +3,18 @@
 
 import { useWishlist } from "@/context/wishlist-context";
 import { useAuth } from "@/context/auth-context";
-import propertiesData from "@/data/properties.json";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-
-const allProperties: Property[] = propertiesData;
+import { getProperties } from "@/lib/firebase/firestore";
 
 export default function WishlistPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { wishlist, isLoading: wishlistLoading } = useWishlist();
+  const [allProperties, setAllProperties] = useState<Property[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
@@ -23,9 +23,20 @@ export default function WishlistPage() {
     }
   }, [user, authLoading, router]);
 
+  useEffect(() => {
+    async function fetchAllProperties() {
+      const props = await getProperties();
+      setAllProperties(props);
+      setDataLoading(false);
+    }
+    fetchAllProperties();
+  }, []);
+
   const wishlistedProperties = allProperties.filter(property => wishlist.includes(property.id));
   
-  if (authLoading || wishlistLoading || !user) {
+  const isLoading = authLoading || wishlistLoading || dataLoading;
+
+  if (isLoading || !user) {
     return null; // Or a loading spinner
   }
 

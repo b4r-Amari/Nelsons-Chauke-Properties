@@ -10,12 +10,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { ArrowLeft, PlusCircle, Trash2 } from "lucide-react"
+import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import agentsData from "@/data/agents.json"
-import { cn } from "@/lib/utils"
+import { addProperty, getAgents } from "@/lib/firebase/firestore"
+import type { Agent } from "@/components/shared/agent-card"
+import { useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   address: z.string().min(5, "Address is too short."),
@@ -30,13 +32,26 @@ const formSchema = z.object({
   description: z.string().min(20, "Description must be at least 20 characters."),
   features: z.array(z.string()).optional().default([]),
   onShow: z.boolean().default(false),
-  agentIds: z.array(z.coerce.number()).min(1, { message: "Please assign at least one agent." }),
+  agentIds: z.array(z.string()).min(1, { message: "Please assign at least one agent." }),
   imageUrl: z.string().url({ message: "Please enter a valid URL." }),
   imageHint: z.string().min(2, { message: "Image hint must be at least 2 characters." }),
+  slug: z.string().min(3, "Slug is required."),
+  isFavorite: z.boolean().default(false),
+  yearBuilt: z.coerce.number().int().min(1900).max(new Date().getFullYear()),
 })
 
 export default function NewPropertyPage() {
   const { toast } = useToast()
+  const router = useRouter();
+  const [agents, setAgents] = useState<Agent[]>([]);
+
+  useEffect(() => {
+    async function fetchAgents() {
+      const fetchedAgents = await getAgents();
+      setAgents(fetchedAgents);
+    }
+    fetchAgents();
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -56,17 +71,29 @@ export default function NewPropertyPage() {
       agentIds: [],
       imageUrl: "https://placehold.co/300x200",
       imageHint: "modern house exterior",
+      slug: "",
+      isFavorite: false,
+      yearBuilt: 2024,
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real app, this would submit to a backend to update the properties.json file or a database.
-    console.log("New Property Data:", values)
-    toast({
-      title: "Property Created",
-      description: `A new property listing for ${values.address} has been created.`,
-    })
-    form.reset()
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await addProperty(values);
+      toast({
+        title: "Property Created",
+        description: `A new property listing for ${values.address} has been created.`,
+      })
+      form.reset();
+      router.push("/admin/properties");
+    } catch(error) {
+      console.error("Failed to create property:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to create property. Please try again."
+      })
+    }
   }
 
   return (
@@ -90,6 +117,9 @@ export default function NewPropertyPage() {
                     <h3 className="text-lg font-semibold font-headline">Basic Information</h3>
                     <FormField control={form.control} name="address" render={({ field }) => (
                         <FormItem><FormLabel>Full Address</FormLabel><FormControl><Input placeholder="123 Main Street" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="slug" render={({ field }) => (
+                        <FormItem><FormLabel>URL Slug</FormLabel><FormControl><Input placeholder="123-main-street-sandton" {...field} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="location" render={({ field }) => (
                         <FormItem><FormLabel>Location / Suburb</FormLabel><FormControl><Input placeholder="e.g. Sandton, Gauteng" {...field} /></FormControl><FormMessage /></FormItem>
@@ -122,6 +152,9 @@ export default function NewPropertyPage() {
                          )} />
                          <FormField control={form.control} name="erfSize" render={({ field }) => (
                             <FormItem><FormLabel>Erf Size (m²)</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
+                         )} />
+                         <FormField control={form.control} name="yearBuilt" render={({ field }) => (
+                            <FormItem><FormLabel>Year Built</FormLabel><FormControl><Input type="number" {...field} /></FormControl><FormMessage /></FormItem>
                          )} />
                     </div>
                 </div>
@@ -159,11 +192,11 @@ export default function NewPropertyPage() {
                     <FormField
                       control={form.control}
                       name="agentIds"
-                      render={({ field }) => (
+                      render={() => (
                         <FormItem>
                           <FormLabel>Assign Agent(s)</FormLabel>
                           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                            {agentsData.map((agent) => (
+                            {agents.map((agent) => (
                               <FormField
                                 key={agent.id}
                                 control={form.control}
@@ -209,8 +242,13 @@ export default function NewPropertyPage() {
                     <FormField control={form.control} name="onShow" render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Property is On Show</FormLabel></div></FormItem>
                     )} />
+                    <FormField control={form.control} name="isFavorite" render={({ field }) => (
+                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"><FormControl><Checkbox checked={field.value} onCheckedChange={field.onChange} /></FormControl><div className="space-y-1 leading-none"><FormLabel>Featured Property</FormLabel></div></FormItem>
+                    )} />
                 </div>
-              <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep" size="lg">Create Property</Button>
+              <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep" size="lg" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Creating..." : "Create Property"}
+              </Button>
             </form>
           </Form>
         </CardContent>

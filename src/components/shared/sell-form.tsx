@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { UploadCloud } from "lucide-react"
+import { addDoc, collection } from "firebase/firestore"
+import { db } from "@/lib/firebase/firebase"
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -38,13 +40,25 @@ export function SellForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    toast({
-      title: "Valuation Request Submitted!",
-      description: "Thank you for your submission. One of our agents will be in touch with you shortly.",
-    })
-    form.reset()
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await addDoc(collection(db, "valuationRequests"), {
+        ...values,
+        submittedAt: new Date(),
+      });
+      toast({
+        title: "Valuation Request Submitted!",
+        description: "Thank you for your submission. One of our agents will be in touch with you shortly.",
+      })
+      form.reset()
+    } catch (error) {
+      console.error("Error submitting valuation request:", error);
+      toast({
+        variant: "destructive",
+        title: "Submission Error",
+        description: "There was a problem submitting your request. Please try again.",
+      });
+    }
   }
 
   return (
@@ -169,7 +183,9 @@ export function SellForm() {
             </div>
         </fieldset>
 
-        <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg">Request Valuation</Button>
+        <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? "Submitting..." : "Request Valuation"}
+        </Button>
       </form>
     </Form>
   )

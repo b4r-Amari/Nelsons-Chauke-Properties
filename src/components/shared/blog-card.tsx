@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
 
 export type BlogPost = {
+  id: string; // Changed to string for Firestore ID
   slug: string;
   title: string;
   author: string;

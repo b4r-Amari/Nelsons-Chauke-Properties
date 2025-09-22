@@ -1,11 +1,11 @@
 
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download } from 'lucide-react';
-import agentsData from '@/data/agents.json';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+import { getAgents } from '@/lib/firebase/firestore';
 
 export const metadata: Metadata = {
   title: 'About NC Properties | Our Story, Mission, and Team',
@@ -27,9 +27,9 @@ const timelineEvents = [
   { year: 'Today', title: 'Industry Leader', description: 'Recognized as a leading property firm in the region, serving thousands of happy clients.' },
 ];
 
-const teamMembers = agentsData;
+export default async function AboutUsPage() {
+  const teamMembers = await getAgents();
 
-export default function AboutUsPage() {
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",

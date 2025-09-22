@@ -4,27 +4,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Phone } from 'lucide-react';
 
-import agentsData from '@/data/agents.json';
+import { getAgent, getAgents, getProperties } from '@/lib/firebase/firestore';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { PropertyCard, type Property } from '@/components/shared/property-card';
-import propertiesData from '@/data/properties.json';
 import type { Metadata } from 'next';
-
-
-type Agent = (typeof agentsData)[0];
-
-const agents: Agent[] = agentsData;
-const allProperties: Property[] = propertiesData;
-
-function getAgent(slug: string) {
-  return agents.find((agent) => agent.slug === slug);
-}
+import { type Agent } from '@/components/shared/agent-card';
 
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const agent = getAgent(params.slug);
+  const agent = await getAgent(params.slug);
 
   if (!agent) {
     return {
@@ -55,20 +45,20 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 
 export async function generateStaticParams() {
+  const agents: Agent[] = await getAgents();
   return agents.map((agent) => ({
     slug: agent.slug,
   }));
 }
 
-export default function AgentProfilePage({ params }: { params: { slug: string } }) {
-  const agent = getAgent(params.slug);
+export default async function AgentProfilePage({ params }: { params: { slug: string } }) {
+  const agent = await getAgent(params.slug);
 
   if (!agent) {
     notFound();
   }
 
-  // In a real app, you'd likely have a mapping of agents to properties.
-  // For this demo, we'll just assign a few active properties to the main agent for display.
+  const allProperties: Property[] = await getProperties();
   const agentProperties = allProperties.filter(p => p.agentIds.includes(agent.id) && p.status !== 'sold');
 
   return (

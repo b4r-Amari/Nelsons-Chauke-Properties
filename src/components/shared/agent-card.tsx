@@ -5,8 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 
-type Agent = {
-  id: number;
+export type Agent = {
+  id: string; // Changed to string for Firestore ID
   slug: string;
   name: string;
   role: string;
@@ -14,6 +14,7 @@ type Agent = {
   imageHint: string;
   phone: string;
   email: string;
+  bio: string;
 };
 
 type AgentCardProps = {

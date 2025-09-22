@@ -1,16 +1,15 @@
 
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowRight, Building, KeyRound, Handshake } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { PropertyCard } from '@/components/shared/property-card';
 import type { Property } from '@/components/shared/property-card';
 import Link from 'next/link';
-import propertiesData from '@/data/properties.json';
 import { Separator } from '@/components/ui/separator';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { HeroSection, CtaTabsSection, NewsletterSection } from '@/components/sections/home-page-sections';
 import type { Metadata } from 'next';
+import { getProperties } from '@/lib/firebase/firestore';
 
 export const metadata: Metadata = {
   title: 'NC Properties Redefined | Find Your Perfect Home in South Africa',
@@ -23,39 +22,9 @@ export const metadata: Metadata = {
   },
 };
 
+async function FeaturedPropertiesSection() {
+  const featuredProperties: Property[] = await getProperties({ featuredOnly: true });
 
-const featuredProperties: Property[] = propertiesData.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 8);
-
-export default function Home() {
-    const websiteSchema = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "url": "https://nelson-chauke-prop.web.app/",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://nelson-chauke-prop.web.app/properties?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  };
-
-  return (
-    <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
-      />
-      <div className="flex flex-col bg-background">
-        <HeroSection />
-        <FeaturedPropertiesSection />
-        <ShortAboutSection />
-        <CtaTabsSection />
-        <NewsletterSection />
-      </div>
-    </>
-  );
-}
-
-function FeaturedPropertiesSection() {
   return (
     <section className="py-24 bg-background relative">
       <div className="container">
@@ -108,5 +77,34 @@ function ShortAboutSection() {
         </article>
       </div>
     </section>
+  );
+}
+
+export default function Home() {
+    const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "url": "https://nelson-chauke-prop.web.app/",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://nelson-chauke-prop.web.app/properties?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <div className="flex flex-col bg-background">
+        <HeroSection />
+        <FeaturedPropertiesSection />
+        <ShortAboutSection />
+        <CtaTabsSection />
+        <NewsletterSection />
+      </div>
+    </>
   );
 }

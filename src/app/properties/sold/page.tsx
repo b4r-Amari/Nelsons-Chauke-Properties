@@ -1,7 +1,7 @@
 
 import { PropertyCard, type Property } from "@/components/shared/property-card";
-import propertiesData from '@/data/properties.json';
 import type { Metadata } from 'next';
+import { getProperties } from "@/lib/firebase/firestore";
 
 export const metadata: Metadata = {
   title: 'Recently Sold Properties | NC Properties Success Stories',
@@ -14,9 +14,11 @@ export const metadata: Metadata = {
   },
 };
 
-const soldProperties: Property[] = propertiesData.filter(p => p.status === 'sold');
 
-export default function SoldPropertiesPage() {
+export default async function SoldPropertiesPage() {
+  const allProperties: Property[] = await getProperties();
+  const soldProperties = allProperties.filter(p => p.status === 'sold');
+  
   return (
     <>
       <section className="bg-brand-deep text-white py-16">

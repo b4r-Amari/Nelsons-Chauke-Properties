@@ -1,42 +1,62 @@
 
-
 "use client"
 
 import { useState, useEffect, Suspense, useMemo } from "react";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
-import propertiesData from '@/data/properties.json';
+import { getProperties } from '@/lib/firebase/firestore';
 import { Button } from "../ui/button";
 import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { ScrollArea } from "../ui/scroll-area";
 import { useSearchParams } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+import { Skeleton } from "../ui/skeleton";
 
-
-const allProperties: Property[] = (propertiesData as Property[]).filter(p => p.status !== 'sold');
-
-function PropertyListingsComponent() {
+function PropertyListingsComponent({ status }: { status?: 'on-show' | 'sold' }) {
   const searchParams = useSearchParams();
   const locationSearch = searchParams.get('location');
   const statusSearch = searchParams.get('status');
 
-  const getInitialProperties = () => {
-    let properties = allProperties;
-
-    if (locationSearch || statusSearch) {
-      return properties.filter(p => {
-        const locationMatch = locationSearch ? p.location.toLowerCase().includes(locationSearch.toLowerCase()) || p.address.toLowerCase().includes(locationSearch.toLowerCase()) : true;
-        const statusMatch = statusSearch ? p.status === statusSearch : true;
-        return locationMatch && statusMatch;
-      });
-    }
-    return properties;
-  }
-  
-  const [initialProperties] = useState(allProperties);
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>(getInitialProperties());
+  const [allProperties, setAllProperties] = useState<Property[]>([]);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [sortOption, setSortOption] = useState('newest');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchProperties() {
+      setIsLoading(true);
+      const props = await getProperties();
+      
+      let initialProps = props;
+      if (status) {
+        if (status === 'on-show') {
+          initialProps = props.filter(p => p.onShow && p.status !== 'sold');
+        } else {
+          initialProps = props.filter(p => p.status === status);
+        }
+      } else {
+        initialProps = props.filter(p => p.status !== 'sold');
+      }
+
+      setAllProperties(initialProps);
+      
+      if (locationSearch || statusSearch) {
+        const filtered = initialProps.filter(p => {
+          const locationMatch = locationSearch ? p.location.toLowerCase().includes(locationSearch.toLowerCase()) || p.address.toLowerCase().includes(locationSearch.toLowerCase()) : true;
+          const statusMatch = statusSearch ? p.status === statusSearch : true;
+          return locationMatch && statusMatch;
+        });
+        setFilteredProperties(filtered);
+      } else {
+        setFilteredProperties(initialProps);
+      }
+
+      setIsLoading(false);
+    }
+
+    fetchProperties();
+  }, [status, locationSearch, statusSearch]);
 
   const sortedAndFilteredProperties = useMemo(() => {
     let sortableProperties = [...filteredProperties];
@@ -49,19 +69,24 @@ function PropertyListingsComponent() {
           return a.price - b.price;
         case 'newest':
         default:
-          return b.id - a.id; // Assuming higher ID is newer
+          return (b.id || 0) > (a.id || 0) ? 1 : -1;
       }
     });
 
     return sortableProperties;
   }, [filteredProperties, sortOption]);
 
-
-  useEffect(() => {
-    setFilteredProperties(getInitialProperties());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
+  const LoadingSkeleton = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="space-y-4">
+          <Skeleton className="h-[250px] w-full" />
+          <Skeleton className="h-6 w-3/4" />
+          <Skeleton className="h-4 w-1/2" />
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <section className="py-16 bg-background">
@@ -86,7 +111,7 @@ function PropertyListingsComponent() {
                 </SheetHeader>
                 <ScrollArea className="flex-grow">
                     <PropertyFilter 
-                        properties={initialProperties} 
+                        properties={allProperties} 
                         onFilterChange={setFilteredProperties}
                         isMobile={true}
                     />
@@ -112,12 +137,14 @@ function PropertyListingsComponent() {
         <div className="grid lg:grid-cols-4 gap-8">
           <aside className="lg:col-span-1 hidden lg:block">
             <PropertyFilter 
-              properties={initialProperties} 
+              properties={allProperties} 
               onFilterChange={setFilteredProperties}
             />
           </aside>
           <main className="lg:col-span-3">
-            {sortedAndFilteredProperties.length > 0 ? (
+            {isLoading ? (
+              <LoadingSkeleton />
+            ) : sortedAndFilteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {sortedAndFilteredProperties.map((prop) => (
                   <PropertyCard key={prop.id} property={prop} />
@@ -135,10 +162,10 @@ function PropertyListingsComponent() {
   );
 }
 
-export function PropertyListings() {
+export function PropertyListings({ status }: { status?: 'on-show' | 'sold' }) {
   return (
     <Suspense>
-      <PropertyListingsComponent />
+      <PropertyListingsComponent status={status} />
     </Suspense>
   )
 }

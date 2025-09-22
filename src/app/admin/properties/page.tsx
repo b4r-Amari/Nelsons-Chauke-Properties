@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { PlusCircle, MoreHorizontal, Pencil, Trash2, Users, ChevronLeft, ChevronRight, ArrowUpDown } from 'lucide-react';
@@ -12,18 +12,12 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-
-import propertiesData from '@/data/properties.json';
-import agentsData from '@/data/agents.json';
+import { getProperties, getAgents, updateProperty } from '@/lib/firebase/firestore';
 import { type Property } from '@/components/shared/property-card';
+import { type Agent } from '@/components/shared/agent-card';
 import { cn } from '@/lib/utils';
-import Image from 'next/image';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
-
-
-const properties: Property[] = propertiesData;
-const agents = agentsData;
 
 const formatPrice = (price: number, status: 'for-sale' | 'to-let' | 'sold') => {
     const isRental = status === 'to-let';
@@ -36,13 +30,25 @@ const formatPrice = (price: number, status: 'for-sale' | 'to-let' | 'sold') => {
     return isRental ? `${formattedPrice} /month` : formattedPrice;
 }
 
-
 export default function AdminPropertiesPage() {
-  const [propertyList, setPropertyList] = useState(properties);
+  const [propertyList, setPropertyList] = useState<Property[]>([]);
+  const [agents, setAgents] = useState<Agent[]>([]);
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const propertiesPerPage = 10;
   const [sortConfig, setSortConfig] = useState<{ key: keyof Property, direction: 'asc' | 'desc' } | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      const [props, ags] = await Promise.all([getProperties(), getAgents()]);
+      setPropertyList(props);
+      setAgents(ags);
+      setIsLoading(false);
+    }
+    fetchData();
+  }, []);
 
   const sortedProperties = useMemo(() => {
     let sortableProperties = [...propertyList];
@@ -80,33 +86,36 @@ export default function AdminPropertiesPage() {
     return sortConfig.direction === 'asc' ? '▲' : '▼';
   };
 
-
-  const handleAgentAssigned = (propertyId: number, newAgentId: number) => {
-    setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentIds: [newAgentId] } : p));
-    const agentName = agents.find(a => a.id === newAgentId)?.name;
-    const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
-    toast({
-      title: "Agent Reassigned",
-      description: `${agentName} has been assigned to ${propertyAddress}.`,
-    });
+  const handleAgentAssigned = async (propertyId: string, newAgentId: string) => {
+    try {
+      await updateProperty(propertyId, { agentIds: [newAgentId] });
+      setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentIds: [newAgentId] } : p));
+      const agentName = agents.find(a => a.id === newAgentId)?.name;
+      const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
+      toast({
+        title: "Agent Reassigned",
+        description: `${agentName} has been assigned to ${propertyAddress}.`,
+      });
+    } catch (error) {
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Failed to reassign agent.',
+      });
+    }
   };
-  
-  const getAgentById = (agentId: number) => {
-    return agents.find(agent => agent.id === agentId);
-  }
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -162,7 +171,7 @@ export default function AdminPropertiesPage() {
                   const propertyAgents = agents.filter(agent => property.agentIds.includes(agent.id));
                   return (
                     <TableRow key={property.id}>
-                      <TableCell className="font-mono text-xs hidden sm:table-cell">{property.id}</TableCell>
+                      <TableCell className="font-mono text-xs hidden sm:table-cell">{property.id.substring(0, 5)}...</TableCell>
                       <TableCell className="font-medium">{property.address}</TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {propertyAgents.length > 0 ? (
@@ -208,7 +217,7 @@ export default function AdminPropertiesPage() {
                                 <Trash2 className="mr-2 h-4 w-4" /> Delete
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
-                              <AssignAgentDialog property={property} onAgentAssigned={handleAgentAssigned} />
+                              <AssignAgentDialog property={property} agents={agents} onAgentAssigned={handleAgentAssigned} />
                             </DropdownMenuContent>
                           </DropdownMenu>
                       </TableCell>
@@ -239,10 +248,9 @@ export default function AdminPropertiesPage() {
   );
 }
 
-
-function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; onAgentAssigned: (propertyId: number, agentId: number) => void; }) {
+function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Property; agents: Agent[]; onAgentAssigned: (propertyId: string, agentId: string) => void; }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedAgentId, setSelectedAgentId] = useState<number | undefined>(property.agentIds[0]);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(property.agentIds[0]);
 
   const handleSubmit = () => {
     if (selectedAgentId) {
@@ -267,7 +275,7 @@ function AssignAgentDialog({ property, onAgentAssigned }: { property: Property; 
         </DialogHeader>
         <div className="py-4">
             <Label htmlFor="agent-select">Select Agent</Label>
-            <Select value={selectedAgentId?.toString()} onValueChange={(value) => setSelectedAgentId(parseInt(value))}>
+            <Select value={selectedAgentId?.toString()} onValueChange={(value) => setSelectedAgentId(value)}>
                 <SelectTrigger id="agent-select">
                     <SelectValue placeholder="Select an agent" />
                 </SelectTrigger>

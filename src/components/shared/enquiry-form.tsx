@@ -5,11 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import { addDoc, collection } from "firebase/firestore"
+import { db } from "@/lib/firebase/firebase"
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -18,7 +20,7 @@ const formSchema = z.object({
   message: z.string().min(10, { message: "Message must be at least 10 characters." }),
 })
 
-export function EnquiryForm() {
+export function EnquiryForm({ propertyId }: { propertyId: string }) {
   const { toast } = useToast()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -31,13 +33,26 @@ export function EnquiryForm() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    toast({
-      title: "Enquiry Sent!",
-      description: "An agent will be in touch with you shortly.",
-    })
-    form.reset()
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await addDoc(collection(db, "enquiries"), {
+        ...values,
+        propertyId,
+        submittedAt: new Date(),
+      });
+      toast({
+        title: "Enquiry Sent!",
+        description: "An agent will be in touch with you shortly.",
+      })
+      form.reset()
+    } catch (error) {
+      console.error("Error submitting enquiry:", error);
+      toast({
+        variant: "destructive",
+        title: "Submission Error",
+        description: "There was a problem sending your enquiry. Please try again.",
+      });
+    }
   }
 
   return (
@@ -100,8 +115,8 @@ export function EnquiryForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg">
-                Send Enquiry
+            <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? "Sending..." : "Send Enquiry"}
             </Button>
           </form>
         </Form>

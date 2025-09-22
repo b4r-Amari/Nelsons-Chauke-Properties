@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 export type Property = {
-  id: number;
+  id: string; // Changed to string for Firestore ID
   slug: string;
   imageUrl: string;
   imageHint: string;
@@ -30,7 +30,7 @@ export type Property = {
   features: string[];
   yearBuilt: number;
   onShow?: boolean;
-  agentIds: number[];
+  agentIds: string[]; // Changed to string for Firestore IDs
 };
 
 type PropertyCardProps = {
@@ -43,11 +43,10 @@ export function PropertyCard({ property }: PropertyCardProps) {
   const isWishlisted = wishlist.includes(property.id.toString());
 
   const handleWishlistClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); // Prevent navigating to property page
+    e.preventDefault();
     e.stopPropagation();
 
     if (!user) {
-      // In a real app, you would probably trigger a login modal here
       alert("Please log in to use the wishlist feature.");
       return;
     }
@@ -69,7 +68,6 @@ export function PropertyCard({ property }: PropertyCardProps) {
     }).format(price);
     return isRental ? `${formattedPrice} /month` : formattedPrice;
   }
-  //<Card className="w-full max-w-[320px] min-h-[480px] h-full rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col mx-auto cursor-pointer overflow-hidden">
 
   return (
     <Link href={`/properties/${property.id}`} className="block group">

@@ -3,20 +3,13 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, User, Calendar } from 'lucide-react';
-
-import blogData from '@/data/blog.json';
+import { getBlogPost, getBlogPosts } from '@/lib/firebase/firestore';
 import { type BlogPost } from '@/components/shared/blog-card';
 import { Badge } from '@/components/ui/badge';
 import type { Metadata } from 'next';
 
-const posts: BlogPost[] = blogData as BlogPost[];
-
-function getPost(slug: string) {
-  return posts.find((post) => post.slug === slug);
-}
-
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = getPost(params.slug);
+  const post = await getBlogPost(params.slug);
 
   if (!post) {
     return {
@@ -47,15 +40,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-
 export async function generateStaticParams() {
+  const posts = await getBlogPosts();
   return posts.map((post) => ({
     slug: post.slug,
   }));
 }
 
-export default function BlogPostPage({ params }: { params: { slug:string } }) {
-  const post = getPost(params.slug);
+export default async function BlogPostPage({ params }: { params: { slug:string } }) {
+  const post = await getBlogPost(params.slug);
 
   if (!post) {
     notFound();
@@ -85,7 +78,6 @@ export default function BlogPostPage({ params }: { params: { slug:string } }) {
     },
     "datePublished": post.date
   };
-
 
   return (
     <div className="bg-background">

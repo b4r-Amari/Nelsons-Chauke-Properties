@@ -1,29 +1,20 @@
 
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
+import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle } from 'lucide-react';
 import type { Metadata } from 'next';
-
-import propertiesData from '@/data/properties.json';
+import { getProperty, getProperties } from '@/lib/firebase/firestore';
 import { type Property } from '@/components/shared/property-card';
 import { AgentCard } from '@/components/shared/agent-card';
 import { EnquiryForm } from '@/components/shared/enquiry-form';
 import { PropertyImageGallery } from '@/components/shared/property-image-gallery';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import agentsData from '@/data/agents.json';
+import { getAgents } from '@/lib/firebase/firestore';
 import { BackButton } from '@/components/shared/back-button';
-import Link from 'next/link';
-
-const properties: Property[] = propertiesData;
-const agents = agentsData;
-
-function getProperty(id: string) {
-  return properties.find((p) => p.id.toString() === id);
-}
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const property = getProperty(params.id);
+  const property = await getProperty(params.id);
 
   if (!property) {
     return {
@@ -66,19 +57,21 @@ export async function generateMetadata({ params }: { params: { id: string } }): 
 
 // This function tells Next.js which dynamic pages to pre-render at build time.
 export async function generateStaticParams() {
+  const properties = await getProperties();
   return properties.map((property) => ({
     id: property.id.toString(),
   }));
 }
 
-export default function PropertyDetailPage({ params }: { params: { id: string } }) {
-  const property = getProperty(params.id);
+export default async function PropertyDetailPage({ params }: { params: { id: string } }) {
+  const property = await getProperty(params.id);
 
   if (!property) {
     notFound();
   }
   
-  const propertyAgents = agents.filter(a => property.agentIds.includes(a.id));
+  const allAgents = await getAgents();
+  const propertyAgents = allAgents.filter(a => property.agentIds.includes(a.id));
 
   const formatPrice = (price: number) => {
     const isRental = property.status === 'to-let';
@@ -240,7 +233,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
               {propertyAgents.map(agent => (
                 <AgentCard key={agent.id} agent={agent} />
               ))}
-              <EnquiryForm />
+              <EnquiryForm propertyId={params.id} />
             </div>
           </aside>
         </div>
