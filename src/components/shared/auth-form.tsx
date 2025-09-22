@@ -70,11 +70,14 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
       toast({ title: "Signed In", description: "Welcome!" });
       onAuthSuccess?.();
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Authentication Failed",
-        description: "Could not sign in with Google. Please try again.",
-      });
+      // Don't show an error toast if the user closes the pop-up
+      if (error.code !== 'auth/popup-closed-by-user') {
+        toast({
+          variant: "destructive",
+          title: "Authentication Failed",
+          description: "Could not sign in with Google. Please try again.",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -191,4 +194,3 @@ function AuthFormContent({ form, onSubmit, isLoading, buttonText, onGoogleSignIn
     </>
   )
 }
-
