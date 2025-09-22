@@ -2,15 +2,17 @@
 
 "use client"
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useMemo } from "react";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import propertiesData from '@/data/properties.json';
 import { Button } from "../ui/button";
-import { SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
 import { ScrollArea } from "../ui/scroll-area";
 import { useSearchParams } from "next/navigation";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
+
 
 const allProperties: Property[] = (propertiesData as Property[]).filter(p => p.status !== 'sold');
 
@@ -34,6 +36,26 @@ function PropertyListingsComponent() {
   
   const [initialProperties] = useState(allProperties);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(getInitialProperties());
+  const [sortOption, setSortOption] = useState('newest');
+
+  const sortedAndFilteredProperties = useMemo(() => {
+    let sortableProperties = [...filteredProperties];
+    
+    sortableProperties.sort((a, b) => {
+      switch (sortOption) {
+        case 'price-desc':
+          return b.price - a.price;
+        case 'price-asc':
+          return a.price - b.price;
+        case 'newest':
+        default:
+          return b.id - a.id; // Assuming higher ID is newer
+      }
+    });
+
+    return sortableProperties;
+  }, [filteredProperties, sortOption]);
+
 
   useEffect(() => {
     setFilteredProperties(getInitialProperties());
@@ -44,12 +66,12 @@ function PropertyListingsComponent() {
   return (
     <section className="py-16 bg-background">
       <div className="container">
-        <div className="lg:hidden mb-6">
+        <div className="lg:hidden mb-6 flex justify-between items-center gap-4">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="outline" className="w-full">
+              <Button variant="outline">
                 <SlidersHorizontal className="mr-2 h-4 w-4" />
-                Filter Properties
+                Filter
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 flex flex-col">
@@ -71,6 +93,21 @@ function PropertyListingsComponent() {
                 </ScrollArea>
             </SheetContent>
           </Sheet>
+           <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <ArrowUpDown className="mr-2 h-4 w-4" />
+                Order By
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Sort Properties</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => setSortOption('newest')}>Newest First</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setSortOption('price-desc')}>Price: High to Low</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setSortOption('price-asc')}>Price: Low to High</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
         <div className="grid lg:grid-cols-4 gap-8">
           <aside className="lg:col-span-1 hidden lg:block">
@@ -80,9 +117,9 @@ function PropertyListingsComponent() {
             />
           </aside>
           <main className="lg:col-span-3">
-            {filteredProperties.length > 0 ? (
+            {sortedAndFilteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredProperties.map((prop) => (
+                {sortedAndFilteredProperties.map((prop) => (
                   <PropertyCard key={prop.id} property={prop} />
                 ))}
               </div>
