@@ -5,15 +5,18 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { signIn, signUp, signInWithGoogle } from "@/lib/firebase/auth";
 import { addUserData } from "@/lib/firebase/firestore";
-import { Loader2 } from "lucide-react";
+import { Logo } from "@/components/shared/logo";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -49,12 +52,13 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
         />
       </svg>
     );
-  }
+}
 
-export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
+function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSuccess?: () => void, initialTab?: "signin" | "signup" }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("signin");
+  const [activeTab, setActiveTab] = useState(initialTab);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<AuthFormData>({
     resolver: zodResolver(authSchema),
@@ -63,7 +67,7 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    form.reset(); // Reset form fields when switching tabs
+    form.reset();
   };
 
   const handleGoogleSignIn = async () => {
@@ -72,7 +76,7 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
       const userCredential = await signInWithGoogle();
       await addUserData(userCredential.user);
       toast({ title: "Signed In", description: "Welcome!" });
-      onAuthSuccess?.();
+      onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
     } catch (error: any) {
       if (error.code !== 'auth/popup-closed-by-user') {
         toast({
@@ -98,7 +102,7 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
         toast({ title: "Account Created", description: "You have successfully signed up." });
       }
       form.reset();
-      onAuthSuccess?.();
+      onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
     } catch (error: any) {
       const errorCode = error.code;
       let errorMessage = "An unexpected error occurred. Please try again.";
@@ -113,11 +117,11 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
           errorMessage = "This email address is already in use by another account.";
           break;
         case "auth/weak-password":
-            errorMessage = "The password is too weak. Please use at least 8 characters.";
-            break;
+          errorMessage = "The password is too weak. Please use at least 8 characters.";
+          break;
         case "auth/invalid-email":
-            errorMessage = "The email address is not valid.";
-            break;
+          errorMessage = "The email address is not valid.";
+          break;
       }
       
       toast({
@@ -198,7 +202,7 @@ function AuthFormContent({ form, onSubmit, isLoading, buttonText, onGoogleSignIn
                 <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
+                <span className="bg-card px-2 text-muted-foreground">
                 Or continue with
                 </span>
             </div>
@@ -209,4 +213,25 @@ function AuthFormContent({ form, onSubmit, isLoading, buttonText, onGoogleSignIn
         </Button>
     </>
   )
+}
+
+export default function LoginPage() {
+    const router = useRouter();
+
+    return (
+        <div className="flex min-h-[calc(100vh-80px)] flex-col items-center justify-center bg-background p-4">
+            <div className="mb-8">
+                <Logo />
+            </div>
+            <Card className="w-full max-w-sm shadow-2xl">
+                <CardHeader className="text-center">
+                    <CardTitle className="font-headline text-2xl">Welcome</CardTitle>
+                    <CardDescription>Sign in or create an account to continue.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <AuthForm onAuthSuccess={() => router.push('/my-account')} />
+                </CardContent>
+            </Card>
+        </div>
+    );
 }

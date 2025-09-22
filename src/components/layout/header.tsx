@@ -17,16 +17,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { useAuth } from "@/context/auth-context";
 import { logOut } from "@/lib/firebase/auth";
-import { AuthForm } from "@/components/shared/auth-form";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const navLinks = [
@@ -62,9 +54,6 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
   const pathname = usePathname();
   const { user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isWishlistAuthDialogOpen, setIsWishlistAuthDialogOpen] = useState(false);
-  const [isUserAuthDialogOpen, setIsUserAuthDialogOpen] = useState(false);
-
 
   const isPropertiesActive = pathname.startsWith('/properties') || pathname === '/sell';
   
@@ -138,29 +127,11 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
         </div>
 
         <div className="ml-auto flex items-center space-x-2">
-           <Dialog open={isWishlistAuthDialogOpen} onOpenChange={setIsWishlistAuthDialogOpen}>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors"
-                onClick={(e) => {
-                  if (!user) {
-                    e.preventDefault();
-                    setIsWishlistAuthDialogOpen(true);
-                  }
-                }}
-              >
-                <Link href={user ? "/my-account/wishlist" : "#"} className="w-full h-full flex items-center justify-center">
+           <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors" asChild>
+                <Link href={user ? "/my-account/wishlist" : "/login"}>
                   <Heart className="h-12 w-12 md:h-7 md:w-7" />
                 </Link>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-headline text-center">Authentication Required</DialogTitle>
-                </DialogHeader>
-                <p className="text-center text-muted-foreground">Please sign in or create an account to use the wishlist feature.</p>
-                <AuthForm onAuthSuccess={() => setIsWishlistAuthDialogOpen(false)} />
-            </DialogContent>
-          </Dialog>
+            </Button>
           
           {user ? (
             <DropdownMenu>
@@ -195,19 +166,11 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-             <Dialog open={isUserAuthDialogOpen} onOpenChange={setIsUserAuthDialogOpen}>
-              <DialogTrigger asChild>
-                 <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors">
+            <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors" asChild>
+                <Link href="/login">
                     <User className="h-12 w-12 md:h-7 md:w-7" />
-                  </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle className="text-2xl font-headline text-center">Welcome</DialogTitle>
-                </DialogHeader>
-                <AuthForm onAuthSuccess={() => setIsUserAuthDialogOpen(false)} />
-              </DialogContent>
-            </Dialog>
+                </Link>
+            </Button>
           )}
 
           <div className="md:hidden">
