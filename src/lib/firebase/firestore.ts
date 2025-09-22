@@ -1,5 +1,4 @@
 
-
 import { collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, where, orderBy, limit, setDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Property } from '@/components/shared/property-card';
@@ -100,4 +99,3 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   }
   return null;
 }
-
