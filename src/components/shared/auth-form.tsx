@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useState } from "react";
@@ -12,8 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { signIn, signUp, signInWithGoogle } from "@/lib/firebase/auth";
+import { addUserData } from "@/lib/firebase/firestore";
 import { Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -64,7 +65,8 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      await signInWithGoogle();
+      const userCredential = await signInWithGoogle();
+      await addUserData(userCredential.user);
       toast({ title: "Signed In", description: "Welcome!" });
       onAuthSuccess?.();
     } catch (error: any) {
@@ -85,7 +87,8 @@ export function AuthForm({ onAuthSuccess }: { onAuthSuccess?: () => void }) {
         await signIn(values.email, values.password);
         toast({ title: "Signed In", description: "Welcome back!" });
       } else {
-        await signUp(values.email, values.password);
+        const userCredential = await signUp(values.email, values.password);
+        await addUserData(userCredential.user);
         toast({ title: "Account Created", description: "You have successfully signed up." });
       }
       form.reset();
@@ -188,3 +191,4 @@ function AuthFormContent({ form, onSubmit, isLoading, buttonText, onGoogleSignIn
     </>
   )
 }
+

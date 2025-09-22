@@ -1,14 +1,34 @@
 
-import { collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, where, orderBy, limit } from 'firebase/firestore';
+
+import { collection, getDocs, getDoc, doc, addDoc, updateDoc, deleteDoc, serverTimestamp, query, where, orderBy, limit, setDoc } from 'firebase/firestore';
 import { db } from './firebase';
 import type { Property } from '@/components/shared/property-card';
 import type { Agent } from '@/components/shared/agent-card';
 import type { BlogPost } from '@/components/shared/blog-card';
+import type { User } from './auth';
 
 // Generic function to convert Firestore snapshot to array of objects
 function snapshotToArray<T>(snapshot: any): T[] {
   return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() } as T));
 }
+
+// User role management
+export async function addUserData(user: User) {
+    const userRef = doc(db, 'users', user.uid);
+    const docSnap = await getDoc(userRef);
+
+    if (!docSnap.exists()) {
+        await setDoc(userRef, {
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            role: 'customer', // Default role
+            createdAt: serverTimestamp(),
+        });
+    }
+}
+
 
 // Properties
 export async function getProperties(options: { featuredOnly?: boolean } = {}): Promise<Property[]> {
@@ -80,3 +100,4 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   }
   return null;
 }
+
