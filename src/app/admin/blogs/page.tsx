@@ -1,39 +1,42 @@
 
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { PlusCircle, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import blogData from '@/data/blog.json';
 import Link from 'next/link';
 import Image from 'next/image';
-
-type BlogPost = {
-  slug: string;
-  title: string;
-  author: string;
-  date: string;
-  imageUrl: string;
-  category: string;
-};
-
-const posts: BlogPost[] = blogData;
+import { getBlogPosts } from '@/lib/firebase/firestore';
+import { type BlogPost } from '@/components/shared/blog-card';
 
 export default function AdminBlogsPage() {
-  const [blogPosts, setBlogPosts] = useState(posts);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+        const posts = await getBlogPosts();
+        setBlogPosts(posts);
+        setIsLoading(false);
+    }
+    fetchData();
+  }, []);
 
   // In a real app, you'd have delete functionality here.
   const handleDelete = (slug: string) => {
     if (confirm('Are you sure you want to delete this blog post?')) {
-      // setBlogPosts(blogPosts.filter(p => p.slug !== slug));
-      // Here you would also update the blog.json file or call an API.
+      // Here you would call a delete function from firestore.ts
       console.log(`(Simulated) Deleting post: ${slug}`);
     }
   };
+  
+  if (isLoading) {
+      return <div>Loading blog posts...</div>
+  }
 
   return (
     <div>
