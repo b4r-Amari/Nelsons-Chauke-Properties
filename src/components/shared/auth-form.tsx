@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { signIn, signUp, signInWithGoogle } from "@/lib/firebase/auth";
+import { signIn, signUp, signInWithGoogle, type User } from "@/lib/firebase/auth";
 import { addUserData } from "@/lib/firebase/firestore";
 
 const authSchema = z.object({
@@ -68,13 +68,22 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
     form.reset();
   };
 
+  const handleSuccessfulAuth = (user: User) => {
+    addUserData(user).then(() => {
+      onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
+    }).catch(dbError => {
+        console.error("Failed to write user data:", dbError);
+        // Still proceed with redirecting the user as auth was successful
+        onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
+    });
+  };
+
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
       const userCredential = await signInWithGoogle();
-      await addUserData(userCredential.user);
       toast({ title: "Signed In", description: "Welcome!" });
-      onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
+      handleSuccessfulAuth(userCredential.user);
     } catch (error: any) {
       if (error.code !== 'auth/popup-closed-by-user') {
         toast({
@@ -92,15 +101,15 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
     setIsLoading(true);
     try {
       if (activeTab === "signin") {
-        await signIn(values.email, values.password);
+        const userCredential = await signIn(values.email, values.password);
         toast({ title: "Signed In", description: "Welcome back!" });
+        handleSuccessfulAuth(userCredential.user);
       } else {
         const userCredential = await signUp(values.email, values.password);
-        await addUserData(userCredential.user);
         toast({ title: "Account Created", description: "You have successfully signed up." });
+        handleSuccessfulAuth(userCredential.user);
       }
       form.reset();
-      onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
     } catch (error: any) {
       const errorCode = error.code;
       let errorMessage = "An unexpected error occurred. Please try again.";

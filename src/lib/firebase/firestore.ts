@@ -16,15 +16,21 @@ export async function addUserData(user: User) {
     const userRef = doc(db, 'users', user.uid);
     const docSnap = await getDoc(userRef);
 
+    // Only create a new user document if one doesn't already exist.
     if (!docSnap.exists()) {
-        await setDoc(userRef, {
-            uid: user.uid,
-            email: user.email,
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            role: 'customer', // Default role
-            createdAt: serverTimestamp(),
-        });
+        try {
+            await setDoc(userRef, {
+                uid: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                photoURL: user.photoURL,
+                role: 'customer', // Default role
+                createdAt: serverTimestamp(),
+            });
+        } catch (error) {
+            console.error("Error creating user document:", error);
+            // Optionally re-throw or handle the error as needed.
+        }
     }
 }
 
