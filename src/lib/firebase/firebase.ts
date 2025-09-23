@@ -3,13 +3,13 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCV3zOd1O9DIsCGy9455nfq90lrXNT8OnU",
-  authDomain: "nelson-chauke-prop.firebaseapp.com",
-  projectId: "nelson-chauke-prop",
-  storageBucket: "nelson-chauke-prop.appspot.com",
-  messagingSenderId: "423862286290",
-  appId: "1:423862286290:web:ceb83c445f7064dcde3a0b",
-  measurementId: "G-E8JCLL7NXH"
+  projectId: "nc-properties-redefined",
+  appId: "1:764533948711:web:477ded0be370b93290a902",
+  apiKey: "AIzaSyB3VAQRiOwxSlLAGQxcwh-3QUd9zkG1zc8",
+  authDomain: "nc-properties-redefined.firebaseapp.com",
+  measurementId: "",
+  messagingSenderId: "764533948711",
+  storageBucket: "nc-properties-redefined.appspot.com"
 };
 
 // Initialize Firebase
