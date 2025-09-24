@@ -9,7 +9,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { addContactSubmission } from "@/lib/firebase/firestore"
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -32,20 +31,12 @@ export function ContactForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      await addContactSubmission(values);
-      toast({
-        title: "Message Sent!",
-        description: "Thank you for contacting us. We will get back to you shortly.",
-      })
-      form.reset()
-    } catch (error) {
-       toast({
-        variant: "destructive",
-        title: "Submission Failed",
-        description: "There was an error sending your message. Please try again.",
-      })
-    }
+    console.log("Contact Form Submitted (Simulated):", values);
+    toast({
+      title: "Message Sent!",
+      description: "Thank you for contacting us. We will get back to you shortly.",
+    })
+    form.reset()
   }
 
   return (

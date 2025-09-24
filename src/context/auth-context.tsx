@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider value={{ user, isLoading: isLoading }}>
-      {!isLoading && children}
+      {children}
     </AuthContext.Provider>
   );
 }
@@ -38,5 +38,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-    

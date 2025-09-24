@@ -2,7 +2,6 @@
 import { type Property } from '@/components/shared/property-card';
 import { type Agent } from '@/components/shared/agent-card';
 import { type BlogPost } from '@/components/shared/blog-card';
-import { getProperty as getPropertyFromDb, getAgent as getAgentFromDb, getBlogPost as getBlogPostFromDb } from './firebase/firestore';
 
 import properties from '@/data/properties.json';
 import agents from '@/data/agents.json';
@@ -28,13 +27,11 @@ export async function getProperties(options: { featuredOnly?: boolean; status?: 
 }
 
 export async function getProperty(id: string): Promise<Property | null> {
-  // First, try to get from local JSON for speed. This is a simple simulation.
   const property = properties.find(p => p.id.toString() === id);
   if (property) {
     return property as Property;
   }
-  // Fallback to DB if not in local, though in this setup it should always be.
-  return getPropertyFromDb(id);
+  return null;
 }
 
 // Agents
@@ -51,7 +48,7 @@ export async function getAgent(slug: string): Promise<Agent | null> {
 export async function getBlogPosts(): Promise<BlogPost[]> {
     const posts: BlogPost[] = blog.map(post => ({
         ...post,
-        id: post.slug // Firestore might use a different ID, but slug is a good unique key
+        id: post.slug
     }));
     return posts;
 }

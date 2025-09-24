@@ -214,5 +214,3 @@ function AuthFormContent({ form, onSubmit, isLoading, buttonText, onGoogleSignIn
     </>
   )
 }
-
-    

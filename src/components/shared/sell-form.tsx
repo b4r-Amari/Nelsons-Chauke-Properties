@@ -11,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { UploadCloud } from "lucide-react"
-import { addValuationRequest } from "@/lib/firebase/firestore"
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -40,20 +39,12 @@ export function SellForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-        await addValuationRequest(values);
-        toast({
-            title: "Valuation Request Submitted!",
-            description: "Thank you for your submission. One of our agents will be in touch with you shortly.",
-        })
-        form.reset()
-    } catch (error) {
-        toast({
-            variant: "destructive",
-            title: "Submission Failed",
-            description: "There was an error submitting your request. Please try again.",
-        })
-    }
+    console.log("Valuation Request Submitted (Simulated):", values);
+    toast({
+        title: "Valuation Request Submitted!",
+        description: "Thank you for your submission. One of our agents will be in touch with you shortly.",
+    })
+    form.reset()
   }
 
   return (
