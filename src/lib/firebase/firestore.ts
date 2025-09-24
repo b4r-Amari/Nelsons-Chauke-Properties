@@ -4,14 +4,12 @@
 import {
   getFirestore,
   collection,
-  getDocs,
   doc,
   getDoc,
   setDoc,
   addDoc,
   query,
   where,
-  type DocumentData,
   type Firestore,
 } from "firebase/firestore";
 import { firebaseApp } from "./firebase";
@@ -39,42 +37,11 @@ export async function addUserData(user: User) {
             });
         } catch (error) {
             console.error("Error creating user document:", error);
-            // We don't re-throw the error, to allow login/signup to complete
         }
     }
 }
 
-// PROPERTY-RELATED FUNCTIONS
-export async function getProperties(options: { featuredOnly?: boolean; status?: 'on-show' | 'sold' } = {}): Promise<Property[]> {
-  try {
-    let q = query(collection(db, "properties"));
-    
-    if (options.featuredOnly) {
-      q = query(q, where("isFavorite", "==", true), where("status", "==", "for-sale"));
-    } else if (options.status) {
-       if (options.status === 'on-show') {
-          q = query(q, where("onShow", "==", true), where("status", "!=", "sold"));
-       } else {
-         q = query(q, where("status", "==", options.status));
-       }
-    } else {
-       q = query(q, where("status", "!=", "sold"));
-    }
-
-    const querySnapshot = await getDocs(q);
-    const properties = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as Property));
-
-    if (options.featuredOnly) {
-        return properties.slice(0, 8);
-    }
-    
-    return properties;
-  } catch (error) {
-    console.error("Error fetching properties from Firestore:", error);
-    return [];
-  }
-}
-
+// SINGLE DOCUMENT FETCH FUNCTIONS
 export async function getProperty(id: string): Promise<Property | null> {
     try {
         const docRef = doc(db, "properties", id);
@@ -83,64 +50,41 @@ export async function getProperty(id: string): Promise<Property | null> {
         if (docSnap.exists()) {
             return { id: docSnap.id, ...docSnap.data() } as unknown as Property;
         } else {
-            console.log("No such property document!");
+            console.log("No such property document in Firestore!");
             return null;
         }
     } catch (error) {
-        console.error("Error fetching property:", error);
+        console.error("Error fetching property from Firestore:", error);
         return null;
-    }
-}
-
-// AGENT-RELATED FUNCTIONS
-export async function getAgents(): Promise<Agent[]> {
-    try {
-        const querySnapshot = await getDocs(collection(db, "agents"));
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as Agent));
-    } catch (error) {
-        console.error("Error fetching agents:", error);
-        return [];
     }
 }
 
 export async function getAgent(slug: string): Promise<Agent | null> {
     try {
         const q = query(collection(db, "agents"), where("slug", "==", slug));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-            const doc = querySnapshot.docs[0];
+        const querySnapshot = await getDoc(q.docs[0].ref);
+        if (querySnapshot.exists()) {
+            const doc = querySnapshot;
             return { id: doc.id, ...doc.data() } as unknown as Agent;
         }
         return null;
     } catch (error) {
-        console.error("Error fetching agent by slug:", error);
+        console.error("Error fetching agent by slug from Firestore:", error);
         return null;
-    }
-}
-
-
-// BLOG-RELATED FUNCTIONS
-export async function getBlogPosts(): Promise<BlogPost[]> {
-    try {
-        const querySnapshot = await getDocs(collection(db, "blogPosts"));
-        return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as BlogPost));
-    } catch (error) {
-        console.error("Error fetching blog posts:", error);
-        return [];
     }
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
     try {
         const q = query(collection(db, "blogPosts"), where("slug", "==", slug));
-        const querySnapshot = await getDocs(q);
-        if (!querySnapshot.empty) {
-            const doc = querySnapshot.docs[0];
+        const querySnapshot = await getDoc(q.docs[0].ref);
+        if (querySnapshot.exists()) {
+            const doc = querySnapshot;
             return { id: doc.id, ...doc.data() } as unknown as BlogPost;
         }
         return null;
     } catch (error) {
-        console.error("Error fetching blog post by slug:", error);
+        console.error("Error fetching blog post by slug from Firestore:", error);
         return null;
     }
 }
