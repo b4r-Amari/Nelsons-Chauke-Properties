@@ -1,44 +1,41 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Public collections, readable by anyone
-    match /properties/{document=**} {
+    // Allow public read access to properties, agents, and blog posts
+    match /properties/{propertyId} {
       allow read: if true;
-      allow write: if request.auth != null; // Allow writes for authenticated users (admins)
+      allow write: if request.auth != null; // For admin functionality in the future
     }
 
-    match /agents/{document=**} {
+    match /agents/{agentId} {
       allow read: if true;
-      allow write: if request.auth != null; // Allow writes for authenticated users (admins)
+      allow write: if request.auth != null; // For admin functionality in the future
     }
 
-    match /blogPosts/{document=**} {
+    match /blogPosts/{postId} {
       allow read: if true;
-      allow write: if request.auth != null; // Allow writes for authenticated users (admins)
+      allow write: if request.auth != null; // For admin functionality in the future
     }
 
-    // Users can only read/write their own data
+    // Users can only read and write their own data
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;
     }
 
-    // Form submissions are write-only for users
-    match /contactSubmissions/{documentId} {
+    // Anyone can submit forms
+    match /contactSubmissions/{submissionId} {
       allow create: if true;
-      allow read, update, delete: if request.auth != null; // Admins can manage
-    }
-
-    match /enquiries/{documentId} {
-      allow create: if true;
-      allow read, update, delete: if request.auth != null; // Admins can manage
     }
     
-    match /valuationRequests/{documentId} {
+    match /enquiries/{enquiryId} {
       allow create: if true;
-      allow read, update, delete: if request.auth != null; // Admins can manage
+    }
+
+    match /valuationRequests/{requestId} {
+      allow create: if true;
     }
   }
 }
