@@ -4,7 +4,6 @@
 import type { Metadata } from 'next';
 import { usePathname } from 'next/navigation';
 import { AuthProvider } from '@/context/auth-context';
-import { WishlistProvider } from '@/context/wishlist-context';
 import { Toaster } from '@/components/ui/toaster';
 import { AdminSidebar } from '@/components/layout/admin-sidebar';
 import { ThemeProvider } from '@/context/theme-provider';
@@ -29,7 +28,6 @@ export default function AdminLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <AuthProvider>
-          <WishlistProvider>
             <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="admin-ui-theme">
               <div className="relative flex min-h-screen w-full bg-background">
                 {!isLoginPage && <AdminSidebar />}
@@ -42,7 +40,6 @@ export default function AdminLayout({
               </div>
               <Toaster />
             </ThemeProvider>
-          </WishlistProvider>
         </AuthProvider>
       </body>
     </html>

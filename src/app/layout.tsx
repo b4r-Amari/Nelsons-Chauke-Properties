@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import './globals.css';
@@ -7,7 +6,6 @@ import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/context/auth-context';
-import { WishlistProvider } from '@/context/wishlist-context';
 import { usePathname } from 'next/navigation';
 import { useState, Suspense } from 'react';
 import { cn } from '@/lib/utils';
@@ -33,7 +31,6 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
         mobileMenuOpen && "overflow-hidden"
       )}>
         <AuthProvider>
-          <WishlistProvider>
             <div className="flex flex-col min-h-screen">
               <Header setMobileMenuOpen={setMobileMenuOpen} />
               <main className="flex-grow">
@@ -42,7 +39,6 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
               <Footer />
             </div>
             <Toaster />
-          </WishlistProvider>
         </AuthProvider>
       </body>
     </html>

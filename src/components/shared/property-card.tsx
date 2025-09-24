@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { BedDouble, Bath, Home, LandPlot, Heart } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
-import { useWishlist } from "@/context/wishlist-context";
 import { useAuth } from "@/context/auth-context";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
@@ -39,24 +38,6 @@ type PropertyCardProps = {
 
 export function PropertyCard({ property }: PropertyCardProps) {
   const { user } = useAuth();
-  const { wishlist, addToWishlist, removeFromWishlist } = useWishlist();
-  const isWishlisted = wishlist.includes(property.id.toString());
-
-  const handleWishlistClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!user) {
-      alert("Please log in to use the wishlist feature.");
-      return;
-    }
-
-    if (isWishlisted) {
-      removeFromWishlist(property.id.toString());
-    } else {
-      addToWishlist(property.id.toString());
-    }
-  };
   
   const formatPrice = (price: number) => {
     const isRental = property.status === 'to-let';
@@ -88,19 +69,6 @@ export function PropertyCard({ property }: PropertyCardProps) {
                  <Badge className="bg-brand-bright text-white border-none w-fit">On Show</Badge>
               )}
             </div>
-            {property.status !== 'sold' && (
-              <Button
-                size="icon"
-                className={cn(
-                  "absolute top-4 right-4 rounded-full bg-white/80 hover:bg-white text-brand-deep transition-all duration-300 scale-100 hover:scale-110",
-                  { "text-red-500": isWishlisted }
-                )}
-                onClick={handleWishlistClick}
-                aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-              >
-                <Heart className={cn("h-6 w-6", { "fill-current": isWishlisted })} />
-              </Button>
-            )}
             {property.status === 'sold' && (
               <div className="absolute top-4 right-4 bg-destructive text-destructive-foreground px-3 py-1 rounded-md font-semibold text-sm">
                   SOLD

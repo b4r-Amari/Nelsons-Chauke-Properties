@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
-import { Menu, Heart, User, ChevronDown, LogOut, LayoutDashboard, X } from 'lucide-react';
+import { Menu, User, ChevronDown, LogOut, LayoutDashboard, X } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -127,12 +127,6 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
         </div>
 
         <div className="ml-auto flex items-center space-x-2">
-           <Button variant="ghost" size="icon" aria-label="View your wishlist" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors" asChild>
-                <Link href={user ? "/my-account/wishlist" : "/login"}>
-                  <Heart className="h-12 w-12 md:h-7 md:w-7" />
-                </Link>
-            </Button>
-          
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -155,9 +149,6 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                   <Link href="/my-account"><LayoutDashboard className="mr-2 h-4 w-4" /> My Account</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link href="/my-account/wishlist"><Heart className="mr-2 h-4 w-4" /> My Wishlist</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => logOut()}>
                    <LogOut className="mr-2 h-4 w-4" />
