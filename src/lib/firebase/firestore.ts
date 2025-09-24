@@ -20,27 +20,6 @@ import type { User } from "./auth";
 
 export const db: Firestore = getFirestore(firebaseApp);
 
-// USER-RELATED FUNCTIONS
-export async function addUserData(user: User) {
-    const userRef = doc(db, "users", user.uid);
-    const userDoc = await getDoc(userRef);
-
-    if (!userDoc.exists()) {
-        try {
-            await setDoc(userRef, {
-                uid: user.uid,
-                email: user.email,
-                displayName: user.displayName,
-                photoURL: user.photoURL,
-                wishlist: [],
-                createdAt: new Date().toISOString(),
-            });
-        } catch (error) {
-            console.error("Error creating user document:", error);
-        }
-    }
-}
-
 // SINGLE DOCUMENT FETCH FUNCTIONS
 export async function getProperty(id: string): Promise<Property | null> {
     try {
@@ -132,3 +111,5 @@ export async function addValuationRequest(data: any) {
     throw e;
   }
 }
+
+    

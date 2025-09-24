@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { signIn, signUp, signInWithGoogle, type User } from "@/lib/firebase/auth";
-import { addUserData } from "@/lib/firebase/firestore";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -68,8 +67,7 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
     form.reset();
   };
 
-  const handleSuccessfulAuth = async (user: User) => {
-    await addUserData(user);
+  const handleSuccessfulAuth = (user: User) => {
     onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
   };
 
@@ -78,7 +76,7 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
     try {
       const userCredential = await signInWithGoogle();
       toast({ title: "Signed In", description: "Welcome!" });
-      await handleSuccessfulAuth(userCredential.user);
+      handleSuccessfulAuth(userCredential.user);
     } catch (error: any) {
       if (error.code !== 'auth/popup-closed-by-user') {
         toast({
@@ -98,11 +96,11 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
       if (activeTab === "signin") {
         const userCredential = await signIn(values.email, values.password);
         toast({ title: "Signed In", description: "Welcome back!" });
-        await handleSuccessfulAuth(userCredential.user);
+        handleSuccessfulAuth(userCredential.user);
       } else {
         const userCredential = await signUp(values.email, values.password);
         toast({ title: "Account Created", description: "You have successfully signed up." });
-        await handleSuccessfulAuth(userCredential.user);
+        handleSuccessfulAuth(userCredential.user);
       }
       form.reset();
     } catch (error: any) {
@@ -216,3 +214,5 @@ function AuthFormContent({ form, onSubmit, isLoading, buttonText, onGoogleSignIn
     </>
   )
 }
+
+    
