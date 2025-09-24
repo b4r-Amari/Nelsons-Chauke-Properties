@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building, Users, DollarSign, Newspaper } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { getProperties, getAgents, getBlogPosts } from '@/lib/firebase/firestore';
+import { getProperties, getAgents, getBlogPosts } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminDashboardPage() {

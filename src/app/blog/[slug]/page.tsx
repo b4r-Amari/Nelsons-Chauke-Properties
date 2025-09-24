@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, User, Calendar } from 'lucide-react';
-import { getBlogPost, getBlogPosts } from '@/lib/firebase/firestore';
+import { getBlogPost, getBlogPosts } from '@/lib/data';
 import { type BlogPost } from '@/components/shared/blog-card';
 import { Badge } from '@/components/ui/badge';
 import type { Metadata } from 'next';

@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { getProperties, getAgents, updateProperty } from '@/lib/firebase/firestore';
+import { getProperties, getAgents } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
 import { type Agent } from '@/components/shared/agent-card';
 import { cn } from '@/lib/utils';
@@ -86,23 +86,16 @@ export default function AdminPropertiesPage() {
     return sortConfig.direction === 'asc' ? '▲' : '▼';
   };
 
-  const handleAgentAssigned = async (propertyId: string, newAgentId: string) => {
-    try {
-      await updateProperty(propertyId, { agentIds: [newAgentId] });
-      setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentIds: [newAgentId] } : p));
-      const agentName = agents.find(a => a.id === newAgentId)?.name;
-      const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
-      toast({
-        title: "Agent Reassigned",
-        description: `${agentName} has been assigned to ${propertyAddress}.`,
-      });
-    } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Error',
-        description: 'Failed to reassign agent.',
-      });
-    }
+  const handleAgentAssigned = async (propertyId: number, newAgentId: number) => {
+    // This is a simulation. In a real app this would write to a database.
+    console.log(`Assigning agent ${newAgentId} to property ${propertyId}`);
+    setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentIds: [newAgentId] } : p));
+    const agentName = agents.find(a => a.id === newAgentId)?.name;
+    const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
+    toast({
+      title: "Agent Reassigned (Simulated)",
+      description: `${agentName} has been assigned to ${propertyAddress}.`,
+    });
   };
 
   const handleNextPage = () => {
@@ -171,7 +164,7 @@ export default function AdminPropertiesPage() {
                   const propertyAgents = agents.filter(agent => property.agentIds.includes(agent.id));
                   return (
                     <TableRow key={property.id}>
-                      <TableCell className="font-mono text-xs hidden sm:table-cell">{property.id.substring(0, 5)}...</TableCell>
+                      <TableCell className="font-mono text-xs hidden sm:table-cell">{String(property.id).substring(0, 5)}...</TableCell>
                       <TableCell className="font-medium">{property.address}</TableCell>
                       <TableCell className="hidden lg:table-cell">
                         {propertyAgents.length > 0 ? (
@@ -248,13 +241,13 @@ export default function AdminPropertiesPage() {
   );
 }
 
-function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Property; agents: Agent[]; onAgentAssigned: (propertyId: string, agentId: string) => void; }) {
+function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Property; agents: Agent[]; onAgentAssigned: (propertyId: number, agentId: number) => void; }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(property.agentIds[0]);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(String(property.agentIds[0]));
 
   const handleSubmit = () => {
     if (selectedAgentId) {
-      onAgentAssigned(property.id, selectedAgentId);
+      onAgentAssigned(property.id, parseInt(selectedAgentId));
       setIsOpen(false);
     }
   };
@@ -275,13 +268,13 @@ function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Pr
         </DialogHeader>
         <div className="py-4">
             <Label htmlFor="agent-select">Select Agent</Label>
-            <Select value={selectedAgentId?.toString()} onValueChange={(value) => setSelectedAgentId(value)}>
+            <Select value={selectedAgentId} onValueChange={(value) => setSelectedAgentId(value)}>
                 <SelectTrigger id="agent-select">
                     <SelectValue placeholder="Select an agent" />
                 </SelectTrigger>
                 <SelectContent>
                     {agents.map(agent => (
-                        <SelectItem key={agent.id} value={agent.id.toString()}>
+                        <SelectItem key={agent.id} value={String(agent.id)}>
                             {agent.name}
                         </SelectItem>
                     ))}

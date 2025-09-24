@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import Link from 'next/link';
 import Image from 'next/image';
-import { getBlogPosts } from '@/lib/firebase/firestore';
+import { getBlogPosts } from '@/lib/data';
 import { type BlogPost } from '@/components/shared/blog-card';
 
 export default function AdminBlogsPage() {

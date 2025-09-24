@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import type { Metadata } from 'next';
 import { Button } from '@/components/ui/button';
 import { BlogCard, type BlogPost } from '@/components/shared/blog-card';
-import { getBlogPosts } from '@/lib/firebase/firestore';
+import { getBlogPosts } from '@/lib/data';
 
 export const metadata: Metadata = {
   title: 'Property News & Real Estate Insights | NC Properties Blog',

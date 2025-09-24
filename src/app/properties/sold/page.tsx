@@ -1,7 +1,7 @@
 
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import type { Metadata } from 'next';
-import { getProperties } from "@/lib/firebase/firestore";
+import { getProperties } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: 'Recently Sold Properties | NC Properties Success Stories',

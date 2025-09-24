@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 
 export type Agent = {
-  id: string; // Changed to string for Firestore ID
+  id: number;
   slug: string;
   name: string;
   role: string;

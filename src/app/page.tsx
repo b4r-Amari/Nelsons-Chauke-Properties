@@ -9,7 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { HeroSection, CtaTabsSection, NewsletterSection } from '@/components/sections/home-page-sections';
 import type { Metadata } from 'next';
-import { getProperties } from '@/lib/firebase/firestore';
+import { getProperties } from '@/lib/data';
 
 export const metadata: Metadata = {
   title: 'NC Properties Redefined | Find Your Perfect Home in South Africa',

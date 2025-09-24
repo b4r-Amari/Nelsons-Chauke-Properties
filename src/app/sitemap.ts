@@ -1,5 +1,6 @@
+
 import { MetadataRoute } from 'next'
-import { getProperties, getBlogPosts, getAgents } from '@/lib/firebase/firestore';
+import { getProperties, getBlogPosts, getAgents } from '@/lib/data';
 
 const BASE_URL = 'https://nelson-chauke-prop.web.app';
 

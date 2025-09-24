@@ -11,8 +11,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { UploadCloud } from "lucide-react"
-import { addDoc, collection } from "firebase/firestore"
-import { db } from "@/lib/firebase/firebase"
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -41,24 +39,13 @@ export function SellForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      await addDoc(collection(db, "valuationRequests"), {
-        ...values,
-        submittedAt: new Date(),
-      });
-      toast({
-        title: "Valuation Request Submitted!",
-        description: "Thank you for your submission. One of our agents will be in touch with you shortly.",
-      })
-      form.reset()
-    } catch (error) {
-      console.error("Error submitting valuation request:", error);
-      toast({
-        variant: "destructive",
-        title: "Submission Error",
-        description: "There was a problem submitting your request. Please try again.",
-      });
-    }
+    // This is a simulation. In a real app this would write to a database.
+    console.log("Valuation request submitted:", values);
+    toast({
+      title: "Valuation Request Submitted! (Simulated)",
+      description: "Thank you for your submission. One of our agents will be in touch with you shortly.",
+    })
+    form.reset()
   }
 
   return (

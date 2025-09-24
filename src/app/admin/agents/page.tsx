@@ -9,7 +9,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
-import { getAgents, getProperties } from '@/lib/firebase/firestore';
+import { getAgents, getProperties } from '@/lib/data';
 import type { Property } from '@/components/shared/property-card';
 import type { Agent } from '@/components/shared/agent-card';
 
@@ -123,7 +123,7 @@ export default function AdminAgentsPage() {
             <TableBody>
               {sortedAgents.map((agent) => (
                 <TableRow key={agent.id}>
-                  <TableCell className="font-mono text-xs hidden sm:table-cell">{agent.id.substring(0,5)}...</TableCell>
+                  <TableCell className="font-mono text-xs hidden sm:table-cell">{String(agent.id).substring(0,5)}...</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-4">
                         <Avatar className="hidden h-9 w-9 sm:flex">

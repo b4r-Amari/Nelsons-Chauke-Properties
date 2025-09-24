@@ -4,7 +4,7 @@
 import { useState, useEffect, Suspense, useMemo } from "react";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
-import { getProperties } from '@/lib/firebase/firestore';
+import { getProperties } from '@/lib/data';
 import { Button } from "../ui/button";
 import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
@@ -66,10 +66,10 @@ function PropertyListingsComponent({ status }: { status?: 'on-show' | 'sold' }) 
         case 'price-desc':
           return b.price - a.price;
         case 'price-asc':
-          return a.price - b.price;
+          return a.price - a.price;
         case 'newest':
         default:
-          return (b.id || 0) > (a.id || 0) ? 1 : -1;
+          return (b.id || 0) > (a.id || 0) ? -1 : 1;
       }
     });
 

@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { signIn, signUp, signInWithGoogle, type User } from "@/lib/firebase/auth";
-import { addUserData } from "@/lib/firebase/firestore";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -69,13 +68,9 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
   };
 
   const handleSuccessfulAuth = (user: User) => {
-    addUserData(user).then(() => {
-      onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
-    }).catch(dbError => {
-        console.error("Failed to write user data:", dbError);
-        // Still proceed with redirecting the user as auth was successful
-        onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
-    });
+    // We can add a database write here in the future if needed
+    console.log("Authenticated user:", user.uid);
+    onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
   };
 
   const handleGoogleSignIn = async () => {

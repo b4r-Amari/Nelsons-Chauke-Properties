@@ -3,14 +3,14 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle } from 'lucide-react';
 import type { Metadata } from 'next';
-import { getProperty, getProperties } from '@/lib/firebase/firestore';
+import { getProperty, getProperties } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
 import { AgentCard } from '@/components/shared/agent-card';
 import { EnquiryForm } from '@/components/shared/enquiry-form';
 import { PropertyImageGallery } from '@/components/shared/property-image-gallery';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { getAgents } from '@/lib/firebase/firestore';
+import { getAgents } from '@/lib/data';
 import { BackButton } from '@/components/shared/back-button';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {

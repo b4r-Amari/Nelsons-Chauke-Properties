@@ -14,7 +14,7 @@ import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { addProperty, getAgents } from "@/lib/firebase/firestore"
+import { getAgents } from "@/lib/data"
 import type { Agent } from "@/components/shared/agent-card"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
@@ -32,7 +32,7 @@ const formSchema = z.object({
   description: z.string().min(20, "Description must be at least 20 characters."),
   features: z.array(z.string()).optional().default([]),
   onShow: z.boolean().default(false),
-  agentIds: z.array(z.string()).min(1, { message: "Please assign at least one agent." }),
+  agentIds: z.array(z.number()).min(1, { message: "Please assign at least one agent." }),
   imageUrl: z.string().url({ message: "Please enter a valid URL." }),
   imageHint: z.string().min(2, { message: "Image hint must be at least 2 characters." }),
   slug: z.string().min(3, "Slug is required."),
@@ -78,22 +78,14 @@ export default function NewPropertyPage() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      await addProperty(values);
-      toast({
-        title: "Property Created",
-        description: `A new property listing for ${values.address} has been created.`,
-      })
-      form.reset();
-      router.push("/admin/properties");
-    } catch(error) {
-      console.error("Failed to create property:", error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to create property. Please try again."
-      })
-    }
+    // This is a simulation. In a real app this would write to a database.
+    console.log("New property data:", values);
+    toast({
+      title: "Property Created (Simulated)",
+      description: `A new property listing for ${values.address} has been created.`,
+    })
+    form.reset();
+    router.push("/admin/properties");
   }
 
   return (

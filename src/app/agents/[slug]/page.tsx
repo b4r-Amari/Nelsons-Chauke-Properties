@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Phone } from 'lucide-react';
 
-import { getAgent, getAgents, getProperties } from '@/lib/firebase/firestore';
+import { getAgent, getAgents, getProperties } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';

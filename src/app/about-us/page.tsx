@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { getAgents } from '@/lib/firebase/firestore';
+import { getAgents } from '@/lib/data';
 
 export const metadata: Metadata = {
   title: 'About NC Properties | Our Story, Mission, and Team',

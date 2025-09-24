@@ -4,14 +4,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { BedDouble, Bath, Home, LandPlot, Heart } from 'lucide-react';
+import { BedDouble, Bath, Home, LandPlot } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
-import { useAuth } from "@/context/auth-context";
-import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
 
 export type Property = {
-  id: string; // Changed to string for Firestore ID
+  id: number;
   slug: string;
   imageUrl: string;
   imageHint: string;
@@ -29,7 +26,7 @@ export type Property = {
   features: string[];
   yearBuilt: number;
   onShow?: boolean;
-  agentIds: string[]; // Changed to string for Firestore IDs
+  agentIds: number[];
 };
 
 type PropertyCardProps = {
@@ -37,7 +34,6 @@ type PropertyCardProps = {
 };
 
 export function PropertyCard({ property }: PropertyCardProps) {
-  const { user } = useAuth();
   
   const formatPrice = (price: number) => {
     const isRental = property.status === 'to-let';
