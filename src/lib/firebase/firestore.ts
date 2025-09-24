@@ -40,8 +40,6 @@ export async function getProperties(options: { featuredOnly?: boolean } = {}): P
   let q = collection(db, 'properties') as any;
   if (options.featuredOnly) {
     q = query(q, where('isFavorite', '==', true), where('status', '==', 'for-sale'), limit(8));
-  } else {
-    q = query(q, orderBy('id', 'desc'));
   }
   const snapshot = await getDocs(q);
   return snapshotToArray<Property>(snapshot);
