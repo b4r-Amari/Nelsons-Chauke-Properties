@@ -210,7 +210,6 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, h
 export function CtaTabsSection() {
   const buyerOptions = [
     { id: 'property-alerts', title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "notification bell" },
-    { id: 'sold-prices', title: "Sold Prices", description: "Research the value of any property in South Africa to make informed decisions.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "price tag", href: "/properties/sold" },
     { id: 'buying-guides', title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "open book", href: "/blog" },
   ];
 
@@ -222,7 +221,6 @@ export function CtaTabsSection() {
 
   const sellerOptions = [
     { title: "Free Property Valuation", description: "Get a free, instant, and accurate valuation for your property.", buttonText: "Get Started", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "valuation chart", href: "/sell" },
-    { id: 'sold-prices', title: "Sold Prices", description: "Understand market trends by viewing the latest sold prices in your neighbourhood.", buttonText: "View Sold Prices", imageSrc: "/images/backgrounds/sold-prices.webp", imageHint: "house price", href: "/properties/sold" },
     { id: 'selling-guides', title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "checklist clipboard", href: "/blog" },
   ];
 
@@ -247,7 +245,7 @@ export function CtaTabsSection() {
               </TabsTrigger>
             </TabsList>
             <TabsContent value="buying" className="mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {buyerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
               </div>
             </TabsContent>
@@ -257,7 +255,7 @@ export function CtaTabsSection() {
               </div>
             </TabsContent>
             <TabsContent value="selling" className="mt-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {sellerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
               </div>
             </TabsContent>

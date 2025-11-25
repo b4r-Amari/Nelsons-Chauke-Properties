@@ -29,7 +29,6 @@ const navLinks = [
     links: [
       { href: "/properties", label: "Buy" },
       { href: "/sell", label: "Sell" },
-      { href: "/properties/sold", label: "Sold" },
       { href: "/properties/on-show", label: "On Show" },
     ]
   },
@@ -42,7 +41,6 @@ const mobileNavLinks = [
   { href: "/", label: "Home" },
   { href: "/properties", label: "Buy" },
   { href: "/sell", label: "Sell" },
-  { href: "/properties/sold", label: "Sold" },
   { href: "/properties/on-show", label: "On Show" },
   { href: "/blog", label: "Property News" },
   { href: "/about-us", label: "About Us" },
