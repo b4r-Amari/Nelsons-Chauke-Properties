@@ -130,13 +130,13 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         setFilters(prev => ({ ...prev, status: newStatus }));
       }}>
         <TabsList className="bg-transparent p-0 h-auto gap-0">
-          {["Buy", "Rent", "Developments", "Agents", "Sold Prices"].map(tab => (
+          {["Buy", "Rent", "Agents"].map(tab => (
               <TabsTrigger
                   key={tab}
                   value={tab.toLowerCase().replace(' ', '-')}
                   className={cn(
                     "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-md font-medium pb-2 px-3 rounded-none border-b-2 border-transparent data-[state=active]:border-white hover:text-white",
-                    tab === "Developments" || tab === "Agents" || tab === "Sold Prices" ? "hidden sm:inline-flex" : "inline-flex"
+                    tab === "Agents" ? "hidden sm:inline-flex" : "inline-flex"
                   )}
                 >
                   {tab}
