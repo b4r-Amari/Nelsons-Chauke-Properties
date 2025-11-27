@@ -6,9 +6,7 @@ import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import { getProperties } from '@/lib/data';
 import { Button } from "../ui/button";
-import { SlidersHorizontal, ArrowUpDown } from "lucide-react";
-import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "../ui/sheet";
-import { ScrollArea } from "../ui/scroll-area";
+import { ArrowUpDown } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
@@ -36,11 +34,13 @@ function PropertyListingsComponent({ status }: { status?: 'on-show' | 'sold' }) 
           initialProps = props.filter(p => p.status === status);
         }
       } else {
-        initialProps = props.filter(p => p.status !== 'sold');
+        // On main properties page, show for-sale and to-let
+        initialProps = props.filter(p => p.status === 'for-sale' || p.status === 'to-let');
       }
 
       setAllProperties(initialProps);
       
+      // Apply initial search params from URL
       if (locationSearch || statusSearch) {
         const filtered = initialProps.filter(p => {
           const locationMatch = locationSearch ? p.location.toLowerCase().includes(locationSearch.toLowerCase()) || p.address.toLowerCase().includes(locationSearch.toLowerCase()) : true;
@@ -66,10 +66,10 @@ function PropertyListingsComponent({ status }: { status?: 'on-show' | 'sold' }) 
         case 'price-desc':
           return b.price - a.price;
         case 'price-asc':
-          return a.price - a.price;
+          return a.price - b.price;
         case 'newest':
         default:
-          return (b.id || 0) > (a.id || 0) ? -1 : 1;
+          return b.id - a.id;
       }
     });
 
@@ -91,38 +91,17 @@ function PropertyListingsComponent({ status }: { status?: 'on-show' | 'sold' }) 
   return (
     <section className="py-16 bg-background">
       <div className="container">
-        <div className="lg:hidden mb-6 flex justify-between items-center gap-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="outline">
-                <SlidersHorizontal className="mr-2 h-4 w-4" />
-                Filter
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0 flex flex-col">
-                <SheetHeader className="p-6 pb-2">
-                    <SheetTitle className="font-headline text-2xl flex items-center gap-3">
-                         <SlidersHorizontal className="h-6 w-6 text-brand-bright"/>
-                         Filter Properties
-                    </SheetTitle>
-                    <SheetDescription>
-                        Refine your search to find the perfect property.
-                    </SheetDescription>
-                </SheetHeader>
-                <ScrollArea className="flex-grow">
-                    <PropertyFilter 
-                        properties={allProperties} 
-                        onFilterChange={setFilteredProperties}
-                        isMobile={true}
-                    />
-                </ScrollArea>
-            </SheetContent>
-          </Sheet>
-           <DropdownMenu>
+        <PropertyFilter 
+          properties={allProperties} 
+          onFilterChange={setFilteredProperties}
+        />
+        
+        <div className="flex justify-end mb-6">
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 <ArrowUpDown className="mr-2 h-4 w-4" />
-                Order By
+                Order By: {sortOption.replace('-', ' ')}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -134,14 +113,8 @@ function PropertyListingsComponent({ status }: { status?: 'on-show' | 'sold' }) 
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="grid lg:grid-cols-4 gap-8">
-          <aside className="lg:col-span-1 hidden lg:block">
-            <PropertyFilter 
-              properties={allProperties} 
-              onFilterChange={setFilteredProperties}
-            />
-          </aside>
-          <main className="lg:col-span-3">
+
+        <main>
             {isLoading ? (
               <LoadingSkeleton />
             ) : sortedAndFilteredProperties.length > 0 ? (
@@ -155,8 +128,7 @@ function PropertyListingsComponent({ status }: { status?: 'on-show' | 'sold' }) 
                 <p className="text-xl text-muted-foreground text-center">No properties match your current filters. Try adjusting your search criteria.</p>
               </div>
             )}
-          </main>
-        </div>
+        </main>
       </div>
     </section>
   );

@@ -1,41 +1,31 @@
 
-
 "use client"
 
 import { useState, useEffect, useCallback } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Search, ChevronsUpDown, SlidersHorizontal, X } from "lucide-react";
-import { Separator } from "@/components/ui/separator";
+import { Search, Map, X, ChevronsUpDown } from "lucide-react";
 import type { Property } from "./property-card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
 import { useSearchParams } from "next/navigation";
+import { Label } from "../ui/label";
 
 type PropertyFilterProps = {
   properties: Property[];
   onFilterChange: (filteredProperties: Property[]) => void;
-  isMobile?: boolean;
 };
 
 const initialFilters = {
     location: "",
-    status: "any",
+    status: "for-sale",
     propertyType: "any",
+    minPrice: "any",
+    maxPrice: "any",
     minBeds: "any",
     minBaths: "any",
-    minPrice: "",
-    maxPrice: "",
-    minParking: "any",
-    minFloorSize: "",
-    maxFloorSize: "",
-    minErfSize: "",
-    maxErfSize: "",
     features: {
         petFriendly: false,
         garden: false,
@@ -44,60 +34,38 @@ const initialFilters = {
     },
     other: {
         retirement: false,
-        repossessed: false,
         onShow: false,
         securityEstate: false,
-        auction: false,
     },
 };
 
-export function PropertyFilter({ properties, onFilterChange, isMobile = false }: PropertyFilterProps) {
+export function PropertyFilter({ properties, onFilterChange }: PropertyFilterProps) {
   const searchParams = useSearchParams();
   const locationSearch = searchParams.get('location');
   const statusSearch = searchParams.get('status');
 
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-  const [filters, setFilters] = useState({...initialFilters, location: locationSearch || "", status: statusSearch || "any" });
+  const [filters, setFilters] = useState({...initialFilters, location: locationSearch || "", status: statusSearch || "for-sale" });
   const [filteredCount, setFilteredCount] = useState(properties.length);
 
-  const handleFilterChange = useCallback(() => {
+  const applyFilters = useCallback(() => {
     const filtered = properties.filter(p => {
-        const { location, status, propertyType, minBeds, minBaths, minPrice, maxPrice, minParking, minFloorSize, maxFloorSize, minErfSize, maxErfSize, features, other } = filters;
+        const { location, status, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other } = filters;
 
-        // Text search
         if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
-        
-        // Status filter
         if (status !== 'any' && p.status !== status) return false;
-
-        // Selects
         if (propertyType !== 'any' && p.type !== propertyType) return false;
         if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
         if (minBaths !== 'any' && p.baths < parseInt(minBaths)) return false;
-        if (minParking !== 'any' && (p.features.find(f => f.toLowerCase().includes('garage') || f.toLowerCase().includes('parking'))?.split(' ')[0] || 0) < minParking) return false;
-        
-        // Price Range
-        if (minPrice && p.price < parseInt(minPrice)) return false;
-        if (maxPrice && p.price > parseInt(maxPrice)) return false;
-
-        // Size Range
-        if (minFloorSize && p.sqft < parseInt(minFloorSize)) return false;
-        if (maxFloorSize && p.sqft > parseInt(maxFloorSize)) return false;
-        if (minErfSize && p.erfSize < parseInt(minErfSize)) return false;
-        if (maxErfSize && p.erfSize > parseInt(maxErfSize)) return false;
-
-        // Checkbox features
+        if (minPrice !== 'any' && p.price < parseInt(minPrice)) return false;
+        if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
         if (features.petFriendly && !p.features.some(f => f.toLowerCase().includes('pet friendly'))) return false;
         if (features.garden && !p.features.some(f => f.toLowerCase().includes('garden'))) return false;
         if (features.pool && !p.features.some(f => f.toLowerCase().includes('pool'))) return false;
         if (features.flatlet && !p.features.some(f => f.toLowerCase().includes('flatlet') || f.toLowerCase().includes('guest cottage'))) return false;
-
-        // Checkbox other
         if (other.onShow && !p.onShow) return false;
         if (other.retirement && !p.features.some(f => f.toLowerCase().includes('retirement'))) return false;
-        if (other.repossessed && !p.features.some(f => f.toLowerCase().includes('repossessed'))) return false;
         if (other.securityEstate && !p.features.some(f => f.toLowerCase().includes('secure estate') || f.toLowerCase().includes('security estate'))) return false;
-        if (other.auction && !p.features.some(f => f.toLowerCase().includes('auction'))) return false;
 
         return true;
     });
@@ -107,11 +75,11 @@ export function PropertyFilter({ properties, onFilterChange, isMobile = false }:
 
 
   useEffect(() => {
-    handleFilterChange();
-  }, [filters, handleFilterChange]);
+    applyFilters();
+  }, [filters, properties, applyFilters]);
   
   useEffect(() => {
-    setFilters(prev => ({...prev, location: locationSearch || "", status: statusSearch || "any"}));
+    setFilters(prev => ({...prev, location: locationSearch || "", status: statusSearch || "for-sale"}));
   }, [locationSearch, statusSearch]);
   
   const handleInputChange = (field: string, value: string | number) => {
@@ -135,204 +103,140 @@ export function PropertyFilter({ properties, onFilterChange, isMobile = false }:
   const clearFilters = () => {
     setFilters(initialFilters);
   }
-  
-  const FilterWrapper = isMobile ? 'div' : Card;
-  const ContentWrapper = isMobile ? 'div' : ScrollArea;
-
 
   return (
-    <FilterWrapper className={cn(
-        !isMobile && "lg:sticky top-24 shadow-lg lg:flex lg:flex-col lg:h-[calc(100vh-7rem)]"
-    )}>
-      {!isMobile && (
-         <CardHeader>
-            <CardTitle className="font-headline text-2xl flex items-center gap-3">
-                <SlidersHorizontal className="h-6 w-6 text-brand-bright"/>
-                Filter Properties
-            </CardTitle>
-        </CardHeader>
-      )}
-      <ContentWrapper className={cn(!isMobile && "lg:flex-grow lg:overflow-y-auto")}>
-        <CardContent className={cn(isMobile && "p-6")}>
-            <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-            <div>
-                <Label htmlFor="location">Location</Label>
-                <Input id="location" placeholder="e.g. 'Cape Town'" value={filters.location} onChange={(e) => handleInputChange('location', e.target.value)} />
-            </div>
-            <div>
-                <Label htmlFor="listing-type">Listing Type</Label>
-                <Select value={filters.status} onValueChange={(value) => handleSelectChange('status', value)}>
-                <SelectTrigger id="listing-type">
-                    <SelectValue placeholder="Any" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="for-sale">For Sale</SelectItem>
-                    <SelectItem value="to-let">To Let</SelectItem>
-                </SelectContent>
-                </Select>
-            </div>
-            <div>
-                <Label htmlFor="property-type">Property Type</Label>
-                <Select value={filters.propertyType} onValueChange={(value) => handleSelectChange('propertyType', value)}>
-                <SelectTrigger id="property-type">
-                    <SelectValue placeholder="Any" />
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="House">House</SelectItem>
-                    <SelectItem value="Apartment">Apartment</SelectItem>
-                    <SelectItem value="Villa">Villa</SelectItem>
-                    <SelectItem value="Townhouse">Townhouse</SelectItem>
-                </SelectContent>
-                </Select>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                <Label htmlFor="min-beds">Min Beds</Label>
-                <Select value={filters.minBeds} onValueChange={(value) => handleSelectChange('minBeds', value)}>
-                    <SelectTrigger id="min-beds">
-                    <SelectValue placeholder="Any" />
-                    </SelectTrigger>
-                    <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="1">1+</SelectItem>
-                    <SelectItem value="2">2+</SelectItem>
-                    <SelectItem value="3">3+</SelectItem>
-                    <SelectItem value="4">4+</SelectItem>
-                    <SelectItem value="5">5+</SelectItem>
-                    </SelectContent>
-                </Select>
+    <div className="mb-8">
+        <Card className="shadow-lg bg-white p-4">
+          <CardContent className="p-2">
+            <div className="flex flex-col md:flex-row items-center gap-4">
+                <div className="relative w-full">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <Input id="location" placeholder="Search by city, suburb or address" value={filters.location} onChange={(e) => handleInputChange('location', e.target.value)} className="pl-10 h-12 text-base"/>
+                    {filters.location && <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8" onClick={() => handleInputChange('location', '')}><X className="h-4 w-4"/></Button>}
                 </div>
-                <div>
-                <Label htmlFor="min-baths">Min Baths</Label>
-                <Select value={filters.minBaths} onValueChange={(value) => handleSelectChange('minBaths', value)}>
-                    <SelectTrigger id="min-baths">
-                    <SelectValue placeholder="Any" />
-                    </SelectTrigger>
-                    <SelectContent>
-                    <SelectItem value="any">Any</SelectItem>
-                    <SelectItem value="1">1+</SelectItem>
-                    <SelectItem value="2">2+</SelectItem>
-                    <SelectItem value="3">3+</SelectItem>
-                    </SelectContent>
-                </Select>
-                </div>
-            </div>
-            <div>
-                <Label>Price Range (ZAR)</Label>
-                <div className="flex gap-2">
-                <Input placeholder="Min price" type="number" step="100000" value={filters.minPrice} onChange={(e) => handleInputChange('minPrice', e.target.value)} />
-                <Input placeholder="Max price" type="number" step="100000" value={filters.maxPrice} onChange={(e) => handleInputChange('maxPrice', e.target.value)} />
-                </div>
-            </div>
-
-            <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
-                <CollapsibleTrigger asChild>
-                <Button variant="ghost" className="w-full justify-center gap-2 text-brand-bright hover:bg-muted hover:text-brand-bright">
-                    <ChevronsUpDown className="h-4 w-4" />
-                    <span>{isAdvancedOpen ? "Hide" : "Show"} More Filters</span>
+                <Button variant="outline" className="w-full md:w-auto h-12 text-base">
+                    <Map className="mr-2 h-5 w-5" /> Map
                 </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent className="space-y-6 pt-6">
-                    <div className="grid grid-cols-1 gap-4">
-                        <div>
-                            <Label htmlFor="min-parking">Parking</Label>
-                            <Select value={filters.minParking} onValueChange={(value) => handleSelectChange('minParking', value)}>
-                                <SelectTrigger id="min-parking"><SelectValue placeholder="Any" /></SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="any">Any</SelectItem>
-                                    <SelectItem value="1">1+</SelectItem>
-                                    <SelectItem value="2">2+</SelectItem>
-                                    <SelectItem value="3">3+</SelectItem>
-                                </SelectContent>
-                            </Select>
+                <Button className="w-full md:w-auto h-12 text-base bg-brand-bright hover:bg-brand-deep" onClick={applyFilters}>
+                    Search
+                </Button>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
+            <div className="bg-primary p-6 transition-all duration-300">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                    <Select value={filters.propertyType} onValueChange={(value) => handleSelectChange('propertyType', value)}>
+                        <SelectTrigger className="h-12"><SelectValue placeholder="Property Type" /></SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="any">Any Type</SelectItem>
+                            <SelectItem value="House">House</SelectItem>
+                            <SelectItem value="Apartment">Apartment</SelectItem>
+                            <SelectItem value="Townhouse">Townhouse</SelectItem>
+                            <SelectItem value="Villa">Villa</SelectItem>
+                            <SelectItem value="Vacant Land">Vacant Land</SelectItem>
+                        </SelectContent>
+                    </Select>
+                     <Select value={filters.minPrice} onValueChange={(value) => handleSelectChange('minPrice', value)}>
+                        <SelectTrigger className="h-12"><SelectValue placeholder="Min Price" /></SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="any">Any Price</SelectItem>
+                            <SelectItem value="500000">R 500 000</SelectItem>
+                            <SelectItem value="1000000">R 1 000 000</SelectItem>
+                            <SelectItem value="2000000">R 2 000 000</SelectItem>
+                            <SelectItem value="5000000">R 5 000 000</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select value={filters.maxPrice} onValueChange={(value) => handleSelectChange('maxPrice', value)}>
+                        <SelectTrigger className="h-12"><SelectValue placeholder="Max Price" /></SelectTrigger>
+                        <SelectContent>
+                           <SelectItem value="any">Any Price</SelectItem>
+                           <SelectItem value="1000000">R 1 000 000</SelectItem>
+                           <SelectItem value="2000000">R 2 000 000</SelectItem>
+                           <SelectItem value="5000000">R 5 000 000</SelectItem>
+                           <SelectItem value="10000000">R 10 000 000</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select value={filters.minBeds} onValueChange={(value) => handleSelectChange('minBeds', value)}>
+                        <SelectTrigger className="h-12"><SelectValue placeholder="Beds" /></SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="any">Any</SelectItem>
+                            <SelectItem value="1">1+</SelectItem>
+                            <SelectItem value="2">2+</SelectItem>
+                            <SelectItem value="3">3+</SelectItem>
+                            <SelectItem value="4">4+</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <CollapsibleTrigger asChild>
+                        <Button variant="outline" className="h-12 text-base bg-primary/20 text-white hover:bg-primary/40 border-white/50 hover:text-white">
+                            {isAdvancedOpen ? "Less Filters" : "More Filters"}
+                            <ChevronsUpDown className="ml-2 h-4 w-4" />
+                        </Button>
+                    </CollapsibleTrigger>
+                </div>
+                <CollapsibleContent className="mt-6">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                         <Select value={filters.minBaths} onValueChange={(value) => handleSelectChange('minBaths', value)}>
+                            <SelectTrigger className="h-12"><SelectValue placeholder="Baths" /></SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="any">Any</SelectItem>
+                                <SelectItem value="1">1+</SelectItem>
+                                <SelectItem value="2">2+</SelectItem>
+                                <SelectItem value="3">3+</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Input className="h-12" placeholder="Min Floor Size (m²)" />
+                        <Input className="h-12" placeholder="Min Erf Size (m²)" />
+                    </div>
+                    <div className="mt-6">
+                        <h4 className="text-lg font-semibold text-white mb-3">Features</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-white">
+                           <div className="flex items-center gap-2">
+                                <Checkbox id="pet-friendly" className="border-white" checked={filters.features.petFriendly} onCheckedChange={(c) => handleCheckboxChange('features', 'petFriendly', !!c)} />
+                                <Label htmlFor="pet-friendly">Pet Friendly</Label>
+                           </div>
+                           <div className="flex items-center gap-2">
+                                <Checkbox id="garden" className="border-white" checked={filters.features.garden} onCheckedChange={(c) => handleCheckboxChange('features', 'garden', !!c)} />
+                                <Label htmlFor="garden">Garden</Label>
+                           </div>
+                           <div className="flex items-center gap-2">
+                                <Checkbox id="pool" className="border-white" checked={filters.features.pool} onCheckedChange={(c) => handleCheckboxChange('features', 'pool', !!c)} />
+                                <Label htmlFor="pool">Pool</Label>
+                           </div>
+                           <div className="flex items-center gap-2">
+                                <Checkbox id="flatlet" className="border-white" checked={filters.features.flatlet} onCheckedChange={(c) => handleCheckboxChange('features', 'flatlet', !!c)} />
+                                <Label htmlFor="flatlet">Flatlet</Label>
+                           </div>
                         </div>
                     </div>
-                    <div>
-                        <Label>Floor Size (m²)</Label>
-                        <div className="flex gap-2">
-                            <Input placeholder="Min" type="number" step="10" value={filters.minFloorSize} onChange={(e) => handleInputChange('minFloorSize', e.target.value)} />
-                            <Input placeholder="Max" type="number" step="10" value={filters.maxFloorSize} onChange={(e) => handleInputChange('maxFloorSize', e.target.value)} />
-                        </div>
-                    </div>
-                    <div>
-                        <Label>Erf Size (m²)</Label>
-                        <div className="flex gap-2">
-                            <Input placeholder="Min" type="number" step="50" value={filters.minErfSize} onChange={(e) => handleInputChange('minErfSize', e.target.value)} />
-                            <Input placeholder="Max" type="number" step="50" value={filters.maxErfSize} onChange={(e) => handleInputChange('maxErfSize', e.target.value)} />
-                        </div>
-                    </div>
-                    
-                    <Separator />
-                    
-                    <div className="space-y-4">
-                        <Label className="mb-2 block font-medium">Features</Label>
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="pet-friendly" checked={filters.features.petFriendly} onCheckedChange={(checked) => handleCheckboxChange('features', 'petFriendly', !!checked)} />
-                                <label htmlFor="pet-friendly" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Pet Friendly</label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="garden" checked={filters.features.garden} onCheckedChange={(checked) => handleCheckboxChange('features', 'garden', !!checked)} />
-                                <label htmlFor="garden" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Garden</label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="pool" checked={filters.features.pool} onCheckedChange={(checked) => handleCheckboxChange('features', 'pool', !!checked)} />
-                                <label htmlFor="pool" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Pool</label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="flatlet" checked={filters.features.flatlet} onCheckedChange={(checked) => handleCheckboxChange('features', 'flatlet', !!checked)} />
-                                <label htmlFor="flatlet" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Flatlet</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <Separator />
-
-                    <div className="space-y-4">
-                        <Label className="mb-2 block font-medium">Other</Label>
-                        <div className="grid grid-cols-2 gap-x-4 gap-y-3">
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="on-show" checked={filters.other.onShow} onCheckedChange={(checked) => handleCheckboxChange('other', 'onShow', !!checked)} />
-                                <label htmlFor="on-show" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">On Show</label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="security-estate" checked={filters.other.securityEstate} onCheckedChange={(checked) => handleCheckboxChange('other', 'securityEstate', !!checked)} />
-                                <label htmlFor="security-estate" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Security Estate</label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="retirement" checked={filters.other.retirement} onCheckedChange={(checked) => handleCheckboxChange('other', 'retirement', !!checked)} />
-                                <label htmlFor="retirement" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Retirement</label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="repossessed" checked={filters.other.repossessed} onCheckedChange={(checked) => handleCheckboxChange('other', 'repossessed', !!checked)} />
-                                <label htmlFor="repossessed" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Repossessed</label>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Checkbox id="auction" checked={filters.other.auction} onCheckedChange={(checked) => handleCheckboxChange('other', 'auction', !!checked)} />
-                                <label htmlFor="auction" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Auction</label>
-                            </div>
+                    <div className="mt-6">
+                        <h4 className="text-lg font-semibold text-white mb-3">Other</h4>
+                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-white">
+                           <div className="flex items-center gap-2">
+                                <Checkbox id="retirement" className="border-white" checked={filters.other.retirement} onCheckedChange={(c) => handleCheckboxChange('other', 'retirement', !!c)} />
+                                <Label htmlFor="retirement">Retirement</Label>
+                           </div>
+                           <div className="flex items-center gap-2">
+                                <Checkbox id="on-show" className="border-white" checked={filters.other.onShow} onCheckedChange={(c) => handleCheckboxChange('other', 'onShow', !!c)} />
+                                <Label htmlFor="on-show">On Show</Label>
+                           </div>
+                           <div className="flex items-center gap-2">
+                                <Checkbox id="security-estate" className="border-white" checked={filters.other.securityEstate} onCheckedChange={(c) => handleCheckboxChange('other', 'securityEstate', !!c)} />
+                                <Label htmlFor="security-estate">Security Estate</Label>
+                           </div>
                         </div>
                     </div>
                 </CollapsibleContent>
-            </Collapsible>
-            </form>
-        </CardContent>
-      </ContentWrapper>
-       <CardFooter className={cn(
-        "flex-col gap-4 pt-6 border-t",
-        isMobile && "sticky bottom-0 bg-background"
-       )}>
-          <Button className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg" onClick={handleFilterChange}>
-              <Search className="mr-2 h-5 w-5"/>
-              Show {filteredCount} {filteredCount === 1 ? 'property' : 'properties'}
-          </Button>
-          <Button type="reset" variant="link" className="w-full text-muted-foreground flex items-center" onClick={clearFilters}>
-              <X className="mr-2 h-4 w-4" />
-              Clear Filters
-          </Button>
-      </CardFooter>
-    </FilterWrapper>
+                 <div className="mt-6 flex items-center justify-center">
+                    <p className="text-white/80 text-sm">
+                        Click search to browse <span className="font-bold text-white">{filteredCount}</span> properties
+                    </p>
+                    <span className="text-white/50 mx-2">•</span>
+                    <Button variant="link" className="p-0 h-auto text-white/80 hover:text-white" onClick={clearFilters}>Clear Filters</Button>
+                </div>
+            </div>
+        </Collapsible>
+    </div>
   );
 }
