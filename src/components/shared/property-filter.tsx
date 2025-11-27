@@ -36,91 +36,6 @@ const initialFilters = {
     },
 };
 
-
-export function PropertyFilter({ properties, onFilterChange }: { properties: Property[], onFilterChange: (filtered: Property[]) => void }) {
-  const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState("buy");
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-  
-  const [filters, setFilters] = useState(() => {
-    const location = searchParams.get("location") || "";
-    const status = searchParams.get("status") || "for-sale";
-    return {...initialFilters, location, status };
-  });
-
-  const applyFilters = useCallback(() => {
-    const filtered = properties.filter(p => {
-        const { location, propertyType, minBeds, minPrice, maxPrice, features, other } = filters;
-
-        if (activeTab === 'buy' && p.status !== 'for-sale') return false;
-        if (activeTab === 'rent' && p.status !== 'to-let') return false;
-        if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
-        if (propertyType !== 'any' && p.type !== propertyType) return false;
-        if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
-        if (minPrice !== 'any' && p.price < parseInt(minPrice)) return false;
-        if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
-
-        if (features.petFriendly && !p.features.some(f => f.toLowerCase().includes('pet friendly'))) return false;
-        if (features.garden && !p.features.some(f => f.toLowerCase().includes('garden'))) return false;
-        if (features.pool && !p.features.some(f => f.toLowerCase().includes('pool'))) return false;
-        if (features.flatlet && !p.features.some(f => f.toLowerCase().includes('flatlet') || f.toLowerCase().includes('guest cottage'))) return false;
-        if (other.onShow && !p.onShow) return false;
-        if (other.retirement && !p.features.some(f => f.toLowerCase().includes('retirement'))) return false;
-        if (other.securityEstate && !p.features.some(f => f.toLowerCase().includes('secure estate') || f.toLowerCase().includes('security estate'))) return false;
-        
-        return true;
-    });
-    onFilterChange(filtered);
-  }, [filters, properties, onFilterChange, activeTab]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [filters, properties, applyFilters]);
-
-  const handleInputChange = (field: string, value: string) => {
-    setFilters(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleSelectChange = (field: string, value: string) => {
-    setFilters(prev => ({ ...prev, [field]: value }));
-  };
-
-   const handleCheckboxChange = (category: 'features' | 'other', field: string, checked: boolean) => {
-    setFilters(prev => ({
-        ...prev,
-        [category]: {
-            ...prev[category],
-            [field]: checked,
-        }
-    }));
-  };
-  
-  const clearFilters = () => {
-    const status = activeTab === 'buy' ? 'for-sale' : 'to-let';
-    setFilters({...initialFilters, status });
-  }
-
-  const filteredCount = useMemo(() => {
-      return properties.filter(p => {
-        const { location, propertyType, minBeds, minPrice, maxPrice } = filters;
-        if (activeTab === 'buy' && p.status !== 'for-sale') return false;
-        if (activeTab === 'rent' && p.status !== 'to-let') return false;
-        if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
-        if (propertyType !== 'any' && p.type !== propertyType) return false;
-        if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
-        if (minPrice !== 'any' && p.price < parseInt(minPrice)) return false;
-        if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
-        return true;
-    }).length
-  }, [filters, properties, activeTab])
-
-    useEffect(() => {
-    const location = searchParams.get('location') || '';
-    const status = searchParams.get('status') || 'for-sale';
-    setFilters(prev => ({...prev, location, status}));
-    setActiveTab(status === 'to-let' ? 'rent' : 'buy');
-  }, [searchParams]);
-
 const FilterContent = ({ filters, handleInputChange, handleSelectChange, isAdvancedOpen, setIsAdvancedOpen, clearFilters, filteredCount, handleCheckboxChange, applyFilters }: any) => {
   return (
     <div className="space-y-[-1px]">
@@ -274,12 +189,101 @@ const FilterContent = ({ filters, handleInputChange, handleSelectChange, isAdvan
             <Button variant="link" className="text-white h-auto p-0" onClick={clearFilters}>Clear Filters</Button>
         </div>
       </div>
-    );
+  );
+}
+
+export function PropertyFilter({ properties, onFilterChange }: { properties: Property[], onFilterChange: (filtered: Property[]) => void }) {
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState("buy");
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  
+  const [filters, setFilters] = useState(() => {
+    const location = searchParams.get("location") || "";
+    const status = searchParams.get("status") || "for-sale";
+    return {...initialFilters, location, status };
+  });
+
+  const applyFilters = useCallback(() => {
+    const filtered = properties.filter(p => {
+        const { location, propertyType, minBeds, minPrice, maxPrice, features, other } = filters;
+
+        if (activeTab === 'buy' && p.status !== 'for-sale') return false;
+        if (activeTab === 'rent' && p.status !== 'to-let') return false;
+        if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
+        if (propertyType !== 'any' && p.type !== propertyType) return false;
+        if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
+        if (minPrice !== 'any' && p.price < parseInt(minPrice)) return false;
+        if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
+
+        if (features.petFriendly && !p.features.some(f => f.toLowerCase().includes('pet friendly'))) return false;
+        if (features.garden && !p.features.some(f => f.toLowerCase().includes('garden'))) return false;
+        if (features.pool && !p.features.some(f => f.toLowerCase().includes('pool'))) return false;
+        if (features.flatlet && !p.features.some(f => f.toLowerCase().includes('flatlet') || f.toLowerCase().includes('guest cottage'))) return false;
+        if (other.onShow && !p.onShow) return false;
+        if (other.retirement && !p.features.some(f => f.toLowerCase().includes('retirement'))) return false;
+        if (other.securityEstate && !p.features.some(f => f.toLowerCase().includes('secure estate') || f.toLowerCase().includes('security estate'))) return false;
+        
+        return true;
+    });
+    onFilterChange(filtered);
+  }, [filters, properties, onFilterChange, activeTab]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [filters, properties, applyFilters]);
+
+  const handleInputChange = (field: string, value: string) => {
+    setFilters(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleSelectChange = (field: string, value: string) => {
+    setFilters(prev => ({ ...prev, [field]: value }));
+  };
+
+   const handleCheckboxChange = (category: 'features' | 'other', field: string, checked: boolean) => {
+    setFilters(prev => ({
+        ...prev,
+        [category]: {
+            ...prev[category],
+            [field]: checked,
+        }
+    }));
+  };
+  
+  const clearFilters = () => {
+    const status = activeTab === 'buy' ? 'for-sale' : 'to-let';
+    setFilters({...initialFilters, status });
   }
+
+  const filteredCount = useMemo(() => {
+      return properties.filter(p => {
+        const { location, propertyType, minBeds, minPrice, maxPrice } = filters;
+        if (activeTab === 'buy' && p.status !== 'for-sale') return false;
+        if (activeTab === 'rent' && p.status !== 'to-let') return false;
+        if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
+        if (propertyType !== 'any' && p.type !== propertyType) return false;
+        if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
+        if (minPrice !== 'any' && p.price < parseInt(minPrice)) return false;
+        if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
+        return true;
+    }).length
+  }, [filters, properties, activeTab])
+
+    useEffect(() => {
+    const location = searchParams.get('location') || '';
+    const status = searchParams.get('status') || 'for-sale';
+    setFilters(prev => ({...prev, location, status}));
+    setActiveTab(status === 'to-let' ? 'rent' : 'buy');
+  }, [searchParams]);
+
 
   return (
     <div className="font-sans">
-      <Tabs defaultValue="buy" className="w-full" value={activeTab} onValueChange={(v) => setActiveTab(v)}>
+      <Tabs defaultValue="buy" className="w-full" value={activeTab} onValueChange={(v) => {
+        setActiveTab(v);
+        const newStatus = v === 'rent' ? 'to-let' : 'for-sale';
+        setFilters(prev => ({ ...prev, status: newStatus }));
+      }}>
         <TabsList className="bg-transparent p-0 h-auto gap-0">
           {["Buy", "Rent", "Developments", "Agents", "Sold Prices"].map(tab => (
               <TabsTrigger
