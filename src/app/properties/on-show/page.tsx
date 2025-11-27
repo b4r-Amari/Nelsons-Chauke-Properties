@@ -14,15 +14,11 @@ export const metadata: Metadata = {
 };
 
 export default function OnShowPropertiesPage() {
+  const pageDetails = {
+    title: "Properties On Show",
+    description: "Visit these properties this weekend. Find your dream home."
+  }
   return (
-    <>
-      <section className="bg-brand-deep text-white py-16">
-        <div className="container text-center">
-          <h1 className="text-4xl font-bold font-headline">Properties On Show</h1>
-          <p className="text-lg mt-2 text-white/80">Visit these properties this weekend. Find your dream home.</p>
-        </div>
-      </section>
-      <PropertyListings status="on-show" />
-    </>
+    <PropertyListings status="on-show" pageDetails={pageDetails}/>
   );
 }

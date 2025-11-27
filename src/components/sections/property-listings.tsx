@@ -2,6 +2,7 @@
 "use client"
 
 import { useState, useEffect, Suspense, useMemo } from "react";
+import Image from "next/image";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import { getProperties } from '@/lib/data';
@@ -11,7 +12,15 @@ import { useSearchParams } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
 
-function PropertyListingsComponent({ status }: { status?: 'on-show' | 'sold' }) {
+type PropertyListingsProps = {
+  status?: 'on-show' | 'sold';
+  pageDetails: {
+    title: string;
+    description: string;
+  };
+};
+
+function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProps) {
   const searchParams = useSearchParams();
   const locationSearch = searchParams.get('location');
   const statusSearch = searchParams.get('status');
@@ -89,55 +98,73 @@ function PropertyListingsComponent({ status }: { status?: 'on-show' | 'sold' }) 
   );
 
   return (
-    <section className="py-16 bg-background">
-      <div className="container">
-        <PropertyFilter 
-          properties={allProperties} 
-          onFilterChange={setFilteredProperties}
+    <>
+      <section className="relative bg-brand-deep text-white py-16 -mt-20 pt-36">
+        <Image
+          src="/images/backgrounds/hero-banner-2.webp"
+          alt="A beautiful modern home"
+          fill
+          className="object-cover"
+          priority
         />
-        
-        <div className="flex justify-end mb-6">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline">
-                <ArrowUpDown className="mr-2 h-4 w-4" />
-                Order By: {sortOption.replace('-', ' ')}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Sort Properties</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => setSortOption('newest')}>Newest First</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setSortOption('price-desc')}>Price: High to Low</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setSortOption('price-asc')}>Price: Low to High</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="container relative z-10">
+          <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold font-headline">{pageDetails.title}</h1>
+              <p className="text-lg mt-2 text-white/80">{pageDetails.description}</p>
+          </div>
+          <PropertyFilter 
+            properties={allProperties} 
+            onFilterChange={setFilteredProperties}
+          />
         </div>
+      </section>
 
-        <main>
-            {isLoading ? (
-              <LoadingSkeleton />
-            ) : sortedAndFilteredProperties.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {sortedAndFilteredProperties.map((prop) => (
-                  <PropertyCard key={prop.id} property={prop} />
-                ))}
-              </div>
-            ) : (
-              <div className="flex items-center justify-center h-full bg-card rounded-lg shadow-md p-12">
-                <p className="text-xl text-muted-foreground text-center">No properties match your current filters. Try adjusting your search criteria.</p>
-              </div>
-            )}
-        </main>
-      </div>
-    </section>
+      <section className="py-16 bg-background">
+        <div className="container">
+          <div className="flex justify-end mb-6">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline">
+                  <ArrowUpDown className="mr-2 h-4 w-4" />
+                  Order By: {sortOption.replace('-', ' ')}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Sort Properties</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => setSortOption('newest')}>Newest First</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setSortOption('price-desc')}>Price: High to Low</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setSortOption('price-asc')}>Price: Low to High</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          <main>
+              {isLoading ? (
+                <LoadingSkeleton />
+              ) : sortedAndFilteredProperties.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  {sortedAndFilteredProperties.map((prop) => (
+                    <PropertyCard key={prop.id} property={prop} />
+                  ))}
+                </div>
+              ) : (
+                <div className="flex items-center justify-center h-full bg-card rounded-lg shadow-md p-12">
+                  <p className="text-xl text-muted-foreground text-center">No properties match your current filters. Try adjusting your search criteria.</p>
+                </div>
+              )}
+          </main>
+        </div>
+      </section>
+    </>
   );
 }
 
-export function PropertyListings({ status }: { status?: 'on-show' | 'sold' }) {
+export function PropertyListings(props: PropertyListingsProps) {
   return (
     <Suspense>
-      <PropertyListingsComponent status={status} />
+      <PropertyListingsComponent {...props} />
     </Suspense>
   )
 }

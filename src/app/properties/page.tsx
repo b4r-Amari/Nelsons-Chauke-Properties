@@ -14,15 +14,11 @@ export const metadata: Metadata = {
 };
 
 export default function PropertiesPage() {
+  const pageDetails = {
+    title: "All Properties",
+    description: "Find your next home from our curated listings across South Africa."
+  }
   return (
-    <>
-      <section className="bg-brand-deep text-white py-16">
-        <div className="container text-center">
-          <h1 className="text-4xl font-bold font-headline">All Properties</h1>
-          <p className="text-lg mt-2 text-white/80">Find your next home from our curated listings across South Africa.</p>
-        </div>
-      </section>
-      <PropertyListings />
-    </>
+    <PropertyListings pageDetails={pageDetails} />
   );
 }
