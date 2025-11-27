@@ -99,16 +99,18 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
 
   return (
     <>
-      <section className="relative bg-brand-deep text-white py-16 -mt-20 pt-36">
-        <Image
-          src="/images/backgrounds/hero-banner-2.webp"
-          alt="A beautiful modern home"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="container relative z-10">
+      <section className="relative bg-background text-white -mt-20 pt-20">
+        <div className="absolute inset-0">
+            <Image
+            src="/images/backgrounds/hero-banner-2.webp"
+            alt="A beautiful modern home"
+            fill
+            className="object-cover"
+            priority
+            />
+            <div className="absolute inset-0 bg-black/60" />
+        </div>
+        <div className="relative z-10 container pt-16 pb-8">
           <div className="text-center mb-8">
               <h1 className="text-4xl font-bold font-headline">{pageDetails.title}</h1>
               <p className="text-lg mt-2 text-white/80">{pageDetails.description}</p>
@@ -120,14 +122,17 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
         </div>
       </section>
 
-      <section className="py-16 bg-background">
+      <section className="py-8 bg-background">
         <div className="container">
-          <div className="flex justify-end mb-6">
+           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 border-b pb-4">
+            <p className="text-muted-foreground text-sm mb-4 sm:mb-0">
+              Showing <span className="font-bold text-foreground">{sortedAndFilteredProperties.length}</span> results
+            </p>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline">
+                <Button variant="ghost">
                   <ArrowUpDown className="mr-2 h-4 w-4" />
-                  Order By: {sortOption.replace('-', ' ')}
+                  Sort By: {sortOption.replace('-', ' ')}
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
