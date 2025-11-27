@@ -36,6 +36,7 @@ const initialFilters = {
     },
 };
 
+
 export function PropertyFilter({ properties, onFilterChange }: { properties: Property[], onFilterChange: (filtered: Property[]) => void }) {
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState("buy");
@@ -113,9 +114,172 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     }).length
   }, [filters, properties, activeTab])
 
+    useEffect(() => {
+    const location = searchParams.get('location') || '';
+    const status = searchParams.get('status') || 'for-sale';
+    setFilters(prev => ({...prev, location, status}));
+    setActiveTab(status === 'to-let' ? 'rent' : 'buy');
+  }, [searchParams]);
+
+const FilterContent = ({ filters, handleInputChange, handleSelectChange, isAdvancedOpen, setIsAdvancedOpen, clearFilters, filteredCount, handleCheckboxChange, applyFilters }: any) => {
+  return (
+    <div className="space-y-[-1px]">
+      <Card className="shadow-lg rounded-t-lg rounded-b-none p-2 bg-white">
+        <CardContent className="p-0">
+          <div className="flex flex-col md:flex-row items-center gap-2">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <Input
+                id="location"
+                placeholder="Search for a suburb, city or province"
+                value={filters.location}
+                onChange={(e) => handleInputChange('location', e.target.value)}
+                className="pl-10 h-12 text-base border-0 focus-visible:ring-0 shadow-none"
+              />
+              {filters.location && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                  onClick={() => handleInputChange('location', '')}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+            <div className="flex w-full md:w-auto gap-2">
+              <Button variant="outline" className="w-1/2 md:w-auto h-12 text-base font-normal">
+                <Map className="mr-2 h-5 w-5" /> Map
+              </Button>
+              <Button className="w-1/2 md:w-auto h-12 text-base bg-accent hover:bg-accent/90" onClick={applyFilters}>
+                Search
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen} className="bg-primary rounded-b-lg">
+        <div className="p-4 transition-all duration-300">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <Select value={filters.propertyType} onValueChange={(value) => handleSelectChange('propertyType', value)}>
+              <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Property Type" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any Type</SelectItem>
+                <SelectItem value="House">House</SelectItem>
+                <SelectItem value="Apartment">Apartment</SelectItem>
+                <SelectItem value="Townhouse">Townhouse</SelectItem>
+                <SelectItem value="Villa">Villa</SelectItem>
+                <SelectItem value="Vacant Land">Vacant Land</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filters.minPrice} onValueChange={(value) => handleSelectChange('minPrice', value)}>
+              <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Min Price" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any Price</SelectItem>
+                <SelectItem value="500000">R 500 000</SelectItem>
+                <SelectItem value="1000000">R 1 000 000</SelectItem>
+                <SelectItem value="2000000">R 2 000 000</SelectItem>
+                <SelectItem value="5000000">R 5 000 000</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filters.maxPrice} onValueChange={(value) => handleSelectChange('maxPrice', value)}>
+              <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Max Price" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any Price</SelectItem>
+                <SelectItem value="1000000">R 1 000 000</SelectItem>
+                <SelectItem value="2000000">R 2 000 000</SelectItem>
+                <SelectItem value="5000000">R 5 000 000</SelectItem>
+                <SelectItem value="10000000">R 10 000 000</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={filters.minBeds} onValueChange={(value) => handleSelectChange('minBeds', value)}>
+              <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Beds" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="any">Any</SelectItem>
+                <SelectItem value="1">1+</SelectItem>
+                <SelectItem value="2">2+</SelectItem>
+                <SelectItem value="3">3+</SelectItem>
+                <SelectItem value="4">4+</SelectItem>
+              </SelectContent>
+            </Select>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" className="h-10 text-base bg-transparent text-white hover:bg-primary-foreground/10 border-white/50 hover:text-white">
+                More Filters
+                <Plus className="ml-2 h-4 w-4" />
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+          <CollapsibleContent className="mt-6 text-white">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              <div>
+                <h4 className="font-semibold mb-3">Features</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="pet-friendly" checked={filters.features.petFriendly} onCheckedChange={(c) => handleCheckboxChange('features', 'petFriendly', !!c)} className="border-white" />
+                    <Label htmlFor="pet-friendly" className="font-normal">Pet Friendly</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="garden" checked={filters.features.garden} onCheckedChange={(c) => handleCheckboxChange('features', 'garden', !!c)} className="border-white" />
+                    <Label htmlFor="garden" className="font-normal">Garden</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="pool" checked={filters.features.pool} onCheckedChange={(c) => handleCheckboxChange('features', 'pool', !!c)} className="border-white" />
+                    <Label htmlFor="pool" className="font-normal">Pool</Label>
+                  </div>
+                   <div className="flex items-center gap-2">
+                    <Checkbox id="flatlet" checked={filters.features.flatlet} onCheckedChange={(c) => handleCheckboxChange('features', 'flatlet', !!c)} className="border-white" />
+                    <Label htmlFor="flatlet" className="font-normal">Flatlet</Label>
+                  </div>
+                </div>
+              </div>
+               <div>
+                <h4 className="font-semibold mb-3">Property Details</h4>
+                <div className="space-y-2">
+                  <Select value={filters.minBaths} onValueChange={(value) => handleSelectChange('minBaths', value)}>
+                      <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Baths" /></SelectTrigger>
+                      <SelectContent>
+                          <SelectItem value="any">Any</SelectItem>
+                          <SelectItem value="1">1+</SelectItem>
+                          <SelectItem value="2">2+</SelectItem>
+                          <SelectItem value="3">3+</SelectItem>
+                      </SelectContent>
+                  </Select>
+                   <Input className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" placeholder="Min Floor Size (m²)" />
+                   <Input className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" placeholder="Min Erf Size (m²)" />
+                </div>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-3">Other Filters</h4>
+                 <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                      <Checkbox id="on-show" checked={filters.other.onShow} onCheckedChange={(c) => handleCheckboxChange('other', 'onShow', !!c)} className="border-white" />
+                      <Label htmlFor="on-show" className="font-normal">On Show</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                      <Checkbox id="retirement" checked={filters.other.retirement} onCheckedChange={(c) => handleCheckboxChange('other', 'retirement', !!c)} className="border-white" />
+                      <Label htmlFor="retirement" className="font-normal">Retirement</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                      <Checkbox id="security-estate" checked={filters.other.securityEstate} onCheckedChange={(c) => handleCheckboxChange('other', 'securityEstate', !!c)} className="border-white" />
+                      <Label htmlFor="security-estate" className="font-normal">Security Estate</Label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CollapsibleContent>
+        </div>
+        <div className="bg-primary text-white text-sm text-center py-2 rounded-b-lg">
+            Click search to browse <span className="font-bold">{filteredCount}</span> properties
+            <span className="mx-2">•</span>
+            <Button variant="link" className="text-white h-auto p-0" onClick={clearFilters}>Clear Filters</Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="font-sans">
-      <Tabs defaultValue="buy" className="w-full" onValueChange={(v) => setActiveTab(v)}>
+      <Tabs defaultValue="buy" className="w-full" value={activeTab} onValueChange={(v) => setActiveTab(v)}>
         <TabsList className="bg-transparent p-0 h-auto gap-0">
           {["Buy", "Rent", "Developments", "Agents", "Sold Prices"].map(tab => (
               <TabsTrigger
@@ -160,157 +324,3 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     </div>
   );
 }
-
-const FilterContent = ({ filters, handleInputChange, handleSelectChange, isAdvancedOpen, setIsAdvancedOpen, clearFilters, filteredCount, handleCheckboxChange, applyFilters }: any) => (
-  <div className="space-y-[-1px]">
-    <Card className="shadow-lg rounded-t-lg rounded-b-none p-2 bg-white">
-      <CardContent className="p-0">
-        <div className="flex flex-col md:flex-row items-center gap-2">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              id="location"
-              placeholder="Search for a suburb, city or province"
-              value={filters.location}
-              onChange={(e) => handleInputChange('location', e.target.value)}
-              className="pl-10 h-12 text-base border-0 focus-visible:ring-0 shadow-none"
-            />
-            {filters.location && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                onClick={() => handleInputChange('location', '')}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-          <div className="flex w-full md:w-auto gap-2">
-            <Button variant="outline" className="w-1/2 md:w-auto h-12 text-base font-normal">
-              <Map className="mr-2 h-5 w-5" /> Map
-            </Button>
-            <Button className="w-1/2 md:w-auto h-12 text-base bg-accent hover:bg-accent/90" onClick={applyFilters}>
-              Search
-            </Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-    <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen} className="bg-primary rounded-b-lg">
-      <div className="p-4 transition-all duration-300">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <Select value={filters.propertyType} onValueChange={(value) => handleSelectChange('propertyType', value)}>
-            <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Property Type" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">Any Type</SelectItem>
-              <SelectItem value="House">House</SelectItem>
-              <SelectItem value="Apartment">Apartment</SelectItem>
-              <SelectItem value="Townhouse">Townhouse</SelectItem>
-              <SelectItem value="Villa">Villa</SelectItem>
-              <SelectItem value="Vacant Land">Vacant Land</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filters.minPrice} onValueChange={(value) => handleSelectChange('minPrice', value)}>
-            <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Min Price" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">Any Price</SelectItem>
-              <SelectItem value="500000">R 500 000</SelectItem>
-              <SelectItem value="1000000">R 1 000 000</SelectItem>
-              <SelectItem value="2000000">R 2 000 000</SelectItem>
-              <SelectItem value="5000000">R 5 000 000</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filters.maxPrice} onValueChange={(value) => handleSelectChange('maxPrice', value)}>
-            <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Max Price" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">Any Price</SelectItem>
-              <SelectItem value="1000000">R 1 000 000</SelectItem>
-              <SelectItem value="2000000">R 2 000 000</SelectItem>
-              <SelectItem value="5000000">R 5 000 000</SelectItem>
-              <SelectItem value="10000000">R 10 000 000</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={filters.minBeds} onValueChange={(value) => handleSelectChange('minBeds', value)}>
-            <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Beds" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="any">Any</SelectItem>
-              <SelectItem value="1">1+</SelectItem>
-              <SelectItem value="2">2+</SelectItem>
-              <SelectItem value="3">3+</SelectItem>
-              <SelectItem value="4">4+</SelectItem>
-            </SelectContent>
-          </Select>
-          <CollapsibleTrigger asChild>
-            <Button variant="outline" className="h-10 text-base bg-transparent text-white hover:bg-primary-foreground/10 border-white/50 hover:text-white">
-              More Filters
-              <Plus className="ml-2 h-4 w-4" />
-            </Button>
-          </CollapsibleTrigger>
-        </div>
-        <CollapsibleContent className="mt-6 text-white">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div>
-              <h4 className="font-semibold mb-3">Features</h4>
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Checkbox id="pet-friendly" checked={filters.features.petFriendly} onCheckedChange={(c) => handleCheckboxChange('features', 'petFriendly', !!c)} className="border-white" />
-                  <Label htmlFor="pet-friendly" className="font-normal">Pet Friendly</Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox id="garden" checked={filters.features.garden} onCheckedChange={(c) => handleCheckboxChange('features', 'garden', !!c)} className="border-white" />
-                  <Label htmlFor="garden" className="font-normal">Garden</Label>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Checkbox id="pool" checked={filters.features.pool} onCheckedChange={(c) => handleCheckboxChange('features', 'pool', !!c)} className="border-white" />
-                  <Label htmlFor="pool" className="font-normal">Pool</Label>
-                </div>
-                 <div className="flex items-center gap-2">
-                  <Checkbox id="flatlet" checked={filters.features.flatlet} onCheckedChange={(c) => handleCheckboxChange('features', 'flatlet', !!c)} className="border-white" />
-                  <Label htmlFor="flatlet" className="font-normal">Flatlet</Label>
-                </div>
-              </div>
-            </div>
-             <div>
-              <h4 className="font-semibold mb-3">Property Details</h4>
-              <div className="space-y-2">
-                <Select value={filters.minBaths} onValueChange={(value) => handleSelectChange('minBaths', value)}>
-                    <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Baths" /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
-                        <SelectItem value="1">1+</SelectItem>
-                        <SelectItem value="2">2+</SelectItem>
-                        <SelectItem value="3">3+</SelectItem>
-                    </SelectContent>
-                </Select>
-                 <Input className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" placeholder="Min Floor Size (m²)" />
-                 <Input className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" placeholder="Min Erf Size (m²)" />
-              </div>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-3">Other Filters</h4>
-               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                    <Checkbox id="on-show" checked={filters.other.onShow} onCheckedChange={(c) => handleCheckboxChange('other', 'onShow', !!c)} className="border-white" />
-                    <Label htmlFor="on-show" className="font-normal">On Show</Label>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Checkbox id="retirement" checked={filters.other.retirement} onCheckedChange={(c) => handleCheckboxChange('other', 'retirement', !!c)} className="border-white" />
-                    <Label htmlFor="retirement" className="font-normal">Retirement</Label>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Checkbox id="security-estate" checked={filters.other.securityEstate} onCheckedChange={(c) => handleCheckboxChange('other', 'securityEstate', !!c)} className="border-white" />
-                    <Label htmlFor="security-estate" className="font-normal">Security Estate</Label>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CollapsibleContent>
-      </div>
-      <div className="bg-primary text-white text-sm text-center py-2 rounded-b-lg">
-          Click search to browse <span className="font-bold">{filteredCount}</span> properties
-          <span className="mx-2">•</span>
-          <Button variant="link" className="text-white h-auto p-0" onClick={clearFilters}>Clear Filters</Button>
-      </div>
-    </div>
-);
