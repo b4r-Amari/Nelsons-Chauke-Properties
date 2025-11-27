@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Search, Map, X, Plus } from "lucide-react";
+import { Search, Map as MapIcon, X, Plus } from "lucide-react";
 import type { Property } from "./property-card";
 import { useSearchParams } from "next/navigation";
 import { Label } from "../ui/label";
@@ -38,8 +38,6 @@ const initialFilters = {
 
 export function PropertyFilter({ properties, onFilterChange }: { properties: Property[], onFilterChange: (filtered: Property[]) => void }) {
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState("buy");
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   
   const [filters, setFilters] = useState(() => {
     const location = searchParams.get("location") || "";
@@ -47,15 +45,19 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     return {...initialFilters, location, status };
   });
 
+  const [activeTab, setActiveTab] = useState(filters.status === 'to-let' ? 'rent' : 'buy');
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+
   const applyFilters = useCallback(() => {
     const filtered = properties.filter(p => {
-        const { location, propertyType, minBeds, minPrice, maxPrice, features, other } = filters;
+        const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other } = filters;
 
         if (activeTab === 'buy' && p.status !== 'for-sale') return false;
         if (activeTab === 'rent' && p.status !== 'to-let') return false;
         if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
         if (propertyType !== 'any' && p.type !== propertyType) return false;
         if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
+        if (minBaths !== 'any' && p.baths < parseInt(minBaths)) return false;
         if (minPrice !== 'any' && p.price < parseInt(minPrice)) return false;
         if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
 
@@ -100,7 +102,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
   }
 
   const filteredCount = useMemo(() => {
-      return properties.filter(p => {
+    return properties.filter(p => {
         const { location, propertyType, minBeds, minPrice, maxPrice } = filters;
         if (activeTab === 'buy' && p.status !== 'for-sale') return false;
         if (activeTab === 'rent' && p.status !== 'to-let') return false;
@@ -111,13 +113,13 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
         return true;
     }).length
-  }, [filters, properties, activeTab])
+  }, [filters, properties, activeTab]);
 
-    useEffect(() => {
-    const location = searchParams.get('location') || '';
-    const status = searchParams.get('status') || 'for-sale';
-    setFilters(prev => ({...prev, location, status}));
-    setActiveTab(status === 'to-let' ? 'rent' : 'buy');
+  useEffect(() => {
+      const location = searchParams.get('location') || '';
+      const status = searchParams.get('status') || 'for-sale';
+      setFilters(prev => ({...prev, location, status}));
+      setActiveTab(status === 'to-let' ? 'rent' : 'buy');
   }, [searchParams]);
 
   return (
@@ -141,7 +143,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
               </TabsTrigger>
           ))}
         </TabsList>
-         <div className="space-y-[-1px]">
+        <div className="space-y-[-1px]">
             <Card className="shadow-lg rounded-t-lg rounded-b-none p-2 bg-white">
                 <CardContent className="p-0">
                     <div className="flex flex-col md:flex-row items-center gap-2">
@@ -167,7 +169,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
                         </div>
                         <div className="flex w-full md:w-auto gap-2">
                             <Button variant="outline" className="w-1/2 md:w-auto h-12 text-base font-normal">
-                            <Map className="mr-2 h-5 w-5" /> Map
+                            <MapIcon className="mr-2 h-5 w-5" /> Map
                             </Button>
                             <Button className="w-1/2 md:w-auto h-12 text-base bg-accent hover:bg-accent/90" onClick={applyFilters}>
                             Search
@@ -291,7 +293,8 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
                     <span className="mx-2">•</span>
                     <Button variant="link" className="text-white h-auto p-0" onClick={clearFilters}>Clear Filters</Button>
                 </div>
-            </div>
+            </Collapsible>
+        </div>
       </Tabs>
     </div>
   );
