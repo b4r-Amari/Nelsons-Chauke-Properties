@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Search, Map as MapIcon, X, Plus } from "lucide-react";
 import type { Property } from "./property-card";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { Label } from "../ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
@@ -41,6 +41,7 @@ const initialFilters = {
 export function PropertyFilter({ properties, onFilterChange }: { properties: Property[], onFilterChange: (filtered: Property[]) => void }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const pathname = usePathname();
   
   const [filters, setFilters] = useState(() => {
     const location = searchParams.get("location") || "";
@@ -53,16 +54,8 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
 
   const applyFilters = useCallback(() => {
     const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other } = filters;
-    const queryParams = new URLSearchParams();
-
-    if (location) queryParams.set('location', location);
-    queryParams.set('status', activeTab === 'buy' ? 'for-sale' : 'to-let');
-    if (propertyType !== 'any') queryParams.set('type', propertyType);
-    if (minBeds !== 'any') queryParams.set('beds', minBeds);
-    if (minPrice !== 'any') queryParams.set('minPrice', minPrice);
-    if (maxPrice !== 'any') queryParams.set('maxPrice', maxPrice);
     
-    // For client-side filtering (if not navigating away)
+    // This part handles the client-side filtering on the listings page
     const filtered = properties.filter(p => {
         if (activeTab === 'buy' && p.status !== 'for-sale') return false;
         if (activeTab === 'rent' && p.status !== 'to-let') return false;
@@ -85,16 +78,35 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     });
     onFilterChange(filtered);
 
-    // If on homepage, navigate to listings page with filters
-    if (window.location.pathname === '/') {
+  }, [filters, properties, onFilterChange, activeTab]);
+
+  const handleSearchClick = () => {
+    const { location, propertyType, minBeds, minPrice, maxPrice } = filters;
+    const queryParams = new URLSearchParams();
+
+    if (location) queryParams.set('location', location);
+    queryParams.set('status', activeTab === 'buy' ? 'for-sale' : 'to-let');
+    if (propertyType !== 'any') queryParams.set('type', propertyType);
+    if (minBeds !== 'any') queryParams.set('beds', minBeds);
+    if (minPrice !== 'any') queryParams.set('minPrice', minPrice);
+    if (maxPrice !== 'any') queryParams.set('maxPrice', maxPrice);
+
+    // If on homepage, navigate to listings page with filters.
+    // Otherwise, apply filters on the current page.
+    if (pathname === '/') {
         router.push(`/properties?${queryParams.toString()}`);
+    } else {
+        applyFilters();
     }
+  }
 
-  }, [filters, properties, onFilterChange, activeTab, router]);
-
+  // Apply filters only on the properties page, not on the homepage.
   useEffect(() => {
-    applyFilters();
-  }, [filters, properties, applyFilters]);
+    if (pathname.startsWith('/properties')) {
+        applyFilters();
+    }
+  }, [filters, properties, applyFilters, pathname]);
+
 
   const handleInputChange = (field: string, value: string) => {
     setFilters(prev => ({ ...prev, [field]: value }));
@@ -153,8 +165,8 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         <TabsList className="flex justify-center bg-transparent p-0 h-auto gap-0 pb-5">
             <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
             <TabsTrigger value="rent" className={cn(commonTabClass, "inline-flex")}>Rent</TabsTrigger>
-            <TabsTrigger value="agents" asChild className={cn(commonTabClass, "hidden sm:inline-flex", "data-[state=inactive]:hover:border-transparent")}>
-                <Link href="/about-us">Agents</Link>
+            <TabsTrigger value="agents" asChild className={cn(commonTabClass, "hidden sm:inline-flex")}>
+                <Link href="/about-us" className="data-[state=inactive]:hover:border-transparent">Agents</Link>
             </TabsTrigger>
         </TabsList>
         <div className="space-y-[-1px]">
@@ -185,7 +197,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
                             <Button variant="outline" className="w-1/2 md:w-auto h-12 text-base font-normal">
                             <MapIcon className="mr-2 h-5 w-5" /> Map
                             </Button>
-                            <Button className="w-1/2 md:w-auto h-12 text-base bg-accent hover:bg-accent/90" onClick={applyFilters}>
+                            <Button className="w-1/2 md:w-auto h-12 text-base bg-accent hover:bg-accent/90" onClick={handleSearchClick}>
                             Search
                             </Button>
                         </div>
