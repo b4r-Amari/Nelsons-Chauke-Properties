@@ -116,7 +116,7 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
         </div>
       </section>
 
-      <div className="bg-brand-bright relative z-20 py-6">
+      <div className="bg-brand-deep relative z-20 py-6">
         <div className="container">
            <PropertyFilter 
             properties={allProperties} 
