@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Menu, ChevronDown, X } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
@@ -158,6 +158,12 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                 </Button>
               </SheetTrigger>
                <SheetContent side="left" className="w-full max-w-[320px] bg-background text-foreground p-0">
+                    <SheetHeader className="sr-only">
+                        <SheetTitle>Mobile Navigation Menu</SheetTitle>
+                        <SheetDescription>
+                            A list of links to navigate the NC Properties website.
+                        </SheetDescription>
+                    </SheetHeader>
                     <div className="flex flex-col h-full">
                         <div className="flex h-20 items-center justify-between border-b px-4">
                             <Logo />
@@ -196,3 +202,5 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
     </header>
   );
 }
+
+    
