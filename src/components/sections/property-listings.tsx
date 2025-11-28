@@ -99,7 +99,7 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
 
   return (
     <>
-       <section className="relative bg-brand-deep text-white py-16">
+       <section className="relative h-[400px] flex items-center justify-center text-white">
         <div className="absolute inset-0">
             <Image
             src="/images/backgrounds/hero-banner-2.webp"
@@ -116,7 +116,7 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
         </div>
       </section>
 
-      <div className="bg-brand-deep relative z-20 py-6">
+      <div className="bg-brand-deep relative z-20 py-t-20 py-b-20 pt-10 pb-10">
         <div className="container">
            <PropertyFilter 
             properties={allProperties} 
