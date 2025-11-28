@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -327,68 +326,77 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                     </CollapsibleTrigger>
                     </div>
                     <CollapsibleContent className="mt-6 text-white">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         <div>
-                            <h4 className="font-semibold mb-3">Features</h4>
-                            <div className="space-y-2">
-                                <div className="flex items-center gap-2">
-                                <Checkbox id="pet-friendly" checked={filters.features.petFriendly} onCheckedChange={(c) => handleCheckboxChange('features', 'petFriendly', !!c)} className="border-white" />
-                                <Label htmlFor="pet-friendly" className="font-normal">Pet Friendly</Label>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                <Checkbox id="garden" checked={filters.features.garden} onCheckedChange={(c) => handleCheckboxChange('features', 'garden', !!c)} className="border-white" />
-                                <Label htmlFor="garden" className="font-normal">Garden</Label>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                <Checkbox id="pool" checked={filters.features.pool} onCheckedChange={(c) => handleCheckboxChange('features', 'pool', !!c)} className="border-white" />
-                                <Label htmlFor="pool" className="font-normal">Pool</Label>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                <Checkbox id="flatlet" checked={filters.features.flatlet} onCheckedChange={(c) => handleCheckboxChange('features', 'flatlet', !!c)} className="border-white" />
-                                <Label htmlFor="flatlet" className="font-normal">Flatlet</Label>
-                                </div>
+                        <h4 className="font-semibold mb-3">Features</h4>
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                            <Checkbox id="pet-friendly" checked={filters.features.petFriendly} onCheckedChange={(c) => handleCheckboxChange('features', 'petFriendly', !!c)} className="border-white" />
+                            <Label htmlFor="pet-friendly" className="font-normal">Pet Friendly</Label>
+                            </div>
+                            <div className="flex items-center gap-2">
+                            <Checkbox id="garden" checked={filters.features.garden} onCheckedChange={(c) => handleCheckboxChange('features', 'garden', !!c)} className="border-white" />
+                            <Label htmlFor="garden" className="font-normal">Garden</Label>
+                            </div>
+                            <div className="flex items-center gap-2">
+                            <Checkbox id="pool" checked={filters.features.pool} onCheckedChange={(c) => handleCheckboxChange('features', 'pool', !!c)} className="border-white" />
+                            <Label htmlFor="pool" className="font-normal">Pool</Label>
+                            </div>
+                            <div className="flex items-center gap-2">
+                            <Checkbox id="flatlet" checked={filters.features.flatlet} onCheckedChange={(c) => handleCheckboxChange('features', 'flatlet', !!c)} className="border-white" />
+                            <Label htmlFor="flatlet" className="font-normal">Flatlet</Label>
                             </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div>
-                                <Label className="font-semibold text-white">Floor Size</Label>
-                                <Select value={filters.minFloorSize} onValueChange={(value) => handleSelectChange('minFloorSize', value)}>
-                                    <SelectTrigger className="h-10 mt-2 bg-primary-foreground/10 text-white border-white/50">
-                                        <SelectValue placeholder="Min" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                                <Select value={filters.maxFloorSize} onValueChange={(value) => handleSelectChange('maxFloorSize', value)}>
-                                    <SelectTrigger className="h-10 mt-2 bg-primary-foreground/10 text-white border-white/50">
-                                        <SelectValue placeholder="Max" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                             <div>
-                                <Label className="font-semibold text-white">Erf Size</Label>
-                                <Select value={filters.minErfSize} onValueChange={(value) => handleSelectChange('minErfSize', value)}>
-                                    <SelectTrigger className="h-10 mt-2 bg-primary-foreground/10 text-white border-white/50">
-                                        <SelectValue placeholder="Min" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {erfSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                                <Select value={filters.maxErfSize} onValueChange={(value) => handleSelectChange('maxErfSize', value)}>
-                                    <SelectTrigger className="h-10 mt-2 bg-primary-foreground/10 text-white border-white/50">
-                                        <SelectValue placeholder="Max" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {erfSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                            </div>
                         </div>
+                            <div className="md:col-span-2">
+                                <h4 className="font-semibold mb-3">Property Details</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <span>Min Floor Size</span>
+                                    <Select value={filters.minFloorSize} onValueChange={(value) => handleSelectChange('minFloorSize', value)}>
+                                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                            <SelectValue placeholder="Min Floor Size" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                        </SelectContent>
+                                    </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                      <span>Max Floor Size</span>
+                                      <Select value={filters.maxFloorSize} onValueChange={(value) => handleSelectChange('maxFloorSize', value)}>
+                                          <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                              <SelectValue placeholder="Max Floor Size" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                              {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                          </SelectContent>
+                                      </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                      <span>Min Erf Size</span>
+                                      <Select value={filters.minErfSize} onValueChange={(value) => handleSelectChange('minErfSize', value)}>
+                                          <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                              <SelectValue placeholder="Min Erf Size" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                              {erfSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                          </SelectContent>
+                                      </Select>
+                                  </div>
+                                  <div className="space-y-2">
+                                      <span>Max Erf Size</span>
+                                      <Select value={filters.maxErfSize} onValueChange={(value) => handleSelectChange('maxErfSize', value)}>
+                                          <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                              <SelectValue placeholder="Max Erf Size" />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                              {erfSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                          </SelectContent>
+                                      </Select>
+                                  </div>
+                                </div>
+                            </div>
                         <div>
                         <h4 className="font-semibold mb-3">Other Filters</h4>
                         <div className="space-y-2">
@@ -420,5 +428,3 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
     </div>
   );
 }
-
-    
