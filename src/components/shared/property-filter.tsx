@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -144,6 +145,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
   return (
     <div className="font-sans max-w-[900px] mx-auto">
       <Tabs defaultValue="buy" className="w-full" value={activeTab} onValueChange={(v) => {
+        if (v === 'agents') return;
         setActiveTab(v);
         const newStatus = v === 'rent' ? 'to-let' : 'for-sale';
         setFilters(prev => ({ ...prev, status: newStatus }));
@@ -151,7 +153,9 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         <TabsList className="flex justify-center bg-transparent p-0 h-auto gap-0 pb-5">
             <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
             <TabsTrigger value="rent" className={cn(commonTabClass, "inline-flex")}>Rent</TabsTrigger>
-            <Link href="/about-us" className={cn(commonTabClass, "hidden sm:inline-flex", "border-b-4 border-transparent")}>Agents</Link>
+            <TabsTrigger value="agents" asChild className={cn(commonTabClass, "hidden sm:inline-flex", "data-[state=inactive]:hover:border-transparent")}>
+                <Link href="/about-us">Agents</Link>
+            </TabsTrigger>
         </TabsList>
         <div className="space-y-[-1px]">
             <Card className="shadow-lg rounded-t-lg rounded-b-none p-2 bg-white">
