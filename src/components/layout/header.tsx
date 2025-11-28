@@ -153,8 +153,8 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
           <div className="md:hidden">
              <Sheet open={isMobileMenuOpen} onOpenChange={handleMobileMenuToggle}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open mobile menu" className="h-10 w-10">
-                  <Menu className="h-6 w-6" />
+                <Button variant="ghost" size="icon" aria-label="Open mobile menu" className="h-12 w-12">
+                  <Menu className="h-8 w-8" />
                 </Button>
               </SheetTrigger>
                <SheetContent side="left" className="w-full max-w-[320px] bg-background text-foreground p-0">
@@ -162,7 +162,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                         <div className="flex h-20 items-center justify-between border-b px-4">
                             <Logo />
                             <SheetClose className="rounded-md p-2 opacity-70 ring-offset-background transition-all hover:opacity-100 data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:bg-brand-bright hover:text-white">
-                                <X className="h-6 w-6" />
+                                <X className="h-8 w-8" />
                                 <span className="sr-only">Close</span>
                             </SheetClose>
                         </div>
