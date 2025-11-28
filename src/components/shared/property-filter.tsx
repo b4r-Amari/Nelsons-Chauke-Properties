@@ -196,15 +196,27 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
   const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-bold pb-3 px-5 rounded-none border-b-4 border-transparent data-[state=active]:border-brand-bright hover:text-white";
 
   const floorSizeOptions = [
-    { value: 'any', label: 'Any Size' },
+    { value: 'any', label: 'Any' },
     { value: '50', label: '50 m²' },
     { value: '100', label: '100 m²' },
     { value: '150', label: '150 m²' },
     { value: '200', label: '200 m²' },
     { value: '300', label: '300 m²' },
     { value: '500', label: '500 m²' },
+    { value: '750', label: '750 m²' },
+    { value: '1000', label: '1000 m²' },
+  ];
+
+  const erfSizeOptions = [
+    { value: 'any', label: 'Any' },
+    { value: '200', label: '200 m²' },
+    { value: '400', label: '400 m²' },
+    { value: '600', label: '600 m²' },
+    { value: '800', label: '800 m²' },
     { value: '1000', label: '1000 m²' },
     { value: '2000', label: '2000 m²' },
+    { value: '5000', label: '5000 m²' },
+    { value: '10000', label: '1 Ha+' },
   ];
 
   return (
@@ -361,7 +373,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                                                 <SelectValue placeholder="Min Erf Size" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                                {erfSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
                                             </SelectContent>
                                         </Select>
                                         <Select value={filters.maxErfSize} onValueChange={(value) => handleSelectChange('maxErfSize', value)}>
@@ -369,7 +381,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                                                 <SelectValue placeholder="Max Erf Size" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                                {erfSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
                                             </SelectContent>
                                         </Select>
                                     </div>
