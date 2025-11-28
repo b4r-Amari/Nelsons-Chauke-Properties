@@ -32,7 +32,20 @@ const navLinks = [
       { href: "/properties/on-show", label: "On Show" },
     ]
   },
+  { 
+    label: "Calculators",
+    isDropdown: true,
+    links: [
+      { href: "#", label: "Home Loan Calculators" },
+      { href: "#", label: "Mortgage Bond Calculator" },
+      { href: "#", label: "Affordability Calculator" },
+      { href: "#", label: "Additional Payment Calculator" },
+      { href: "#", label: "Bond and Transfer Calculator" },
+    ]
+  },
   { href: "/blog", label: "Property News" },
+  { href: "/about-us", label: "About Us" },
+  { href: "/contact-us", label: "Contact Us" },
 ];
 
 const mobileNavLinks = [
@@ -40,6 +53,17 @@ const mobileNavLinks = [
   { href: "/properties", label: "Buy" },
   { href: "/sell", label: "Sell" },
   { href: "/properties/on-show", label: "On Show" },
+  { 
+    label: "Calculators",
+    isDropdown: true,
+    links: [
+      { href: "#", label: "Home Loan Calculators" },
+      { href: "#", label: "Mortgage Bond Calculator" },
+      { href: "#", label: "Affordability Calculator" },
+      { href: "#", label: "Additional Payment Calculator" },
+      { href: "#", label: "Bond and Transfer Calculator" },
+    ]
+  },
   { href: "/blog", label: "Property News" },
   { href: "/about-us", label: "About Us" },
   { href: "/contact-us", label: "Contact Us" },
@@ -81,7 +105,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                         variant="ghost" 
                         className={cn(
                             "group relative px-3 py-2 text-sm font-medium font-headline transition-colors hover:bg-transparent",
-                            isPropertiesActive ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright",
+                            (isPropertiesActive && item.label === 'Properties') ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright",
                             "focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                         )}
                         >
@@ -89,11 +113,11 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                         <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                         <span className={cn(
                             'absolute bottom-0 left-0 h-0.5 transition-all duration-300',
-                            isPropertiesActive ? 'w-full bg-brand-deep' : 'w-0 group-hover:w-full bg-brand-bright'
+                            (isPropertiesActive && item.label === 'Properties') ? 'w-full bg-brand-deep' : 'w-0 group-hover:w-full bg-brand-bright'
                         )}></span>
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-48">
+                    <DropdownMenuContent className="w-56">
                         {item.links.map(link => (
                         <DropdownMenuItem key={link.href} asChild>
                             <Link href={link.href}>{link.label}</Link>
@@ -180,13 +204,13 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                         <nav className="p-4" aria-label="Mobile Navigation">
                             <ul className="space-y-2 w-full">
                             {mobileNavLinks.map((link) => (
-                                <li key={link.href}>
+                                <li key={link.href || link.label}>
                                     <SheetClose asChild>
                                     <Link
-                                        href={link.href}
+                                        href={link.href || '#'}
                                         className={cn(
                                         "block rounded-md px-3 py-2 text-lg font-headline transition-colors w-full text-left",
-                                        (pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href)))
+                                        (pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href || '')) && !link.isDropdown)
                                             ? "bg-muted text-foreground"
                                             : "hover:bg-muted"
                                         )}
