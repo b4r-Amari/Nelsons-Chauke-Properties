@@ -99,7 +99,7 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
 
   return (
     <>
-      <section className="relative bg-background text-white -mt-20 pt-20">
+       <section className="relative bg-background text-white py-16">
         <div className="absolute inset-0">
             <Image
             src="/images/backgrounds/hero-banner-2.webp"
@@ -110,17 +110,20 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
             />
             <div className="absolute inset-0 bg-black/60" />
         </div>
-        <div className="relative z-10 container pt-16 pb-8">
-          <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold font-headline">{pageDetails.title}</h1>
-              <p className="text-lg mt-2 text-white/80">{pageDetails.description}</p>
-          </div>
-          <PropertyFilter 
+        <div className="relative z-10 container text-center">
+            <h1 className="text-4xl font-bold font-headline">{pageDetails.title}</h1>
+            <p className="text-lg mt-2 text-white/80">{pageDetails.description}</p>
+        </div>
+      </section>
+
+      <div className="bg-background -mt-10 relative z-20">
+        <div className="container">
+           <PropertyFilter 
             properties={allProperties} 
             onFilterChange={setFilteredProperties}
           />
         </div>
-      </section>
+      </div>
 
       <section className="py-8 bg-background">
         <div className="container">
