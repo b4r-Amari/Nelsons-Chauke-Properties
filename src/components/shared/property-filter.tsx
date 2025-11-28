@@ -72,10 +72,6 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
   const [activeTab, setActiveTab] = useState(filters.status === 'to-let' ? 'rent' : 'buy');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   
-  useEffect(() => {
-    setFilters(prev => ({...prev, ...initial}))
-  }, [initial]);
-
   const applyFilters = useCallback(() => {
     const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other, minFloorSize, maxFloorSize } = filters;
     
@@ -185,8 +181,9 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
   }, [filters, properties, activeTab]);
 
   useEffect(() => {
-      setActiveTab(filters.status === 'to-let' ? 'rent' : 'buy');
-  }, [filters.status]);
+    setFilters(prev => ({ ...prev, ...initial }));
+    setActiveTab(initial?.status === 'to-let' ? 'rent' : 'buy');
+  }, [initial]);
 
   const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-bold pb-3 px-5 rounded-none border-b-4 border-transparent data-[state=active]:border-brand-bright hover:text-white";
 
@@ -242,9 +239,11 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                 <div className="p-4 transition-all duration-300 bg-transparent">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     <Select value={filters.propertyType} onValueChange={(value) => handleSelectChange('propertyType', value)}>
-                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Property Type" /></SelectTrigger>
+                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                            <span className="text-white/70 mr-1">Type:</span><SelectValue placeholder="Any" />
+                        </SelectTrigger>
                         <SelectContent>
-                        <SelectItem value="any">Any Type</SelectItem>
+                        <SelectItem value="any">Any</SelectItem>
                         <SelectItem value="House">House</SelectItem>
                         <SelectItem value="Apartment">Apartment</SelectItem>
                         <SelectItem value="Townhouse">Townhouse</SelectItem>
@@ -253,7 +252,9 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                         </SelectContent>
                     </Select>
                     <Select value={filters.minPrice} onValueChange={(value) => handleSelectChange('minPrice', value)}>
-                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Min Price" /></SelectTrigger>
+                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                             <span className="text-white/70 mr-1">Min Price:</span><SelectValue placeholder="Any" />
+                        </SelectTrigger>
                         <SelectContent>
                         <SelectItem value="any">Any Price</SelectItem>
                         <SelectItem value="500000">R 500 000</SelectItem>
@@ -263,7 +264,9 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                         </SelectContent>
                     </Select>
                     <Select value={filters.maxPrice} onValueChange={(value) => handleSelectChange('maxPrice', value)}>
-                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Max Price" /></SelectTrigger>
+                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                             <span className="text-white/70 mr-1">Max Price:</span><SelectValue placeholder="Any" />
+                        </SelectTrigger>
                         <SelectContent>
                         <SelectItem value="any">Any Price</SelectItem>
                         <SelectItem value="1000000">R 1 000 000</SelectItem>
@@ -273,7 +276,9 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                         </SelectContent>
                     </Select>
                     <Select value={filters.minBeds} onValueChange={(value) => handleSelectChange('minBeds', value)}>
-                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Beds" /></SelectTrigger>
+                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                             <span className="text-white/70 mr-1">Beds:</span><SelectValue placeholder="Any" />
+                        </SelectTrigger>
                         <SelectContent>
                         <SelectItem value="any">Any</SelectItem>
                         <SelectItem value="1">1+</SelectItem>
@@ -316,7 +321,9 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                         <h4 className="font-semibold mb-3">Property Details</h4>
                         <div className="space-y-2">
                             <Select value={filters.minBaths} onValueChange={(value) => handleSelectChange('minBaths', value)}>
-                                <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Baths" /></SelectTrigger>
+                                <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                     <span className="text-white/70 mr-1">Baths:</span><SelectValue placeholder="Any" />
+                                </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="any">Any</SelectItem>
                                     <SelectItem value="1">1+</SelectItem>
@@ -326,13 +333,17 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                             </Select>
                             <div className="grid grid-cols-2 gap-2">
                                <Select value={filters.minFloorSize} onValueChange={(value) => handleSelectChange('minFloorSize', value)}>
-                                    <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Min Size" /></SelectTrigger>
+                                    <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                         <span className="text-white/70 mr-1">Min Size:</span><SelectValue placeholder="Any" />
+                                    </SelectTrigger>
                                     <SelectContent>
                                         {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
                                     </SelectContent>
                                 </Select>
                                 <Select value={filters.maxFloorSize} onValueChange={(value) => handleSelectChange('maxFloorSize', value)}>
-                                    <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Max Size" /></SelectTrigger>
+                                    <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                         <span className="text-white/70 mr-1">Max Size:</span><SelectValue placeholder="Any" />
+                                    </SelectTrigger>
                                     <SelectContent>
                                         {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
                                     </SelectContent>
