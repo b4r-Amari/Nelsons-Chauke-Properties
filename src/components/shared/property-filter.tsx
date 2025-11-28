@@ -178,7 +178,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
                     </div>
                 </CardContent>
             </Card>
-            <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen} className="bg-primary rounded-b-lg">
+            <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen} className="rounded-b-lg">
                 <div className="p-4 transition-all duration-300">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     <Select value={filters.propertyType} onValueChange={(value) => handleSelectChange('propertyType', value)}>
@@ -288,7 +288,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
                     </div>
                     </CollapsibleContent>
                 </div>
-                <div className="bg-primary text-white text-sm text-center py-2 rounded-b-lg">
+                <div className="bg-card/20 text-white text-sm text-center py-2 rounded-b-lg">
                     Click search to browse <span className="font-bold">{filteredCount}</span> properties
                     <span className="mx-2">•</span>
                     <Button variant="link" className="text-white h-auto p-0" onClick={clearFilters}>Clear Filters</Button>
