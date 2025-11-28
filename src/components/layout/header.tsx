@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetTitle } from "@/components/ui/sheet";
-import { Menu, User, ChevronDown, LogOut, LayoutDashboard, X } from 'lucide-react';
+import { Menu, ChevronDown, LogOut, LayoutDashboard, X } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -142,7 +142,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
             </nav>
         </div>
 
-        <div className="ml-auto flex items-center space-x-2">
+        <div className="ml-auto flex items-center space-x-4">
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -173,10 +173,8 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button variant="ghost" size="icon" aria-label="Login or sign up" className="text-muted-foreground hover:bg-brand-bright hover:text-white transition-colors" asChild>
-                <Link href="/login">
-                    <User className="h-12 w-12 md:h-7 md:w-7" />
-                </Link>
+            <Button asChild>
+              <Link href="/login">Sign In</Link>
             </Button>
           )}
 
