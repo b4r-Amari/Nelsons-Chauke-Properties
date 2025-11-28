@@ -123,7 +123,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
   }, [searchParams]);
 
   return (
-    <div className="font-sans">
+    <div className="font-sans max-w-[500px] mx-auto">
       <Tabs defaultValue="buy" className="w-full" value={activeTab} onValueChange={(v) => {
         setActiveTab(v);
         const newStatus = v === 'rent' ? 'to-let' : 'for-sale';

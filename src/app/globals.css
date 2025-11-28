@@ -86,6 +86,6 @@ body {
     @apply bg-background text-foreground;
   }
   .container {
-    @apply max-w-[500px] mx-auto px-4 sm:px-6 lg:px-8;
+    @apply max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8;
   }
 }
