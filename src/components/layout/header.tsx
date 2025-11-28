@@ -36,11 +36,11 @@ const navLinks = [
     label: "Calculators",
     isDropdown: true,
     links: [
-      { href: "#", label: "Home Loan Calculators" },
-      { href: "#", label: "Mortgage Bond Calculator" },
-      { href: "#", label: "Affordability Calculator" },
-      { href: "#", label: "Additional Payment Calculator" },
-      { href: "#", label: "Bond and Transfer Calculator" },
+      { href: "/calculators/home-loan", label: "Home Loan Calculator" },
+      { href: "/calculators/mortgage-bond", label: "Mortgage Bond Calculator" },
+      { href: "/calculators/affordability", label: "Affordability Calculator" },
+      { href: "/calculators/additional-payment", label: "Additional Payment Calculator" },
+      { href: "/calculators/bond-and-transfer", label: "Bond and Transfer Calculator" },
     ]
   },
   { href: "/blog", label: "Property News" },
@@ -55,11 +55,11 @@ const mobileNavLinks = [
     label: "Calculators",
     isDropdown: true,
     links: [
-      { href: "#", label: "Home Loan Calculators" },
-      { href: "#", label: "Mortgage Bond Calculator" },
-      { href: "#", label: "Affordability Calculator" },
-      { href: "#", label: "Additional Payment Calculator" },
-      { href: "#", label: "Bond and Transfer Calculator" },
+      { href: "/calculators/home-loan", label: "Home Loan Calculator" },
+      { href: "/calculators/mortgage-bond", label: "Mortgage Bond Calculator" },
+      { href: "/calculators/affordability", label: "Affordability Calculator" },
+      { href: "/calculators/additional-payment", label: "Additional Payment Calculator" },
+      { href: "/calculators/bond-and-transfer", label: "Bond and Transfer Calculator" },
     ]
   },
   { href: "/blog", label: "Property News" },
@@ -72,6 +72,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const isPropertiesActive = pathname.startsWith('/properties') || pathname === '/sell';
+  const isCalculatorsActive = pathname.startsWith('/calculators');
   
   const getInitials = (email: string | null | undefined) => {
     if (!email) return "U";
@@ -101,7 +102,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                         variant="ghost" 
                         className={cn(
                             "group relative px-3 py-2 text-sm font-medium font-headline transition-colors hover:bg-transparent",
-                            (isPropertiesActive && item.label === 'Properties') ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright",
+                            (isPropertiesActive && item.label === 'Properties') || (isCalculatorsActive && item.label === 'Calculators') ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright",
                             "focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
                         )}
                         >
@@ -109,7 +110,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                         <ChevronDown className="h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
                         <span className={cn(
                             'absolute bottom-0 left-0 h-0.5 transition-all duration-300',
-                            (isPropertiesActive && item.label === 'Properties') ? 'w-full bg-brand-deep' : 'w-0 group-hover:w-full bg-brand-bright'
+                            (isPropertiesActive && item.label === 'Properties') || (isCalculatorsActive && item.label === 'Calculators') ? 'w-full bg-brand-deep' : 'w-0 group-hover:w-full bg-brand-bright'
                         )}></span>
                         </Button>
                     </DropdownMenuTrigger>
@@ -227,7 +228,3 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
     </header>
   );
 }
-
-    
-
-    
