@@ -44,8 +44,6 @@ const navLinks = [
     ]
   },
   { href: "/blog", label: "Property News" },
-  { href: "/about-us", label: "About Us" },
-  { href: "/contact-us", label: "Contact Us" },
 ];
 
 const mobileNavLinks = [
@@ -65,8 +63,6 @@ const mobileNavLinks = [
     ]
   },
   { href: "/blog", label: "Property News" },
-  { href: "/about-us", label: "About Us" },
-  { href: "/contact-us", label: "Contact Us" },
 ]
 
 
