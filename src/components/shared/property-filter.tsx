@@ -151,7 +151,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         <TabsList className="flex justify-center bg-transparent p-0 h-auto gap-0 pb-5">
             <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
             <TabsTrigger value="rent" className={cn(commonTabClass, "inline-flex")}>Rent</TabsTrigger>
-            <Link href="/about-us" className={cn(commonTabClass, "hidden sm:inline-flex", "border-b-4 border-transparent hover:border-brand-bright/50")}>Agents</Link>
+            <Link href="/about-us" className={cn(commonTabClass, "hidden sm:inline-flex", "border-b-4 border-transparent")}>Agents</Link>
         </TabsList>
         <div className="space-y-[-1px]">
             <Card className="shadow-lg rounded-t-lg rounded-b-none p-2 bg-white">
