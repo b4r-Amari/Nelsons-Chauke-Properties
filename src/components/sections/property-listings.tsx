@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState, useEffect, Suspense, useMemo } from "react";
+import { useState, useEffect, Suspense, useMemo, useRef } from "react";
 import Image from "next/image";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
@@ -28,12 +28,14 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
   const bedsSearch = searchParams.get('beds');
   const minPriceSearch = searchParams.get('minPrice');
   const maxPriceSearch = searchParams.get('maxPrice');
+  const shouldScroll = searchParams.get('autoscroll');
 
 
   const [allProperties, setAllProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [sortOption, setSortOption] = useState('newest');
   const [isLoading, setIsLoading] = useState(true);
+  const resultsRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     async function fetchProperties() {
@@ -70,6 +72,14 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
 
     fetchProperties();
   }, [status, locationSearch, statusSearch, typeSearch, bedsSearch, minPriceSearch, maxPriceSearch]);
+  
+  useEffect(() => {
+    if (shouldScroll === 'true' && resultsRef.current) {
+      setTimeout(() => {
+         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [shouldScroll]);
 
   const sortedAndFilteredProperties = useMemo(() => {
     let sortableProperties = [...filteredProperties];
@@ -129,7 +139,7 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
         </div>
       </div>
 
-      <section className="py-8 bg-background">
+      <section className="py-8 bg-background" ref={resultsRef} id="property-results">
         <div className="container">
            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 border-b pb-4">
             <p className="text-muted-foreground text-sm mb-4 sm:mb-0">
@@ -180,5 +190,3 @@ export function PropertyListings(props: PropertyListingsProps) {
     </Suspense>
   )
 }
-
-    

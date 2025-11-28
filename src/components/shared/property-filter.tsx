@@ -94,8 +94,12 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     // If on homepage, navigate to listings page with filters.
     // Otherwise, apply filters on the current page.
     if (pathname === '/') {
+        queryParams.set('autoscroll', 'true');
         router.push(`/properties?${queryParams.toString()}`);
     } else {
+        // Update URL on properties page without navigating away
+        const newUrl = `${pathname}?${queryParams.toString()}`;
+        window.history.pushState({ ...window.history.state, as: newUrl, url: newUrl }, '', newUrl);
         applyFilters();
     }
   }
@@ -165,8 +169,8 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         <TabsList className="flex justify-center bg-transparent p-0 h-auto gap-0 pb-5">
             <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
             <TabsTrigger value="rent" className={cn(commonTabClass, "inline-flex")}>Rent</TabsTrigger>
-            <TabsTrigger value="agents" asChild className={cn(commonTabClass, "hidden sm:inline-flex")}>
-                <Link href="/about-us" className="data-[state=inactive]:hover:border-transparent">Agents</Link>
+            <TabsTrigger value="agents" asChild className={cn(commonTabClass, "hidden sm:inline-flex", "data-[state=inactive]:hover:border-b-4 data-[state=inactive]:hover:border-brand-bright/50")}>
+                <Link href="/about-us">Agents</Link>
             </TabsTrigger>
         </TabsList>
         <div className="space-y-[-1px]">
@@ -325,5 +329,3 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     </div>
   );
 }
-
-    
