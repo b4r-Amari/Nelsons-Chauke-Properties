@@ -143,6 +143,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
         </div>
 
         <div className="ml-auto flex items-center space-x-4">
+          {/*
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -177,6 +178,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
               <Link href="/login">Sign In</Link>
             </Button>
           )}
+          */}
 
           <div className="md:hidden">
              <Sheet open={isMobileMenuOpen} onOpenChange={handleMobileMenuToggle}>
@@ -225,5 +227,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
     </header>
   );
 }
+
+    
 
     
