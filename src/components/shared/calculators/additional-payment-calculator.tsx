@@ -1,128 +1,164 @@
 
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Info } from "lucide-react";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(value);
+    return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
 };
 
 const formSchema = z.object({
-  loanAmount: z.number().min(50000, "Must be at least 50,000"),
-  loanTerm: z.number().min(1, "Must be at least 1 year").max(30, "Cannot exceed 30 years"),
-  interestRate: z.number().min(0.1, "Must be a positive rate"),
-  additionalPayment: z.number().min(0),
+  loanAmount: z.coerce.number().min(50000, "Must be at least 50,000"),
+  interestRate: z.coerce.number().min(0.1, "Must be a positive rate"),
+  loanTerm: z.coerce.number().min(1).max(30),
+  additionalPayment: z.coerce.number().min(0).optional(),
 });
 
-export function AdditionalPaymentCalculator() {
-  const [result, setResult] = useState({ interestSaved: 0, yearsSaved: 0, monthsSaved: 0, newLoanTerm: 0 });
+type FormData = z.infer<typeof formSchema>;
 
-  const form = useForm<z.infer<typeof formSchema>>({
+export function AdditionalPaymentCalculator() {
+  const [result, setResult] = useState({
+    interestSaved: 0,
+    yearsSaved: "0",
+    newTotalPayment: 0,
+  });
+
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      loanAmount: 1500000,
-      loanTerm: 20,
+      loanAmount: 1000000,
       interestRate: 11.75,
+      loanTerm: 20,
       additionalPayment: 1000,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const { loanAmount, loanTerm, interestRate, additionalPayment } = values;
+  const calculateResults = useCallback((values: FormData) => {
+    const { loanAmount, loanTerm, interestRate, additionalPayment = 0 } = values;
     const monthlyInterestRate = interestRate / 100 / 12;
     const originalNumberOfPayments = loanTerm * 12;
 
     if (loanAmount <= 0 || monthlyInterestRate <= 0) {
-        setResult({ interestSaved: 0, yearsSaved: 0, monthsSaved: 0, newLoanTerm: 0 });
+        setResult({ interestSaved: 0, yearsSaved: "0", newTotalPayment: 0 });
         return;
     }
 
     const originalMonthlyPayment = loanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, originalNumberOfPayments)) / (Math.pow(1 + monthlyInterestRate, originalNumberOfPayments) - 1);
     const originalTotalPayment = originalMonthlyPayment * originalNumberOfPayments;
-    const originalTotalInterest = originalTotalPayment - loanAmount;
 
     const newMonthlyPayment = originalMonthlyPayment + additionalPayment;
-
-    if (newMonthlyPayment <= 0) {
-        setResult({ interestSaved: 0, yearsSaved: 0, monthsSaved: 0, newLoanTerm: loanTerm });
+    
+    if (newMonthlyPayment <= 0 || additionalPayment <= 0) {
+        setResult({ interestSaved: 0, yearsSaved: "0", newTotalPayment: originalTotalPayment });
         return;
     }
     
-    // Calculate new loan term in months
     const newNumberOfPayments = -(Math.log(1 - (loanAmount * monthlyInterestRate) / newMonthlyPayment) / Math.log(1 + monthlyInterestRate));
-
     const newTotalPayment = newMonthlyPayment * newNumberOfPayments;
-    const newTotalInterest = newTotalPayment - loanAmount;
 
-    const interestSaved = originalTotalInterest - newTotalInterest;
+    const interestSaved = originalTotalPayment - newTotalPayment;
     
     const monthsSavedRaw = originalNumberOfPayments - newNumberOfPayments;
-    const yearsSaved = Math.floor(monthsSavedRaw / 12);
-    const monthsSaved = Math.floor(monthsSavedRaw % 12);
-    
-    const newLoanTermYears = newNumberOfPayments / 12;
+    const years = Math.floor(monthsSavedRaw / 12);
+    const months = Math.round(monthsSavedRaw % 12);
+    const yearsSaved = `${years} years, ${months} months`;
 
-    setResult({ interestSaved: interestSaved > 0 ? interestSaved : 0, yearsSaved, monthsSaved, newLoanTerm: newLoanTermYears });
-  };
+    setResult({ interestSaved: interestSaved > 0 ? interestSaved : 0, yearsSaved, newTotalPayment });
+  }, []);
 
   useEffect(() => {
-    onSubmit(form.getValues());
-  }, [form]);
+    const subscription = form.watch((values) => {
+      calculateResults(values as FormData);
+    });
+    calculateResults(form.getValues());
+    return () => subscription.unsubscribe();
+  }, [form, calculateResults]);
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="font-headline text-2xl">Additional Payment Calculator</CardTitle>
-        <CardDescription>See how paying extra on your bond can save you money and shorten your loan term.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid md:grid-cols-2 gap-12">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} onChange={() => form.handleSubmit(onSubmit)()} className="space-y-6">
-              <FormField control={form.control} name="loanAmount" render={({ field }) => (
-                <FormItem><FormLabel>Outstanding Loan Amount</FormLabel><FormControl><Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="loanTerm" render={({ field }) => (
-                <FormItem><FormLabel>Remaining Loan Term (Years): {field.value}</FormLabel><FormControl><Slider defaultValue={[field.value]} max={30} min={1} step={1} onValueChange={(vals) => field.onChange(vals[0])} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="interestRate" render={({ field }) => (
-                <FormItem><FormLabel>Interest Rate (%): {field.value.toFixed(2)}</FormLabel><FormControl><Slider defaultValue={[field.value]} max={20} min={5} step={0.25} onValueChange={(vals) => field.onChange(vals[0])} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <FormField control={form.control} name="additionalPayment" render={({ field }) => (
-                <FormItem><FormLabel>Extra Monthly Payment</FormLabel><FormControl><Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} /></FormControl><FormMessage /></FormItem>
-              )} />
-              <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep">Calculate</Button>
-            </form>
-          </Form>
+    <div>
+        <h2 className="text-2xl md:text-3xl font-bold font-headline mb-8">See what you'll save with extra payments</h2>
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+            <Form {...form}>
+                <form className="space-y-6">
+                    <FormField control={form.control} name="loanAmount" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-brand-deep font-semibold">Outstanding Loan Amount</FormLabel>
+                            <FormControl>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
+                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={field.value.toLocaleString('en-ZA')} className="pl-8" />
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                     <FormField control={form.control} name="additionalPayment" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-brand-deep font-semibold">Additional Monthly Payment</FormLabel>
+                            <FormControl>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
+                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={(field.value || 0).toLocaleString('en-ZA')} className="pl-8" />
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                    <FormField control={form.control} name="interestRate" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-brand-deep font-semibold">Interest Rate</FormLabel>
+                            <FormControl>
+                                <div className="relative">
+                                    <Input type="number" {...field} step="0.01" className="pr-8" />
+                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                    <FormField control={form.control} name="loanTerm" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-brand-deep font-semibold">Remaining Loan Term</FormLabel>
+                            <Select onValueChange={(val) => field.onChange(Number(val))} defaultValue={String(field.value)}>
+                                <FormControl>
+                                    <SelectTrigger><SelectValue placeholder="Select loan term" /></SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {[...Array(30)].map((_, i) => (
+                                        <SelectItem key={i + 1} value={String(i + 1)}>{i + 1} year{i > 0 && 's'}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                </form>
+            </Form>
 
-          <div className="bg-muted/50 p-8 rounded-lg space-y-6 flex flex-col justify-center">
-            <h3 className="text-xl font-bold font-headline text-center">Your Potential Savings</h3>
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground">Total Interest Saved</p>
-              <p className="text-4xl font-bold text-brand-bright">{formatCurrency(result.interestSaved)}</p>
+            <div className="space-y-6">
+                <div className="flex justify-between items-center py-4 border-b">
+                    <span className="font-semibold text-lg">Interest Saved</span>
+                    <span className="font-bold text-2xl text-brand-bright">{formatCurrency(result.interestSaved)}</span>
+                </div>
+                 <div className="flex justify-between items-center py-4 border-b">
+                    <span className="font-semibold text-lg">Term Reduced By</span>
+                    <span className="font-bold text-2xl text-brand-bright">{result.yearsSaved}</span>
+                </div>
+                <div className="flex justify-between items-center py-4 border-b">
+                    <span className="font-semibold text-lg">New Total Repayment</span>
+                    <span className="font-bold text-2xl text-brand-bright">{formatCurrency(result.newTotalPayment)}</span>
+                </div>
             </div>
-            <div className="space-y-4 pt-4 border-t">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold">Time Saved</span>
-                <span className="font-mono text-lg">{result.yearsSaved} years, {result.monthsSaved} months</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="font-semibold">New Loan Term</span>
-                <span className="font-mono text-lg">{result.newLoanTerm.toFixed(1)} years</span>
-              </div>
-            </div>
-          </div>
         </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

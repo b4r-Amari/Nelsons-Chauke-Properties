@@ -1,43 +1,26 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowRight, Calculator } from 'lucide-react';
+'use client';
+
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { HomeLoanCalculator } from '@/components/shared/calculators/home-loan-calculator';
+import { AffordabilityCalculator } from '@/components/shared/calculators/affordability-calculator';
+import { AdditionalPaymentCalculator } from '@/components/shared/calculators/additional-payment-calculator';
+import { BondAndTransferCalculator } from '@/components/shared/calculators/bond-and-transfer-calculator';
+import { cn } from '@/lib/utils';
 
-export const metadata: Metadata = {
-    title: 'Real Estate Calculators | NC Properties',
-    description: 'A suite of financial calculators to help you plan your property journey, from affordability and home loans to bond and transfer costs.',
-};
 
-const calculatorLinks = [
-    {
-        href: '/calculators/home-loan',
-        title: 'Home Loan Calculator',
-        description: 'Estimate your monthly repayments on a home loan based on the property price, deposit, interest rate, and loan term.',
-    },
-    {
-        href: '/calculators/mortgage-bond',
-        title: 'Mortgage Bond Calculator',
-        description: 'Calculate the total cost of your mortgage bond over the entire loan term, including total interest paid.',
-    },
-    {
-        href: '/calculators/affordability',
-        title: 'Affordability Calculator',
-        description: 'Determine the maximum home loan you could qualify for based on your monthly income and expenses.',
-    },
-    {
-        href: '/calculators/additional-payment',
-        title: 'Additional Payment Calculator',
-        description: 'See how making extra payments on your home loan can help you save on interest and pay it off sooner.',
-    },
-    {
-        href: '/calculators/bond-and-transfer',
-        title: 'Bond & Transfer Cost Calculator',
-        description: 'Calculate the estimated bond registration and property transfer costs, including attorney fees and transfer duty.',
-    },
-];
+// export const metadata: Metadata = {
+//     title: 'Real Estate Calculators | NC Properties',
+//     description: 'A suite of financial calculators to help you plan your property journey, from affordability and home loans to bond and transfer costs.',
+// };
+
 
 export default function CalculatorsPage() {
+    
+    const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-brand-deep text-muted-foreground text-md font-bold pb-3 px-5 rounded-none border-b-4 border-transparent data-[state=active]:border-brand-bright hover:text-brand-deep";
+
     return (
         <>
             <section className="bg-brand-deep text-white py-16">
@@ -46,32 +29,33 @@ export default function CalculatorsPage() {
                     <p className="text-lg mt-2 text-white/80">Tools to empower your property decisions.</p>
                 </div>
             </section>
-            <main className="py-24 bg-background">
-                <div className="container">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {calculatorLinks.map((calc) => (
-                            <Link href={calc.href} key={calc.href} className="group block">
-                                <Card className="h-full flex flex-col shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
-                                    <CardHeader>
-                                        <div className="flex items-center gap-4">
-                                            <div className="bg-brand-bright/10 p-3 rounded-full">
-                                                <Calculator className="h-6 w-6 text-brand-bright" />
-                                            </div>
-                                            <CardTitle className="font-headline text-xl text-brand-deep group-hover:text-brand-bright transition-colors">{calc.title}</CardTitle>
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent className="flex-grow">
-                                        <CardDescription>{calc.description}</CardDescription>
-                                    </CardContent>
-                                    <div className="p-6 pt-0">
-                                        <span className="font-semibold text-brand-bright flex items-center gap-2">
-                                            Open Calculator <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                                        </span>
-                                    </div>
-                                </Card>
-                            </Link>
-                        ))}
-                    </div>
+            <main className="py-12 md:py-24 bg-background">
+                <div className="container max-w-5xl">
+                     <Tabs defaultValue="bond-repayment" className="w-full">
+                        <TabsList className="flex flex-wrap justify-center bg-transparent p-0 h-auto gap-4 md:gap-8 mb-12">
+                            <TabsTrigger value="bond-repayment" className={cn(commonTabClass)}>Bond Repayment</TabsTrigger>
+                            <TabsTrigger value="affordability" className={cn(commonTabClass)}>Affordability</TabsTrigger>
+                            <TabsTrigger value="additional-payment" className={cn(commonTabClass)}>Additional Payment</TabsTrigger>
+                            <TabsTrigger value="bond-and-transfer" className={cn(commonTabClass)}>Bond and Transfer</TabsTrigger>
+                        </TabsList>
+
+                        <Card className="shadow-2xl">
+                            <CardContent className="p-4 sm:p-8 md:p-12">
+                                <TabsContent value="bond-repayment">
+                                    <HomeLoanCalculator />
+                                </TabsContent>
+                                <TabsContent value="affordability">
+                                    <AffordabilityCalculator />
+                                </TabsContent>
+                                <TabsContent value="additional-payment">
+                                    <AdditionalPaymentCalculator />
+                                </TabsContent>
+                                <TabsContent value="bond-and-transfer">
+                                    <BondAndTransferCalculator />
+                                </TabsContent>
+                            </CardContent>
+                        </Card>
+                    </Tabs>
                 </div>
             </main>
         </>

@@ -1,152 +1,165 @@
 
 "use client"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Info } from "lucide-react";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0 }).format(value);
+    return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
 };
 
 const formSchema = z.object({
-  grossIncome: z.number().min(1000, "Income must be at least 1,000"),
-  monthlyExpenses: z.number().min(0, "Expenses cannot be negative"),
-  loanTerm: z.number().min(1, "Must be at least 1 year").max(30, "Cannot exceed 30 years"),
-  interestRate: z.number().min(0.1, "Must be a positive rate"),
+  grossIncome: z.coerce.number().min(1000, "Income must be at least 1,000"),
+  monthlyExpenses: z.coerce.number().min(0, "Expenses cannot be negative").optional(),
+  interestRate: z.coerce.number().min(0.1, "Must be a positive rate"),
+  loanTerm: z.coerce.number().min(1).max(30),
 });
 
-export function AffordabilityCalculator() {
-  const [result, setResult] = useState({ maxLoanAmount: 0, monthlyPayment: 0 });
+type FormData = z.infer<typeof formSchema>;
 
-  const form = useForm<z.infer<typeof formSchema>>({
+export function AffordabilityCalculator() {
+  const [result, setResult] = useState({
+    maxLoanAmount: 0,
+    monthlyPayment: 0,
+    onceOffCosts: 0,
+  });
+
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       grossIncome: 50000,
       monthlyExpenses: 15000,
-      loanTerm: 20,
       interestRate: 11.75,
+      loanTerm: 20,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    const { grossIncome, monthlyExpenses, loanTerm, interestRate } = values;
+  const calculateResults = useCallback((values: FormData) => {
+    const { grossIncome, monthlyExpenses = 0, loanTerm, interestRate } = values;
     
     // Banks typically allow 30% of gross income to go towards a bond repayment.
     const maxRepayment = grossIncome * 0.3;
-    const disposableForBond = maxRepayment - monthlyExpenses;
-
-    if (disposableForBond <= 0) {
-        setResult({ maxLoanAmount: 0, monthlyPayment: 0 });
-        return;
-    }
+    const disposableForBond = Math.max(0, maxRepayment - monthlyExpenses);
     
     const monthlyInterestRate = interestRate / 100 / 12;
     const numberOfPayments = loanTerm * 12;
 
-    const maxLoanAmount = disposableForBond * ( (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1) / (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) );
+    const maxLoanAmount = disposableForBond > 0 && monthlyInterestRate > 0
+      ? disposableForBond * ( (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1) / (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) )
+      : 0;
     
-    // Calculate the actual monthly payment for the calculated max loan
-    const actualMonthlyPayment = maxLoanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1);
+    const monthlyPayment = maxLoanAmount > 0 && monthlyInterestRate > 0
+        ? maxLoanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1)
+        : 0;
 
+    // Simplified once-off costs for this calculator
+    const transferDuty = maxLoanAmount > 1100000 ? (maxLoanAmount - 1100000) * 0.03 : 0;
+    const attorneyFees = maxLoanAmount * 0.01;
+    const onceOffCosts = transferDuty + attorneyFees;
 
-    setResult({ maxLoanAmount, monthlyPayment: actualMonthlyPayment > 0 ? actualMonthlyPayment : 0 });
-  };
+    setResult({ maxLoanAmount, monthlyPayment, onceOffCosts });
+  }, []);
 
   useEffect(() => {
-    onSubmit(form.getValues());
-  }, [form]);
+    const subscription = form.watch((values) => {
+      calculateResults(values as FormData);
+    });
+    calculateResults(form.getValues());
+    return () => subscription.unsubscribe();
+  }, [form, calculateResults]);
 
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle className="font-headline text-2xl">Home Loan Affordability Calculator</CardTitle>
-        <CardDescription>Estimate the maximum home loan amount you might qualify for based on your income and expenses.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid md:grid-cols-2 gap-12">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} onChange={() => form.handleSubmit(onSubmit)()} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="grossIncome"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Gross Monthly Income</FormLabel>
-                    <FormControl>
-                        <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="monthlyExpenses"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Total Monthly Expenses (excluding rent)</FormLabel>
-                    <FormControl>
-                        <Input type="number" {...field} onChange={e => field.onChange(Number(e.target.value))} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="loanTerm"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Loan Term (Years): {field.value}</FormLabel>
-                    <FormControl>
-                      <Slider defaultValue={[field.value]} max={30} min={1} step={1} onValueChange={(vals) => field.onChange(vals[0])} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="interestRate"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Interest Rate (%): {field.value.toFixed(2)}</FormLabel>
-                    <FormControl>
-                      <Slider defaultValue={[field.value]} max={20} min={5} step={0.25} onValueChange={(vals) => field.onChange(vals[0])} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep">Calculate</Button>
-            </form>
-          </Form>
+    <div>
+        <h2 className="text-2xl md:text-3xl font-bold font-headline mb-8">Calculate what you can afford</h2>
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
+            <Form {...form}>
+                <form className="space-y-6">
+                    <FormField control={form.control} name="grossIncome" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-brand-deep font-semibold">Gross Monthly Income</FormLabel>
+                            <FormControl>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
+                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={field.value.toLocaleString('en-ZA')} className="pl-8" />
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                    <FormField control={form.control} name="monthlyExpenses" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-brand-deep font-semibold">Total Monthly Expenses</FormLabel>
+                            <FormControl>
+                                <div className="relative">
+                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
+                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={(field.value || 0).toLocaleString('en-ZA')} className="pl-8" />
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                    <FormField control={form.control} name="interestRate" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-brand-deep font-semibold">Interest Rate</FormLabel>
+                            <FormControl>
+                                <div className="relative">
+                                    <Input type="number" {...field} step="0.01" className="pr-8" />
+                                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                    <FormField control={form.control} name="loanTerm" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-brand-deep font-semibold">Loan Term</FormLabel>
+                            <Select onValueChange={(val) => field.onChange(Number(val))} defaultValue={String(field.value)}>
+                                <FormControl>
+                                    <SelectTrigger><SelectValue placeholder="Select loan term" /></SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                    {[...Array(30)].map((_, i) => (
+                                        <SelectItem key={i + 1} value={String(i + 1)}>{i + 1} year{i > 0 && 's'}</SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )} />
+                </form>
+            </Form>
 
-          <div className="bg-muted/50 p-8 rounded-lg space-y-6 flex flex-col justify-center">
-            <h3 className="text-xl font-bold font-headline text-center">Your Affordability Estimate</h3>
-            <div className="text-center">
-              <p className="text-sm text-muted-foreground">You could afford a property up to</p>
-              <p className="text-4xl font-bold text-brand-bright">{formatCurrency(result.maxLoanAmount)}</p>
+            <div className="space-y-6">
+                <div className="flex justify-between items-center py-4 border-b">
+                    <span className="font-semibold text-lg">You could afford a house up to</span>
+                    <span className="font-bold text-2xl text-brand-bright">{formatCurrency(result.maxLoanAmount)}</span>
+                </div>
+
+                <div className="space-y-4 py-4 border-b">
+                     <div className="flex justify-between items-center">
+                        <span className="font-semibold text-lg">Estimated Monthly Repayment</span>
+                        <span className="font-bold text-2xl text-brand-bright">{formatCurrency(result.monthlyPayment)}</span>
+                    </div>
+                </div>
+
+                <div className="py-4">
+                     <div className="flex justify-between items-center">
+                        <span className="font-semibold text-lg">Estimated Once-off Costs</span>
+                        <span className="font-bold text-2xl text-brand-bright">{formatCurrency(result.onceOffCosts)}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-2">This is an estimate. The final loan amount depends on the bank's assessment and your credit profile.</p>
+                </div>
             </div>
-            <div className="space-y-4 pt-4 border-t">
-              <div className="flex justify-between items-center">
-                <span className="font-semibold">Estimated Monthly Repayment</span>
-                <span className="font-mono text-lg">{formatCurrency(result.monthlyPayment)}</span>
-              </div>
-            </div>
-            <p className="text-xs text-muted-foreground text-center pt-4">This is an estimate. The final loan amount depends on the bank's assessment and your credit profile.</p>
-          </div>
         </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
