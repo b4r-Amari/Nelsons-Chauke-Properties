@@ -17,6 +17,9 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { PropertyFilter } from '../shared/property-filter';
+import { getProperties } from '@/lib/data';
+import type { Property } from '../shared/property-card';
 
 
 const heroBanners = [
@@ -28,29 +31,21 @@ const heroBanners = [
 
 export function HeroSection() {
   const [bannerImage, setBannerImage] = useState(heroBanners[0]);
-  const [searchLocation, setSearchLocation] = useState('');
-  const [searchStatus, setSearchStatus] = useState('for-sale');
+  const [properties, setProperties] = useState<Property[]>([]);
   const router = useRouter();
 
 
   useEffect(() => {
     const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
     setBannerImage(randomBanner);
+    
+    async function fetchProps() {
+        const props = await getProperties();
+        setProperties(props);
+    }
+    fetchProps();
   }, []);
   
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    const params = new URLSearchParams();
-    if (searchLocation) {
-      params.set('location', searchLocation);
-    }
-    if (searchStatus) {
-      params.set('status', searchStatus);
-    }
-    router.push(`/properties?${params.toString()}`);
-  };
-
-
   return (
     <section className="relative h-[70vh] min-h-[550px] flex items-center justify-center text-white">
       <Image
@@ -71,34 +66,7 @@ export function HeroSection() {
         </p>
         <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-black/20 backdrop-blur-md border border-white/20">
           <CardContent className="p-4">
-            <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 items-center">
-              <div className="md:col-span-4">
-                <Select value={searchStatus} onValueChange={setSearchStatus}>
-                  <SelectTrigger className="h-12 md:h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0">
-                    <SelectValue placeholder="For Sale" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="for-sale">For Sale</SelectItem>
-                    <SelectItem value="to-let">To Let</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="md:col-span-6">
-                <Input
-                  type="text"
-                  placeholder="Enter city, suburb or area"
-                  className="w-full h-12 md:h-14 text-base bg-white text-black border-input focus:ring-2 focus:ring-brand-bright focus:ring-offset-0"
-                  value={searchLocation}
-                  onChange={(e) => setSearchLocation(e.target.value)}
-                />
-              </div>
-              <div className="md:col-span-2">
-                <Button type="submit" size="lg" className="w-full h-12 md:h-14 bg-brand-bright hover:bg-brand-deep transition-colors duration-300 text-lg">
-                  <Search className="mr-2 h-6 w-6" />
-                  Search
-                </Button>
-              </div>
-            </form>
+             <PropertyFilter properties={properties} onFilterChange={() => {}} />
           </CardContent>
         </Card>
       </div>
@@ -311,3 +279,5 @@ export function NewsletterSection() {
     </section>
   );
 }
+
+    
