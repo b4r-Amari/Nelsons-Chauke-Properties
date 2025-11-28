@@ -24,6 +24,11 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
   const searchParams = useSearchParams();
   const locationSearch = searchParams.get('location');
   const statusSearch = searchParams.get('status');
+  const typeSearch = searchParams.get('type');
+  const bedsSearch = searchParams.get('beds');
+  const minPriceSearch = searchParams.get('minPrice');
+  const maxPriceSearch = searchParams.get('maxPrice');
+
 
   const [allProperties, setAllProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
@@ -47,25 +52,24 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
         initialProps = props.filter(p => p.status === 'for-sale' || p.status === 'to-let');
       }
 
-      setAllProperties(initialProps);
+      setAllProperties(props); // Set all properties for the filter
       
       // Apply initial search params from URL
-      if (locationSearch || statusSearch) {
-        const filtered = initialProps.filter(p => {
-          const locationMatch = locationSearch ? p.location.toLowerCase().includes(locationSearch.toLowerCase()) || p.address.toLowerCase().includes(locationSearch.toLowerCase()) : true;
-          const statusMatch = statusSearch ? p.status === statusSearch : true;
-          return locationMatch && statusMatch;
-        });
-        setFilteredProperties(filtered);
-      } else {
-        setFilteredProperties(initialProps);
-      }
-
+      const urlFiltered = initialProps.filter(p => {
+        const locationMatch = locationSearch ? p.location.toLowerCase().includes(locationSearch.toLowerCase()) || p.address.toLowerCase().includes(locationSearch.toLowerCase()) : true;
+        const statusMatch = statusSearch ? p.status === statusSearch : true;
+        const typeMatch = typeSearch ? p.type === typeSearch : true;
+        const bedsMatch = bedsSearch ? p.beds >= parseInt(bedsSearch) : true;
+        const minPriceMatch = minPriceSearch ? p.price >= parseInt(minPriceSearch) : true;
+        const maxPriceMatch = maxPriceSearch ? p.price <= parseInt(maxPriceSearch) : true;
+        return locationMatch && statusMatch && typeMatch && bedsMatch && minPriceMatch && maxPriceMatch;
+      });
+      setFilteredProperties(urlFiltered);
       setIsLoading(false);
     }
 
     fetchProperties();
-  }, [status, locationSearch, statusSearch]);
+  }, [status, locationSearch, statusSearch, typeSearch, bedsSearch, minPriceSearch, maxPriceSearch]);
 
   const sortedAndFilteredProperties = useMemo(() => {
     let sortableProperties = [...filteredProperties];
@@ -116,7 +120,7 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
         </div>
       </section>
 
-      <div className="bg-brand-deep relative z-20 py-10">
+      <div className="bg-brand-deep relative z-20 py-10" style={{marginTop: '-160px'}}>
         <div className="container">
            <PropertyFilter 
             properties={allProperties} 
@@ -176,3 +180,5 @@ export function PropertyListings(props: PropertyListingsProps) {
     </Suspense>
   )
 }
+
+    

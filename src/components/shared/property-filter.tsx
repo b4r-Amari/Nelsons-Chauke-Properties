@@ -10,10 +10,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Search, Map as MapIcon, X, Plus } from "lucide-react";
 import type { Property } from "./property-card";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Label } from "../ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 const initialFilters = {
     location: "",
@@ -38,6 +39,7 @@ const initialFilters = {
 
 export function PropertyFilter({ properties, onFilterChange }: { properties: Property[], onFilterChange: (filtered: Property[]) => void }) {
   const searchParams = useSearchParams();
+  const router = useRouter();
   
   const [filters, setFilters] = useState(() => {
     const location = searchParams.get("location") || "";
@@ -49,9 +51,18 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const applyFilters = useCallback(() => {
-    const filtered = properties.filter(p => {
-        const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other } = filters;
+    const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other } = filters;
+    const queryParams = new URLSearchParams();
 
+    if (location) queryParams.set('location', location);
+    queryParams.set('status', activeTab === 'buy' ? 'for-sale' : 'to-let');
+    if (propertyType !== 'any') queryParams.set('type', propertyType);
+    if (minBeds !== 'any') queryParams.set('beds', minBeds);
+    if (minPrice !== 'any') queryParams.set('minPrice', minPrice);
+    if (maxPrice !== 'any') queryParams.set('maxPrice', maxPrice);
+    
+    // For client-side filtering (if not navigating away)
+    const filtered = properties.filter(p => {
         if (activeTab === 'buy' && p.status !== 'for-sale') return false;
         if (activeTab === 'rent' && p.status !== 'to-let') return false;
         if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
@@ -72,7 +83,13 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         return true;
     });
     onFilterChange(filtered);
-  }, [filters, properties, onFilterChange, activeTab]);
+
+    // If on homepage, navigate to listings page with filters
+    if (window.location.pathname === '/') {
+        router.push(`/properties?${queryParams.toString()}`);
+    }
+
+  }, [filters, properties, onFilterChange, activeTab, router]);
 
   useEffect(() => {
     applyFilters();
@@ -122,26 +139,20 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
       setActiveTab(status === 'to-let' ? 'rent' : 'buy');
   }, [searchParams]);
 
+  const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-bold pb-3 px-5 rounded-none border-b-4 border-transparent data-[state=active]:border-brand-bright hover:text-white";
+
   return (
     <div className="font-sans max-w-[900px] mx-auto">
       <Tabs defaultValue="buy" className="w-full" value={activeTab} onValueChange={(v) => {
+        if (v === 'agents') return;
         setActiveTab(v);
         const newStatus = v === 'rent' ? 'to-let' : 'for-sale';
         setFilters(prev => ({ ...prev, status: newStatus }));
       }}>
         <TabsList className="flex justify-center bg-transparent p-0 h-auto gap-0 pb-5">
-          {["Buy", "Rent", "Agents"].map(tab => (
-              <TabsTrigger
-                  key={tab}
-                  value={tab.toLowerCase().replace(' ', '-')}
-                  className={cn(
-                    "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-bold pb-3 px-5 rounded-none border-b-4 border-transparent data-[state=active]:border-brand-bright hover:text-white",
-                    tab === "Agents" ? "hidden sm:inline-flex" : "inline-flex"
-                  )}
-                >
-                  {tab}
-              </TabsTrigger>
-          ))}
+            <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
+            <TabsTrigger value="rent" className={cn(commonTabClass, "inline-flex")}>Rent</TabsTrigger>
+            <Link href="/about-us" className={cn(commonTabClass, "hidden sm:inline-flex", "border-b-4 border-transparent hover:border-brand-bright/50")}>Agents</Link>
         </TabsList>
         <div className="space-y-[-1px]">
             <Card className="shadow-lg rounded-t-lg rounded-b-none p-2 bg-white">
@@ -299,3 +310,5 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     </div>
   );
 }
+
+    
