@@ -1,5 +1,4 @@
 
-
 "use client"
 
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -27,6 +26,8 @@ export type Filters = {
     minBaths: string;
     minFloorSize: string;
     maxFloorSize: string;
+    minErfSize: string;
+    maxErfSize: string;
     features: {
         petFriendly: boolean;
         garden: boolean;
@@ -51,6 +52,8 @@ const initialFilters: Filters = {
     minBaths: "any",
     minFloorSize: "any",
     maxFloorSize: "any",
+    minErfSize: "any",
+    maxErfSize:"any",
     features: {
         petFriendly: false,
         garden: false,
@@ -73,7 +76,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   
   const applyFilters = useCallback(() => {
-    const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other, minFloorSize, maxFloorSize } = filters;
+    const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other, minFloorSize, maxFloorSize, minErfSize, maxErfSize } = filters;
     
     // This part handles the client-side filtering on the listings page
     const filtered = properties.filter(p => {
@@ -91,6 +94,8 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
         if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
         if (minFloorSize !== 'any' && p.sqft < parseInt(minFloorSize)) return false;
         if (maxFloorSize !== 'any' && p.sqft > parseInt(maxFloorSize)) return false;
+        if (minErfSize !== 'any' && p.erfSize < parseInt(minErfSize)) return false;
+        if (maxErfSize !== 'any' && p.erfSize > parseInt(maxErfSize)) return false;
 
 
         if (features.petFriendly && !p.features.some(f => f.toLowerCase().includes('pet friendly'))) return false;
@@ -108,7 +113,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
   }, [filters, properties, onFilterChange, activeTab]);
 
   const handleSearchClick = () => {
-    const { location, propertyType, minBeds, minPrice, maxPrice, minFloorSize, maxFloorSize } = filters;
+    const { location, propertyType, minBeds, minPrice, maxPrice, minFloorSize, maxFloorSize, minErfSize, maxErfSize } = filters;
     const queryParams = new URLSearchParams();
 
     if (location) queryParams.set('location', location);
@@ -119,6 +124,8 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
     if (maxPrice !== 'any') queryParams.set('maxPrice', maxPrice);
     if (minFloorSize !== 'any') queryParams.set('minFloorSize', minFloorSize);
     if (maxFloorSize !== 'any') queryParams.set('maxFloorSize', maxFloorSize);
+    if (minErfSize !== 'any') queryParams.set('minErfSize', minErfSize);
+    if (maxErfSize !== 'any') queryParams.set('maxErfSize', maxErfSize);
 
     // If on homepage, navigate to listings page with filters.
     // Otherwise, apply filters on the current page.
@@ -166,7 +173,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
 
   const filteredCount = useMemo(() => {
     return properties.filter(p => {
-        const { location, propertyType, minBeds, minPrice, maxPrice, minFloorSize, maxFloorSize } = filters;
+        const { location, propertyType, minBeds, minPrice, maxPrice, minFloorSize, maxFloorSize, minErfSize, maxErfSize } = filters;
         if (activeTab === 'buy' && p.status !== 'for-sale') return false;
         if (activeTab === 'rent' && p.status !== 'to-let') return false;
         if (location && !p.location.toLowerCase().includes(location.toLowerCase())) return false;
@@ -176,6 +183,8 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
         if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
         if (minFloorSize !== 'any' && p.sqft < parseInt(minFloorSize)) return false;
         if (maxFloorSize !== 'any' && p.sqft > parseInt(maxFloorSize)) return false;
+        if (minErfSize !== 'any' && p.erfSize < parseInt(minErfSize)) return false;
+        if (maxErfSize !== 'any' && p.erfSize > parseInt(maxErfSize)) return false;
         return true;
     }).length
   }, [filters, properties, activeTab]);
@@ -243,7 +252,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                             <SelectValue placeholder="Property Type" />
                         </SelectTrigger>
                         <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
+                        <SelectItem value="any">Property Type</SelectItem>
                         <SelectItem value="House">House</SelectItem>
                         <SelectItem value="Apartment">Apartment</SelectItem>
                         <SelectItem value="Townhouse">Townhouse</SelectItem>
@@ -251,12 +260,35 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                         <SelectItem value="Vacant Land">Vacant Land</SelectItem>
                         </SelectContent>
                     </Select>
+                    <Select value={filters.minBeds} onValueChange={(value) => handleSelectChange('minBeds', value)}>
+                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                            <SelectValue placeholder="Beds" />
+                        </SelectTrigger>
+                        <SelectContent>
+                        <SelectItem value="any">Min Beds</SelectItem>
+                        <SelectItem value="1">1+</SelectItem>
+                        <SelectItem value="2">2+</SelectItem>
+                        <SelectItem value="3">3+</SelectItem>
+                        <SelectItem value="4">4+</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select value={filters.minBaths} onValueChange={(value) => handleSelectChange('minBaths', value)}>
+                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                            <SelectValue placeholder="Baths" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="any">Baths</SelectItem>
+                            <SelectItem value="1">1+</SelectItem>
+                            <SelectItem value="2">2+</SelectItem>
+                            <SelectItem value="3">3+</SelectItem>
+                        </SelectContent>
+                    </Select>
                     <Select value={filters.minPrice} onValueChange={(value) => handleSelectChange('minPrice', value)}>
                         <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
                             <SelectValue placeholder="Min Price" />
                         </SelectTrigger>
                         <SelectContent>
-                        <SelectItem value="any">Any Price</SelectItem>
+                        <SelectItem value="any">Min Price</SelectItem>
                         <SelectItem value="500000">R 500 000</SelectItem>
                         <SelectItem value="1000000">R 1 000 000</SelectItem>
                         <SelectItem value="2000000">R 2 000 000</SelectItem>
@@ -268,23 +300,11 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                             <SelectValue placeholder="Max Price" />
                         </SelectTrigger>
                         <SelectContent>
-                        <SelectItem value="any">Any Price</SelectItem>
+                        <SelectItem value="any">Max Price</SelectItem>
                         <SelectItem value="1000000">R 1 000 000</SelectItem>
                         <SelectItem value="2000000">R 2 000 000</SelectItem>
                         <SelectItem value="5000000">R 5 000 000</SelectItem>
                         <SelectItem value="10000000">R 10 000 000</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <Select value={filters.minBeds} onValueChange={(value) => handleSelectChange('minBeds', value)}>
-                        <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                            <SelectValue placeholder="Beds" />
-                        </SelectTrigger>
-                        <SelectContent>
-                        <SelectItem value="any">Any</SelectItem>
-                        <SelectItem value="1">1+</SelectItem>
-                        <SelectItem value="2">2+</SelectItem>
-                        <SelectItem value="3">3+</SelectItem>
-                        <SelectItem value="4">4+</SelectItem>
                         </SelectContent>
                     </Select>
                     <CollapsibleTrigger asChild>
@@ -317,39 +337,46 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                             </div>
                         </div>
                         </div>
-                        <div>
-                        <h4 className="font-semibold mb-3">Property Details</h4>
-                        <div className="space-y-2">
-                            <Select value={filters.minBaths} onValueChange={(value) => handleSelectChange('minBaths', value)}>
-                                <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                                    <SelectValue placeholder="Baths" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="any">Any</SelectItem>
-                                    <SelectItem value="1">1+</SelectItem>
-                                    <SelectItem value="2">2+</SelectItem>
-                                    <SelectItem value="3">3+</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <div className="grid grid-cols-2 gap-2">
-                               <Select value={filters.minFloorSize} onValueChange={(value) => handleSelectChange('minFloorSize', value)}>
-                                    <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                                        <SelectValue placeholder="Min Size" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
-                                <Select value={filters.maxFloorSize} onValueChange={(value) => handleSelectChange('maxFloorSize', value)}>
-                                    <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                                        <SelectValue placeholder="Max Size" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
+                            <div>
+                                <h4 className="font-semibold mb-3">Property Details</h4>
+                                <div className="space-y-2">
+                                    <div className="grid grid-cols-2 grid-rows-2 gap-2">
+                                        <Select value={filters.minFloorSize} onValueChange={(value) => handleSelectChange('minFloorSize', value)}>
+                                            <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                                <SelectValue placeholder="Min Floor Size" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                        <Select value={filters.maxFloorSize} onValueChange={(value) => handleSelectChange('maxFloorSize', value)}>
+                                            <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                                <SelectValue placeholder="Max Floor Size" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                        <Select value={filters.minErfSize} onValueChange={(value) => handleSelectChange('minErfSize', value)}>
+                                            <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                                <SelectValue placeholder="Min Erf Size" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                        <Select value={filters.maxErfSize} onValueChange={(value) => handleSelectChange('maxErfSize', value)}>
+                                            <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
+                                                <SelectValue placeholder="Max Erf Size" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                
                             </div>
-                        </div>
+                            
                         </div>
                         <div>
                         <h4 className="font-semibold mb-3">Other Filters</h4>
@@ -382,3 +409,4 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
     </div>
   );
 }
+
