@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Changelog**: Created this `CHANGELOG.md` file to track project changes.
+
 ### Changed
 - **Styling**: Reverted the primary and accent colors back to the original deep maroon and burgundy theme.
 - **Property Filter**:
