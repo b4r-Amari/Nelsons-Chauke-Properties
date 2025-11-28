@@ -135,7 +135,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
                   key={tab}
                   value={tab.toLowerCase().replace(' ', '-')}
                   className={cn(
-                    "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-semibold pb-3 px-4 rounded-none border-b-2 border-transparent data-[state=active]:border-white hover:text-white",
+                    "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-bold pb-3 px-5 rounded-none border-b-4 border-transparent data-[state=active]:border-brand-bright hover:text-white",
                     tab === "Agents" ? "hidden sm:inline-flex" : "inline-flex"
                   )}
                 >
@@ -179,7 +179,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
                 </CardContent>
             </Card>
             <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen} className="rounded-b-lg">
-                <div className="p-4 transition-all duration-300">
+                <div className="p-4 transition-all duration-300 bg-transparent">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     <Select value={filters.propertyType} onValueChange={(value) => handleSelectChange('propertyType', value)}>
                         <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Property Type" /></SelectTrigger>
@@ -300,4 +300,5 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
   );
 }
 
+    
     
