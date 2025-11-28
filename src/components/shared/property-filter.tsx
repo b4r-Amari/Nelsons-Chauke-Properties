@@ -144,7 +144,6 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
   return (
     <div className="font-sans max-w-[900px] mx-auto">
       <Tabs defaultValue="buy" className="w-full" value={activeTab} onValueChange={(v) => {
-        if (v === 'agents') return;
         setActiveTab(v);
         const newStatus = v === 'rent' ? 'to-let' : 'for-sale';
         setFilters(prev => ({ ...prev, status: newStatus }));
