@@ -13,6 +13,7 @@ import { useSearchParams } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
 import { Card, CardFooter } from "../ui/card";
+import { type Filters } from "../shared/property-filter";
 
 type PropertyListingsProps = {
   status?: 'on-show' | 'sold';
@@ -24,14 +25,6 @@ type PropertyListingsProps = {
 
 function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProps) {
   const searchParams = useSearchParams();
-  const locationSearch = searchParams.get('location');
-  const statusSearch = searchParams.get('status');
-  const typeSearch = searchParams.get('type');
-  const bedsSearch = searchParams.get('beds');
-  const minPriceSearch = searchParams.get('minPrice');
-  const maxPriceSearch = searchParams.get('maxPrice');
-  const shouldScroll = searchParams.get('autoscroll');
-
 
   const [allProperties, setAllProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
@@ -40,7 +33,27 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
   const [currentPage, setCurrentPage] = useState(1);
   const propertiesPerPage = 12;
   const resultsRef = useRef<HTMLElement>(null);
+  
+  const initialFilters = useMemo(() => {
+    const location = searchParams.get('location') || "";
+    const statusSearch = searchParams.get('status') || (status === 'on-show' ? 'for-sale' : 'any');
+    const type = searchParams.get('type') || 'any';
+    const beds = searchParams.get('beds') || 'any';
+    const minPrice = searchParams.get('minPrice') || 'any';
+    const maxPrice = searchParams.get('maxPrice') || 'any';
+    const minFloorSize = searchParams.get('minFloorSize') || 'any';
+    const maxFloorSize = searchParams.get('maxFloorSize') || 'any';
+    const shouldScroll = searchParams.get('autoscroll');
 
+    if (shouldScroll === 'true' && resultsRef.current) {
+      setTimeout(() => {
+        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+    
+    return { location, status: statusSearch, propertyType: type, minBeds: beds, minPrice, maxPrice, minFloorSize, maxFloorSize } as Partial<Filters>
+  }, [searchParams, status]);
+  
   useEffect(() => {
     async function fetchProperties() {
       setIsLoading(true);
@@ -54,37 +67,18 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
           initialProps = props.filter(p => p.status === status);
         }
       } else {
-        // On main properties page, show for-sale and to-let
+        // On main properties page, show for-sale and to-let by default
         initialProps = props.filter(p => p.status === 'for-sale' || p.status === 'to-let');
       }
 
       setAllProperties(props); // Set all properties for the filter
-      
-      // Apply initial search params from URL
-      const urlFiltered = initialProps.filter(p => {
-        const locationMatch = locationSearch ? p.location.toLowerCase().includes(locationSearch.toLowerCase()) || p.address.toLowerCase().includes(locationSearch.toLowerCase()) : true;
-        const statusMatch = statusSearch ? p.status === statusSearch : true;
-        const typeMatch = typeSearch ? p.type === typeSearch : true;
-        const bedsMatch = bedsSearch ? p.beds >= parseInt(bedsSearch) : true;
-        const minPriceMatch = minPriceSearch ? p.price >= parseInt(minPriceSearch) : true;
-        const maxPriceMatch = maxPriceSearch ? p.price <= parseInt(maxPriceSearch) : true;
-        return locationMatch && statusMatch && typeMatch && bedsMatch && minPriceMatch && maxPriceMatch;
-      });
-      setFilteredProperties(urlFiltered);
+      setFilteredProperties(initialProps);
       setIsLoading(false);
     }
 
     fetchProperties();
-  }, [status, locationSearch, statusSearch, typeSearch, bedsSearch, minPriceSearch, maxPriceSearch]);
+  }, [status]);
   
-  useEffect(() => {
-    if (shouldScroll === 'true' && resultsRef.current) {
-      setTimeout(() => {
-         resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
-  }, [shouldScroll]);
-
   const sortedAndFilteredProperties = useMemo(() => {
     let sortableProperties = [...filteredProperties];
     
@@ -138,14 +132,20 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
               <p className="text-lg mt-2 text-muted-foreground">{pageDetails.description}</p>
             </div>
         </div>
-        <div className="bg-primary py-10">
-            <div className="container">
-              <PropertyFilter properties={allProperties} onFilterChange={setFilteredProperties}/>
-            </div>
-        </div>
+      </div>
+      
+      <div className="bg-primary py-10">
+          <div className="container">
+            <PropertyFilter 
+              properties={allProperties} 
+              onFilterChange={setFilteredProperties}
+              initial={initialFilters}
+            />
+          </div>
       </div>
 
-      <section className="py-8 bg-background" ref={resultsRef} id="property-results">
+
+      <main className="py-8 bg-background" ref={resultsRef} id="property-results">
         <div className="container">
            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 border-b pb-4">
             <p className="text-muted-foreground text-sm mb-4 sm:mb-0">
@@ -168,7 +168,7 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
             </DropdownMenu>
           </div>
 
-          <main>
+          
               {isLoading ? (
                 <LoadingSkeleton />
               ) : currentProperties.length > 0 ? (
@@ -203,9 +203,9 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
                   <p className="text-xl text-muted-foreground text-center">No properties match your current filters. Try adjusting your search criteria.</p>
                 </div>
               )}
-          </main>
+          
         </div>
-      </section>
+      </main>
     </>
   );
 }

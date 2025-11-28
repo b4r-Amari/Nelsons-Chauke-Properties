@@ -11,13 +11,37 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Search, Map as MapIcon, X, Plus } from "lucide-react";
 import type { Property } from "./property-card";
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Label } from "../ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-const initialFilters = {
+export type Filters = {
+    location: string;
+    status: "for-sale" | "to-let" | "sold" | "any";
+    propertyType: string;
+    minPrice: string;
+    maxPrice: string;
+    minBeds: string;
+    minBaths: string;
+    minFloorSize: string;
+    maxFloorSize: string;
+    features: {
+        petFriendly: boolean;
+        garden: boolean;
+        pool: boolean;
+        flatlet: boolean;
+    };
+    other: {
+        retirement: boolean;
+        onShow: boolean;
+        securityEstate: boolean;
+    };
+};
+
+
+const initialFilters: Filters = {
     location: "",
     status: "for-sale",
     propertyType: "any",
@@ -25,6 +49,8 @@ const initialFilters = {
     maxPrice: "any",
     minBeds: "any",
     minBaths: "any",
+    minFloorSize: "any",
+    maxFloorSize: "any",
     features: {
         petFriendly: false,
         garden: false,
@@ -38,22 +64,20 @@ const initialFilters = {
     },
 };
 
-export function PropertyFilter({ properties, onFilterChange }: { properties: Property[], onFilterChange: (filtered: Property[]) => void }) {
-  const searchParams = useSearchParams();
+export function PropertyFilter({ properties, onFilterChange, initial }: { properties: Property[], onFilterChange: (filtered: Property[]) => void, initial?: Partial<Filters> }) {
   const router = useRouter();
   const pathname = usePathname();
   
-  const [filters, setFilters] = useState(() => {
-    const location = searchParams.get("location") || "";
-    const status = searchParams.get("status") || "for-sale";
-    return {...initialFilters, location, status };
-  });
-
+  const [filters, setFilters] = useState({ ...initialFilters, ...initial });
   const [activeTab, setActiveTab] = useState(filters.status === 'to-let' ? 'rent' : 'buy');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
+  useEffect(() => {
+    setFilters(prev => ({...prev, ...initial}))
+  }, [initial]);
+
   const applyFilters = useCallback(() => {
-    const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other } = filters;
+    const { location, propertyType, minBeds, minBaths, minPrice, maxPrice, features, other, minFloorSize, maxFloorSize } = filters;
     
     // This part handles the client-side filtering on the listings page
     const filtered = properties.filter(p => {
@@ -65,6 +89,9 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         if (minBaths !== 'any' && p.baths < parseInt(minBaths)) return false;
         if (minPrice !== 'any' && p.price < parseInt(minPrice)) return false;
         if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
+        if (minFloorSize !== 'any' && p.sqft < parseInt(minFloorSize)) return false;
+        if (maxFloorSize !== 'any' && p.sqft > parseInt(maxFloorSize)) return false;
+
 
         if (features.petFriendly && !p.features.some(f => f.toLowerCase().includes('pet friendly'))) return false;
         if (features.garden && !p.features.some(f => f.toLowerCase().includes('garden'))) return false;
@@ -81,7 +108,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
   }, [filters, properties, onFilterChange, activeTab]);
 
   const handleSearchClick = () => {
-    const { location, propertyType, minBeds, minPrice, maxPrice } = filters;
+    const { location, propertyType, minBeds, minPrice, maxPrice, minFloorSize, maxFloorSize } = filters;
     const queryParams = new URLSearchParams();
 
     if (location) queryParams.set('location', location);
@@ -90,6 +117,8 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     if (minBeds !== 'any') queryParams.set('beds', minBeds);
     if (minPrice !== 'any') queryParams.set('minPrice', minPrice);
     if (maxPrice !== 'any') queryParams.set('maxPrice', maxPrice);
+    if (minFloorSize !== 'any') queryParams.set('minFloorSize', minFloorSize);
+    if (maxFloorSize !== 'any') queryParams.set('maxFloorSize', maxFloorSize);
 
     // If on homepage, navigate to listings page with filters.
     // Otherwise, apply filters on the current page.
@@ -112,11 +141,11 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
   }, [filters, properties, applyFilters, pathname]);
 
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: keyof Filters, value: string) => {
     setFilters(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSelectChange = (field: string, value: string) => {
+  const handleSelectChange = (field: keyof Filters, value: string) => {
     setFilters(prev => ({ ...prev, [field]: value }));
   };
 
@@ -137,7 +166,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
 
   const filteredCount = useMemo(() => {
     return properties.filter(p => {
-        const { location, propertyType, minBeds, minPrice, maxPrice } = filters;
+        const { location, propertyType, minBeds, minPrice, maxPrice, minFloorSize, maxFloorSize } = filters;
         if (activeTab === 'buy' && p.status !== 'for-sale') return false;
         if (activeTab === 'rent' && p.status !== 'to-let') return false;
         if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
@@ -145,16 +174,15 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
         if (minPrice !== 'any' && p.price < parseInt(minPrice)) return false;
         if (maxPrice !== 'any' && p.price > parseInt(maxPrice)) return false;
+        if (minFloorSize !== 'any' && p.sqft < parseInt(minFloorSize)) return false;
+        if (maxFloorSize !== 'any' && p.sqft > parseInt(maxFloorSize)) return false;
         return true;
     }).length
   }, [filters, properties, activeTab]);
 
   useEffect(() => {
-      const location = searchParams.get("location") || '';
-      const status = searchParams.get('status') || 'for-sale';
-      setFilters(prev => ({...prev, location, status}));
-      setActiveTab(status === 'to-let' ? 'rent' : 'buy');
-  }, [searchParams]);
+      setActiveTab(filters.status === 'to-let' ? 'rent' : 'buy');
+  }, [filters.status]);
 
   const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-bold pb-3 px-5 rounded-none border-b-4 border-transparent data-[state=active]:border-brand-bright hover:text-white";
 
@@ -164,7 +192,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         if (v === 'agents') return;
         setActiveTab(v);
         const newStatus = v === 'rent' ? 'to-let' : 'for-sale';
-        setFilters(prev => ({ ...prev, status: newStatus }));
+        setFilters(prev => ({ ...prev, status: newStatus as "for-sale" | "to-let"}));
       }}>
         <TabsList className="flex justify-center bg-transparent p-0 h-auto gap-0 pb-5">
             <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
@@ -294,8 +322,24 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
                                     <SelectItem value="3">3+</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Input className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" placeholder="Min Floor Size (m²)" />
-                            <Input className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" placeholder="Min Erf Size (m²)" />
+                            <Input 
+                                className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" 
+                                placeholder="Min Floor Size (m²)" 
+                                type="number"
+                                min={250}
+                                max={20000}
+                                value={filters.minFloorSize === 'any' ? '' : filters.minFloorSize}
+                                onChange={(e) => handleInputChange('minFloorSize', e.target.value || 'any')}
+                            />
+                            <Input 
+                                className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" 
+                                placeholder="Max Floor Size (m²)"
+                                type="number"
+                                min={250}
+                                max={20000}
+                                value={filters.maxFloorSize === 'any' ? '' : filters.maxFloorSize}
+                                onChange={(e) => handleInputChange('maxFloorSize', e.target.value || 'any')}
+                            />
                         </div>
                         </div>
                         <div>
