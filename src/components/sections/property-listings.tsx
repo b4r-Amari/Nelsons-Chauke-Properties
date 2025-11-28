@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useState, useEffect, Suspense, useMemo, useRef } from "react";
@@ -7,10 +8,11 @@ import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import { getProperties } from '@/lib/data';
 import { Button } from "../ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
+import { Card, CardFooter } from "../ui/card";
 
 type PropertyListingsProps = {
   status?: 'on-show' | 'sold';
@@ -35,6 +37,8 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [sortOption, setSortOption] = useState('newest');
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const propertiesPerPage = 12;
   const resultsRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -98,10 +102,24 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
 
     return sortableProperties;
   }, [filteredProperties, sortOption]);
+  
+  const totalPages = Math.ceil(sortedAndFilteredProperties.length / propertiesPerPage);
+  const indexOfLastProperty = currentPage * propertiesPerPage;
+  const indexOfFirstProperty = indexOfLastProperty - propertiesPerPage;
+  const currentProperties = sortedAndFilteredProperties.slice(indexOfFirstProperty, indexOfLastProperty);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
 
   const LoadingSkeleton = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {Array.from({ length: 6 }).map((_, i) => (
+      {Array.from({ length: 12 }).map((_, i) => (
         <div key={i} className="space-y-4">
           <Skeleton className="h-[250px] w-full" />
           <Skeleton className="h-6 w-3/4" />
@@ -153,12 +171,33 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
           <main>
               {isLoading ? (
                 <LoadingSkeleton />
-              ) : sortedAndFilteredProperties.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                  {sortedAndFilteredProperties.map((prop) => (
-                    <PropertyCard key={prop.id} property={prop} />
-                  ))}
-                </div>
+              ) : currentProperties.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                    {currentProperties.map((prop) => (
+                      <PropertyCard key={prop.id} property={prop} />
+                    ))}
+                  </div>
+                   {totalPages > 1 && (
+                     <Card className="mt-12">
+                        <CardFooter className="flex-col sm:flex-row items-center justify-between py-4">
+                            <div className="text-sm text-muted-foreground mb-4 sm:mb-0">
+                                Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <Button variant="outline" size="sm" onClick={handlePrevPage} disabled={currentPage === 1}>
+                                    <ChevronLeft className="h-4 w-4" />
+                                    <span className="sm:inline ml-1">Previous</span>
+                                </Button>
+                                <Button variant="outline" size="sm" onClick={handleNextPage} disabled={currentPage === totalPages}>
+                                    <span className="sm:inline mr-1">Next</span>
+                                    <ChevronRight className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </CardFooter>
+                      </Card>
+                    )}
+                </>
               ) : (
                 <div className="flex items-center justify-center h-full bg-card rounded-lg shadow-md p-12">
                   <p className="text-xl text-muted-foreground text-center">No properties match your current filters. Try adjusting your search criteria.</p>
