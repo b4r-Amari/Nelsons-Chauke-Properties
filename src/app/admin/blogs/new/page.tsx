@@ -14,6 +14,7 @@ import { ArrowLeft, UploadCloud } from "lucide-react"
 import Link from "next/link"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import placeholders from "@/lib/placeholder-images.json";
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
@@ -35,8 +36,8 @@ export default function NewBlogPage() {
       author: "NC Properties",
       category: "Buying Guide",
       excerpt: "",
-      imageUrl: "https://placehold.co/800x450",
-      imageHint: "real estate concept",
+      imageUrl: placeholders.blogDefault.url,
+      imageHint: placeholders.blogDefault.hint,
       content: "",
     },
   })

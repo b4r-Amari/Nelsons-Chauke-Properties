@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
+import placeholders from "@/lib/placeholder-images.json";
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -33,8 +34,8 @@ export default function NewAgentPage() {
       role: "",
       email: "",
       phone: "",
-      imageUrl: "https://placehold.co/200x200.png",
-      imageHint: "professional person",
+      imageUrl: placeholders.agentProfile.url,
+      imageHint: placeholders.agentProfile.hint,
       bio: "",
     },
   })

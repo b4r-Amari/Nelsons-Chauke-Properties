@@ -18,6 +18,7 @@ import { getAgents } from "@/lib/data"
 import type { Agent } from "@/components/shared/agent-card"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import placeholders from "@/lib/placeholder-images.json";
 
 const formSchema = z.object({
   address: z.string().min(5, "Address is too short."),
@@ -69,8 +70,8 @@ export default function NewPropertyPage() {
       features: ["Swimming Pool", "Garden", "Secure Estate"],
       onShow: false,
       agentIds: [],
-      imageUrl: "https://placehold.co/300x200",
-      imageHint: "modern house exterior",
+      imageUrl: placeholders.propertyDefault.url,
+      imageHint: placeholders.propertyDefault.hint,
       slug: "",
       isFavorite: false,
       yearBuilt: 2024,

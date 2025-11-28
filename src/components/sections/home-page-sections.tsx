@@ -6,20 +6,19 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Building, KeyRound, Handshake } from 'lucide-react';
-import Link from 'next/link';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from '@/hooks/use-toast';
-import { useRouter } from 'next/navigation';
 import { PropertyFilter } from '../shared/property-filter';
 import { getProperties } from '@/lib/data';
 import type { Property } from '../shared/property-card';
+import placeholders from '@/lib/placeholder-images.json';
+import Link from 'next/link';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Building, KeyRound, Handshake } from 'lucide-react';
 
 
 const heroBanners = [
@@ -32,12 +31,12 @@ const heroBanners = [
 export function HeroSection() {
   const [bannerImage, setBannerImage] = useState(heroBanners[0]);
   const [properties, setProperties] = useState<Property[]>([]);
-  const router = useRouter();
-
 
   useEffect(() => {
-    const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
-    setBannerImage(randomBanner);
+    if (typeof window !== 'undefined') {
+      const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
+      setBannerImage(randomBanner);
+    }
     
     async function fetchProps() {
         const props = await getProperties();
@@ -155,7 +154,7 @@ function PropertyAlertForm() {
 
 
 function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, href }: { id?:string, title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string }) {
-  const isAlertForm = id === 'property-alerts';
+  const isAlertForm = id === 'property-alerts' || id === 'rental-alerts';
 
   return (
     <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card h-full group">
@@ -177,19 +176,19 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, h
 
 export function CtaTabsSection() {
   const buyerOptions = [
-    { id: 'property-alerts', title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "notification bell" },
-    { id: 'buying-guides', title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "open book", href: "/blog" },
+    { id: 'property-alerts', title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: placeholders.propertyAlert.url, imageHint: placeholders.propertyAlert.hint },
+    { id: 'buying-guides', title: "Buying Guides", description: "Our comprehensive guides cover everything you need to know about buying a home.", buttonText: "Explore Guides", imageSrc: placeholders.buyingGuides.url, imageHint: placeholders.buyingGuides.hint, href: "/blog" },
   ];
 
   const renterOptions = [
-    { title: "Find Letting Agents", description: "Connect with trusted and experienced letting agents in your desired area.", buttonText: "Search Agents", imageSrc: "/images/backgrounds/find-letting-agents.webp", imageHint: "handshake professional", href: "/about-us" },
-    { id: 'property-alerts', title: "Rental Alerts", description: "Be the first to know about new rental properties as soon as they hit the market.", buttonText: "Sign Up Now", imageSrc: "/images/backgrounds/property-alert.webp", imageHint: "email notification" },
-    { title: "Renter's Advice", description: "Navigate the rental market with confidence using our collection of helpful articles.", buttonText: "Read Articles", imageSrc: "/images/backgrounds/rental-advice.webp", imageHint: "lightbulb idea", href: "/blog" },
+    { title: "Find Letting Agents", description: "Connect with trusted and experienced letting agents in your desired area.", buttonText: "Search Agents", imageSrc: placeholders.findLettingAgents.url, imageHint: placeholders.findLettingAgents.hint, href: "/about-us" },
+    { id: 'rental-alerts', title: "Rental Alerts", description: "Be the first to know about new rental properties as soon as they hit the market.", buttonText: "Sign Up Now", imageSrc: placeholders.rentalAlerts.url, imageHint: placeholders.rentalAlerts.hint },
+    { title: "Renter's Advice", description: "Navigate the rental market with confidence using our collection of helpful articles.", buttonText: "Read Articles", imageSrc: placeholders.rentersAdvice.url, imageHint: placeholders.rentersAdvice.hint, href: "/blog" },
   ];
 
   const sellerOptions = [
-    { title: "Free Property Valuation", description: "Get a free, instant, and accurate valuation for your property.", buttonText: "Get Started", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "valuation chart", href: "/sell" },
-    { id: 'selling-guides', title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: "/images/backgrounds/automated-property-valuations.webp", imageHint: "checklist clipboard", href: "/blog" },
+    { title: "Free Property Valuation", description: "Get a free, instant, and accurate valuation for your property.", buttonText: "Get Started", imageSrc: placeholders.freePropertyValuation.url, imageHint: placeholders.freePropertyValuation.hint, href: "/sell" },
+    { id: 'selling-guides', title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: placeholders.sellingGuides.url, imageHint: placeholders.sellingGuides.hint, href: "/blog" },
   ];
 
   return (
@@ -245,9 +244,10 @@ export function NewsletterSection() {
   const [bgImages, setBgImages] = useState(mailImages.slice(0,3).join(', '));
 
   useEffect(() => {
-    // This effect runs only on the client, after hydration
-    const shuffled = [...mailImages].sort(() => 0.5 - Math.random());
-    setBgImages(shuffled.slice(0, 3).join(', '));
+    if (typeof window !== 'undefined') {
+      const shuffled = [...mailImages].sort(() => 0.5 - Math.random());
+      setBgImages(shuffled.slice(0, 3).join(', '));
+    }
   }, []);
 
   return (
@@ -279,5 +279,3 @@ export function NewsletterSection() {
     </section>
   );
 }
-
-    

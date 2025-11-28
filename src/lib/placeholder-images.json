@@ -1,0 +1,50 @@
+{
+  "modernOffice": {
+    "url": "https://picsum.photos/seed/office/600/400",
+    "hint": "modern office"
+  },
+  "agentProfile": {
+    "url": "https://picsum.photos/seed/agent/200/200",
+    "hint": "professional person"
+  },
+  "blogDefault": {
+    "url": "https://picsum.photos/seed/blog/800/450",
+    "hint": "real estate concept"
+  },
+  "propertyDefault": {
+    "url": "https://picsum.photos/seed/property/300/200",
+    "hint": "modern house exterior"
+  },
+  "propertyGallery": {
+    "url": "https://picsum.photos/seed/gallery/1200/800",
+    "hint": "property interior"
+  },
+  "propertyAlert": {
+    "url": "/images/backgrounds/property-alert.webp",
+    "hint": "notification bell"
+  },
+  "buyingGuides": {
+    "url": "/images/backgrounds/automated-property-valuations.webp",
+    "hint": "open book"
+  },
+  "findLettingAgents": {
+    "url": "/images/backgrounds/find-letting-agents.webp",
+    "hint": "handshake professional"
+  },
+  "rentalAlerts": {
+    "url": "/images/backgrounds/property-alert.webp",
+    "hint": "email notification"
+  },
+  "rentersAdvice": {
+    "url": "/images/backgrounds/rental-advice.webp",
+    "hint": "lightbulb idea"
+  },
+  "freePropertyValuation": {
+    "url": "/images/backgrounds/automated-property-valuations.webp",
+    "hint": "valuation chart"
+  },
+  "sellingGuides": {
+    "url": "/images/backgrounds/automated-property-valuations.webp",
+    "hint": "checklist clipboard"
+  }
+}

@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { getAgents } from '@/lib/data';
 import { BackButton } from '@/components/shared/back-button';
+import placeholders from '@/lib/placeholder-images.json';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const property = await getProperty(params.id);
@@ -84,12 +85,11 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
     return isRental ? `${formattedPrice} /month` : formattedPrice;
   }
 
-  // Dummy gallery images. In a real app, these would be specific to the property.
   const galleryImages = [
     property.imageUrl,
-    "https://placehold.co/1200x800.png",
-    "https://placehold.co/1200x800.png",
-    "https://placehold.co/1200x800.png",
+    placeholders.propertyGallery.url.replace('gallery', 'gallery1'),
+    placeholders.propertyGallery.url.replace('gallery', 'gallery2'),
+    placeholders.propertyGallery.url.replace('gallery', 'gallery3'),
   ];
 
   const realEstateListingSchema = {

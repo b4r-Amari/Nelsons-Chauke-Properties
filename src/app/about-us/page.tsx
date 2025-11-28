@@ -6,6 +6,7 @@ import { Download } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getAgents } from '@/lib/data';
+import placeholders from '@/lib/placeholder-images.json';
 
 export const metadata: Metadata = {
   title: 'About NC Properties | Our Story, Mission, and Team',
@@ -76,7 +77,7 @@ export default async function AboutUsPage() {
                 </Button>
               </article>
               <div>
-                <Image src="https://placehold.co/600x400.png" alt="The modern and bright office interior of NC Properties with team members collaborating." data-ai-hint="modern office" width={600} height={400} className="rounded-lg shadow-lg" />
+                <Image src={placeholders.modernOffice.url} alt="The modern and bright office interior of NC Properties with team members collaborating." data-ai-hint={placeholders.modernOffice.hint} width={600} height={400} className="rounded-lg shadow-lg" />
               </div>
             </div>
           </div>
