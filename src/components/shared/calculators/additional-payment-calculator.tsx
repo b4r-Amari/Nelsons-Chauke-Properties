@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -74,9 +74,9 @@ export function AdditionalPaymentCalculator() {
     setResult({ interestSaved: interestSaved > 0 ? interestSaved : 0, yearsSaved, monthsSaved, newLoanTerm: newLoanTermYears });
   };
 
-  useState(() => {
+  useEffect(() => {
     onSubmit(form.getValues());
-  });
+  }, [form]);
 
   return (
     <Card className="shadow-lg">

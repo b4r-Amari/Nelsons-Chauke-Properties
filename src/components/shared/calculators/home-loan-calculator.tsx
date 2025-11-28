@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -54,9 +54,9 @@ export function HomeLoanCalculator() {
   };
   
   // Trigger calculation on initial render
-  useState(() => {
+  useEffect(() => {
     onSubmit(form.getValues());
-  });
+  }, [form]);
 
   return (
     <Card className="shadow-lg">
