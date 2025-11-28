@@ -113,25 +113,12 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
 
   return (
     <>
-       <section className="relative h-[400px] flex items-center justify-center text-white">
-        <div className="absolute inset-0">
-            <Image
-            src="/images/backgrounds/hero-banner-2.webp"
-            alt="A beautiful modern home"
-            fill
-            className="object-cover"
-            priority
-            />
-            <div className="absolute inset-0 bg-black/60" />
-        </div>
-        <div className="relative z-10 container text-center">
-            <h1 className="text-4xl font-bold font-headline">{pageDetails.title}</h1>
-            <p className="text-lg mt-2 text-white/80">{pageDetails.description}</p>
-        </div>
-      </section>
-
-      <div className="bg-brand-deep relative z-20 py-10" style={{marginTop: '-160px'}}>
+      <div className="bg-background relative z-20 pt-10">
         <div className="container">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-bold font-headline text-brand-deep">{pageDetails.title}</h1>
+              <p className="text-lg mt-2 text-muted-foreground">{pageDetails.description}</p>
+            </div>
            <PropertyFilter 
             properties={allProperties} 
             onFilterChange={setFilteredProperties}
