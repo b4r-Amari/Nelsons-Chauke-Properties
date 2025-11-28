@@ -67,7 +67,7 @@ const SheetContent = React.forwardRef<
     >
       {children}
       <SheetPrimitive.Close className="absolute right-4 top-4 rounded-md p-2 opacity-70 ring-offset-background transition-all hover:opacity-100 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:bg-brand-bright hover:text-white">
-        <X className="h-6 w-6" />
+        <X className="h-9 w-9" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>
     </SheetPrimitive.Content>
@@ -139,5 +139,3 @@ export {
   SheetTitle,
   SheetDescription,
 }
-
-    

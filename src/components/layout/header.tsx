@@ -154,24 +154,18 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
              <Sheet open={isMobileMenuOpen} onOpenChange={handleMobileMenuToggle}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Open mobile menu" className="h-14 w-14">
-                  <Menu className="h-9 w-9" />
+                  <Menu className="h-10 w-10" />
                 </Button>
               </SheetTrigger>
                <SheetContent side="left" className="w-full max-w-[320px] bg-background text-foreground p-0">
-                    <SheetHeader className="sr-only">
-                        <SheetTitle>Mobile Navigation Menu</SheetTitle>
-                        <SheetDescription>
+                    <SheetHeader className="flex flex-row h-20 items-center justify-between border-b px-4">
+                        <Logo />
+                         <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
+                        <SheetDescription className="sr-only">
                             A list of links to navigate the NC Properties website.
                         </SheetDescription>
                     </SheetHeader>
                     <div className="flex flex-col h-full">
-                        <div className="flex h-20 items-center justify-between border-b px-4">
-                            <Logo />
-                            <SheetClose className="rounded-md p-2 opacity-70 ring-offset-background transition-all hover:opacity-100 data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:bg-brand-bright hover:text-white">
-                                <X className="h-9 w-9" />
-                                <span className="sr-only">Close</span>
-                            </SheetClose>
-                        </div>
                         <nav className="p-4" aria-label="Mobile Navigation">
                             <ul className="space-y-2 w-full">
                             {mobileNavLinks.map((link) => (
@@ -202,5 +196,3 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
     </header>
   );
 }
-
-    
