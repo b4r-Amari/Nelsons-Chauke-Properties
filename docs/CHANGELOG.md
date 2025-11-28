@@ -17,10 +17,6 @@ All notable changes to this project will be documented in this file.
     - Configured forms (Contact, Enquiry, Sell) to save submissions to Firestore.
 - **Dynamic Sitemap**: Created a `sitemap.ts` file to automatically generate a sitemap for all pages, including dynamic property, blog, and agent pages, to improve SEO.
 - **Calculators Dropdown**: Added a "Calculators" dropdown menu to the main header navigation, including links for Home Loan, Mortgage Bond, Affordability, and other financial calculators.
-- **Performance Optimizations**:
-    - Replaced Google Font imports with `next/font` for optimized font loading and reduced layout shift.
-    - Centralized placeholder image management into `src/lib/placeholder-images.json` for easier maintenance and consistency.
-    - Added a React `Suspense` boundary to the root layout to prevent hydration errors.
 
 ### Changed
 - **Styling**: 
@@ -46,6 +42,7 @@ All notable changes to this project will be documented in this file.
     - Replaced the user icon in the header with a more prominent "Sign In" button for logged-out users.
     - Implemented logic to save a user's Google profile picture on sign-up.
 - **Header Navigation**: Simplified the main navigation by removing the "About Us" and "Contact Us" links.
+- **Calculators**: Consolidated all financial calculators onto a single page using a tabbed interface for a more streamlined user experience. Redesigned all calculators with a consistent and modern two-column layout.
 
 ### Fixed
 - **Build & Runtime Errors**: Resolved multiple build and runtime errors, including:
@@ -67,4 +64,3 @@ All notable changes to this project will be documented in this file.
 - **Duplicate Files**: Removed several duplicate component files that were causing build conflicts.
 - **Header Links**: Removed "About Us" and "Contact Us" from the main header navigation to streamline the user experience.
 - **`patch-package`**: Removed the `patch-package` dependency from `package.json` as it was not needed.
-
