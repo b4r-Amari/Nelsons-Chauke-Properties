@@ -7,7 +7,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger, SheetClose } from "@/components/ui/sheet";
-import { Menu, ChevronDown, X } from 'lucide-react';
+import { Menu, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -153,8 +153,8 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
           <div className="md:hidden">
              <Sheet open={isMobileMenuOpen} onOpenChange={handleMobileMenuToggle}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open mobile menu" className="h-14 w-14">
-                  <Menu className="h-10 w-10" />
+                <Button variant="ghost" size="icon" aria-label="Open mobile menu" className="h-16 w-16">
+                  <Menu className="h-12 w-12" />
                 </Button>
               </SheetTrigger>
                <SheetContent side="left" className="w-full max-w-[320px] bg-background text-foreground p-0">
@@ -196,3 +196,5 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
     </header>
   );
 }
+
+    
