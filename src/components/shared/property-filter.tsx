@@ -129,7 +129,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
         const newStatus = v === 'rent' ? 'to-let' : 'for-sale';
         setFilters(prev => ({ ...prev, status: newStatus }));
       }}>
-        <TabsList className="bg-transparent p-0 h-auto gap-0 pb-5">
+        <TabsList className="flex justify-center bg-transparent p-0 h-auto gap-0 pb-5">
           {["Buy", "Rent", "Agents"].map(tab => (
               <TabsTrigger
                   key={tab}
