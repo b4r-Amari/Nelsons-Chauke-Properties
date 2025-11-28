@@ -33,8 +33,6 @@ const navLinks = [
     ]
   },
   { href: "/blog", label: "Property News" },
-  { href: "/about-us", label: "About Us" },
-  { href: "/contact-us", label: "Contact Us" },
 ];
 
 const mobileNavLinks = [
@@ -209,3 +207,5 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
     </header>
   );
 }
+
+    
