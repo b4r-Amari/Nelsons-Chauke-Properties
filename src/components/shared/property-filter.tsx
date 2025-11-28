@@ -240,7 +240,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     <Select value={filters.propertyType} onValueChange={(value) => handleSelectChange('propertyType', value)}>
                         <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                            <span className="text-white/70 mr-1">Type:</span><SelectValue placeholder="Any" />
+                            <SelectValue placeholder="Property Type" />
                         </SelectTrigger>
                         <SelectContent>
                         <SelectItem value="any">Any</SelectItem>
@@ -253,7 +253,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                     </Select>
                     <Select value={filters.minPrice} onValueChange={(value) => handleSelectChange('minPrice', value)}>
                         <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                             <span className="text-white/70 mr-1">Min Price:</span><SelectValue placeholder="Any" />
+                            <SelectValue placeholder="Min Price" />
                         </SelectTrigger>
                         <SelectContent>
                         <SelectItem value="any">Any Price</SelectItem>
@@ -265,7 +265,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                     </Select>
                     <Select value={filters.maxPrice} onValueChange={(value) => handleSelectChange('maxPrice', value)}>
                         <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                             <span className="text-white/70 mr-1">Max Price:</span><SelectValue placeholder="Any" />
+                            <SelectValue placeholder="Max Price" />
                         </SelectTrigger>
                         <SelectContent>
                         <SelectItem value="any">Any Price</SelectItem>
@@ -277,7 +277,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                     </Select>
                     <Select value={filters.minBeds} onValueChange={(value) => handleSelectChange('minBeds', value)}>
                         <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                             <span className="text-white/70 mr-1">Beds:</span><SelectValue placeholder="Any" />
+                            <SelectValue placeholder="Beds" />
                         </SelectTrigger>
                         <SelectContent>
                         <SelectItem value="any">Any</SelectItem>
@@ -322,7 +322,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                         <div className="space-y-2">
                             <Select value={filters.minBaths} onValueChange={(value) => handleSelectChange('minBaths', value)}>
                                 <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                                     <span className="text-white/70 mr-1">Baths:</span><SelectValue placeholder="Any" />
+                                    <SelectValue placeholder="Baths" />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="any">Any</SelectItem>
@@ -334,7 +334,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                             <div className="grid grid-cols-2 gap-2">
                                <Select value={filters.minFloorSize} onValueChange={(value) => handleSelectChange('minFloorSize', value)}>
                                     <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                                         <span className="text-white/70 mr-1">Min Size:</span><SelectValue placeholder="Any" />
+                                        <SelectValue placeholder="Min Size" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
@@ -342,7 +342,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                                 </Select>
                                 <Select value={filters.maxFloorSize} onValueChange={(value) => handleSelectChange('maxFloorSize', value)}>
                                     <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50">
-                                         <span className="text-white/70 mr-1">Max Size:</span><SelectValue placeholder="Any" />
+                                        <SelectValue placeholder="Max Size" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
