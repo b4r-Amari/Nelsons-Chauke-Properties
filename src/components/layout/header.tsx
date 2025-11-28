@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, ChevronDown } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
@@ -153,14 +153,14 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
           <div className="md:hidden">
              <Sheet open={isMobileMenuOpen} onOpenChange={handleMobileMenuToggle}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Open mobile menu" className="h-16 w-16">
-                  <Menu className="h-12 w-12" />
+                <Button variant="ghost" size="icon" aria-label="Open mobile menu" className="h-20 w-20">
+                  <Menu className="h-14 w-14" />
                 </Button>
               </SheetTrigger>
                <SheetContent side="left" className="w-full max-w-[320px] bg-background text-foreground p-0">
                     <SheetHeader className="flex flex-row h-20 items-center justify-between border-b px-4">
                         <Logo />
-                         <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
+                        <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
                         <SheetDescription className="sr-only">
                             A list of links to navigate the NC Properties website.
                         </SheetDescription>
@@ -170,7 +170,6 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                             <ul className="space-y-2 w-full">
                             {mobileNavLinks.map((link) => (
                                 <li key={link.href || link.label}>
-                                    <SheetClose asChild>
                                     <Link
                                         href={link.href || '#'}
                                         className={cn(
@@ -179,10 +178,10 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                                             ? "bg-muted text-foreground"
                                             : "hover:bg-muted"
                                         )}
+                                        onClick={() => handleMobileMenuToggle(false)}
                                     >
                                         {link.label}
                                     </Link>
-                                    </SheetClose>
                                 </li>
                             ))}
                             </ul>
@@ -196,5 +195,3 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
     </header>
   );
 }
-
-    
