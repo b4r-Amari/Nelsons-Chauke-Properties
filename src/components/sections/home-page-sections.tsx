@@ -57,14 +57,12 @@ export function HeroSection() {
       />
       <div className="absolute inset-0 bg-black/60" />
       <div className="relative z-10 container text-center flex flex-col items-center">
-        <div className="bg-black/30 backdrop-blur-sm p-6 rounded-lg">
-          <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">
-            We have space for you
-          </h1>
-          <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
-            Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
-          </p>
-        </div>
+        <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">
+          We have space for you
+        </h1>
+        <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
+          Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
+        </p>
         <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-black/20 backdrop-blur-md border border-white/20 mt-8">
           <CardContent className="p-4">
              <PropertyFilter properties={properties} onFilterChange={() => {}} />
@@ -282,5 +280,6 @@ export function NewsletterSection() {
   );
 }
 
+    
     
     
