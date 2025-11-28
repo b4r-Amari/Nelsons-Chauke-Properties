@@ -116,7 +116,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
   }, [filters, properties, activeTab]);
 
   useEffect(() => {
-      const location = searchParams.get('location') || '';
+      const location = searchParams.get("location") || '';
       const status = searchParams.get('status') || 'for-sale';
       setFilters(prev => ({...prev, location, status}));
       setActiveTab(status === 'to-let' ? 'rent' : 'buy');
@@ -135,7 +135,7 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
                   key={tab}
                   value={tab.toLowerCase().replace(' ', '-')}
                   className={cn(
-                    "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-md font-medium pb-2 px-3 rounded-none border-b-2 border-transparent data-[state=active]:border-white hover:text-white",
+                    "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-semibold pb-3 px-4 rounded-none border-b-2 border-transparent data-[state=active]:border-white hover:text-white",
                     tab === "Agents" ? "hidden sm:inline-flex" : "inline-flex"
                   )}
                 >
@@ -299,3 +299,5 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     </div>
   );
 }
+
+    
