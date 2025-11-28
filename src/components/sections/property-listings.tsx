@@ -119,10 +119,11 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
               <h1 className="text-4xl font-bold font-headline text-brand-deep">{pageDetails.title}</h1>
               <p className="text-lg mt-2 text-muted-foreground">{pageDetails.description}</p>
             </div>
-           <PropertyFilter 
-            properties={allProperties} 
-            onFilterChange={setFilteredProperties}
-          />
+        </div>
+        <div className="bg-primary py-10">
+            <div className="container">
+              <PropertyFilter properties={allProperties} onFilterChange={setFilteredProperties}/>
+            </div>
         </div>
       </div>
 
