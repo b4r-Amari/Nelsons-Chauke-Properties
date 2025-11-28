@@ -106,13 +106,13 @@ export default function AdminAgentsPage() {
                         Name {getSortIndicator('name')}
                     </Button>
                 </TableHead>
-                <TableHead>
+                <TableHead className="hidden sm:table-cell">
                      <Button variant="ghost" onClick={() => requestSort('role')}>
                         Role {getSortIndicator('role')}
                     </Button>
                 </TableHead>
                 <TableHead className="hidden md:table-cell">Email</TableHead>
-                <TableHead className="hidden sm:table-cell">
+                <TableHead className="hidden lg:table-cell">
                     <Button variant="ghost" onClick={() => requestSort('propertyCount')}>
                         Properties {getSortIndicator('propertyCount')}
                     </Button>
@@ -133,9 +133,9 @@ export default function AdminAgentsPage() {
                         <div className="font-medium">{agent.name}</div>
                     </div>
                   </TableCell>
-                  <TableCell>{agent.role}</TableCell>
+                  <TableCell className="hidden sm:table-cell">{agent.role}</TableCell>
                   <TableCell className="hidden md:table-cell">{agent.email}</TableCell>
-                   <TableCell className="text-center hidden sm:table-cell">{agent.propertyCount}</TableCell>
+                   <TableCell className="text-center hidden lg:table-cell">{agent.propertyCount}</TableCell>
                   <TableCell>
                      <DropdownMenu>
                         <DropdownMenuTrigger asChild>

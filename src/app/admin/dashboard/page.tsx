@@ -69,7 +69,7 @@ export default function AdminDashboardPage() {
       </div>
       <div className="mt-12">
         <h2 className="text-2xl font-bold font-headline mb-4">Quick Actions</h2>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <Link href="/admin/properties/new">
                  <Card className="flex items-center justify-center p-6 text-center hover:bg-muted transition-colors cursor-pointer">
                     <div>

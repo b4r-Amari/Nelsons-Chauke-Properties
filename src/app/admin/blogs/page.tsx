@@ -61,7 +61,7 @@ export default function AdminBlogsPage() {
                 <TableHead className="hidden w-[100px] sm:table-cell">Image</TableHead>
                 <TableHead>Title</TableHead>
                 <TableHead className="hidden md:table-cell">Author</TableHead>
-                <TableHead className="hidden md:table-cell">Category</TableHead>
+                <TableHead className="hidden lg:table-cell">Category</TableHead>
                 <TableHead className="hidden lg:table-cell">Date</TableHead>
                 <TableHead><span className="sr-only">Actions</span></TableHead>
               </TableRow>
@@ -80,7 +80,7 @@ export default function AdminBlogsPage() {
                   </TableCell>
                   <TableCell className="font-medium">{post.title}</TableCell>
                   <TableCell className="hidden md:table-cell">{post.author}</TableCell>
-                  <TableCell className="hidden md:table-cell">
+                  <TableCell className="hidden lg:table-cell">
                     <Badge variant="outline">{post.category}</Badge>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">{post.date}</TableCell>
