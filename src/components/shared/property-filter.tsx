@@ -299,6 +299,3 @@ export function PropertyFilter({ properties, onFilterChange }: { properties: Pro
     </div>
   );
 }
-
-    
-    
