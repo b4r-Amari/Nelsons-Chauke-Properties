@@ -71,7 +71,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
   const [filters, setFilters] = useState({ ...initialFilters, ...initial });
   const [activeTab, setActiveTab] = useState(filters.status === 'to-let' ? 'rent' : 'buy');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-
+  
   useEffect(() => {
     setFilters(prev => ({...prev, ...initial}))
   }, [initial]);
@@ -83,7 +83,11 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
     const filtered = properties.filter(p => {
         if (activeTab === 'buy' && p.status !== 'for-sale') return false;
         if (activeTab === 'rent' && p.status !== 'to-let') return false;
-        if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
+
+        if (location && !p.location.toLowerCase().includes(location.toLowerCase())) {
+            return false;
+        }
+
         if (propertyType !== 'any' && p.type !== propertyType) return false;
         if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
         if (minBaths !== 'any' && p.baths < parseInt(minBaths)) return false;
@@ -169,7 +173,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
         const { location, propertyType, minBeds, minPrice, maxPrice, minFloorSize, maxFloorSize } = filters;
         if (activeTab === 'buy' && p.status !== 'for-sale') return false;
         if (activeTab === 'rent' && p.status !== 'to-let') return false;
-        if (location && !p.location.toLowerCase().includes(location.toLowerCase()) && !p.address.toLowerCase().includes(location.toLowerCase())) return false;
+        if (location && !p.location.toLowerCase().includes(location.toLowerCase())) return false;
         if (propertyType !== 'any' && p.type !== propertyType) return false;
         if (minBeds !== 'any' && p.beds < parseInt(minBeds)) return false;
         if (minPrice !== 'any' && p.price < parseInt(minPrice)) return false;
@@ -185,6 +189,18 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
   }, [filters.status]);
 
   const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-bold pb-3 px-5 rounded-none border-b-4 border-transparent data-[state=active]:border-brand-bright hover:text-white";
+
+  const floorSizeOptions = [
+    { value: 'any', label: 'Any Size' },
+    { value: '50', label: '50 m²' },
+    { value: '100', label: '100 m²' },
+    { value: '150', label: '150 m²' },
+    { value: '200', label: '200 m²' },
+    { value: '300', label: '300 m²' },
+    { value: '500', label: '500 m²' },
+    { value: '1000', label: '1000 m²' },
+    { value: '2000', label: '2000 m²' },
+  ];
 
   return (
     <div className="font-sans max-w-[900px] mx-auto">
@@ -205,26 +221,12 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
             <Card className="shadow-lg rounded-t-lg rounded-b-none p-2 bg-white">
                 <CardContent className="p-0">
                     <div className="flex flex-col md:flex-row items-center gap-2">
-                        <div className="relative w-full">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                            <Input
-                                id="location"
-                                placeholder="Search for a suburb, city or province"
-                                value={filters.location}
-                                onChange={(e) => handleInputChange('location', e.target.value)}
-                                className="pl-10 h-12 text-base border-0 focus-visible:ring-0 shadow-none"
-                            />
-                            {filters.location && (
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                                onClick={() => handleInputChange('location', '')}
-                            >
-                                <X className="h-4 w-4" />
-                            </Button>
-                            )}
-                        </div>
+                        <Input
+                            placeholder="Search by suburb..."
+                            className="h-12 text-base border-0 focus-visible:ring-0 shadow-none flex-grow"
+                            value={filters.location}
+                            onChange={(e) => handleInputChange('location', e.target.value)}
+                        />
                         <div className="flex w-full md:w-auto gap-2">
                             <Button variant="outline" className="w-1/2 md:w-auto h-12 text-base font-normal">
                             <MapIcon className="mr-2 h-5 w-5" /> Map
@@ -322,24 +324,20 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                                     <SelectItem value="3">3+</SelectItem>
                                 </SelectContent>
                             </Select>
-                            <Input 
-                                className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" 
-                                placeholder="Min Floor Size (m²)" 
-                                type="number"
-                                min={250}
-                                max={20000}
-                                value={filters.minFloorSize === 'any' ? '' : filters.minFloorSize}
-                                onChange={(e) => handleInputChange('minFloorSize', e.target.value || 'any')}
-                            />
-                            <Input 
-                                className="h-10 bg-primary-foreground/10 text-white border-white/50 placeholder:text-white/70" 
-                                placeholder="Max Floor Size (m²)"
-                                type="number"
-                                min={250}
-                                max={20000}
-                                value={filters.maxFloorSize === 'any' ? '' : filters.maxFloorSize}
-                                onChange={(e) => handleInputChange('maxFloorSize', e.target.value || 'any')}
-                            />
+                            <div className="grid grid-cols-2 gap-2">
+                               <Select value={filters.minFloorSize} onValueChange={(value) => handleSelectChange('minFloorSize', value)}>
+                                    <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Min Size" /></SelectTrigger>
+                                    <SelectContent>
+                                        {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                                <Select value={filters.maxFloorSize} onValueChange={(value) => handleSelectChange('maxFloorSize', value)}>
+                                    <SelectTrigger className="h-10 bg-primary-foreground/10 text-white border-white/50"><SelectValue placeholder="Max Size" /></SelectTrigger>
+                                    <SelectContent>
+                                        {floorSizeOptions.map(opt => <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                         </div>
                         <div>
