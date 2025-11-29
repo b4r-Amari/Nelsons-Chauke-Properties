@@ -292,7 +292,7 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                     ))}
                     </div>
                 </section>
-                 <section>
+                 <section className="hidden md:block">
                     <EnquiryForm propertyId={params.id} />
                 </section>
             </div>
