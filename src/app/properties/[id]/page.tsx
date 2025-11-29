@@ -175,18 +175,21 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
         
         <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} isOnShow={property.onShow} />
 
-        <div className="flex justify-around items-center bg-card text-center border-y p-2 md:hidden">
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
+        <div className="container mx-auto px-4">
+           <div className="flex justify-start items-center bg-card text-center border-y my-2 p-2">
+            <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
+            <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
+            <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
+             <div className="ml-auto">
+              <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
+            </div>
+          </div>
         </div>
-
 
       <div className="container py-8">
         <div className="max-w-4xl mx-auto">
             <main>
-                <div className="md:p-8">
+                <div>
                      <header className="mb-6 border-b pb-6">
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                             <div>
