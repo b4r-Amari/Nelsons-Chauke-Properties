@@ -5,11 +5,24 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
-- **Multi-Select Autocomplete Filter**: Implemented an advanced "Multi-Select Autocomplete Search Input with Chips" for location filtering, allowing users to search for and select multiple suburbs simultaneously.
-- **Automatic Scrolling**: The property listings page now automatically scrolls down to the results when a search is initiated from the homepage, creating a smoother user experience.
-- **Differentiated Size Options**: Added a separate, larger range of size options for the "Erf Size" filter in the property filter, distinguishing it from the "Floor Size" options for more accurate searching.
+- **Property Details Page Redesign**:
+    - Overhauled the property details page with a cleaner, borderless, all-white layout for a more modern feel.
+    - Consolidated property specs (beds, baths, size) into a single, four-column row for better scannability.
+    - Added a new, detailed "Property Details" section to display key information like listing number, rates, and levies.
+    - Integrated a "Home Loan Calculator" directly onto the property details page for instant repayment estimates.
+    - Implemented a responsive image gallery with a dynamic grid layout on desktop (one large image, two small) and a full-width view on mobile.
+- **Floating Mobile Contact Bar**: Added a new floating contact bar at the bottom of the screen on mobile devices for the property details page, featuring quick actions for "Call", "WhatsApp", and "Email".
+- **Sell Page Redesign**:
+    - Transformed the "Sell" page into an informational guide, outlining a clear 4-step process for selling a property with NC Properties.
+    - Streamlined the valuation request form by removing unnecessary fields (file upload, message) to simplify the user journey.
+- **Calculator Descriptions**: Added descriptive text to each tab on the financial calculators page to clarify the purpose and function of each tool.
 
 ### Changed
+- **Conditional Video Button**: The "Video" button on the property details action bar is now conditionally rendered, only appearing if a video URL exists for the property.
+- **Action Bar Behavior**: The action bar (Photos, Map, Video) on the property details page is now static and scrolls with the page, instead of floating.
+- **Mobile UI Enhancements**:
+    - The "Make an Enquiry" form on the property details page is now hidden on mobile devices to avoid redundancy with the new floating contact bar.
+    - The floating contact bar was styled with rounded corners and a small margin to give it a more modern appearance.
 - **Property Filter Redesign**:
     - Overhauled the property filter to a modern, full-width layout inspired by Property24.
     - Removed "Developments" and "Sold Prices" tabs to simplify the interface.
@@ -40,8 +53,11 @@ All notable changes to this project will be documented in this file.
     - Resolved a horizontal scroll issue on the property details page caused by carousel controls.
 
 ### Removed
+- **"View All Photos" Button**: Removed the explicit "View all photos" button from the property image gallery, relying on intuitive image clicks to open the lightbox.
 - **Wishlist Feature**: Completely removed the wishlist feature to resolve persistent permission errors and simplify the codebase.
 - **Sold Properties Page**: Deleted the "Sold Properties" page and all links pointing to it.
 - **Duplicate Files**: Removed several duplicate component files that were causing build conflicts.
 - **Header Links**: Removed "About Us" and "Contact Us" from the main header navigation to streamline the user experience.
 - **`patch-package`**: Removed the `patch-package` dependency from `package.json` as it was not needed.
+
+```

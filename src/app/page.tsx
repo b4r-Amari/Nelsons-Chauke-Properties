@@ -26,7 +26,7 @@ async function FeaturedPropertiesSection() {
   const featuredProperties: Property[] = await getProperties({ featuredOnly: true });
 
   return (
-    <section className="py-24 bg-background relative pt-32 md:mt-0">
+    <section className="py-24 bg-background relative mt-32 md:mt-0">
       <div className="container">
         <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties in South Africa, offering the perfect blend of luxury, comfort, and style.</p>
