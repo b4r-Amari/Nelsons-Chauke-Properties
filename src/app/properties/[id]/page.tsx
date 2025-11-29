@@ -163,7 +163,7 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
   ];
 
   return (
-    <div className="bg-background">
+    <div className="bg-white">
        <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateListingSchema) }}
