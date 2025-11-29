@@ -7,6 +7,9 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { getProperties, getAgents, getBlogPosts } from '@/lib/data';
 import { Skeleton } from '@/components/ui/skeleton';
+import { type Property } from '@/components/shared/property-card';
+import { type Agent } from '@/components/shared/agent-card';
+import { type BlogPost } from '@/components/shared/blog-card';
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState([
@@ -19,6 +22,7 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     async function fetchData() {
+      setIsLoading(true);
       const [propertiesData, agentsData, blogData] = await Promise.all([
         getProperties(),
         getAgents(),
@@ -27,7 +31,7 @@ export default function AdminDashboardPage() {
 
       setStats([
         { title: "Total Properties", value: propertiesData.length, icon: Building, description: "All properties listed" },
-        { title: "For Sale", value: propertiesData.filter(p => p.status === 'for-sale').length, icon: DollarSign, description: "Properties currently for sale" },
+        { title: "For Sale", value: propertiesData.filter((p: Property) => p.status === 'for-sale').length, icon: DollarSign, description: "Properties currently for sale" },
         { title: "Total Agents", value: agentsData.length, icon: Users, description: "Active real estate agents" },
         { title: "Blog Posts", value: blogData.length, icon: Newspaper, description: "Published articles" },
       ]);
