@@ -230,7 +230,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
         <TabsList className="flex justify-center bg-transparent p-0 h-auto gap-0 pb-5">
             <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
             <TabsTrigger value="rent" className={cn(commonTabClass, "inline-flex")}>Rent</TabsTrigger>
-            <TabsTrigger value="agents" asChild className={cn(commonTabClass, "hidden sm:inline-flex", "data-[state=inactive]:border-b-4")}>
+            <TabsTrigger value="agents" asChild className={cn(commonTabClass, "inline-flex", "data-[state=inactive]:border-b-4")}>
                 <Link href="/about-us">Agents</Link>
             </TabsTrigger>
         </TabsList>
