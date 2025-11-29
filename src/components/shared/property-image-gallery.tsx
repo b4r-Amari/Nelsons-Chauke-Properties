@@ -68,11 +68,6 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow }: Proper
                 On Show
               </Badge>
             )}
-            <div className="absolute bottom-4 right-4">
-               <Button variant="outline" className="bg-black/50 text-white border-white hover:bg-white hover:text-black">
-                <Camera className="mr-2 h-4 w-4" /> View all {images.length} photos
-              </Button>
-            </div>
           </div>
           
           {/* Small Image 1 */}
