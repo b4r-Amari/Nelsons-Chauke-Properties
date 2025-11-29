@@ -90,7 +90,7 @@ export default function NewPropertyPage() {
   }
 
   return (
-    <div>
+    <>
        <div className="mb-4">
             <Link href="/admin/properties" className="inline-flex items-center text-brand-deep hover:text-brand-bright transition-colors font-semibold">
               <ArrowLeft className="mr-2 h-4 w-4" />
@@ -246,6 +246,6 @@ export default function NewPropertyPage() {
           </Form>
         </CardContent>
       </Card>
-    </div>
+    </>
   )
 }
