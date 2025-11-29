@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { getAgents } from '@/lib/data';
 import { BackButton } from '@/components/shared/back-button';
 import placeholders from '@/lib/placeholder-images.json';
+import { Card, CardContent } from '@/components/ui/card';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const property = await getProperty(params.id);
@@ -147,97 +148,119 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateListingSchema) }}
         />
-      <div className="container py-8">
-        <div className="mb-6">
-            <BackButton>Back to Listings</BackButton>
-        </div>
-        <div className="grid lg:grid-cols-3 gap-12">
-          {/* Left Column: Gallery and Details */}
-          <main className="lg:col-span-2">
-            <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} />
-            
-            <article className="mt-8">
-              <header className="mb-6">
-                <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
-                    <div>
-                        <h1 className="text-3xl md:text-4xl font-bold font-headline text-brand-deep">{property.address}</h1>
-                        <p className="text-md md:text-lg text-muted-foreground mt-1 flex items-center gap-2">
-                            <MapPin className="h-5 w-5 text-brand-bright" />
-                            {property.location}
-                        </p>
-                    </div>
-                    <div className="text-left sm:text-right flex-shrink-0">
-                        <p className="text-3xl font-bold text-brand-bright">{formatPrice(property.price)}</p>
-                        <div className="flex gap-2 mt-2 justify-start sm:justify-end">
-                            {property.onShow && <Badge className="bg-brand-bright text-white border-none">On Show</Badge>}
-                            {property.status === 'sold' && <Badge variant="destructive">SOLD</Badge>}
-                        </div>
-                    </div>
-                </div>
-              </header>
-
-              <Separator className="my-8" />
-              
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center border rounded-lg p-4 md:p-6 bg-card">
-                 <div className="flex flex-col items-center gap-1 md:gap-2">
-                    <BedDouble className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
-                    <span className="font-semibold text-md md:text-lg">{property.beds}</span>
-                    <span className="text-xs md:text-sm text-muted-foreground">Bedrooms</span>
-                </div>
-                <div className="flex flex-col items-center gap-1 md:gap-2">
-                    <Bath className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
-                    <span className="font-semibold text-md md:text-lg">{property.baths}</span>
-                    <span className="text-xs md:text-sm text-muted-foreground">Bathrooms</span>
-                </div>
-                <div className="flex flex-col items-center gap-1 md:gap-2">
-                    <Home className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
-                    <span className="font-semibold text-md md:text-lg">{property.sqft} m²</span>
-                     <span className="text-xs md:text-sm text-muted-foreground">House Size</span>
-                </div>
-                 <div className="flex flex-col items-center gap-1 md:gap-2">
-                    <LandPlot className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
-                    <span className="font-semibold text-md md:text-lg">{property.erfSize} m²</span>
-                    <span className="text-xs md:text-sm text-muted-foreground">Erf Size</span>
-                </div>
-              </div>
-
-              <Separator className="my-8" />
-
-              <section>
-                <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Property Description</h2>
-                <div className="prose prose-lg dark:prose-invert max-w-none">
-                    <p>{property.description}</p>
-                </div>
-              </section>
-              
-               <Separator className="my-8" />
-
-              <section>
-                <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Features</h2>
-                 <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
-                  {property.features.map((feature, index) => (
-                    <li key={index} className="flex items-center gap-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                      <span className="text-muted-foreground">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-
-            </article>
-          </main>
-          
-          {/* Right Column: Enquiry and Agent */}
-          <aside className="lg:col-span-1">
-            <div className="sticky top-24 space-y-8">
-              {propertyAgents.map(agent => (
-                <AgentCard key={agent.id} agent={agent} />
-              ))}
-              <EnquiryForm propertyId={params.id} />
+        <header className="relative h-[300px] md:h-[500px]">
+             <Image
+                src={property.imageUrl}
+                alt={`Main image of the property, showing the ${property.imageHint}.`}
+                data-ai-hint={property.imageHint}
+                fill
+                className="object-cover"
+                priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+            <div className="absolute top-4 left-4 z-10">
+                <BackButton>Back to Listings</BackButton>
             </div>
-          </aside>
+        </header>
+
+      <div className="container py-8 -mt-20 z-10 relative">
+        <div className="max-w-4xl mx-auto">
+            <main>
+                <Card className="shadow-2xl">
+                    <CardContent className="p-6 md:p-8">
+                         <header className="mb-6 border-b pb-6">
+                            <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+                                <div>
+                                    <h1 className="text-3xl md:text-4xl font-bold font-headline text-brand-deep">{property.address}</h1>
+                                    <p className="text-md md:text-lg text-muted-foreground mt-1 flex items-center gap-2">
+                                        <MapPin className="h-5 w-5 text-brand-bright" />
+                                        {property.location}
+                                    </p>
+                                </div>
+                                <div className="text-left sm:text-right flex-shrink-0">
+                                    <p className="text-3xl font-bold text-brand-bright">{formatPrice(property.price)}</p>
+                                    <div className="flex gap-2 mt-2 justify-start sm:justify-end">
+                                        {property.onShow && <Badge className="bg-brand-bright text-white border-none">On Show</Badge>}
+                                        {property.status === 'sold' && <Badge variant="destructive">SOLD</Badge>}
+                                    </div>
+                                </div>
+                            </div>
+                        </header>
+                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center border rounded-lg p-4 md:p-6 bg-muted/50 mb-8">
+                            <div className="flex flex-col items-center gap-1 md:gap-2">
+                                <BedDouble className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
+                                <span className="font-semibold text-md md:text-lg">{property.beds}</span>
+                                <span className="text-xs md:text-sm text-muted-foreground">Bedrooms</span>
+                            </div>
+                            <div className="flex flex-col items-center gap-1 md:gap-2">
+                                <Bath className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
+                                <span className="font-semibold text-md md:text-lg">{property.baths}</span>
+                                <span className="text-xs md:text-sm text-muted-foreground">Bathrooms</span>
+                            </div>
+                            <div className="flex flex-col items-center gap-1 md:gap-2">
+                                <Home className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
+                                <span className="font-semibold text-md md:text-lg">{property.sqft} m²</span>
+                                <span className="text-xs md:text-sm text-muted-foreground">House Size</span>
+                            </div>
+                            <div className="flex flex-col items-center gap-1 md:gap-2">
+                                <LandPlot className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
+                                <span className="font-semibold text-md md:text-lg">{property.erfSize} m²</span>
+                                <span className="text-xs md:text-sm text-muted-foreground">Erf Size</span>
+                            </div>
+                        </div>
+
+                         <article>
+                             <section className="mb-8">
+                                <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Property Description</h2>
+                                <div className="prose prose-lg dark:prose-invert max-w-none">
+                                    <p>{property.description}</p>
+                                </div>
+                            </section>
+                            
+                            <Separator className="my-8" />
+
+                            <section className="mb-8">
+                                <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Features</h2>
+                                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
+                                {property.features.map((feature, index) => (
+                                    <li key={index} className="flex items-center gap-3">
+                                    <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                                    <span className="text-muted-foreground">{feature}</span>
+                                    </li>
+                                ))}
+                                </ul>
+                            </section>
+                         </article>
+                    </CardContent>
+                </Card>
+            </main>
+        </div>
+      </div>
+      <div className="container pb-12">
+        <div className="max-w-4xl mx-auto space-y-12">
+             <section>
+                <h2 className="text-2xl font-bold font-headline mb-6 text-brand-deep text-center">Image Gallery</h2>
+                <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} />
+            </section>
+            
+            <Separator />
+            
+            <div className="grid md:grid-cols-2 gap-12">
+                <section>
+                    <h2 className="text-2xl font-bold font-headline mb-6 text-brand-deep">Contact Agent</h2>
+                    <div className="space-y-8">
+                    {propertyAgents.map(agent => (
+                        <AgentCard key={agent.id} agent={agent} />
+                    ))}
+                    </div>
+                </section>
+                 <section>
+                    <EnquiryForm propertyId={params.id} />
+                </section>
+            </div>
         </div>
       </div>
     </div>
   );
 }
+

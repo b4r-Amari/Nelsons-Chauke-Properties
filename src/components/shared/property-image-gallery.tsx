@@ -43,7 +43,7 @@ export function PropertyImageGallery({ images, mainImageHint }: PropertyImageGal
 
   return (
     <div>
-       <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg mb-4">
+       <div className="relative aspect-video w-full rounded-lg overflow-hidden shadow-lg mb-4 hidden md:block">
         <Image
           src={mainImage}
           alt={`Main image of the property, showing the ${mainImage === images[0] ? mainImageHint : "property interior"}.`}
