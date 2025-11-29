@@ -3,7 +3,6 @@
 "use client"
 
 import { useState, useEffect, Suspense, useMemo, useRef } from "react";
-import Image from "next/image";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import { getProperties } from '@/lib/data';
@@ -90,7 +89,7 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
           return a.price - b.price;
         case 'newest':
         default:
-          return b.id - a.id;
+          return (new Date(b.createdAt) as any) - (new Date(a.createdAt) as any);
       }
     });
 

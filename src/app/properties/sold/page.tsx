@@ -16,8 +16,7 @@ export const metadata: Metadata = {
 
 
 export default async function SoldPropertiesPage() {
-  const allProperties: Property[] = await getProperties();
-  const soldProperties = allProperties.filter(p => p.status === 'sold');
+  const soldProperties: Property[] = await getProperties({ status: 'sold' });
   
   return (
     <>

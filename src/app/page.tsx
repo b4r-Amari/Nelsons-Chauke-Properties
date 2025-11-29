@@ -80,7 +80,9 @@ function ShortAboutSection() {
   );
 }
 
-export default function Home() {
+export default async function Home() {
+    const properties = await getProperties();
+
     const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -99,7 +101,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
       <div className="flex flex-col bg-background">
-        <HeroSection />
+        <HeroSection properties={properties} />
         <FeaturedPropertiesSection />
         <ShortAboutSection />
         <CtaTabsSection />

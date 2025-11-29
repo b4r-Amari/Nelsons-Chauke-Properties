@@ -13,7 +13,6 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from '@/hooks/use-toast';
 import { PropertyFilter } from '../shared/property-filter';
-import { getProperties } from '@/lib/data';
 import type { Property } from '../shared/property-card';
 import placeholders from '@/lib/placeholder-images.json';
 import Link from 'next/link';
@@ -28,21 +27,14 @@ const heroBanners = [
   '/images/backgrounds/hero-banner-4.webp'
 ];
 
-export function HeroSection() {
+export function HeroSection({ properties }: { properties: Property[] }) {
   const [bannerImage, setBannerImage] = useState(heroBanners[0]);
-  const [properties, setProperties] = useState<Property[]>([]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
       setBannerImage(randomBanner);
     }
-    
-    async function fetchProps() {
-        const props = await getProperties();
-        setProperties(props);
-    }
-    fetchProps();
   }, []);
   
   return (
@@ -279,7 +271,3 @@ export function NewsletterSection() {
     </section>
   );
 }
-
-    
-    
-    
