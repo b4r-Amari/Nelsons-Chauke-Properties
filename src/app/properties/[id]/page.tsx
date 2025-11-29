@@ -174,7 +174,7 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
         
         <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} isOnShow={property.onShow} />
 
-        <div className="flex justify-around items-center bg-card text-center border-y p-2 sticky top-20 z-30">
+        <div className="flex justify-around items-center bg-card text-center border-y p-2">
           <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
           <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
           <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
@@ -300,4 +300,3 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
     </div>
   );
 }
-
