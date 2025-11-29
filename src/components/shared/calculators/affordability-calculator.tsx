@@ -79,7 +79,10 @@ export function AffordabilityCalculator() {
 
   return (
     <div>
-        <h2 className="text-2xl md:text-3xl font-bold font-headline mb-8">Calculate what you can afford</h2>
+        <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold font-headline">Calculate what you can afford</h2>
+            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Determine the maximum home loan you could qualify for based on your gross monthly income and expenses. This calculator provides an estimate of your purchasing power, helping you set a realistic budget for your property search.</p>
+        </div>
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <Form {...form}>
                 <form className="space-y-6">

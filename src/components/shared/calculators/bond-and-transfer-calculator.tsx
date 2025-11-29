@@ -102,7 +102,10 @@ export function BondAndTransferCalculator() {
 
   return (
     <div>
-        <h2 className="text-2xl md:text-3xl font-bold font-headline mb-8">Calculate your bond and transfer costs</h2>
+        <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold font-headline">Calculate your bond and transfer costs</h2>
+            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Get a detailed breakdown of the once-off costs involved in buying a property, including bond registration fees, transfer duty, and attorney fees. This helps you budget for the upfront expenses beyond the purchase price.</p>
+        </div>
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <Form {...form}>
                 <form className="space-y-6">

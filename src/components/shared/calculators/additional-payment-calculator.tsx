@@ -85,7 +85,10 @@ export function AdditionalPaymentCalculator() {
 
   return (
     <div>
-        <h2 className="text-2xl md:text-3xl font-bold font-headline mb-8">See what you'll save with extra payments</h2>
+        <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold font-headline">See what you'll save with extra payments</h2>
+            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Discover how making extra payments on your home loan can save you a significant amount of interest and shorten your loan term. Enter an additional monthly payment amount to see the long-term financial benefits.</p>
+        </div>
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <Form {...form}>
                 <form className="space-y-6">

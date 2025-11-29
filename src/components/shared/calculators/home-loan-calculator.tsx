@@ -119,7 +119,10 @@ export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { pu
 
   return (
     <div>
-        <h2 className="text-2xl md:text-3xl font-bold font-headline mb-8">Calculate your monthly bond repayments</h2>
+        <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold font-headline">Calculate your monthly bond repayments</h2>
+            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Estimate your monthly bond repayments, total once-off costs, and the gross monthly income required to qualify for a home loan. Adjust the purchase price, deposit, interest rate, and loan term to see how these factors impact your affordability.</p>
+        </div>
         <div className="grid md:grid-cols-2 gap-8 md:gap-12">
             <Form {...form}>
                 <form className="space-y-6">
