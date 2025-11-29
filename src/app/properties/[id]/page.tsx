@@ -1,7 +1,7 @@
 
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
-import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle } from 'lucide-react';
+import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, Heart, Share2, Video, Map, Camera } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getProperty, getProperties } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
@@ -14,6 +14,7 @@ import { getAgents } from '@/lib/data';
 import { BackButton } from '@/components/shared/back-button';
 import placeholders from '@/lib/placeholder-images.json';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const property = await getProperty(params.id);
@@ -148,25 +149,25 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateListingSchema) }}
         />
-        <header className="relative h-[300px] md:h-[500px]">
-             <Image
-                src={property.imageUrl}
-                alt={`Main image of the property, showing the ${property.imageHint}.`}
-                data-ai-hint={property.imageHint}
-                fill
-                className="object-cover"
-                priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-            <div className="absolute top-4 left-4 z-10">
-                <BackButton>Back to Listings</BackButton>
-            </div>
-        </header>
+        <div className="container py-4">
+          <BackButton>Back to listings</BackButton>
+        </div>
+        
+        <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} isOnShow={property.onShow} />
 
-      <div className="container py-8 -mt-20 z-10 relative">
+        <div className="flex justify-around items-center bg-card text-center border-y p-2 sticky top-20 z-30">
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Heart className="h-5 w-5" />Save</Button>
+        </div>
+
+
+      <div className="container py-8">
         <div className="max-w-4xl mx-auto">
             <main>
-                <Card className="shadow-2xl">
+                <Card className="shadow-lg">
                     <CardContent className="p-6 md:p-8">
                          <header className="mb-6 border-b pb-6">
                             <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -179,10 +180,7 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                                 </div>
                                 <div className="text-left sm:text-right flex-shrink-0">
                                     <p className="text-3xl font-bold text-brand-bright">{formatPrice(property.price)}</p>
-                                    <div className="flex gap-2 mt-2 justify-start sm:justify-end">
-                                        {property.onShow && <Badge className="bg-brand-bright text-white border-none">On Show</Badge>}
-                                        {property.status === 'sold' && <Badge variant="destructive">SOLD</Badge>}
-                                    </div>
+                                    {property.status === 'sold' && <Badge variant="destructive" className="mt-2">SOLD</Badge>}
                                 </div>
                             </div>
                         </header>
@@ -238,11 +236,6 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
       </div>
       <div className="container pb-12">
         <div className="max-w-4xl mx-auto space-y-12">
-             <section>
-                <h2 className="text-2xl font-bold font-headline mb-6 text-brand-deep text-center">Image Gallery</h2>
-                <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} />
-            </section>
-            
             <Separator />
             
             <div className="grid md:grid-cols-2 gap-12">
@@ -263,4 +256,3 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
     </div>
   );
 }
-
