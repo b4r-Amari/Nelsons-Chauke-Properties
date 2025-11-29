@@ -47,7 +47,7 @@ const calculateTransferDuty = (price: number) => {
 const calculateAttorneyFee = (amount: number) => (amount * 0.0075) + 5000;
 
 
-export function HomeLoanCalculator() {
+export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { purchasePrice?: number }) {
   const [result, setResult] = useState({
     monthlyPayment: 0,
     onceOffCosts: 0,
@@ -60,7 +60,7 @@ export function HomeLoanCalculator() {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      purchasePrice: 1000000,
+      purchasePrice: initialPurchasePrice || 1000000,
       deposit: 0,
       interestRate: 11.75,
       loanTerm: 20,
@@ -110,6 +110,12 @@ export function HomeLoanCalculator() {
     calculateResults(form.getValues());
     return () => subscription.unsubscribe();
   }, [form, calculateResults]);
+  
+  useEffect(() => {
+      if (initialPurchasePrice) {
+          form.setValue('purchasePrice', initialPurchasePrice);
+      }
+  }, [initialPurchasePrice, form]);
 
   return (
     <div>
@@ -223,3 +229,4 @@ export function HomeLoanCalculator() {
     </div>
   );
 }
+
