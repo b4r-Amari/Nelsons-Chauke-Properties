@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, UploadCloud } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -19,6 +19,8 @@ import type { Agent } from "@/components/shared/agent-card"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import placeholders from "@/lib/placeholder-images.json";
+import { Separator } from "@/components/ui/separator"
+import { Label } from "@/components/ui/label"
 
 const formSchema = z.object({
   address: z.string().min(5, "Address is too short."),
@@ -182,6 +184,27 @@ export default function NewPropertyPage() {
                             <FormItem><FormLabel>Image Hint</FormLabel><FormControl><Input placeholder="e.g. modern house exterior" {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                     </div>
+                    <Separator className="my-6" />
+                    <div>
+                        <Label>Upload Media</Label>
+                        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10">
+                            <div className="text-center">
+                                <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
+                                <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                                <label
+                                    htmlFor="file-upload"
+                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-brand-bright focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-deep focus-within:ring-offset-2 hover:text-brand-deep"
+                                >
+                                    <span>Upload a file</span>
+                                    <input id="file-upload" name="file-upload" type="file" className="sr-only" />
+                                </label>
+                                <p className="pl-1">or drag and drop</p>
+                                </div>
+                                <p className="text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
+                            </div>
+                        </div>
+                    </div>
+                    <Separator className="my-6" />
                     <FormField
                       control={form.control}
                       name="agentIds"
