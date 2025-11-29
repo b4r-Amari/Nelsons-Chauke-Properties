@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { ArrowLeft, UploadCloud } from "lucide-react"
+import { ArrowLeft, UploadCloud, X, Image as ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation"
 import placeholders from "@/lib/placeholder-images.json";
 import { Separator } from "@/components/ui/separator"
 import { Label } from "@/components/ui/label"
+import Image from "next/image"
 
 const formSchema = z.object({
   address: z.string().min(5, "Address is too short."),
@@ -36,7 +37,7 @@ const formSchema = z.object({
   features: z.array(z.string()).optional().default([]),
   onShow: z.boolean().default(false),
   agentIds: z.array(z.number()).min(1, { message: "Please assign at least one agent." }),
-  imageUrl: z.string().url({ message: "Please enter a valid URL." }),
+  imageUrls: z.array(z.string().url()).min(1, "Please provide at least one image URL."),
   imageHint: z.string().min(2, { message: "Image hint must be at least 2 characters." }),
   slug: z.string().min(3, "Slug is required."),
   isFavorite: z.boolean().default(false),
@@ -47,6 +48,7 @@ export default function NewPropertyPage() {
   const { toast } = useToast()
   const router = useRouter();
   const [agents, setAgents] = useState<Agent[]>([]);
+  const [newImageUrl, setNewImageUrl] = useState("");
 
   useEffect(() => {
     async function fetchAgents() {
@@ -72,13 +74,47 @@ export default function NewPropertyPage() {
       features: ["Swimming Pool", "Garden", "Secure Estate"],
       onShow: false,
       agentIds: [],
-      imageUrl: placeholders.propertyDefault.url,
+      imageUrls: [placeholders.propertyDefault.url],
       imageHint: placeholders.propertyDefault.hint,
       slug: "",
       isFavorite: false,
       yearBuilt: 2024,
     },
   })
+
+  const imageUrls = form.watch("imageUrls");
+
+  const handleAddImageUrl = () => {
+    if (newImageUrl && z.string().url().safeParse(newImageUrl).success) {
+      form.setValue("imageUrls", [...(form.getValues("imageUrls") || []), newImageUrl]);
+      setNewImageUrl("");
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Invalid URL",
+        description: "Please enter a valid image URL.",
+      });
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const uploadedImageUrls = Array.from(files).map(file => URL.createObjectURL(file));
+      // For this prototype, we'll use blob URLs. In a real app, you'd upload them to a service like Firebase Storage and get a permanent URL.
+      form.setValue("imageUrls", [...(form.getValues("imageUrls") || []), ...uploadedImageUrls]);
+      toast({
+        title: "Images Added",
+        description: `${files.length} image(s) have been added to the gallery.`,
+      });
+    }
+  };
+
+  const removeImage = (index: number) => {
+    const currentImages = form.getValues("imageUrls") || [];
+    form.setValue("imageUrls", currentImages.filter((_, i) => i !== index));
+  };
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     // This is a simulation. In a real app this would write to a database.
@@ -176,33 +212,71 @@ export default function NewPropertyPage() {
                  {/* Image & Agent */}
                 <div className="space-y-4 p-4 border rounded-lg">
                     <h3 className="text-lg font-semibold font-headline">Media & Assignment</h3>
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <FormField control={form.control} name="imageUrl" render={({ field }) => (
-                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input placeholder="https://example.com/image.png" {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
-                        <FormField control={form.control} name="imageHint" render={({ field }) => (
-                            <FormItem><FormLabel>Image Hint</FormLabel><FormControl><Input placeholder="e.g. modern house exterior" {...field} /></FormControl><FormMessage /></FormItem>
-                        )} />
+                    
+                    <FormField
+                      control={form.control}
+                      name="imageUrls"
+                      render={() => (
+                        <FormItem>
+                          <FormLabel>Image Gallery</FormLabel>
+                          <Card className="border-dashed">
+                            <CardContent className="p-4">
+                              {imageUrls && imageUrls.length > 0 ? (
+                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                  {imageUrls.map((url, index) => (
+                                    <div key={index} className="relative group aspect-video">
+                                      <Image src={url} alt={`Property image ${index + 1}`} fill className="rounded-md object-cover" />
+                                      <Button
+                                        type="button"
+                                        variant="destructive"
+                                        size="icon"
+                                        className="absolute top-1 right-1 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                        onClick={() => removeImage(index)}
+                                      >
+                                        <X className="h-4 w-4" />
+                                      </Button>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
+                                    <ImageIcon className="h-12 w-12 mb-2" />
+                                    <p>Your image gallery is empty.</p>
+                                </div>
+                              )}
+                            </CardContent>
+                          </Card>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <div className="flex items-center gap-2">
+                        <Input 
+                            placeholder="Add another image URL" 
+                            value={newImageUrl} 
+                            onChange={(e) => setNewImageUrl(e.target.value)} 
+                        />
+                        <Button type="button" variant="outline" onClick={handleAddImageUrl}>Add URL</Button>
                     </div>
+
                     <Separator className="my-6" />
                     <div>
-                        <Label>Upload Media</Label>
-                        <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10">
-                            <div className="text-center">
-                                <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
-                                <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                <label
-                                    htmlFor="file-upload"
-                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-brand-bright focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-deep focus-within:ring-offset-2 hover:text-brand-deep"
-                                >
-                                    <span>Upload a file</span>
-                                    <input id="file-upload" name="file-upload" type="file" className="sr-only" />
-                                </label>
-                                <p className="pl-1">or drag and drop</p>
+                        <Label htmlFor="file-upload" className="cursor-pointer">
+                            <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 hover:bg-muted/50 transition-colors">
+                                <div className="text-center">
+                                    <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
+                                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                                        <span className="relative font-semibold text-brand-bright focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-deep focus-within:ring-offset-2 hover:text-brand-deep">
+                                            Upload files
+                                        </span>
+                                        <p className="pl-1">or drag and drop</p>
+                                    </div>
+                                    <p className="text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
                                 </div>
-                                <p className="text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
                             </div>
-                        </div>
+                        </Label>
+                        <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple onChange={handleFileChange} accept="image/png, image/jpeg" />
                     </div>
                     <Separator className="my-6" />
                     <FormField
@@ -272,3 +346,5 @@ export default function NewPropertyPage() {
     </>
   )
 }
+
+    
