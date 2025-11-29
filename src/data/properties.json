@@ -19,7 +19,8 @@
     "features": ["Swimming Pool", "Landscaped Garden", "Double Garage", "Secure Estate", "Covered Patio", "Gourmet Kitchen", "Close to Sandton City"],
     "yearBuilt": 2018,
     "onShow": true,
-    "agentIds": [1, 4]
+    "agentIds": [1, 4],
+    "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
   },
   {
     "id": 2,

@@ -179,7 +179,9 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
            <div className="flex justify-start items-center bg-card text-center border-y my-2 p-2">
             <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
             <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
-            <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
+            {property.videoUrl && (
+              <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
+            )}
              <div className="ml-auto">
               <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
             </div>

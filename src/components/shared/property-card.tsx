@@ -27,6 +27,7 @@ export type Property = {
   yearBuilt: number;
   onShow?: boolean;
   agentIds: number[];
+  videoUrl?: string;
 };
 
 type PropertyCardProps = {
