@@ -2,58 +2,77 @@
 import { type Property } from '@/components/shared/property-card';
 import { type Agent } from '@/components/shared/agent-card';
 import { type BlogPost } from '@/components/shared/blog-card';
+import { db } from './firebase/firebase';
+import { collection, getDocs, doc, getDoc, query, where, limit } from 'firebase/firestore';
 
-import properties from '@/data/properties.json';
-import agents from '@/data/agents.json';
-import blog from '@/data/blog.json';
+// Helper to convert Firestore document to a plain object
+function docToObj(d: any) {
+    const data = d.data();
+    return {
+        ...data,
+        id: d.id,
+        // Convert Timestamps to serializable strings
+        date: data.date?.toDate()?.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) || null,
+        createdAt: data.createdAt?.toDate()?.toISOString() || null,
+        updatedAt: data.updatedAt?.toDate()?.toISOString() || null,
+    };
+}
+
 
 // Properties
 export async function getProperties(options: { featuredOnly?: boolean; status?: 'on-show' | 'sold' } = {}): Promise<Property[]> {
-  let propertyList: Property[] = properties as Property[];
+  const propertiesCol = collection(db, 'properties');
+  let q;
 
   if (options.featuredOnly) {
-    propertyList = propertyList.filter(p => p.isFavorite && p.status === 'for-sale').slice(0, 8);
+    q = query(propertiesCol, where('isFavorite', '==', true), where('status', '==', 'for-sale'), limit(8));
   } else if (options.status) {
     if (options.status === 'on-show') {
-      propertyList = propertyList.filter(p => p.onShow && p.status !== 'sold');
+        q = query(propertiesCol, where('onShow', '==', true), where('status', '!=', 'sold'));
     } else {
-      propertyList = propertyList.filter(p => p.status === options.status);
+        q = query(propertiesCol, where('status', '==', options.status));
     }
   } else {
-    propertyList = propertyList.filter(p => p.status !== 'sold');
+     q = query(propertiesCol, where('status', '!=', 'sold'));
   }
 
-  return propertyList;
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(docToObj) as Property[];
 }
 
 export async function getProperty(id: string): Promise<Property | null> {
-  const property = properties.find(p => p.id.toString() === id);
-  if (property) {
-    return property as Property;
-  }
-  return null;
+  const propertyDoc = await getDoc(doc(db, 'properties', id));
+  return propertyDoc.exists() ? docToObj(propertyDoc) as Property : null;
 }
 
 // Agents
 export async function getAgents(): Promise<Agent[]> {
-  return agents as Agent[];
+  const agentsCol = collection(db, 'agents');
+  const snapshot = await getDocs(agentsCol);
+  return snapshot.docs.map(docToObj) as Agent[];
 }
 
 export async function getAgent(slug: string): Promise<Agent | null> {
-  const agent = agents.find(a => a.slug === slug);
-  return agent ? (agent as Agent) : null;
+  const q = query(collection(db, 'agents'), where('slug', '==', slug), limit(1));
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) {
+    return null;
+  }
+  return docToObj(snapshot.docs[0]) as Agent;
 }
 
 // Blog Posts
 export async function getBlogPosts(): Promise<BlogPost[]> {
-    const posts: BlogPost[] = blog.map(post => ({
-        ...post,
-        id: post.slug
-    }));
-    return posts;
+    const blogCol = collection(db, 'blogPosts');
+    const snapshot = await getDocs(blogCol);
+    return snapshot.docs.map(docToObj) as BlogPost[];
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  const post = blog.find(p => p.slug === slug);
-  return post ? { ...post, id: slug } as BlogPost : null;
+  const q = query(collection(db, 'blogPosts'), where('slug', '==', slug), limit(1));
+  const snapshot = await getDocs(q);
+  if (snapshot.empty) {
+      return null;
+  }
+  return docToObj(snapshot.docs[0]) as BlogPost;
 }
