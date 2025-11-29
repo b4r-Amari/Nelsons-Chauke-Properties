@@ -18,6 +18,7 @@ import { type Agent } from '@/components/shared/agent-card';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
+import { deleteProperty, updateProperty } from '@/lib/firebase/firestore';
 
 const formatPrice = (price: number, status: 'for-sale' | 'to-let' | 'sold') => {
     const isRental = status === 'to-let';
@@ -39,15 +40,16 @@ export default function AdminPropertiesPage() {
   const [sortConfig, setSortConfig] = useState<{ key: keyof Property, direction: 'asc' | 'desc' } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchData() {
+  const fetchPageData = async () => {
       setIsLoading(true);
       const [props, ags] = await Promise.all([getProperties(), getAgents()]);
       setPropertyList(props);
       setAgents(ags);
       setIsLoading(false);
-    }
-    fetchData();
+  }
+
+  useEffect(() => {
+    fetchPageData();
   }, []);
 
   const sortedProperties = useMemo(() => {
@@ -86,17 +88,43 @@ export default function AdminPropertiesPage() {
     return sortConfig.direction === 'asc' ? '▲' : '▼';
   };
 
-  const handleAgentAssigned = async (propertyId: number, newAgentId: number) => {
-    // This is a simulation. In a real app this would write to a database.
-    console.log(`Assigning agent ${newAgentId} to property ${propertyId}`);
-    setPropertyList(prev => prev.map(p => p.id === propertyId ? { ...p, agentIds: [newAgentId] } : p));
-    const agentName = agents.find(a => a.id === newAgentId)?.name;
-    const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
-    toast({
-      title: "Agent Reassigned (Simulated)",
-      description: `${agentName} has been assigned to ${propertyAddress}.`,
-    });
+  const handleAgentAssigned = async (propertyId: string, newAgentId: string) => {
+    const result = await updateProperty(propertyId, { agentIds: [newAgentId] });
+    if (result.success) {
+      const agentName = agents.find(a => a.id === newAgentId)?.name;
+      const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
+      toast({
+        title: "Agent Reassigned",
+        description: `${agentName} has been assigned to ${propertyAddress}.`,
+      });
+      fetchPageData(); // Re-fetch data to reflect changes
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: result.error || "An unknown error occurred.",
+      });
+    }
   };
+
+  const handleDelete = async (id: string, address: string) => {
+    if (confirm(`Are you sure you want to delete the property: ${address}?`)) {
+        const result = await deleteProperty(id);
+        if(result.success) {
+            toast({
+                title: "Property Deleted",
+                description: `${address} has been successfully deleted.`,
+            });
+            fetchPageData(); // Re-fetch data
+        } else {
+             toast({
+                variant: "destructive",
+                title: "Error Deleting Property",
+                description: result.error || "An unknown error occurred.",
+            });
+        }
+    }
+  }
 
   const handleNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -161,7 +189,7 @@ export default function AdminPropertiesPage() {
               </TableHeader>
               <TableBody>
                 {currentProperties.map((property) => {
-                  const propertyAgents = agents.filter(agent => property.agentIds.includes(agent.id));
+                  const propertyAgents = agents.filter(agent => property.agentIds.includes(String(agent.id)));
                   return (
                     <TableRow key={property.id}>
                       <TableCell className="font-mono text-xs hidden sm:table-cell">{String(property.id).substring(0, 5)}...</TableCell>
@@ -206,7 +234,7 @@ export default function AdminPropertiesPage() {
                               <DropdownMenuItem>
                                 <Pencil className="mr-2 h-4 w-4" /> Edit
                                 </DropdownMenuItem>
-                              <DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDelete(property.id, property.address)}>
                                 <Trash2 className="mr-2 h-4 w-4" /> Delete
                               </DropdownMenuItem>
                               <DropdownMenuSeparator />
@@ -241,13 +269,13 @@ export default function AdminPropertiesPage() {
   );
 }
 
-function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Property; agents: Agent[]; onAgentAssigned: (propertyId: number, agentId: number) => void; }) {
+function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Property; agents: Agent[]; onAgentAssigned: (propertyId: string, agentId: string) => void; }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(String(property.agentIds[0]));
 
   const handleSubmit = () => {
     if (selectedAgentId) {
-      onAgentAssigned(property.id, parseInt(selectedAgentId));
+      onAgentAssigned(property.id, selectedAgentId);
       setIsOpen(false);
     }
   };

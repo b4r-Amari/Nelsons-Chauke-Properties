@@ -12,7 +12,8 @@ import Link from 'next/link';
 import { getAgents, getProperties } from '@/lib/data';
 import type { Property } from '@/components/shared/property-card';
 import type { Agent } from '@/components/shared/agent-card';
-
+import { deleteAgent } from '@/lib/firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 type AgentWithCount = Agent & {
     propertyCount: number;
@@ -22,19 +23,22 @@ export default function AdminAgentsPage() {
   const [agents, setAgents] = useState<AgentWithCount[]>([]);
   const [sortConfig, setSortConfig] = useState<{ key: keyof AgentWithCount, direction: 'asc' | 'desc' } | null>({ key: 'id', direction: 'asc' });
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  const fetchData = async () => {
+      setIsLoading(true);
+      const [agentsData, propertiesData] = await Promise.all([getAgents(), getProperties()]);
+      
+      const agentsWithPropertyCount: AgentWithCount[] = agentsData.map(agent => ({
+          ...agent,
+          propertyCount: propertiesData.filter((p: Property) => p.agentIds.includes(String(agent.id))).length
+      }));
+      
+      setAgents(agentsWithPropertyCount);
+      setIsLoading(false);
+  }
 
   useEffect(() => {
-    async function fetchData() {
-        const [agentsData, propertiesData] = await Promise.all([getAgents(), getProperties()]);
-        
-        const agentsWithPropertyCount: AgentWithCount[] = agentsData.map(agent => ({
-            ...agent,
-            propertyCount: propertiesData.filter((p: Property) => p.agentIds.includes(agent.id)).length
-        }));
-        
-        setAgents(agentsWithPropertyCount);
-        setIsLoading(false);
-    }
     fetchData();
   }, []);
 
@@ -64,6 +68,25 @@ export default function AdminAgentsPage() {
     }
     setSortConfig({ key, direction });
   };
+  
+  const handleDelete = async (id: string, name: string) => {
+      if(confirm(`Are you sure you want to delete agent: ${name}?`)) {
+          const result = await deleteAgent(id);
+          if (result.success) {
+              toast({
+                  title: "Agent Deleted",
+                  description: `${name} has been successfully deleted.`
+              });
+              fetchData();
+          } else {
+              toast({
+                  variant: "destructive",
+                  title: "Error",
+                  description: result.error || "Could not delete agent."
+              });
+          }
+      }
+  }
 
   const getSortIndicator = (key: keyof AgentWithCount) => {
     if (!sortConfig || sortConfig.key !== key) {
@@ -149,7 +172,7 @@ export default function AdminAgentsPage() {
                           <DropdownMenuItem>
                             <Pencil className="mr-2 h-4 w-4" /> Edit
                             </DropdownMenuItem>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDelete(String(agent.id), agent.name)}>
                             <Trash2 className="mr-2 h-4 w-4" /> Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>

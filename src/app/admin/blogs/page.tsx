@@ -12,25 +12,41 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getBlogPosts } from '@/lib/data';
 import { type BlogPost } from '@/components/shared/blog-card';
+import { useToast } from '@/hooks/use-toast';
+import { deleteBlogPost } from '@/lib/firebase/firestore';
 
 export default function AdminBlogsPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
+
+  async function fetchData() {
+      setIsLoading(true);
+      const posts = await getBlogPosts();
+      setBlogPosts(posts);
+      setIsLoading(false);
+  }
 
   useEffect(() => {
-    async function fetchData() {
-        const posts = await getBlogPosts();
-        setBlogPosts(posts);
-        setIsLoading(false);
-    }
     fetchData();
   }, []);
 
-  // In a real app, you'd have delete functionality here.
-  const handleDelete = (slug: string) => {
-    if (confirm('Are you sure you want to delete this blog post?')) {
-      // Here you would call a delete function from firestore.ts
-      console.log(`(Simulated) Deleting post: ${slug}`);
+  const handleDelete = async (id: string, title: string) => {
+    if (confirm(`Are you sure you want to delete this blog post: "${title}"?`)) {
+      const result = await deleteBlogPost(id);
+      if (result.success) {
+        toast({
+          title: "Post Deleted",
+          description: `The post "${title}" has been successfully deleted.`,
+        });
+        fetchData();
+      } else {
+         toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.error || "Could not delete the post.",
+        });
+      }
     }
   };
   
@@ -95,7 +111,7 @@ export default function AdminBlogsPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDelete(post.slug)}><Trash2 className="mr-2 h-4 w-4" /> Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDelete(post.id, post.title)}><Trash2 className="mr-2 h-4 w-4" /> Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>

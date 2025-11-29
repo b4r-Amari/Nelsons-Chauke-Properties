@@ -15,6 +15,8 @@ import Link from "next/link"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import placeholders from "@/lib/placeholder-images.json";
+import { addBlogPost } from "@/lib/firebase/firestore"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
@@ -28,6 +30,7 @@ const formSchema = z.object({
 
 export default function NewBlogPage() {
   const { toast } = useToast()
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,14 +45,22 @@ export default function NewBlogPage() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real app, this would submit to a backend to update the blog.json file or a database.
-    console.log("New Blog Post Data:", values)
-    toast({
-      title: "Blog Post Created",
-      description: `The post "${values.title}" has been successfully created.`,
-    })
-    form.reset()
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const result = await addBlogPost(values);
+    if (result.success) {
+        toast({
+            title: "Blog Post Created",
+            description: `The post "${values.title}" has been successfully created.`,
+        })
+        form.reset();
+        router.push('/admin/blogs');
+    } else {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: result.error || "An unknown error occurred.",
+        });
+    }
   }
 
   return (
@@ -66,7 +77,9 @@ export default function NewBlogPage() {
                     Add New Blog Post
                 </h1>
                 <div className="ml-auto flex items-center gap-2">
-                    <Button type="submit" size="sm" className="bg-brand-bright hover:bg-brand-deep">Publish Post</Button>
+                    <Button type="submit" size="sm" className="bg-brand-bright hover:bg-brand-deep" disabled={form.formState.isSubmitting}>
+                        {form.formState.isSubmitting ? "Publishing..." : "Publish Post"}
+                    </Button>
                 </div>
             </div>
 

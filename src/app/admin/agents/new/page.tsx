@@ -13,6 +13,8 @@ import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import placeholders from "@/lib/placeholder-images.json";
+import { addAgent } from "@/lib/firebase/firestore"
+import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -26,6 +28,7 @@ const formSchema = z.object({
 
 export default function NewAgentPage() {
   const { toast } = useToast()
+  const router = useRouter()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,14 +43,22 @@ export default function NewAgentPage() {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real app, this would submit to a backend to update the agents.json file or a database.
-    console.log("New Agent Data:", values)
-    toast({
-      title: "Agent Created",
-      description: `A new agent profile for ${values.name} has been created.`,
-    })
-    form.reset()
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const result = await addAgent(values);
+    if (result.success) {
+        toast({
+        title: "Agent Created",
+        description: `A new agent profile for ${values.name} has been created.`,
+        });
+        form.reset();
+        router.push('/admin/agents');
+    } else {
+        toast({
+            variant: "destructive",
+            title: "Error",
+            description: result.error || "An unknown error occurred.",
+        });
+    }
   }
 
   return (
@@ -163,7 +174,9 @@ export default function NewAgentPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep" size="lg">Create Agent Profile</Button>
+              <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep" size="lg" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Creating..." : "Create Agent Profile"}
+              </Button>
             </form>
           </Form>
         </CardContent>
