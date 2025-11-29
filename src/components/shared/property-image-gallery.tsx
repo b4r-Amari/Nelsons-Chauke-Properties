@@ -4,11 +4,9 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Camera } from "lucide-react";
 
 type PropertyImageGalleryProps = {
   images: string[];
@@ -47,8 +45,8 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow }: Proper
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <div className="container">
-         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[500px] relative overflow-hidden rounded-lg">
+      <div className="md:container">
+         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 md:h-[500px] h-[350px] relative md:rounded-lg overflow-hidden">
           {/* Main Image */}
           <div 
             className="md:col-span-3 md:row-span-2 relative group cursor-pointer"
