@@ -98,7 +98,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
                 </div>
             </div>
 
-            <p className="text-[15px] text-gray-700 leading-relaxed mt-4 h-[60px] overflow-hidden text-ellipsis">
+            <p className="hidden lg:block text-[15px] text-gray-700 leading-relaxed mt-4 h-[60px] overflow-hidden text-ellipsis">
               {property.description}
             </p>
 
