@@ -1,0 +1,92 @@
+
+"use client"
+
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import Image from 'next/image';
+import { type BlogPost } from '@/components/shared/blog-card';
+import { useToast } from '@/hooks/use-toast';
+import { deleteBlogPost } from '@/lib/firebase/firestore';
+
+export function BlogsTable({ initialPosts }: { initialPosts: BlogPost[] }) {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(initialPosts);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setBlogPosts(initialPosts);
+  }, [initialPosts]);
+
+  const handleDelete = async (id: string, title: string) => {
+    if (confirm(`Are you sure you want to delete this blog post: "${title}"?`)) {
+      const result = await deleteBlogPost(id);
+      if (result.success) {
+        toast({
+          title: "Post Deleted",
+          description: `The post "${title}" has been successfully deleted.`,
+        });
+        setBlogPosts(blogPosts.filter(post => post.id !== id));
+      } else {
+         toast({
+          variant: "destructive",
+          title: "Error",
+          description: result.error || "Could not delete the post.",
+        });
+      }
+    }
+  };
+  
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="hidden w-[100px] sm:table-cell">Image</TableHead>
+          <TableHead>Title</TableHead>
+          <TableHead className="hidden md:table-cell">Author</TableHead>
+          <TableHead className="hidden lg:table-cell">Category</TableHead>
+          <TableHead className="hidden lg:table-cell">Date</TableHead>
+          <TableHead><span className="sr-only">Actions</span></TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {blogPosts.map((post) => (
+          <TableRow key={post.slug}>
+            <TableCell className="hidden sm:table-cell">
+              <Image
+                alt={`Featured image for blog post titled: ${post.title}`}
+                className="aspect-square rounded-md object-cover"
+                height="64"
+                src={post.imageUrl}
+                width="64"
+              />
+            </TableCell>
+            <TableCell className="font-medium">{post.title}</TableCell>
+            <TableCell className="hidden md:table-cell">{post.author}</TableCell>
+            <TableCell className="hidden lg:table-cell">
+              <Badge variant="outline">{post.category}</Badge>
+            </TableCell>
+            <TableCell className="hidden lg:table-cell">{post.date}</TableCell>
+            <TableCell>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button aria-haspopup="true" size="icon" variant="ghost">
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">Toggle menu</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleDelete(post.id, post.title)}><Trash2 className="mr-2 h-4 w-4" /> Delete</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
