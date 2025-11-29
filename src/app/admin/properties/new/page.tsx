@@ -176,10 +176,10 @@ export default function NewPropertyPage() {
                     <h3 className="text-lg font-semibold font-headline">Media & Assignment</h3>
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <FormField control={form.control} name="imageUrl" render={({ field }) => (
-                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input placeholder="https://example.com/image.png" {...field} /></FormControl><FormMessage /></FormMessage>
+                            <FormItem><FormLabel>Image URL</FormLabel><FormControl><Input placeholder="https://example.com/image.png" {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="imageHint" render={({ field }) => (
-                            <FormItem><FormLabel>Image Hint</FormLabel><FormControl><Input placeholder="e.g. modern house exterior" {...field} /></FormControl><FormMessage /></FormMessage>
+                            <FormItem><FormLabel>Image Hint</FormLabel><FormControl><Input placeholder="e.g. modern house exterior" {...field} /></FormControl><FormMessage /></FormItem>
                         )} />
                     </div>
                     <FormField
