@@ -48,10 +48,10 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow }: Proper
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <div className="container">
-         <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-2 gap-2 h-[450px] relative overflow-hidden rounded-lg">
+         <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 h-[500px] relative overflow-hidden rounded-lg">
           {/* Main Image */}
           <div 
-            className="md:col-span-1 md:row-span-2 relative group cursor-pointer"
+            className="md:col-span-3 md:row-span-2 relative group cursor-pointer"
             onClick={() => handleImageClick(0)}
           >
             <Image
@@ -68,6 +68,11 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow }: Proper
                 On Show
               </Badge>
             )}
+            <div className="absolute bottom-4 right-4">
+               <Button variant="outline" className="bg-black/50 text-white border-white hover:bg-white hover:text-black">
+                <Camera className="mr-2 h-4 w-4" /> View all {images.length} photos
+              </Button>
+            </div>
           </div>
           
           {/* Small Image 1 */}
@@ -95,11 +100,7 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow }: Proper
               fill
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-black/50 transition-colors flex items-center justify-center">
-              <Button variant="outline" className="bg-transparent text-white border-white hover:bg-white hover:text-black">
-                <Camera className="mr-2 h-4 w-4" /> View all {images.length} photos
-              </Button>
-            </div>
+             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
           </div>
           
            {/* Mobile view trigger */}
