@@ -160,7 +160,6 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
           <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
           <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
           <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Heart className="h-5 w-5" />Save</Button>
         </div>
 
 
