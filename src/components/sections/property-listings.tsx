@@ -147,18 +147,15 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
 
       <main className="py-8 bg-background" ref={resultsRef} id="property-results">
         <div className="container">
-           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 border-b pb-4">
-            <p className="text-muted-foreground text-sm mb-4 sm:mb-0">
-              Showing <span className="font-bold text-foreground">{sortedAndFilteredProperties.length}</span> results
-            </p>
-            <DropdownMenu>
+           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b pb-4">
+             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost">
                   <ArrowUpDown className="mr-2 h-4 w-4" />
                   Sort By: {sortOption.replace('-', ' ')}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent>
                 <DropdownMenuLabel>Sort Properties</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onSelect={() => setSortOption('newest')}>Newest First</DropdownMenuItem>
@@ -166,6 +163,10 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
                 <DropdownMenuItem onSelect={() => setSortOption('price-asc')}>Price: Low to High</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            <p className="text-muted-foreground text-sm mt-4 sm:mt-0">
+              Showing <span className="font-bold text-foreground">{sortedAndFilteredProperties.length}</span> results
+            </p>
           </div>
 
           
