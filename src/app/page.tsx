@@ -41,15 +41,13 @@ function HeroSection({ properties }: { properties: Property[] }) {
       />
       <div className="absolute inset-0 bg-black/60" />
       <div className="relative z-10 container text-center flex flex-col items-center pt-24">
-        <div className='bg-black/20 p-4 rounded-lg'>
-          <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">
-            We have space for you
-          </h1>
-          <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
-            Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
-          </p>
-        </div>
-        <div className="w-full max-w-4xl mx-auto mt-8">
+        <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">
+          We have space for you
+        </h1>
+        <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
+          Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
+        </p>
+        <div className="w-full max-w-4xl mx-auto mt-8 bg-black/20 p-4 rounded-lg">
             <PropertyFilter properties={properties} onFilterChange={() => {}} />
         </div>
       </div>
