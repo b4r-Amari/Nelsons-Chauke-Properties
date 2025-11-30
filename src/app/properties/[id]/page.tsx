@@ -5,14 +5,13 @@ import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, Video, Map, Camera, Share2, Building, Calendar, Hash } from 'lucide-react';
 import type { Metadata } from 'next';
-import { getProperty } from '@/lib/data';
+import { getProperty, getAgents } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
-import { AgentCard, type Agent } from '@/components/shared/agent-card';
+import { AgentCard } from '@/components/shared/agent-card';
 import { EnquiryForm } from '@/components/shared/enquiry-form';
 import { PropertyImageGallery } from '@/components/shared/property-image-gallery';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { getAgents } from '@/lib/data';
 import { BackButton } from '@/components/shared/back-button';
 import placeholders from '@/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
@@ -20,26 +19,26 @@ import { HomeLoanCalculator } from '@/components/shared/calculators/home-loan-ca
 import { Card, CardContent } from '@/components/ui/card';
 import { FloatingContactBar } from '@/components/shared/floating-contact-bar';
 import { useEffect, useState } from 'react';
-
-// This metadata is not used in a client component, but we keep it for reference
-// export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> { ... }
+import { type Agent } from '@/components/shared/agent-card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function PropertyDetailPage() {
   const params = useParams();
-  const propertyId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const id = params.id as string;
 
   const [property, setProperty] = useState<Property | null>(null);
   const [propertyAgents, setPropertyAgents] = useState<Agent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showFloatingBar, setShowFloatingBar] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!propertyId) return;
-    async function fetchData() {
-      setIsLoading(true);
-      const prop = await getProperty(propertyId);
+    if (!id) return;
+    
+    const fetchPropertyData = async () => {
+      setLoading(true);
+      const prop = await getProperty(id);
       if (!prop) {
         notFound();
+        return;
       }
       
       const allAgents = await getAgents();
@@ -47,22 +46,30 @@ export default function PropertyDetailPage() {
       
       setProperty(prop);
       setPropertyAgents(agents);
-      setIsLoading(false);
-    }
-    fetchData();
-  }, [propertyId]);
-
-  useEffect(() => {
-    const checkSize = () => {
-      setShowFloatingBar(window.innerWidth < 768);
+      setLoading(false);
     };
-    checkSize();
-    window.addEventListener('resize', checkSize);
-    return () => window.removeEventListener('resize', checkSize);
-  }, []);
 
-  if (isLoading || !property) {
-    return null; // Or a loading skeleton
+    fetchPropertyData();
+  }, [id]);
+
+  if (loading || !property) {
+    return (
+        <div className="container py-8">
+            <div className="max-w-4xl mx-auto">
+                <Skeleton className="h-8 w-32 mb-8" />
+                <Skeleton className="h-[400px] w-full mb-8" />
+                <div className="grid md:grid-cols-3 gap-8">
+                    <div className="md:col-span-2 space-y-8">
+                        <Skeleton className="h-12 w-full" />
+                        <Skeleton className="h-64 w-full" />
+                    </div>
+                    <div>
+                        <Skeleton className="h-96 w-full" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
   }
 
   const formatPrice = (price: number) => {
@@ -86,12 +93,12 @@ export default function PropertyDetailPage() {
     placeholders.propertyGallery.url.replace('gallery', 'gallery2'),
     placeholders.propertyGallery.url.replace('gallery', 'gallery3'),
   ];
-  
+
   const listingDate = new Date();
-  listingDate.setDate(listingDate.getDate() - (Number(property.id) % 30));
+  listingDate.setDate(listingDate.getDate() - (property.id % 30));
 
   const propertyDetails = [
-      { label: "Listing Number", value: `T${String(property.id).substring(0, 8)}`, icon: Hash },
+      { label: "Listing Number", value: `T${property.id * 12345}`, icon: Hash },
       { label: "Property Type", value: property.type, icon: Building },
       { label: "Listing Date", value: listingDate.toLocaleDateString('en-ZA', { year: 'numeric', month: 'short', day: 'numeric' }), icon: Calendar },
       { label: "Floor Size", value: `${property.sqft} m²`, icon: Home },
@@ -109,23 +116,18 @@ export default function PropertyDetailPage() {
         
         <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} isOnShow={property.onShow} />
 
-        <div className="container mx-auto">
-            <div className="flex justify-start items-center bg-card text-center border-y my-2 p-2">
-                <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
-                <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
-                {property.videoUrl && (
-                <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
-                )}
-                <div className="ml-auto">
-                <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
-                </div>
-            </div>
+        <div className="flex justify-around items-center bg-card text-center border-y p-2 md:hidden">
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
         </div>
 
+
       <div className="container py-8">
-        <div className="grid md:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
             <main className="md:col-span-2">
-                <div>
+                <div className="md:p-8">
                      <header className="mb-6 border-b pb-6">
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                             <div>
@@ -202,9 +204,20 @@ export default function PropertyDetailPage() {
                             ))}
                             </ul>
                         </section>
-                        
+
                         <Separator className="my-8" />
                         
+                        <section>
+                            <h2 className="text-2xl font-bold font-headline mb-6 text-brand-deep">Contact Agent</h2>
+                            <div className="space-y-8">
+                            {propertyAgents.map(agent => (
+                                <AgentCard key={agent.id} agent={agent} />
+                            ))}
+                            </div>
+                        </section>
+
+                        <Separator className="my-8" />
+
                         <section className="mb-8">
                             <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Home Loan Calculator</h2>
                             <Card className="shadow-none border">
@@ -213,29 +226,15 @@ export default function PropertyDetailPage() {
                                 </CardContent>
                             </Card>
                         </section>
-                        
-                        <Separator className="my-8" />
-                        
-                        <section>
-                            <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Contact Agent</h2>
-                            <div className="grid sm:grid-cols-2 gap-6">
-                            {propertyAgents.map(agent => (
-                                <AgentCard key={agent.id} agent={agent} />
-                            ))}
-                            </div>
-                        </section>
-
                      </article>
                 </div>
             </main>
-             <aside className="hidden md:block md:col-span-1">
-                <div className="sticky top-24 space-y-8">
-                    <EnquiryForm propertyId={propertyId} />
-                </div>
+            <aside className="sticky top-24 h-fit hidden md:block">
+                <EnquiryForm propertyId={id} />
             </aside>
         </div>
       </div>
-      {showFloatingBar && propertyAgents.length > 0 && <FloatingContactBar agent={propertyAgents[0]} />}
+      {propertyAgents.length > 0 && <FloatingContactBar agent={propertyAgents[0]} />}
     </div>
   );
 }
