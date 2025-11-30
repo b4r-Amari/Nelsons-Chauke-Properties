@@ -8,13 +8,17 @@ import { collection, getDocs, doc, getDoc, query, where, limit } from 'firebase/
 // Helper to convert Firestore document to a plain object
 function docToObj(d: any) {
     const data = d.data();
+    // Safely convert Firestore Timestamps to serializable strings
+    const date = data.date ? new Date(data.date.seconds * 1000).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : null;
+    const createdAt = data.createdAt ? new Date(data.createdAt.seconds * 1000).toISOString() : null;
+    const updatedAt = data.updatedAt ? new Date(data.updatedAt.seconds * 1000).toISOString() : null;
+
     return {
         ...data,
         id: d.id,
-        // Convert Timestamps to serializable strings
-        date: data.date?.toDate()?.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) || null,
-        createdAt: data.createdAt?.toDate()?.toISOString() || null,
-        updatedAt: data.updatedAt?.toDate()?.toISOString() || null,
+        date,
+        createdAt,
+        updatedAt,
     };
 }
 
