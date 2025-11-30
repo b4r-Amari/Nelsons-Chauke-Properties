@@ -1,80 +1,56 @@
 
+"use client";
+
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, Video, Map, Camera, Share2, Building, Calendar, Hash } from 'lucide-react';
 import type { Metadata } from 'next';
 import { getProperty, getProperties } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
-import { AgentCard } from '@/components/shared/agent-card';
+import { AgentCard, type Agent } from '@/components/shared/agent-card';
 import { EnquiryForm } from '@/components/shared/enquiry-form';
+import { PropertyImageGallery } from '@/components/shared/property-image-gallery';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { getAgents } from '@/lib/data';
 import { BackButton } from '@/components/shared/back-button';
+import placeholders from '@/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
 import { HomeLoanCalculator } from '@/components/shared/calculators/home-loan-calculator';
 import { Card, CardContent } from '@/components/ui/card';
-import { PropertyDetailClientWrapper } from './property-detail-client-wrapper';
+import { FloatingContactBar } from '@/components/shared/floating-contact-bar';
+import { useEffect, useState } from 'react';
 
-export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
-  const property = await getProperty(params.id);
+// This metadata is not used in a client component, but we keep it for reference
+// export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> { ... }
 
-  if (!property) {
-    return {
-      title: 'Property Not Found',
-      description: 'The requested property could not be found.',
-    };
-  }
+export default function PropertyDetailPage({ params }: { params: { id: string } }) {
+  const [property, setProperty] = useState<Property | null>(null);
+  const [propertyAgents, setPropertyAgents] = useState<Agent[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-ZA', {
-      style: 'currency',
-      currency: 'ZAR',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
-  };
-
-  const title = `${property.beds} Bed ${property.type} for Sale in ${property.location} | NC Properties`;
-  const description = `View details for ${property.address}. A ${property.beds} bedroom, ${property.baths} bathroom ${property.type} listed for ${formatPrice(property.price)}. ${property.description.substring(0, 120)}...`;
-
-  return {
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      type: 'website',
-      url: `/properties/${property.id}`,
-      images: [
-        {
-          url: property.imageUrl,
-          width: 300,
-          height: 200,
-          alt: `Exterior view of ${property.address}`,
-        },
-      ],
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true);
+      const prop = await getProperty(params.id);
+      if (!prop) {
+        notFound();
+      }
+      
+      const allAgents = await getAgents();
+      const agents = allAgents.filter(a => prop.agentIds.includes(a.id));
+      
+      setProperty(prop);
+      setPropertyAgents(agents);
+      setIsLoading(false);
     }
-  };
-}
+    fetchData();
+  }, [params.id]);
 
-// This function tells Next.js which dynamic pages to pre-render at build time.
-export async function generateStaticParams() {
-  const properties = await getProperties();
-  return properties.map((property) => ({
-    id: String(property.id),
-  }));
-}
 
-export default async function PropertyDetailPage({ params }: { params: { id: string } }) {
-  const property = await getProperty(params.id);
-
-  if (!property) {
-    notFound();
+  if (isLoading || !property) {
+    return null; // Or a loading skeleton
   }
-  
-  const allAgents = await getAgents();
-  const propertyAgents = allAgents.filter(a => property.agentIds.includes(a.id));
 
   const formatPrice = (price: number) => {
     const isRental = property.status === 'to-let';
@@ -91,55 +67,13 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
     return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
   };
 
-  const realEstateListingSchema = {
-    "@context": "https://schema.org",
-    "@type": "RealEstateListing",
-    "name": property.address,
-    "description": property.description,
-    "image": property.imageUrl,
-    "url": `https://nelson-chauke-prop.web.app/properties/${property.id}`,
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": property.address,
-      "addressLocality": property.location.split(',')[0],
-      "addressRegion": property.location.split(',')[1],
-      "addressCountry": "ZA"
-    },
-    "numberOfBedrooms": property.beds,
-    "numberOfBathroomsTotal": property.baths,
-    "floorSize": {
-      "@type": "QuantitativeValue",
-      "value": property.sqft,
-      "unitCode": "MTK"
-    },
-    ...(property.status === 'for-sale' && {
-      "offers": {
-        "@type": "Offer",
-        "price": property.price,
-        "priceCurrency": "ZAR",
-        "availability": "https://schema.org/InStock"
-      }
-    }),
-    ...(property.status === 'to-let' && {
-      "leaseLength": {
-        "@type": "QuantitativeValue",
-        "value": 12,
-        "unitText": "MONTH"
-      },
-      "offers": {
-        "@type": "Offer",
-        "price": property.price,
-        "priceCurrency": "ZAR",
-        "priceSpecification": {
-          "@type": "PriceSpecification",
-          "price": property.price,
-          "priceCurrency": "ZAR",
-          "unitText": "monthly"
-        }
-      }
-    })
-  };
-
+  const galleryImages = [
+    property.imageUrl,
+    placeholders.propertyGallery.url.replace('gallery', 'gallery1'),
+    placeholders.propertyGallery.url.replace('gallery', 'gallery2'),
+    placeholders.propertyGallery.url.replace('gallery', 'gallery3'),
+  ];
+  
   const listingDate = new Date();
   listingDate.setDate(listingDate.getDate() - (Number(property.id) % 30));
 
@@ -156,18 +90,24 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
 
   return (
     <div className="bg-white">
-       <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(realEstateListingSchema) }}
-        />
         <div className="container py-4">
           <BackButton>Back to listings</BackButton>
         </div>
         
-        <PropertyDetailClientWrapper 
-            property={property} 
-            agents={propertyAgents}
-        />
+        <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} isOnShow={property.onShow} />
+
+        <div className="container mx-auto">
+            <div className="flex justify-start items-center bg-card text-center border-y my-2 p-2">
+                <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
+                <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
+                {property.videoUrl && (
+                <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
+                )}
+                <div className="ml-auto">
+                <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
+                </div>
+            </div>
+        </div>
 
       <div className="container py-8">
         <div className="grid md:grid-cols-3 gap-12">
@@ -249,9 +189,9 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                             ))}
                             </ul>
                         </section>
-
+                        
                         <Separator className="my-8" />
-
+                        
                         <section className="mb-8">
                             <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Home Loan Calculator</h2>
                             <Card className="shadow-none border">
@@ -260,10 +200,10 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                                 </CardContent>
                             </Card>
                         </section>
-                        
+
                         <Separator className="my-8" />
                         
-                        <section className="mb-8">
+                        <section>
                             <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Contact Agent</h2>
                             <div className="grid sm:grid-cols-2 gap-6">
                             {propertyAgents.map(agent => (
@@ -271,6 +211,7 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                             ))}
                             </div>
                         </section>
+
                      </article>
                 </div>
             </main>
@@ -281,8 +222,7 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
             </aside>
         </div>
       </div>
+       {propertyAgents.length > 0 && <FloatingContactBar agent={propertyAgents[0]} />}
     </div>
   );
 }
-
-    
