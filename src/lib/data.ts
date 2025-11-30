@@ -2,11 +2,12 @@
 import { type Property } from '@/components/shared/property-card';
 import { type Agent } from '@/components/shared/agent-card';
 import { type BlogPost } from '@/components/shared/blog-card';
-import { adminDb } from './firebase/admin';
-import * as admin from 'firebase-admin';
+import { adminDb, Timestamp } from './firebase/admin';
+import type { DocumentData, Query, DocumentSnapshot } from '@google-cloud/firestore';
+
 
 // Helper to convert Firestore document to a plain object
-function docToObj(d: admin.firestore.DocumentSnapshot<admin.firestore.DocumentData>) {
+function docToObj(d: DocumentSnapshot<DocumentData>) {
     const data = d.data();
     if (!data) return null;
 
@@ -14,7 +15,7 @@ function docToObj(d: admin.firestore.DocumentSnapshot<admin.firestore.DocumentDa
     const serializedData: { [key: string]: any } = {};
     for (const key in data) {
         const value = data[key];
-        if (value instanceof admin.firestore.Timestamp) {
+        if (value instanceof Timestamp) {
             if (key === 'date') { // For blog posts
                  serializedData[key] = value.toDate().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
             } else { // for createdAt, updatedAt
@@ -35,7 +36,7 @@ function docToObj(d: admin.firestore.DocumentSnapshot<admin.firestore.DocumentDa
 // Properties
 export async function getProperties(options: { featuredOnly?: boolean; status?: 'on-show' | 'sold' } = {}): Promise<Property[]> {
   const propertiesCol = adminDb.collection('properties');
-  let q: admin.firestore.Query;
+  let q: Query;
 
   if (options.featuredOnly) {
     q = propertiesCol.where('isFavorite', '==', true).where('status', '==', 'for-sale').limit(8);

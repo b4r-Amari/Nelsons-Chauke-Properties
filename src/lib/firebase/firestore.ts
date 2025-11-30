@@ -1,8 +1,7 @@
 
 'use server';
 
-import { adminDb } from './admin';
-import { Timestamp } from 'firebase-admin/firestore';
+import { adminDb, Timestamp } from './admin';
 import { revalidatePath } from 'next/cache';
 
 // Generic type for data to be added
