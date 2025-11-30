@@ -120,3 +120,15 @@ This document tracks all requests made by the user and the actions taken by the 
     - Modified `src/app/page.tsx` to remove the `div` containing the "View All Properties" button from the `FeaturedPropertiesSection` component.
 - **Status:** `Completed`
 - **Note:** This is a minor UI tweak to simplify the homepage.
+
+---
+
+### **Entry 9: Property Filter UI Refinement**
+
+- **Date:** 2024-08-20
+- **User Request:**
+    - Remove the underline hover effect on the "Agents" tab in the homepage property filter to match the other tabs.
+- **AI Action:**
+    - Modified `src/components/shared/property-filter.tsx` to remove the specific `data-[state=inactive]:hover:border-b-4` and `data-[state=inactive]:hover:border-brand-bright/50` classes that were causing the underline effect on hover for the "Agents" tab.
+- **Status:** `Completed`
+- **Note:** A small UI consistency fix.
