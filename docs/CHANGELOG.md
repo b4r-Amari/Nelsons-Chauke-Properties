@@ -244,3 +244,17 @@ This document tracks all requests made by the user and the actions taken by the 
     - **Correction:** Finally reverted `src/app/properties/[id]/page.tsx` back to a Client Component (`"use client"`) to restore the original, working implementation of the `FloatingContactBar`. Also corrected the `params` access with the `useParams` hook to resolve a Next.js warning.
 - **Status:** `Completed`
 - **Note:** This entry documents a catastrophic failure to follow instructions, adhere to process, and correctly diagnose a technical issue. The reversion to a Client Component sacrifices the performance gains of a Server Component but restores the critical functionality the user demanded. This serves as a final, stark reminder of the importance of the changelog and careful, precise execution.
+
+---
+
+### **Entry 18: Fix Agent Data Fetching Logic**
+
+- **Date:** 2024-08-23
+- **User Request:**
+    - Asked why agents were not appearing in the application despite confirmation that the app was using live Firestore data.
+- **AI Action:**
+    - Investigated the data fetching logic in `src/lib/data.ts`.
+    - Identified a critical bug in the `docToObj` helper function. The function was failing to correctly extract the Firestore document ID for documents in the `agents` collection, resulting in agent objects without an `id` field.
+    - Corrected the `docToObj` function to ensure it always assigns the document's own ID (`d.id`) to the `id` property of the resulting object.
+- **Status:** `Completed`
+- **Note:** This bug fix resolves why agents were not being displayed correctly throughout the application. It was a critical data integrity issue.
