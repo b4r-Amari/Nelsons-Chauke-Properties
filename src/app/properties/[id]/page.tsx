@@ -7,16 +7,14 @@ import { getProperty, getProperties } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
 import { AgentCard } from '@/components/shared/agent-card';
 import { EnquiryForm } from '@/components/shared/enquiry-form';
-import { PropertyImageGallery } from '@/components/shared/property-image-gallery';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { getAgents } from '@/lib/data';
 import { BackButton } from '@/components/shared/back-button';
-import placeholders from '@/lib/placeholder-images.json';
 import { Button } from '@/components/ui/button';
 import { HomeLoanCalculator } from '@/components/shared/calculators/home-loan-calculator';
 import { Card, CardContent } from '@/components/ui/card';
-import { FloatingContactBar } from '@/components/shared/floating-contact-bar';
+import { PropertyDetailClientWrapper } from './property-detail-client-wrapper';
 
 export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
   const property = await getProperty(params.id);
@@ -93,13 +91,6 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
     return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
   };
 
-  const galleryImages = [
-    property.imageUrl,
-    placeholders.propertyGallery.url.replace('gallery', 'gallery1'),
-    placeholders.propertyGallery.url.replace('gallery', 'gallery2'),
-    placeholders.propertyGallery.url.replace('gallery', 'gallery3'),
-  ];
-
   const realEstateListingSchema = {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
@@ -173,21 +164,10 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
           <BackButton>Back to listings</BackButton>
         </div>
         
-        <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} isOnShow={property.onShow} />
-
-        <div className="container mx-auto">
-           <div className="flex justify-start items-center bg-card text-center border-y my-2 p-2">
-            <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
-            <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
-            {property.videoUrl && (
-              <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
-            )}
-             <div className="ml-auto">
-              <Button variant="ghost" className="flex items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
-            </div>
-          </div>
-        </div>
-
+        <PropertyDetailClientWrapper 
+            property={property} 
+            agents={propertyAgents}
+        />
 
       <div className="container py-8">
         <div className="grid md:grid-cols-3 gap-12">
@@ -280,7 +260,7 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                                 </CardContent>
                             </Card>
                         </section>
-
+                        
                         <Separator className="my-8" />
                         
                         <section className="mb-8">
@@ -300,9 +280,6 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                 </div>
             </aside>
         </div>
-      </div>
-      <div id="floating-contact-bar-container">
-        {propertyAgents.length > 0 && <FloatingContactBar agent={propertyAgents[0]} />}
       </div>
     </div>
   );
