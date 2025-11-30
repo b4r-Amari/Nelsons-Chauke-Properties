@@ -170,3 +170,17 @@ This document tracks all requests made by the user and the actions taken by the 
     - Corrected the error by removing the incorrect check from the `className` logic within the `map` function for mobile navigation links.
 - **Status:** `Completed`
 - **Note:** A quick bug fix to resolve a TypeScript compilation error in the mobile header.
+
+---
+
+### **Entry 13: Restore Mobile Floating Contact Bar**
+
+- **Date:** 2024-08-20
+- **User Request:**
+    - Restore the floating contact bar at the bottom of the property details page (`/properties/[id]`).
+    - The bar should only appear on mobile/small screens and contain "Call", "WhatsApp", and "Email" buttons with icons.
+- **AI Action:**
+    - Identified that the `FloatingContactBar` component had been erroneously removed during a previous code reversion.
+    - Modified `src/app/properties/[id]/page.tsx` to re-import and render the `FloatingContactBar` component, passing the primary agent's details to it.
+- **Status:** `Completed`
+- **Note:** This corrects an accidental regression and restores a key mobile UI feature.
