@@ -294,7 +294,7 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                      </article>
                 </div>
             </main>
-             <aside className="md:col-span-1">
+             <aside className="hidden md:block md:col-span-1">
                 <div className="sticky top-24 space-y-8">
                     <EnquiryForm propertyId={params.id} />
                 </div>

@@ -216,3 +216,15 @@ This document tracks all requests made by the user and the actions taken by the 
     - Placed the agent information in a new "Contact Agent(s)" section immediately after the property features for better visibility.
 - **Status:** `Completed`
 - **Note:** This makes it easier for users to identify and contact the listing agent for a property.
+
+---
+
+### **Entry 16: Hide Enquiry Form on Mobile**
+
+- **Date:** 2024-08-21
+- **User Request:**
+    - Ensure the "Make an Enquiry" form on the property details page is only visible on desktops.
+- **AI Action:**
+    - Modified `src/app/properties/[id]/page.tsx` by wrapping the `<aside>` element containing the `EnquiryForm` with the `hidden md:block` Tailwind CSS classes. This ensures the form is not rendered on screens smaller than the medium breakpoint, leaving the `FloatingContactBar` as the primary contact method on mobile.
+- **Status:** `Completed`
+- **Note:** This change ensures the UI is optimized for different screen sizes, prioritizing the floating bar on mobile and the full form on desktop.
