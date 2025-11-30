@@ -7,7 +7,7 @@ import { Footer } from '@/components/layout/footer';
 import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/context/auth-context';
 import { usePathname } from 'next/navigation';
-import { useState, Suspense } from 'react';
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Poppins, Lato, Roboto } from 'next/font/google';
 
@@ -29,15 +29,22 @@ const roboto = Roboto({
   variable: '--font-roboto',
 });
 
-function LayoutContent({ children }: { children: React.ReactNode }) {
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  // The admin layout handles its own html and body tags.
+  // We only render the main layout for public-facing pages.
   if (isAdminPage) {
     return <>{children}</>;
   }
-  
+
   return (
     <html lang="en" className={cn("scroll-smooth", poppins.variable, lato.variable, roboto.variable)} suppressHydrationWarning>
       <body className={cn(
@@ -57,16 +64,4 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
       </body>
     </html>
   );
-}
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  return (
-    <Suspense>
-      <LayoutContent>{children}</LayoutContent>
-    </Suspense>
-  )
 }

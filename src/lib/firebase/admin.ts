@@ -1,13 +1,11 @@
 
 import * as admin from 'firebase-admin';
 
-// Server-side (admin) app
+// In a Google Cloud environment like App Hosting, the SDK will automatically
+// find the service account credentials. We don't need to provide them.
 if (admin.apps.length === 0) {
     try {
-        admin.initializeApp({
-            credential: admin.credential.applicationDefault(),
-            projectId: process.env.GCLOUD_PROJECT || 'nc-properties-redefined',
-        });
+        admin.initializeApp();
     } catch (error: any) {
         if (error.code !== 'app/duplicate-app') {
             console.error('Firebase Admin SDK initialization error:', error);

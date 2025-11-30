@@ -13,7 +13,6 @@ import blogData from '@/data/blog.json';
 // This can be a path to your service account key file.
 try {
     admin.initializeApp({
-        credential: admin.credential.applicationDefault(),
         projectId: process.env.GCLOUD_PROJECT || 'nc-properties-redefined',
     });
     console.log('Firebase Admin SDK initialized successfully.');
