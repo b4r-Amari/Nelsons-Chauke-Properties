@@ -10,7 +10,6 @@ import { getAgents } from '@/lib/data';
 import placeholders from '@/lib/placeholder-images.json';
 import { useEffect, useState } from 'react';
 import { type Agent } from '@/components/shared/agent-card';
-import { Skeleton } from '@/components/ui/skeleton';
 
 const timelineEvents = [
   { year: '2010', title: 'Foundation', description: 'NC Properties was founded with a mission to simplify the home-buying process.' },
@@ -22,14 +21,11 @@ const timelineEvents = [
 
 export default function AboutUsPage() {
   const [teamMembers, setTeamMembers] = useState<Agent[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAgents = async () => {
-      setLoading(true);
       const agents = await getAgents();
       setTeamMembers(agents);
-      setLoading(false);
     };
     fetchAgents();
   }, []);
@@ -101,16 +97,7 @@ export default function AboutUsPage() {
           <div className="container">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">Meet Our Team</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {loading ? (
-                 Array.from({ length: 3 }).map((_, i) => (
-                  <Card key={i} className="text-center shadow-lg h-full p-6 space-y-4">
-                      <Skeleton className="h-40 w-40 rounded-full mx-auto" />
-                      <Skeleton className="h-8 w-3/4 mx-auto" />
-                      <Skeleton className="h-6 w-1/2 mx-auto" />
-                  </Card>
-                 ))
-              ) : (
-                teamMembers.map((member) => (
+                {teamMembers.map((member) => (
                   <Link href={`/agents/${member.slug}`} key={member.id} className="group block">
                     <Card className="text-center shadow-lg transition-transform duration-300 hover:-translate-y-2 h-full">
                       <CardContent className="p-6">
@@ -120,8 +107,7 @@ export default function AboutUsPage() {
                       </CardContent>
                     </Card>
                   </Link>
-                ))
-              )}
+                ))}
             </div>
           </div>
         </section>

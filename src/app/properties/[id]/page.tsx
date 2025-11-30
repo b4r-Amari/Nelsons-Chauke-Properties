@@ -19,37 +19,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FloatingContactBar } from '@/components/shared/floating-contact-bar';
 import { useEffect, useState } from 'react';
 import type { Agent } from '@/components/shared/agent-card';
-import { Skeleton } from '@/components/ui/skeleton';
-
-function LoadingSkeleton() {
-  return (
-    <div className="container py-8">
-       <div className="max-w-4xl mx-auto">
-        <Skeleton className="h-8 w-1/4 mb-12" />
-        <Skeleton className="h-[500px] w-full mb-8" />
-        <Skeleton className="h-10 w-3/4 mb-4" />
-        <Skeleton className="h-6 w-1/2 mb-8" />
-        <div className="grid grid-cols-4 gap-4 mb-8">
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-        </div>
-        <Skeleton className="h-40 w-full" />
-       </div>
-    </div>
-  )
-}
 
 export default function PropertyDetailPage({ params }: { params: { id: string } }) {
   const [property, setProperty] = useState<Property | null>(null);
   const [propertyAgents, setPropertyAgents] = useState<Agent[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!params.id) return;
     const fetchPropertyData = async () => {
-      setLoading(true);
       const prop = await getProperty(params.id);
       if (prop) {
         setProperty(prop);
@@ -58,15 +35,14 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
       } else {
         notFound();
       }
-      setLoading(false);
     };
 
     fetchPropertyData();
   }, [params.id]);
 
 
-  if (loading || !property) {
-    return <LoadingSkeleton />;
+  if (!property) {
+    return null;
   }
 
   const formatPrice = (price: number) => {

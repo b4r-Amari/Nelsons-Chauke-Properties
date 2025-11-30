@@ -9,50 +9,23 @@ import { getBlogPost } from '@/lib/data';
 import { type BlogPost } from '@/components/shared/blog-card';
 import { Badge } from '@/components/ui/badge';
 import { useEffect, useState } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-
-function LoadingSkeleton() {
-  return (
-    <div className="container py-12 md:py-24">
-      <div className="max-w-4xl mx-auto">
-        <Skeleton className="h-8 w-1/4 mb-8" />
-        <div className="mb-8 space-y-4">
-          <Skeleton className="h-6 w-1/5" />
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-10 w-3/4" />
-          <Skeleton className="h-6 w-1/2" />
-        </div>
-        <Skeleton className="aspect-video w-full rounded-lg my-8" />
-        <div className="space-y-4">
-          <Skeleton className="h-6 w-full" />
-          <Skeleton className="h-6 w-full" />
-          <Skeleton className="h-6 w-5/6" />
-          <Skeleton className="h-6 w-full" />
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export default function BlogPostPage({ params }: { params: { slug:string } }) {
   const [post, setPost] = useState<BlogPost | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPost = async () => {
-      setLoading(true);
       const postData = await getBlogPost(params.slug);
       if (!postData) {
         notFound();
       }
       setPost(postData);
-      setLoading(false);
     };
     fetchPost();
   }, [params.slug]);
 
-  if (loading || !post) {
-    return <LoadingSkeleton />;
+  if (!post) {
+    return null;
   }
 
   return (

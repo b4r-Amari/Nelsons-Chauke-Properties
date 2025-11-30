@@ -12,60 +12,13 @@ import { Separator } from '@/components/ui/separator';
 import { PropertyCard, type Property } from '@/components/shared/property-card';
 import { type Agent } from '@/components/shared/agent-card';
 import { useEffect, useState } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
-
-function LoadingSkeleton() {
-  return (
-    <div className="container py-12 md:py-24">
-      <Skeleton className="h-8 w-1/4 mb-8" />
-       <div className="grid lg:grid-cols-3 gap-12">
-        <aside className="lg:col-span-1">
-          <Card className="sticky top-24 shadow-lg text-center p-8 space-y-4">
-              <Skeleton className="h-48 w-48 rounded-full mx-auto" />
-              <Skeleton className="h-8 w-3/4 mx-auto" />
-              <Skeleton className="h-6 w-1/2 mx-auto" />
-              <Separator className="my-6" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-8 w-full" />
-              <Skeleton className="h-12 w-full mt-4" />
-          </Card>
-        </aside>
-        <article className="lg:col-span-2 space-y-8">
-            <div className="space-y-4">
-              <Skeleton className="h-10 w-1/3" />
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-full" />
-              <Skeleton className="h-6 w-5/6" />
-            </div>
-             <div className="space-y-4">
-              <Skeleton className="h-10 w-1/3" />
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                  <div className="space-y-4">
-                    <Skeleton className="h-[250px] w-full" />
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                   <div className="space-y-4">
-                    <Skeleton className="h-[250px] w-full" />
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-               </div>
-            </div>
-        </article>
-      </div>
-    </div>
-  )
-}
 
 export default function AgentProfilePage({ params }: { params: { slug: string } }) {
   const [agent, setAgent] = useState<Agent | null>(null);
   const [agentProperties, setAgentProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAgentData = async () => {
-      setLoading(true);
       const agentData = await getAgent(params.slug);
       if (!agentData) {
         notFound();
@@ -74,14 +27,13 @@ export default function AgentProfilePage({ params }: { params: { slug: string } 
       
       const allProperties = await getProperties();
       setAgentProperties(allProperties.filter(p => p.agentIds.includes(agentData.id) && p.status !== 'sold'));
-      setLoading(false);
     }
     fetchAgentData();
   }, [params.slug]);
 
 
-  if (loading || !agent) {
-    return <LoadingSkeleton />;
+  if (!agent) {
+    return null;
   }
 
   return (

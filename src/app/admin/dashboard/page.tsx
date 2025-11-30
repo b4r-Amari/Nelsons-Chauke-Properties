@@ -9,7 +9,6 @@ import { type Property } from '@/components/shared/property-card';
 import { useEffect, useState } from 'react';
 import { type Agent } from '@/components/shared/agent-card';
 import { type BlogPost } from '@/components/shared/blog-card';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState([
@@ -18,11 +17,9 @@ export default function AdminDashboardPage() {
     { title: "Total Agents", value: 0, icon: Users, description: "Active real estate agents" },
     { title: "Blog Posts", value: 0, icon: Newspaper, description: "Published articles" },
   ]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
-      setLoading(true);
       const [propertiesData, agentsData, blogData] = await Promise.all([
         getProperties(),
         getAgents(),
@@ -35,7 +32,6 @@ export default function AdminDashboardPage() {
         { title: "Total Agents", value: agentsData.length, icon: Users, description: "Active real estate agents" },
         { title: "Blog Posts", value: blogData.length, icon: Newspaper, description: "Published articles" },
       ]);
-      setLoading(false);
     };
 
     fetchStats();
@@ -45,20 +41,7 @@ export default function AdminDashboardPage() {
     <div>
       <h1 className="text-3xl font-bold font-headline mb-8">Dashboard</h1>
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-        {loading ? (
-           Array.from({ length: 4 }).map((_, i) => (
-             <Card key={i}>
-                <CardHeader>
-                  <Skeleton className="h-5 w-2/3" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-7 w-1/2 mb-2" />
-                  <Skeleton className="h-4 w-full" />
-                </CardContent>
-             </Card>
-           ))
-        ) : (
-          stats.map((stat) => (
+          {stats.map((stat) => (
             <Card key={stat.title} className="shadow-md hover:shadow-lg transition-shadow">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
@@ -69,8 +52,7 @@ export default function AdminDashboardPage() {
                 <p className="text-xs text-muted-foreground">{stat.description}</p>
               </CardContent>
             </Card>
-          ))
-        )}
+          ))}
       </div>
       <div className="mt-12">
         <h2 className="text-2xl font-bold font-headline mb-4">Quick Actions</h2>

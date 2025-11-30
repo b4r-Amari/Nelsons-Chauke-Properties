@@ -12,7 +12,6 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { CtaTabsSection, NewsletterSection } from '@/components/sections/home-page-sections';
 import { getProperties } from '@/lib/data';
 import { useEffect, useState } from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
 import { PropertyFilter } from '@/components/shared/property-filter';
 
 function HeroSection({ properties }: { properties: Property[] }) {
@@ -62,37 +61,14 @@ function HeroSection({ properties }: { properties: Property[] }) {
 
 function FeaturedPropertiesSection() {
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFeatured = async () => {
-      setLoading(true);
       const props = await getProperties({ featuredOnly: true });
       setFeaturedProperties(props);
-      setLoading(false);
     };
     fetchFeatured();
   }, []);
-
-  if (loading) {
-    return (
-      <section className="py-24 bg-background relative mt-32 md:mt-0">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
-          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties...</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="space-y-4">
-                  <Skeleton className="h-[250px] w-full" />
-                  <Skeleton className="h-6 w-3/4" />
-                  <Skeleton className="h-4 w-1/2" />
-                </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="py-24 bg-background relative mt-32 md:mt-0">
