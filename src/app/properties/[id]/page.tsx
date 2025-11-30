@@ -190,8 +190,8 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
 
 
       <div className="container py-8">
-        <div className="max-w-4xl mx-auto">
-            <main>
+        <div className="grid md:grid-cols-3 gap-12">
+            <main className="md:col-span-2">
                 <div>
                      <header className="mb-6 border-b pb-6">
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
@@ -271,6 +271,17 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                         </section>
 
                         <Separator className="my-8" />
+                        
+                        <section className="mb-8">
+                            <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Contact Agent(s)</h2>
+                            <div className="grid sm:grid-cols-2 gap-6">
+                            {propertyAgents.map(agent => (
+                                <AgentCard key={agent.id} agent={agent} />
+                            ))}
+                            </div>
+                        </section>
+
+                        <Separator className="my-8" />
 
                         <section className="mb-8">
                             <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Home Loan Calculator</h2>
@@ -283,25 +294,11 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                      </article>
                 </div>
             </main>
-        </div>
-      </div>
-      <div className="container pb-12">
-        <div className="max-w-4xl mx-auto space-y-12">
-            <Separator />
-            
-            <div className="grid md:grid-cols-2 gap-12">
-                <section>
-                    <h2 className="text-2xl font-bold font-headline mb-6 text-brand-deep">Contact Agent</h2>
-                    <div className="space-y-8">
-                    {propertyAgents.map(agent => (
-                        <AgentCard key={agent.id} agent={agent} />
-                    ))}
-                    </div>
-                </section>
-                 <section className="hidden md:block">
+             <aside className="md:col-span-1">
+                <div className="sticky top-24 space-y-8">
                     <EnquiryForm propertyId={params.id} />
-                </section>
-            </div>
+                </div>
+            </aside>
         </div>
       </div>
       <div id="floating-contact-bar-container">

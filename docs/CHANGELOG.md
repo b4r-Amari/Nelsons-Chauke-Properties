@@ -203,3 +203,16 @@ This document tracks all requests made by the user and the actions taken by the 
     - Applied the user-provided code to `src/app/properties/[id]/page.tsx`.
 - **Status:** `Completed`
 - **Note:** This is a major architectural improvement for the property details page, making it faster and more SEO-friendly.
+
+---
+
+### **Entry 15: Display Agents on Property Page**
+
+- **Date:** 2024-08-21
+- **User Request:**
+    - Display the assigned agent(s) on the property details page.
+- **AI Action:**
+    - Modified `src/app/properties/[id]/page.tsx` to display the `AgentCard` component(s) for the assigned agent(s) directly within the main content area of the page.
+    - Placed the agent information in a new "Contact Agent(s)" section immediately after the property features for better visibility.
+- **Status:** `Completed`
+- **Note:** This makes it easier for users to identify and contact the listing agent for a property.
