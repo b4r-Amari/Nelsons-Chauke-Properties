@@ -1,4 +1,5 @@
 
+
 "use client"
 
 import { useState, useEffect, useCallback, useMemo } from "react";
@@ -133,7 +134,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
   
   const clearFilters = () => {
     const status = activeTab === 'buy' ? 'for-sale' : 'to-let';
-    const newFilters = {...initialFilters, status };
+    const newFilters = {...initialFilters, status: status as "for-sale" | "to-let" };
     setFilters(newFilters);
   }
 
@@ -356,5 +357,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
     </div>
   );
 }
+
+    
 
     
