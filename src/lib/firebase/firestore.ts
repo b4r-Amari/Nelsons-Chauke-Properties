@@ -1,8 +1,8 @@
 
 'use server';
 
-import { db } from './firebase';
-import { collection, addDoc, doc, updateDoc, deleteDoc, Timestamp } from 'firebase/firestore';
+import { adminDb } from './firebase';
+import { Timestamp } from 'firebase-admin/firestore';
 import { revalidatePath } from 'next/cache';
 
 // Generic type for data to be added
@@ -11,8 +11,8 @@ type DataObject = { [key: string]: any };
 // Properties
 export async function addProperty(propertyData: DataObject) {
     try {
-        const propertiesCol = collection(db, 'properties');
-        await addDoc(propertiesCol, {
+        const propertiesCol = adminDb.collection('properties');
+        await propertiesCol.add({
             ...propertyData,
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
@@ -28,8 +28,8 @@ export async function addProperty(propertyData: DataObject) {
 
 export async function updateProperty(id: string, propertyData: DataObject) {
     try {
-        const propertyRef = doc(db, 'properties', id);
-        await updateDoc(propertyRef, {
+        const propertyRef = adminDb.collection('properties').doc(id);
+        await propertyRef.update({
             ...propertyData,
             updatedAt: Timestamp.now(),
         });
@@ -43,7 +43,7 @@ export async function updateProperty(id: string, propertyData: DataObject) {
 
 export async function deleteProperty(id: string) {
     try {
-        await deleteDoc(doc(db, 'properties', id));
+        await adminDb.collection('properties').doc(id).delete();
         revalidatePath('/admin/properties');
         revalidatePath('/properties');
         return { success: true };
@@ -57,8 +57,8 @@ export async function addAgent(agentData: DataObject) {
     try {
         // Create slug from name
         const slug = agentData.name.toLowerCase().replace(/\s+/g, '-');
-        const agentsCol = collection(db, 'agents');
-        await addDoc(agentsCol, {
+        const agentsCol = adminDb.collection('agents');
+        await agentsCol.add({
             ...agentData,
             slug,
             createdAt: Timestamp.now(),
@@ -74,7 +74,7 @@ export async function addAgent(agentData: DataObject) {
 
 export async function deleteAgent(id: string) {
     try {
-        await deleteDoc(doc(db, 'agents', id));
+        await adminDb.collection('agents').doc(id).delete();
         revalidatePath('/admin/agents');
         revalidatePath('/about-us');
         return { success: true };
@@ -89,8 +89,8 @@ export async function addBlogPost(postData: DataObject) {
     try {
         // Create slug from title
         const slug = postData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-        const blogCol = collection(db, 'blogPosts');
-        await addDoc(blogCol, {
+        const blogCol = adminDb.collection('blogPosts');
+        await blogCol.add({
             ...postData,
             slug,
             date: Timestamp.fromDate(new Date()),
@@ -107,7 +107,7 @@ export async function addBlogPost(postData: DataObject) {
 
 export async function deleteBlogPost(id: string) {
     try {
-        await deleteDoc(doc(db, 'blogPosts', id));
+        await adminDb.collection('blogPosts').doc(id).delete();
         revalidatePath('/admin/blogs');
         revalidatePath('/blog');
         return { success: true };

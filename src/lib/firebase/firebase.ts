@@ -1,6 +1,7 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getFirestore, type Firestore } from "firebase/firestore";
+import * as admin from 'firebase-admin';
 
 const firebaseConfig = {
   projectId: "nc-properties-redefined",
@@ -12,7 +13,7 @@ const firebaseConfig = {
   storageBucket: "nc-properties-redefined.appspot.com"
 };
 
-// Initialize Firebase
+// Client-side app
 let app: FirebaseApp;
 if (getApps().length === 0) {
   app = initializeApp(firebaseConfig);
@@ -22,3 +23,20 @@ if (getApps().length === 0) {
 
 export const firebaseApp = app;
 export const db: Firestore = getFirestore(app);
+
+
+// Server-side (admin) app
+if (admin.apps.length === 0) {
+    try {
+        admin.initializeApp({
+            credential: admin.credential.applicationDefault(),
+            projectId: process.env.GCLOUD_PROJECT || 'nc-properties-redefined',
+        });
+    } catch (error: any) {
+        if (error.code !== 'app/duplicate-app') {
+            console.error('Firebase Admin SDK initialization error:', error);
+        }
+    }
+}
+
+export const adminDb = admin.firestore();
