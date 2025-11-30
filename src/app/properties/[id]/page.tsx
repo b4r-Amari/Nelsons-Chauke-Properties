@@ -4,7 +4,6 @@
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, Video, Map, Camera, Share2, Building, Calendar, Hash } from 'lucide-react';
-import type { Metadata } from 'next';
 import { getProperty, getAgents } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
 import { AgentCard } from '@/components/shared/agent-card';
@@ -20,7 +19,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FloatingContactBar } from '@/components/shared/floating-contact-bar';
 import { useEffect, useState } from 'react';
 import { type Agent } from '@/components/shared/agent-card';
-import { Skeleton } from '@/components/ui/skeleton';
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -53,23 +51,7 @@ export default function PropertyDetailPage() {
   }, [id]);
 
   if (loading || !property) {
-    return (
-        <div className="container py-8">
-            <div className="max-w-4xl mx-auto">
-                <Skeleton className="h-8 w-32 mb-8" />
-                <Skeleton className="h-[400px] w-full mb-8" />
-                <div className="grid md:grid-cols-3 gap-8">
-                    <div className="md:col-span-2 space-y-8">
-                        <Skeleton className="h-12 w-full" />
-                        <Skeleton className="h-64 w-full" />
-                    </div>
-                    <div>
-                        <Skeleton className="h-96 w-full" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+    return null; // Render nothing or a minimal loader while fetching
   }
 
   const formatPrice = (price: number) => {
@@ -206,17 +188,6 @@ export default function PropertyDetailPage() {
                         </section>
 
                         <Separator className="my-8" />
-                        
-                        <section>
-                            <h2 className="text-2xl font-bold font-headline mb-6 text-brand-deep">Contact Agent</h2>
-                            <div className="space-y-8">
-                            {propertyAgents.map(agent => (
-                                <AgentCard key={agent.id} agent={agent} />
-                            ))}
-                            </div>
-                        </section>
-
-                        <Separator className="my-8" />
 
                         <section className="mb-8">
                             <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Home Loan Calculator</h2>
@@ -225,6 +196,17 @@ export default function PropertyDetailPage() {
                                      <HomeLoanCalculator purchasePrice={property.price} />
                                 </CardContent>
                             </Card>
+                        </section>
+
+                         <Separator className="my-8" />
+                        
+                        <section>
+                            <h2 className="text-2xl font-bold font-headline mb-6 text-brand-deep">Contact Agent</h2>
+                            <div className="space-y-8">
+                            {propertyAgents.map(agent => (
+                                <AgentCard key={agent.id} agent={agent} />
+                            ))}
+                            </div>
                         </section>
                      </article>
                 </div>
