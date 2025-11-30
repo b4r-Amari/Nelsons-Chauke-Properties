@@ -271,17 +271,6 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                         </section>
 
                         <Separator className="my-8" />
-                        
-                        <section className="mb-8">
-                            <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Contact Agent(s)</h2>
-                            <div className="grid sm:grid-cols-2 gap-6">
-                            {propertyAgents.map(agent => (
-                                <AgentCard key={agent.id} agent={agent} />
-                            ))}
-                            </div>
-                        </section>
-
-                        <Separator className="my-8" />
 
                         <section className="mb-8">
                             <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Home Loan Calculator</h2>
@@ -290,6 +279,17 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                                      <HomeLoanCalculator purchasePrice={property.price} />
                                 </CardContent>
                             </Card>
+                        </section>
+
+                        <Separator className="my-8" />
+                        
+                        <section className="mb-8">
+                            <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Contact Agent(s)</h2>
+                            <div className="grid sm:grid-cols-2 gap-6">
+                            {propertyAgents.map(agent => (
+                                <AgentCard key={agent.id} agent={agent} />
+                            ))}
+                            </div>
                         </section>
                      </article>
                 </div>
