@@ -51,7 +51,12 @@ export default function PropertyDetailPage() {
   }, [id]);
 
   if (loading || !property) {
-    return null; // Render nothing or a minimal loader while fetching
+    // Return a minimal loading state or null to prevent layout shifts
+    return (
+        <div className="container py-12 text-center">
+            <p>Loading property details...</p>
+        </div>
+    );
   }
 
   const formatPrice = (price: number) => {
@@ -107,9 +112,9 @@ export default function PropertyDetailPage() {
 
 
       <div className="container py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            <main className="md:col-span-2">
-                <div className="md:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+            <main className="lg:col-span-2">
+                <div className="p-0 md:p-8">
                      <header className="mb-6 border-b pb-6">
                         <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                             <div>
@@ -211,7 +216,7 @@ export default function PropertyDetailPage() {
                      </article>
                 </div>
             </main>
-            <aside className="sticky top-24 h-fit hidden md:block">
+            <aside className="sticky top-24 h-fit hidden lg:block">
                 <EnquiryForm propertyId={id} />
             </aside>
         </div>
