@@ -1,11 +1,10 @@
-
 "use client";
 
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, Video, Map, Camera, Share2, Building, Calendar, Hash } from 'lucide-react';
 import type { Metadata } from 'next';
-import { getProperty, getProperties } from '@/lib/data';
+import { getProperty } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
 import { AgentCard, type Agent } from '@/components/shared/agent-card';
 import { EnquiryForm } from '@/components/shared/enquiry-form';
@@ -24,15 +23,20 @@ import { useEffect, useState } from 'react';
 // This metadata is not used in a client component, but we keep it for reference
 // export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> { ... }
 
-export default function PropertyDetailPage({ params }: { params: { id: string } }) {
+export default function PropertyDetailPage() {
+  const params = useParams();
+  const propertyId = Array.isArray(params.id) ? params.id[0] : params.id;
+
   const [property, setProperty] = useState<Property | null>(null);
   const [propertyAgents, setPropertyAgents] = useState<Agent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showFloatingBar, setShowFloatingBar] = useState(false);
 
   useEffect(() => {
+    if (!propertyId) return;
     async function fetchData() {
       setIsLoading(true);
-      const prop = await getProperty(params.id);
+      const prop = await getProperty(propertyId);
       if (!prop) {
         notFound();
       }
@@ -45,8 +49,16 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
       setIsLoading(false);
     }
     fetchData();
-  }, [params.id]);
+  }, [propertyId]);
 
+  useEffect(() => {
+    const checkSize = () => {
+      setShowFloatingBar(window.innerWidth < 768);
+    };
+    checkSize();
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
+  }, []);
 
   if (isLoading || !property) {
     return null; // Or a loading skeleton
@@ -200,7 +212,7 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
                                 </CardContent>
                             </Card>
                         </section>
-
+                        
                         <Separator className="my-8" />
                         
                         <section>
@@ -217,12 +229,12 @@ export default function PropertyDetailPage({ params }: { params: { id: string } 
             </main>
              <aside className="hidden md:block md:col-span-1">
                 <div className="sticky top-24 space-y-8">
-                    <EnquiryForm propertyId={params.id} />
+                    <EnquiryForm propertyId={propertyId} />
                 </div>
             </aside>
         </div>
       </div>
-       {propertyAgents.length > 0 && <FloatingContactBar agent={propertyAgents[0]} />}
+      {showFloatingBar && propertyAgents.length > 0 && <FloatingContactBar agent={propertyAgents[0]} />}
     </div>
   );
 }
