@@ -2,8 +2,8 @@
 import { type Property } from '@/components/shared/property-card';
 import { type Agent } from '@/components/shared/agent-card';
 import { type BlogPost } from '@/components/shared/blog-card';
-import { adminDb } from './firebase/firebase';
-import { collection, getDocs, doc, getDoc, query, where, limit, DocumentData, Query } from 'firebase/firestore';
+import { adminDb } from './firebase/admin';
+import * as admin from 'firebase-admin';
 
 // Helper to convert Firestore document to a plain object
 function docToObj(d: admin.firestore.DocumentSnapshot<admin.firestore.DocumentData>) {

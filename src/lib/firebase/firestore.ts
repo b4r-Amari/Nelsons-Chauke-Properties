@@ -1,7 +1,7 @@
 
 'use server';
 
-import { adminDb } from './firebase';
+import { adminDb } from './admin';
 import { Timestamp } from 'firebase-admin/firestore';
 import { revalidatePath } from 'next/cache';
 
@@ -85,15 +85,14 @@ export async function deleteAgent(id: string) {
 
 
 // Blog Posts
-export async function addBlogPost(postData: DataObject) {
+export async function addBlogPost(blogData: DataObject) {
     try {
-        // Create slug from title
-        const slug = postData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+        const slug = blogData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
         const blogCol = adminDb.collection('blogPosts');
         await blogCol.add({
-            ...postData,
+            ...blogData,
             slug,
-            date: Timestamp.fromDate(new Date()),
+            date: Timestamp.now(),
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
         });
