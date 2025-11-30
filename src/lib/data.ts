@@ -1,12 +1,33 @@
 
-"use client";
 
 import { type Property } from '@/components/shared/property-card';
 import { type Agent } from '@/components/shared/agent-card';
 import { type BlogPost } from '@/components/shared/blog-card';
-import { db } from './firebase/firebase';
 import { collection, getDocs, doc, getDoc, query, where, limit, Timestamp } from 'firebase/firestore';
 import type { DocumentData, DocumentSnapshot } from 'firebase/firestore';
+
+// This is a temporary measure to allow server-side rendering in Next.js
+// In a real-world scenario, you would use the Firebase Admin SDK for server-side operations
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+
+const firebaseConfig = {
+  projectId: "nc-properties-redefined",
+  appId: "1:764533948711:web:477ded0be370b93290a902",
+  apiKey: "AIzaSyB3VAQRiOwxSlLAGQxcwh-3QUd9zkG1zc8",
+  authDomain: "nc-properties-redefined.firebaseapp.com",
+  measurementId: "",
+  messagingSenderId: "764533948711",
+  storageBucket: "nc-properties-redefined.appspot.com"
+};
+
+let app;
+if (!getApps().length) {
+    app = initializeApp(firebaseConfig);
+} else {
+    app = getApp();
+}
+const db = getFirestore(app);
 
 
 // Helper to convert Firestore document to a plain object
