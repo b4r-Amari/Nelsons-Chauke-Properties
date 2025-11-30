@@ -20,51 +20,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Building, KeyRound, Handshake } from 'lucide-react';
 
 
-const heroBanners = [
-  '/images/backgrounds/hero-banner-1.webp',
-  '/images/backgrounds/hero-banner-2.webp',
-  '/images/backgrounds/hero-banner-3.webp',
-  '/images/backgrounds/hero-banner-4.webp'
-];
-
-export function HeroSection({ properties }: { properties: Property[] }) {
-  const [bannerImage, setBannerImage] = useState(heroBanners[0]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
-      setBannerImage(randomBanner);
-    }
-  }, []);
-  
-  return (
-    <section className="relative h-[70vh] min-h-[550px] flex items-center justify-center text-white">
-      <Image
-        src={bannerImage}
-        alt="A beautiful, modern home interior, representing the quality properties offered by NC Properties."
-        data-ai-hint="modern home interior"
-        fill
-        className="object-cover"
-        priority
-      />
-      <div className="absolute inset-0 bg-black/60" />
-      <div className="relative z-10 container text-center flex flex-col items-center mt-40">
-        <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">
-          We have space for you
-        </h1>
-        <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
-          Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
-        </p>
-        <Card className="w-full max-w-4xl mx-auto shadow-2xl bg-black/20 backdrop-blur-md border border-white/20 mt-8">
-          <CardContent className="p-4">
-             <PropertyFilter properties={properties} onFilterChange={() => {}} />
-          </CardContent>
-        </Card>
-      </div>
-    </section>
-  );
-}
-
 const alertFormSchema = z.object({
   fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -253,7 +208,7 @@ export function NewsletterSection() {
       }}
       aria-label="Newsletter subscription section"
     >
-      <div className="absolute inset-0 bg-black/50" />
+      <div className="absolute inset-0 bg-black/60" />
       <div className="container relative">
         <Card className="max-w-2xl mx-auto shadow-xl bg-card/80 backdrop-blur-sm">
           <CardHeader className="text-center">

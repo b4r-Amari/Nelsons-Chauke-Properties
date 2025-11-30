@@ -9,10 +9,55 @@ import type { Property } from '@/components/shared/property-card';
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { HeroSection, CtaTabsSection, NewsletterSection } from '@/components/sections/home-page-sections';
+import { CtaTabsSection, NewsletterSection } from '@/components/sections/home-page-sections';
 import { getProperties } from '@/lib/data';
 import { useEffect, useState } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PropertyFilter } from '@/components/shared/property-filter';
+
+function HeroSection({ properties }: { properties: Property[] }) {
+  const [bannerImage, setBannerImage] = useState('/images/backgrounds/hero-banner-1.webp');
+
+  useEffect(() => {
+    const heroBanners = [
+      '/images/backgrounds/hero-banner-1.webp',
+      '/images/backgrounds/hero-banner-2.webp',
+      '/images/backgrounds/hero-banner-3.webp',
+      '/images/backgrounds/hero-banner-4.webp'
+    ];
+    if (typeof window !== 'undefined') {
+      const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
+      setBannerImage(randomBanner);
+    }
+  }, []);
+
+  return (
+    <section className="relative h-[70vh] min-h-[550px] flex items-center justify-center text-white">
+      <Image
+        src={bannerImage}
+        alt="A beautiful, modern home interior, representing the quality properties offered by NC Properties."
+        data-ai-hint="modern home interior"
+        fill
+        className="object-cover"
+        priority
+      />
+      <div className="absolute inset-0 bg-black/60" />
+      <div className="relative z-10 container text-center flex flex-col items-center pt-24">
+        <div className='bg-black/20 p-4 rounded-lg'>
+          <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">
+            We have space for you
+          </h1>
+          <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
+            Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
+          </p>
+        </div>
+        <div className="w-full max-w-4xl mx-auto mt-8">
+            <PropertyFilter properties={properties} onFilterChange={() => {}} />
+        </div>
+      </div>
+    </section>
+  );
+}
 
 
 function FeaturedPropertiesSection() {
@@ -63,7 +108,7 @@ function FeaturedPropertiesSection() {
         >
           <CarouselContent>
             {featuredProperties.map((prop) => (
-              <CarouselItem key={prop.id} className="basis-full sm:basis-1/2 lg:basis-1/3 xl:basis-1/4">
+              <CarouselItem key={prop.id} className="basis-full sm:basis-1/2 lg:basis-1/3">
                 <div className="p-1 h-full">
                   <PropertyCard property={prop} />
                 </div>
