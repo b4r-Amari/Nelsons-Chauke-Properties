@@ -8,6 +8,7 @@ import { type Agent } from "@/components/shared/agent-card";
 import placeholders from '@/lib/placeholder-images.json';
 import { Button } from "@/components/ui/button";
 import { Camera, Map, Video, Share2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 type PropertyDetailClientWrapperProps = {
     property: Property;
@@ -15,6 +16,11 @@ type PropertyDetailClientWrapperProps = {
 };
 
 export function PropertyDetailClientWrapper({ property, agents }: PropertyDetailClientWrapperProps) {
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
     
     const galleryImages = [
         property.imageUrl,
@@ -40,9 +46,9 @@ export function PropertyDetailClientWrapper({ property, agents }: PropertyDetail
                 </div>
             </div>
 
-            <div id="floating-contact-bar-container">
-                {agents.length > 0 && <FloatingContactBar agent={agents[0]} />}
-            </div>
+            {isClient && agents.length > 0 && <FloatingContactBar agent={agents[0]} />}
         </>
     );
 }
+
+    

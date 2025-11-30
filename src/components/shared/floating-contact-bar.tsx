@@ -1,22 +1,11 @@
+
 'use client';
 
 import { Phone, MessageSquare, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import type { Agent } from './agent-card';
-import { useState, useEffect } from 'react';
 
 export function FloatingContactBar({ agent }: { agent: Agent }) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // This ensures the component only renders on the client side,
-    // where it can correctly determine the screen size for md:hidden to work.
-    setIsVisible(true);
-  }, []);
-
-  if (!isVisible) {
-    return null;
-  }
 
   const whatsappNumber = agent.phone.replace(/[^0-9]/g, '');
   const whatsappLink = `https://wa.me/27${whatsappNumber.substring(whatsappNumber.length - 9)}`;
@@ -48,3 +37,5 @@ export function FloatingContactBar({ agent }: { agent: Agent }) {
     </div>
   );
 }
+
+    
