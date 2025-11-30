@@ -304,7 +304,9 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
             </div>
         </div>
       </div>
-      {propertyAgents.length > 0 && <FloatingContactBar agent={propertyAgents[0]} />}
+      <div id="floating-contact-bar-container">
+        {propertyAgents.length > 0 && <FloatingContactBar agent={propertyAgents[0]} />}
+      </div>
     </div>
   );
 }
