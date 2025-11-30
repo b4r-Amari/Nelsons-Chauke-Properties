@@ -1,17 +1,21 @@
-# Changelog
+# Project Changelog
 
-All notable changes to this project will be documented in this file.
+This document tracks all requests made by the user and the actions taken by the AI. It serves as a running record to maintain project context and ensure all changes are aligned with the user's goals.
 
-## [Unreleased]
+---
 
-### Added
-- **Project Changelog**: This document was created to maintain a persistent history of user requests and AI-driven changes, ensuring context is not lost between interactions.
+### **Entry 1: Architectural Shift to Client-Side Data Fetching**
 
-### Changed
-- **Architectural Shift: Reverted to Client-Side Data Fetching**: Due to persistent server-side authentication errors (`Could not refresh access token`), all data fetching was moved from the server to the client. This ensures the application is functional and can reliably connect to Firestore.
-  - All data fetching now occurs within components using `useEffect` hooks and the client-side `firebase` SDK.
-  - The `firebase-admin` and `@google-cloud/firestore` packages were removed to resolve the build-time and runtime authentication conflicts.
-  - The server-side data fetching logic in `src/lib/data.ts` and related files was replaced with client-side implementations.
+- **Date:** 2024-08-19
+- **User Request:**
+    - Resolve a persistent "Could not refresh access token" error that was preventing the application from fetching data from Firestore on the server.
+- **AI Action:**
+    - After multiple unsuccessful attempts to fix the server-side authentication for `firebase-admin` and `@google-cloud/firestore`, a major architectural change was implemented to ensure application functionality.
+    - **Removed all server-side data fetching logic:** The functions in `src/lib/data.ts` that used the Admin SDK were removed.
+    - **Implemented client-side data fetching:** All components that display data from Firestore (e.g., `HomePage`, `PropertiesPage`, `AdminDashboardPage`, etc.) were refactored to use `useState` and `useEffect` hooks to fetch data directly in the browser using the client-side Firebase SDK.
+    - **Removed server-side dependencies:** The `firebase-admin` and `@google-cloud/firestore` packages were removed from `package.json` to resolve build-time and runtime dependency conflicts.
+    - **Updated documentation:** The `README.md` and other documentation were updated to reflect this architectural change.
+- **Status:** `Completed`
+- **Note:** This change was made to deliver a functional application after exhausting server-side authentication options. While it moves data fetching to the client, it resolves the critical runtime errors.
 
-### Fixed
-- **Persistent Data Fetching Errors**: Resolved a series of `Could not refresh access token` and `Module not found: Can't resolve 'net'` errors by moving all data fetching to the client-side, which eliminated the server-side authentication problem.
+---
