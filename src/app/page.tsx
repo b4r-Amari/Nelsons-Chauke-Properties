@@ -1,4 +1,6 @@
 
+"use client";
+
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from 'lucide-react';
@@ -8,22 +10,44 @@ import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { HeroSection, CtaTabsSection, NewsletterSection } from '@/components/sections/home-page-sections';
-import type { Metadata } from 'next';
 import { getProperties } from '@/lib/data';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export const metadata: Metadata = {
-  title: 'NC Properties Redefined | Find Your Perfect Home in South Africa',
-  description: 'Discover the finest properties for sale and to rent across South Africa with NC Properties. Your new home is just a search away. Explore listings in Sandton, Cape Town, and more.',
-  openGraph: {
-    title: 'NC Properties Redefined | Find Your Perfect Home in South Africa',
-    description: 'Discover the finest properties for sale and to rent across South Africa with NC Properties. Your new home is just a search away.',
-    type: 'website',
-    url: '/',
-  },
-};
 
-async function FeaturedPropertiesSection() {
-  const featuredProperties: Property[] = await getProperties({ featuredOnly: true });
+function FeaturedPropertiesSection() {
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      setLoading(true);
+      const props = await getProperties({ featuredOnly: true });
+      setFeaturedProperties(props);
+      setLoading(false);
+    };
+    fetchFeatured();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-24 bg-background relative mt-32 md:mt-0">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
+          <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties...</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="space-y-4">
+                  <Skeleton className="h-[250px] w-full" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-24 bg-background relative mt-32 md:mt-0">
@@ -80,8 +104,16 @@ function ShortAboutSection() {
   );
 }
 
-export default async function Home() {
-    const properties = await getProperties();
+export default function Home() {
+    const [properties, setProperties] = useState<Property[]>([]);
+
+    useEffect(() => {
+        const fetchProps = async () => {
+            const props = await getProperties();
+            setProperties(props);
+        }
+        fetchProps();
+    }, []);
 
     const websiteSchema = {
     "@context": "https://schema.org",

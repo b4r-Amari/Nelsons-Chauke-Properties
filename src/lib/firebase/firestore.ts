@@ -1,8 +1,8 @@
 
-'use server';
+'use client';
 
-import { adminDb, Timestamp } from './admin';
-import { revalidatePath } from 'next/cache';
+import { db } from './firebase';
+import { collection, addDoc, doc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
 
 // Generic type for data to be added
 type DataObject = { [key: string]: any };
@@ -10,15 +10,12 @@ type DataObject = { [key: string]: any };
 // Properties
 export async function addProperty(propertyData: DataObject) {
     try {
-        const propertiesCol = adminDb.collection('properties');
-        await propertiesCol.add({
+        const propertiesCol = collection(db, 'properties');
+        await addDoc(propertiesCol, {
             ...propertyData,
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
         });
-        revalidatePath('/admin/properties');
-        revalidatePath('/properties');
-        revalidatePath('/');
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -27,13 +24,11 @@ export async function addProperty(propertyData: DataObject) {
 
 export async function updateProperty(id: string, propertyData: DataObject) {
     try {
-        const propertyRef = adminDb.collection('properties').doc(id);
-        await propertyRef.update({
+        const propertyRef = doc(db, 'properties', id);
+        await updateDoc(propertyRef, {
             ...propertyData,
             updatedAt: Timestamp.now(),
         });
-        revalidatePath(`/admin/properties`);
-        revalidatePath(`/properties/${id}`);
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -42,9 +37,7 @@ export async function updateProperty(id: string, propertyData: DataObject) {
 
 export async function deleteProperty(id: string) {
     try {
-        await adminDb.collection('properties').doc(id).delete();
-        revalidatePath('/admin/properties');
-        revalidatePath('/properties');
+        await deleteDoc(doc(db, 'properties', id));
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -56,15 +49,13 @@ export async function addAgent(agentData: DataObject) {
     try {
         // Create slug from name
         const slug = agentData.name.toLowerCase().replace(/\s+/g, '-');
-        const agentsCol = adminDb.collection('agents');
-        await agentsCol.add({
+        const agentsCol = collection(db, 'agents');
+        await addDoc(agentsCol, {
             ...agentData,
             slug,
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
         });
-        revalidatePath('/admin/agents');
-        revalidatePath('/about-us');
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -73,9 +64,7 @@ export async function addAgent(agentData: DataObject) {
 
 export async function deleteAgent(id: string) {
     try {
-        await adminDb.collection('agents').doc(id).delete();
-        revalidatePath('/admin/agents');
-        revalidatePath('/about-us');
+        await deleteDoc(doc(db, 'agents', id));
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -87,16 +76,14 @@ export async function deleteAgent(id: string) {
 export async function addBlogPost(blogData: DataObject) {
     try {
         const slug = blogData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
-        const blogCol = adminDb.collection('blogPosts');
-        await blogCol.add({
+        const blogCol = collection(db, 'blogPosts');
+        await addDoc(blogCol, {
             ...blogData,
             slug,
             date: Timestamp.now(),
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
         });
-        revalidatePath('/admin/blogs');
-        revalidatePath('/blog');
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -105,9 +92,7 @@ export async function addBlogPost(blogData: DataObject) {
 
 export async function deleteBlogPost(id: string) {
     try {
-        await adminDb.collection('blogPosts').doc(id).delete();
-        revalidatePath('/admin/blogs');
-        revalidatePath('/blog');
+        await deleteDoc(doc(db, 'blogPosts', id));
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };

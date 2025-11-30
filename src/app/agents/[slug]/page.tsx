@@ -1,65 +1,88 @@
 
+"use client";
+
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, Mail, Phone } from 'lucide-react';
-
-import { getAgent, getAgents, getProperties } from '@/lib/data';
+import { getAgent, getProperties } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { PropertyCard, type Property } from '@/components/shared/property-card';
-import type { Metadata } from 'next';
 import { type Agent } from '@/components/shared/agent-card';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
+function LoadingSkeleton() {
+  return (
+    <div className="container py-12 md:py-24">
+      <Skeleton className="h-8 w-1/4 mb-8" />
+       <div className="grid lg:grid-cols-3 gap-12">
+        <aside className="lg:col-span-1">
+          <Card className="sticky top-24 shadow-lg text-center p-8 space-y-4">
+              <Skeleton className="h-48 w-48 rounded-full mx-auto" />
+              <Skeleton className="h-8 w-3/4 mx-auto" />
+              <Skeleton className="h-6 w-1/2 mx-auto" />
+              <Separator className="my-6" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-8 w-full" />
+              <Skeleton className="h-12 w-full mt-4" />
+          </Card>
+        </aside>
+        <article className="lg:col-span-2 space-y-8">
+            <div className="space-y-4">
+              <Skeleton className="h-10 w-1/3" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-full" />
+              <Skeleton className="h-6 w-5/6" />
+            </div>
+             <div className="space-y-4">
+              <Skeleton className="h-10 w-1/3" />
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                  <div className="space-y-4">
+                    <Skeleton className="h-[250px] w-full" />
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                   <div className="space-y-4">
+                    <Skeleton className="h-[250px] w-full" />
+                    <Skeleton className="h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+               </div>
+            </div>
+        </article>
+      </div>
+    </div>
+  )
+}
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const agent = await getAgent(params.slug);
+export default function AgentProfilePage({ params }: { params: { slug: string } }) {
+  const [agent, setAgent] = useState<Agent | null>(null);
+  const [agentProperties, setAgentProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!agent) {
-    return {
-      title: 'Agent Not Found',
-      description: 'The requested agent could not be found.',
-    };
-  }
-
-  return {
-    title: `${agent.name} - ${agent.role} | NC Properties`,
-    description: `View the profile and active listings for ${agent.name}, a dedicated real estate agent at NC Properties. Contact ${agent.name.split(' ')[0]} for expert property advice.`,
-    openGraph: {
-        title: `${agent.name} - ${agent.role} | NC Properties`,
-        description: `View the profile and active listings for ${agent.name}, a dedicated real estate agent at NC Properties. Contact ${agent.name.split(' ')[0]} for expert property advice.`,
-        type: 'profile',
-        url: `/agents/${agent.slug}`,
-        images: [
-            {
-            url: agent.imageUrl,
-            width: 200,
-            height: 200,
-            alt: `Portrait of ${agent.name}`,
-            },
-        ],
+  useEffect(() => {
+    const fetchAgentData = async () => {
+      setLoading(true);
+      const agentData = await getAgent(params.slug);
+      if (!agentData) {
+        notFound();
+      }
+      setAgent(agentData);
+      
+      const allProperties = await getProperties();
+      setAgentProperties(allProperties.filter(p => p.agentIds.includes(agentData.id) && p.status !== 'sold'));
+      setLoading(false);
     }
-  };
-}
+    fetchAgentData();
+  }, [params.slug]);
 
 
-export async function generateStaticParams() {
-  const agents: Agent[] = await getAgents();
-  return agents.map((agent) => ({
-    slug: agent.slug,
-  }));
-}
-
-export default async function AgentProfilePage({ params }: { params: { slug: string } }) {
-  const agent = await getAgent(params.slug);
-
-  if (!agent) {
-    notFound();
+  if (loading || !agent) {
+    return <LoadingSkeleton />;
   }
-
-  const allProperties: Property[] = await getProperties();
-  const agentProperties = allProperties.filter(p => p.agentIds.includes(agent.id) && p.status !== 'sold');
 
   return (
     <div className="bg-background">

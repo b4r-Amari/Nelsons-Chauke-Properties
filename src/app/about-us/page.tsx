@@ -1,24 +1,16 @@
 
+"use client";
+
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Download } from 'lucide-react';
 import Link from 'next/link';
-import type { Metadata } from 'next';
 import { getAgents } from '@/lib/data';
 import placeholders from '@/lib/placeholder-images.json';
-
-export const metadata: Metadata = {
-  title: 'About NC Properties | Our Story, Mission, and Team',
-  description: 'Learn about the story, mission, and dedicated team behind NC Properties. Discover our journey and commitment to redefining the real estate experience in South Africa.',
-  openGraph: {
-    title: 'About NC Properties | Our Story, Mission, and Team',
-    description: 'Learn about the story, mission, and dedicated team behind NC Properties. Discover our journey and commitment to redefining the real estate experience in South Africa.',
-    type: 'website',
-    url: '/about-us',
-  },
-};
-
+import { useEffect, useState } from 'react';
+import { type Agent } from '@/components/shared/agent-card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const timelineEvents = [
   { year: '2010', title: 'Foundation', description: 'NC Properties was founded with a mission to simplify the home-buying process.' },
@@ -28,30 +20,22 @@ const timelineEvents = [
   { year: 'Today', title: 'Industry Leader', description: 'Recognized as a leading property firm in the region, serving thousands of happy clients.' },
 ];
 
-export default async function AboutUsPage() {
-  const teamMembers = await getAgents();
+export default function AboutUsPage() {
+  const [teamMembers, setTeamMembers] = useState<Agent[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const organizationSchema = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "NC Properties Redefined",
-    "url": "https://nelson-chauke-prop.web.app/",
-    "logo": "https://nelson-chauke-prop.web.app/images/logo.png",
-    "description": "NC Properties has been driven by a singular vision: to create a real estate experience that is seamless, transparent, and built on trust.",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+1-123-456-7890",
-      "contactType": "Customer Service"
-    }
-  };
-
+  useEffect(() => {
+    const fetchAgents = async () => {
+      setLoading(true);
+      const agents = await getAgents();
+      setTeamMembers(agents);
+      setLoading(false);
+    };
+    fetchAgents();
+  }, []);
 
   return (
     <>
-      <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-      />
       <section 
         className="relative bg-brand-deep text-white py-20 bg-cover bg-center"
         style={{ backgroundImage: "url('/images/backgrounds/about.webp')"}}
@@ -117,17 +101,27 @@ export default async function AboutUsPage() {
           <div className="container">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">Meet Our Team</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {teamMembers.map((member) => (
-                <Link href={`/agents/${member.slug}`} key={member.id} className="group block">
-                  <Card className="text-center shadow-lg transition-transform duration-300 hover:-translate-y-2 h-full">
-                    <CardContent className="p-6">
-                      <Image src={member.imageUrl} data-ai-hint={member.imageHint} alt={`Portrait of ${member.name}, ${member.role} at NC Properties.`} width={200} height={200} className="rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover w-[200px] h-[200px]" />
-                      <h3 className="text-xl font-bold font-headline text-brand-deep group-hover:text-brand-bright transition-colors">{member.name}</h3>
-                      <p className="text-brand-deep font-semibold">{member.role}</p>
-                    </CardContent>
+              {loading ? (
+                 Array.from({ length: 3 }).map((_, i) => (
+                  <Card key={i} className="text-center shadow-lg h-full p-6 space-y-4">
+                      <Skeleton className="h-40 w-40 rounded-full mx-auto" />
+                      <Skeleton className="h-8 w-3/4 mx-auto" />
+                      <Skeleton className="h-6 w-1/2 mx-auto" />
                   </Card>
-                </Link>
-              ))}
+                 ))
+              ) : (
+                teamMembers.map((member) => (
+                  <Link href={`/agents/${member.slug}`} key={member.id} className="group block">
+                    <Card className="text-center shadow-lg transition-transform duration-300 hover:-translate-y-2 h-full">
+                      <CardContent className="p-6">
+                        <Image src={member.imageUrl} data-ai-hint={member.imageHint} alt={`Portrait of ${member.name}, ${member.role} at NC Properties.`} width={200} height={200} className="rounded-full mx-auto mb-4 border-4 border-white shadow-md object-cover w-[200px] h-[200px]" />
+                        <h3 className="text-xl font-bold font-headline text-brand-deep group-hover:text-brand-bright transition-colors">{member.name}</h3>
+                        <p className="text-brand-deep font-semibold">{member.role}</p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))
+              )}
             </div>
           </div>
         </section>

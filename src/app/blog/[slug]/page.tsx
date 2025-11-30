@@ -1,90 +1,62 @@
 
+"use client";
+
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowLeft, User, Calendar } from 'lucide-react';
-import { getBlogPost, getBlogPosts } from '@/lib/data';
+import { getBlogPost } from '@/lib/data';
 import { type BlogPost } from '@/components/shared/blog-card';
 import { Badge } from '@/components/ui/badge';
-import type { Metadata } from 'next';
+import { useEffect, useState } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = await getBlogPost(params.slug);
-
-  if (!post) {
-    return {
-      title: 'Post Not Found',
-      description: 'The requested blog post could not be found.',
-    };
-  }
-
-  return {
-    title: `${post.title} | NC Properties Blog`,
-    description: post.excerpt,
-    openGraph: {
-        title: `${post.title} | NC Properties Blog`,
-        description: post.excerpt,
-        type: 'article',
-        url: `/blog/${post.slug}`,
-        images: [
-            {
-            url: post.imageUrl,
-            width: 800,
-            height: 450,
-            alt: `Featured image for blog post titled: ${post.title}`,
-            },
-        ],
-        authors: [post.author],
-        publishedTime: new Date(post.date).toISOString(),
-    }
-  };
+function LoadingSkeleton() {
+  return (
+    <div className="container py-12 md:py-24">
+      <div className="max-w-4xl mx-auto">
+        <Skeleton className="h-8 w-1/4 mb-8" />
+        <div className="mb-8 space-y-4">
+          <Skeleton className="h-6 w-1/5" />
+          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-10 w-3/4" />
+          <Skeleton className="h-6 w-1/2" />
+        </div>
+        <Skeleton className="aspect-video w-full rounded-lg my-8" />
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-6 w-full" />
+          <Skeleton className="h-6 w-5/6" />
+          <Skeleton className="h-6 w-full" />
+        </div>
+      </div>
+    </div>
+  )
 }
 
-export async function generateStaticParams() {
-  const posts = await getBlogPosts();
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
-}
+export default function BlogPostPage({ params }: { params: { slug:string } }) {
+  const [post, setPost] = useState<BlogPost | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export default async function BlogPostPage({ params }: { params: { slug:string } }) {
-  const post = await getBlogPost(params.slug);
-
-  if (!post) {
-    notFound();
-  }
-
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "mainEntityOfPage": {
-      "@type": "WebPage",
-      "@id": `https://nelson-chauke-prop.web.app/blog/${post.slug}`
-    },
-    "headline": post.title,
-    "description": post.excerpt,
-    "image": post.imageUrl,
-    "author": {
-      "@type": "Person",
-      "name": post.author
-    },
-    "publisher": {
-      "@type": "Organization",
-      "name": "NC Properties Redefined",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://nelson-chauke-prop.web.app/images/logo.png"
+  useEffect(() => {
+    const fetchPost = async () => {
+      setLoading(true);
+      const postData = await getBlogPost(params.slug);
+      if (!postData) {
+        notFound();
       }
-    },
-    "datePublished": post.date
-  };
+      setPost(postData);
+      setLoading(false);
+    };
+    fetchPost();
+  }, [params.slug]);
+
+  if (loading || !post) {
+    return <LoadingSkeleton />;
+  }
 
   return (
     <div className="bg-background">
-       <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
       <div className="container py-12 md:py-24">
         <div className="max-w-4xl mx-auto">
           <div className="mb-8">
