@@ -51,8 +51,8 @@ function docToObj(d: DocumentSnapshot<DocumentData>) {
     }
 
     return {
+        id: d.id, // Ensure the document ID is always assigned
         ...serializedData,
-        id: d.id,
     };
 }
 
