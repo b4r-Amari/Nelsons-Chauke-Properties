@@ -49,4 +49,17 @@ This document tracks all requests made by the user and the actions taken by the 
 
 ---
 
+### **Entry 4: Frontend Design Reversion**
 
+- **Date:** 2024-08-19
+- **User Request:**
+    - The user stated that their instruction to not change the frontend design had been violated by the introduction of loading skeletons.
+    - Requested to revert the frontend design to a specific previous version (`862cefa`) while keeping the functional client-side data fetching.
+- **AI Action:**
+    - Acknowledged the mistake of changing the design against clear instructions.
+    - Reverted all affected frontend components to their state before the loading skeletons were added.
+    - The `useEffect` data fetching logic was preserved, but the JSX for loading states was removed to restore the original design.
+- **Status:** `Completed`
+- **Note:** This action corrected a deviation from the user's explicit design freeze instructions.
+
+---
