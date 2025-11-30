@@ -15,14 +15,13 @@ import { Card, CardFooter } from "../ui/card";
 import { type Filters } from "../shared/property-filter";
 
 type PropertyListingsProps = {
-  status?: 'on-show' | 'sold';
   pageDetails: {
     title: string;
     description: string;
   };
 };
 
-function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProps) {
+function PropertyListingsComponent({ pageDetails }: PropertyListingsProps) {
   const searchParams = useSearchParams();
 
   const [allProperties, setAllProperties] = useState<Property[]>([]);
@@ -35,49 +34,78 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
   
   const initialFilters = useMemo(() => {
     const location = searchParams.get('location') || "";
-    const statusSearch = searchParams.get('status') || (status === 'on-show' ? 'for-sale' : 'any');
-    const type = searchParams.get('type') || 'any';
-    const beds = searchParams.get('beds') || 'any';
+    const status = searchParams.get('status') || 'for-sale';
+    const propertyType = searchParams.get('type') || 'any';
+    const minBeds = searchParams.get('beds') || 'any';
     const minPrice = searchParams.get('minPrice') || 'any';
     const maxPrice = searchParams.get('maxPrice') || 'any';
     const minFloorSize = searchParams.get('minFloorSize') || 'any';
     const maxFloorSize = searchParams.get('maxFloorSize') || 'any';
-    const shouldScroll = searchParams.get('autoscroll');
-
-    if (shouldScroll === 'true' && resultsRef.current) {
-      setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+    const minErfSize = searchParams.get('minErfSize') || 'any';
+    const maxErfSize = searchParams.get('maxErfSize') || 'any';
+    
+    if (searchParams.get('autoscroll') === 'true' && resultsRef.current) {
+        setTimeout(() => {
+            resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
     }
     
-    return { location, status: statusSearch, propertyType: type, minBeds: beds, minPrice, maxPrice, minFloorSize, maxFloorSize } as Partial<Filters>
-  }, [searchParams, status]);
-  
+    return { location, status, propertyType, minBeds, minPrice, maxPrice, minFloorSize, maxFloorSize, minErfSize, maxErfSize } as Partial<Filters>;
+  }, [searchParams]);
+
   useEffect(() => {
-    async function fetchProperties() {
+    async function fetchAndFilterProperties() {
       setIsLoading(true);
       const props = await getProperties();
+      setAllProperties(props);
       
-      let initialProps = props;
-      if (status) {
-        if (status === 'on-show') {
-          initialProps = props.filter(p => p.onShow && p.status !== 'sold');
-        } else {
-          initialProps = props.filter(p => p.status === status);
-        }
-      } else {
-        // On main properties page, show for-sale and to-let by default
-        initialProps = props.filter(p => p.status === 'for-sale' || p.status === 'to-let');
-      }
+      const filtered = props.filter(p => {
+        if (initialFilters.status && p.status !== initialFilters.status) return false;
+        if (initialFilters.location && !p.location.toLowerCase().includes(initialFilters.location.toLowerCase()) && !p.address.toLowerCase().includes(initialFilters.location.toLowerCase())) return false;
+        if (initialFilters.propertyType && initialFilters.propertyType !== 'any' && p.type !== initialFilters.propertyType) return false;
+        if (initialFilters.minBeds && initialFilters.minBeds !== 'any' && p.beds < parseInt(initialFilters.minBeds, 10)) return false;
+        if (initialFilters.minPrice && initialFilters.minPrice !== 'any' && p.price < parseInt(initialFilters.minPrice, 10)) return false;
+        if (initialFilters.maxPrice && initialFilters.maxPrice !== 'any' && p.price > parseInt(initialFilters.maxPrice, 10)) return false;
+        if (initialFilters.minFloorSize && initialFilters.minFloorSize !== 'any' && p.sqft < parseInt(initialFilters.minFloorSize, 10)) return false;
+        if (initialFilters.maxFloorSize && initialFilters.maxFloorSize !== 'any' && p.sqft > parseInt(initialFilters.maxFloorSize, 10)) return false;
+        if (initialFilters.minErfSize && initialFilters.minErfSize !== 'any' && p.erfSize < parseInt(initialFilters.minErfSize, 10)) return false;
+        if (initialFilters.maxErfSize && initialFilters.maxErfSize !== 'any' && p.erfSize > parseInt(initialFilters.maxErfSize, 10)) return false;
+        return true;
+      });
 
-      setAllProperties(props); // Set all properties for the filter
-      setFilteredProperties(initialProps);
+      setFilteredProperties(filtered);
       setIsLoading(false);
     }
 
-    fetchProperties();
-  }, [status]);
+    fetchAndFilterProperties();
+  }, [initialFilters]);
   
+  const handleFilterChange = (newFilters: Filters) => {
+    const filtered = allProperties.filter(p => {
+      if (newFilters.status && p.status !== newFilters.status) return false;
+      if (newFilters.location && !p.location.toLowerCase().includes(newFilters.location.toLowerCase()) && !p.address.toLowerCase().includes(newFilters.location.toLowerCase())) return false;
+      if (newFilters.propertyType !== 'any' && p.type !== newFilters.propertyType) return false;
+      if (newFilters.minBeds !== 'any' && p.beds < parseInt(newFilters.minBeds)) return false;
+      if (newFilters.minBaths !== 'any' && p.baths < parseInt(newFilters.minBaths)) return false;
+      if (newFilters.minPrice !== 'any' && p.price < parseInt(newFilters.minPrice)) return false;
+      if (newFilters.maxPrice !== 'any' && p.price > parseInt(newFilters.maxPrice)) return false;
+      if (newFilters.features.petFriendly && !p.features.some(f => f.toLowerCase().includes('pet friendly'))) return false;
+      if (newFilters.features.garden && !p.features.some(f => f.toLowerCase().includes('garden'))) return false;
+      if (newFilters.features.pool && !p.features.some(f => f.toLowerCase().includes('pool'))) return false;
+      if (newFilters.features.flatlet && !p.features.some(f => f.toLowerCase().includes('flatlet') || f.toLowerCase().includes('guest cottage'))) return false;
+      if (newFilters.other.onShow && !p.onShow) return false;
+      if (newFilters.other.retirement && !p.features.some(f => f.toLowerCase().includes('retirement'))) return false;
+      if (newFilters.other.securityEstate && !p.features.some(f => f.toLowerCase().includes('secure estate') || f.toLowerCase().includes('security estate'))) return false;
+      if (newFilters.minFloorSize !== 'any' && p.sqft < parseInt(newFilters.minFloorSize)) return false;
+      if (newFilters.maxFloorSize !== 'any' && p.sqft > parseInt(newFilters.maxFloorSize)) return false;
+      if (newFilters.minErfSize !== 'any' && p.erfSize < parseInt(newFilters.minErfSize)) return false;
+      if (newFilters.maxErfSize !== 'any' && p.erfSize > parseInt(newFilters.maxErfSize)) return false;
+      return true;
+    });
+    setFilteredProperties(filtered);
+    setCurrentPage(1); // Reset to first page on new filter
+  };
+
   const sortedAndFilteredProperties = useMemo(() => {
     let sortableProperties = [...filteredProperties];
     
@@ -89,7 +117,9 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
           return a.price - b.price;
         case 'newest':
         default:
-          return (new Date(b.createdAt) as any) - (new Date(a.createdAt) as any);
+          const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return dateB - dateA;
       }
     });
 
@@ -124,20 +154,11 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
 
   return (
     <>
-      <div className="bg-background relative z-20 pt-10">
-        <div className="container">
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold font-headline text-brand-deep">{pageDetails.title}</h1>
-              <p className="text-lg mt-2 text-muted-foreground">{pageDetails.description}</p>
-            </div>
-        </div>
-      </div>
-      
-      <div className="bg-primary py-10">
+      <div className="bg-brand-deep py-10">
           <div className="container">
             <PropertyFilter 
               properties={allProperties} 
-              onFilterChange={setFilteredProperties}
+              onFilterChange={handleFilterChange}
               initial={initialFilters}
             />
           </div>
@@ -172,7 +193,7 @@ function PropertyListingsComponent({ status, pageDetails }: PropertyListingsProp
                 <LoadingSkeleton />
               ) : currentProperties.length > 0 ? (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {currentProperties.map((prop) => (
                       <PropertyCard key={prop.id} property={prop} />
                     ))}
