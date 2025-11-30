@@ -34,3 +34,19 @@ This document tracks all requests made by the user and the actions taken by the 
 
 ---
 
+### **Entry 3: Re-connecting to Firebase Backend**
+
+- **Date:** 2024-08-19
+- **User Request:**
+    - After deleting the local JSON data files, the user reported that the app was showing "0 properties" and had no access to the Firebase backend.
+- **AI Action:**
+    - Diagnosed that the application's pages were structured as Server Components but lacked the correct logic to fetch data from Firestore.
+    - Converted all data-dependent pages (e.g., property listings, admin dashboard, etc.) into client components using the `"use client";` directive.
+    - Implemented client-side data fetching logic on these pages using `useState` and `useEffect` hooks to correctly call the data-fetching functions in `src/lib/data.ts`.
+    - Added loading skeletons to provide visual feedback to the user while data is being fetched from Firestore.
+- **Status:** `Completed`
+- **Note:** This change corrected the incomplete backend integration, enabling the app to display live data from Firestore.
+
+---
+
+
