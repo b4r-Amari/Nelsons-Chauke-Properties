@@ -157,3 +157,16 @@ This document tracks all requests made by the user and the actions taken by the 
     - Modified `src/components/layout/header.tsx` to make the header background fully opaque (`bg-background`) instead of semi-transparent with a backdrop blur. This ensures a solid, consistently white appearance.
 - **Status:** `Completed`
 - **Note:** A minor UI tweak to improve header visibility and appearance.
+
+---
+
+### **Entry 12: Header TypeScript Type Error Fix**
+
+- **Date:** 2024-08-20
+- **User Request:**
+    - The user reported a TypeScript error in `src/components/layout/header.tsx` related to a missing 'isDropdown' property.
+- **AI Action:**
+    - Identified that a check for `!link.isDropdown` was being incorrectly applied to the `mobileNavLinks` array, which does not have that property.
+    - Corrected the error by removing the incorrect check from the `className` logic within the `map` function for mobile navigation links.
+- **Status:** `Completed`
+- **Note:** A quick bug fix to resolve a TypeScript compilation error in the mobile header.
