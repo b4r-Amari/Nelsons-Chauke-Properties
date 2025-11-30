@@ -284,7 +284,7 @@ export default async function PropertyDetailPage({ params }: { params: { id: str
                         <Separator className="my-8" />
                         
                         <section className="mb-8">
-                            <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Contact Agent(s)</h2>
+                            <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Contact Agent</h2>
                             <div className="grid sm:grid-cols-2 gap-6">
                             {propertyAgents.map(agent => (
                                 <AgentCard key={agent.id} agent={agent} />
