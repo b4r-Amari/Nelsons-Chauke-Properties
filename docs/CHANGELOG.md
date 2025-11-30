@@ -132,3 +132,16 @@ This document tracks all requests made by the user and the actions taken by the 
     - Modified `src/components/shared/property-filter.tsx` to remove the specific `data-[state=inactive]:hover:border-b-4` and `data-[state=inactive]:hover:border-brand-bright/50` classes that were causing the underline effect on hover for the "Agents" tab.
 - **Status:** `Completed`
 - **Note:** A small UI consistency fix.
+
+---
+
+### **Entry 10: Property Filter Logic Change**
+
+- **Date:** 2024-08-20
+- **User Request:**
+    - Change the property filter behavior so that it only filters results when the "Search" button is explicitly clicked, not automatically on every input change.
+- **AI Action:**
+    - Modified `src/components/shared/property-filter.tsx` by removing the `useEffect` hook that triggered filtering on every state change. The logic now correctly waits for a button click.
+    - Modified `src/components/sections/property-listings.tsx` to accommodate the new manual filtering behavior, ensuring the "Search" button on that page now applies the selected filters.
+- **Status:** `Completed`
+- **Note:** This is a functional change to the user experience of the property filter.

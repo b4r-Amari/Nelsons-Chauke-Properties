@@ -56,7 +56,19 @@ export function PropertyListings({ pageDetails }: PropertyListingsProps) {
       setIsLoading(true);
       const props = await getProperties({status: initialFilters.status as 'on-show' | 'sold' | undefined});
       setAllProperties(props);
-      setFilteredProperties(props); // Initially, all properties are shown
+      
+      // Apply initial filters from URL
+      const filtered = props.filter(p => {
+        const filters = initialFilters as Filters;
+        if (filters.status && p.status !== filters.status) return false;
+        if (filters.location && !p.location.toLowerCase().includes(filters.location.toLowerCase()) && !p.address.toLowerCase().includes(filters.location.toLowerCase())) return false;
+        if (filters.propertyType !== 'any' && p.type !== filters.propertyType) return false;
+        if (filters.minBeds !== 'any' && p.beds < parseInt(filters.minBeds)) return false;
+        if (filters.minPrice !== 'any' && p.price < parseInt(filters.minPrice)) return false;
+        if (filters.maxPrice !== 'any' && p.price > parseInt(filters.maxPrice)) return false;
+        return true;
+      });
+      setFilteredProperties(filtered);
       setIsLoading(false);
     }
 
@@ -65,7 +77,7 @@ export function PropertyListings({ pageDetails }: PropertyListingsProps) {
   
   const handleFilterChange = (newFilters: Filters) => {
     const filtered = allProperties.filter(p => {
-      if (newFilters.status && p.status !== newFilters.status) return false;
+      if (newFilters.status && newFilters.status !== 'any' && p.status !== newFilters.status) return false;
       if (newFilters.location && !p.location.toLowerCase().includes(newFilters.location.toLowerCase()) && !p.address.toLowerCase().includes(newFilters.location.toLowerCase())) return false;
       if (newFilters.propertyType !== 'any' && p.type !== newFilters.propertyType) return false;
       if (newFilters.minBeds !== 'any' && p.beds < parseInt(newFilters.minBeds)) return false;
@@ -154,6 +166,7 @@ export function PropertyListings({ pageDetails }: PropertyListingsProps) {
               properties={allProperties} 
               onFilterChange={handleFilterChange}
               initial={initialFilters}
+              showSearchButton={true}
             />
           </div>
       </section>

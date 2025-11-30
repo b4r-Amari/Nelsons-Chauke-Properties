@@ -84,19 +84,21 @@ const erfSizeOptions = [
 ];
 
 
-export function PropertyFilter({ properties, onFilterChange, initial }: { properties: Property[], onFilterChange: (filters: Filters) => void, initial?: Partial<Filters> }) {
+export function PropertyFilter({ properties, onFilterChange, initial, showSearchButton = false }: { properties: Property[], onFilterChange: (filters: Filters) => void, initial?: Partial<Filters>, showSearchButton?: boolean }) {
   const router = useRouter();
-  const pathname = usePathname();
 
   const [filters, setFilters] = useState({ ...initialFilters, ...initial });
   const [activeTab, setActiveTab] = useState(filters.status === 'to-let' ? 'rent' : 'buy');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
-  useEffect(() => {
-    onFilterChange(filters);
-  }, [filters, onFilterChange]);
-
   const handleSearchClick = () => {
+    // If on the properties page, just apply filters via callback
+    if (showSearchButton) {
+      onFilterChange(filters);
+      return;
+    }
+    
+    // If on homepage, navigate with query params
     const queryParams = new URLSearchParams();
     if (filters.location) queryParams.set('location', filters.location);
     queryParams.set('status', filters.status);
@@ -136,6 +138,9 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
     const status = activeTab === 'buy' ? 'for-sale' : 'to-let';
     const newFilters = {...initialFilters, status: status as "for-sale" | "to-let" };
     setFilters(newFilters);
+    if (showSearchButton) {
+      onFilterChange(newFilters);
+    }
   }
 
   const filteredCount = useMemo(() => {
@@ -347,7 +352,7 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
                     </CollapsibleContent>
                 </div>
                 <div className="bg-card/20 text-white text-sm text-center py-2 rounded-b-lg">
-                    Click search to browse <span className="font-bold">{filteredCount}</span> properties
+                    Click search to see <span className="font-bold">{filteredCount}</span> properties
                     <span className="mx-2">•</span>
                     <Button variant="link" className="text-white h-auto p-0" onClick={clearFilters}>Clear Filters</Button>
                 </div>
@@ -361,3 +366,4 @@ export function PropertyFilter({ properties, onFilterChange, initial }: { proper
     
 
     
+
