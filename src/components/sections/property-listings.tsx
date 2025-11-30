@@ -2,7 +2,7 @@
 
 "use client"
 
-import { useState, useEffect, Suspense, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import { getProperties } from '@/lib/data';
@@ -21,7 +21,7 @@ type PropertyListingsProps = {
   };
 };
 
-function PropertyListingsComponent({ pageDetails }: PropertyListingsProps) {
+export function PropertyListings({ pageDetails }: PropertyListingsProps) {
   const searchParams = useSearchParams();
 
   const [allProperties, setAllProperties] = useState<Property[]>([]);
@@ -56,24 +56,9 @@ function PropertyListingsComponent({ pageDetails }: PropertyListingsProps) {
   useEffect(() => {
     async function fetchAndFilterProperties() {
       setIsLoading(true);
-      const props = await getProperties();
+      const props = await getProperties({status: initialFilters.status as 'on-show' | 'sold' | undefined});
       setAllProperties(props);
-      
-      const filtered = props.filter(p => {
-        if (initialFilters.status && p.status !== initialFilters.status) return false;
-        if (initialFilters.location && !p.location.toLowerCase().includes(initialFilters.location.toLowerCase()) && !p.address.toLowerCase().includes(initialFilters.location.toLowerCase())) return false;
-        if (initialFilters.propertyType && initialFilters.propertyType !== 'any' && p.type !== initialFilters.propertyType) return false;
-        if (initialFilters.minBeds && initialFilters.minBeds !== 'any' && p.beds < parseInt(initialFilters.minBeds, 10)) return false;
-        if (initialFilters.minPrice && initialFilters.minPrice !== 'any' && p.price < parseInt(initialFilters.minPrice, 10)) return false;
-        if (initialFilters.maxPrice && initialFilters.maxPrice !== 'any' && p.price > parseInt(initialFilters.maxPrice, 10)) return false;
-        if (initialFilters.minFloorSize && initialFilters.minFloorSize !== 'any' && p.sqft < parseInt(initialFilters.minFloorSize, 10)) return false;
-        if (initialFilters.maxFloorSize && initialFilters.maxFloorSize !== 'any' && p.sqft > parseInt(initialFilters.maxFloorSize, 10)) return false;
-        if (initialFilters.minErfSize && initialFilters.minErfSize !== 'any' && p.erfSize < parseInt(initialFilters.minErfSize, 10)) return false;
-        if (initialFilters.maxErfSize && initialFilters.maxErfSize !== 'any' && p.erfSize > parseInt(initialFilters.maxErfSize, 10)) return false;
-        return true;
-      });
-
-      setFilteredProperties(filtered);
+      setFilteredProperties(props); // Initially, all properties are shown
       setIsLoading(false);
     }
 
@@ -154,15 +139,26 @@ function PropertyListingsComponent({ pageDetails }: PropertyListingsProps) {
 
   return (
     <>
-      <div className="bg-brand-deep py-10">
-          <div className="container">
+      <section 
+        className="relative h-[400px] flex items-center justify-center text-white bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/backgrounds/hero-banner-2.webp')"}}
+      >
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="relative z-10 container text-center">
+            <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">{pageDetails.title}</h1>
+            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto drop-shadow-md">{pageDetails.description}</p>
+        </div>
+      </section>
+
+      <section className="bg-brand-deep -mt-20 relative z-20 py-6">
+        <div className="container">
             <PropertyFilter 
               properties={allProperties} 
               onFilterChange={handleFilterChange}
               initial={initialFilters}
             />
           </div>
-      </div>
+      </section>
 
 
       <main className="py-8 bg-background" ref={resultsRef} id="property-results">
@@ -228,12 +224,4 @@ function PropertyListingsComponent({ pageDetails }: PropertyListingsProps) {
       </main>
     </>
   );
-}
-
-export function PropertyListings(props: PropertyListingsProps) {
-  return (
-    <Suspense>
-      <PropertyListingsComponent {...props} />
-    </Suspense>
-  )
 }

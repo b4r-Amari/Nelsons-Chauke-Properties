@@ -1,4 +1,5 @@
 
+
 import type { Metadata } from 'next';
 import { PropertyListings } from '@/components/sections/property-listings';
 
@@ -19,6 +20,6 @@ export default function OnShowPropertiesPage() {
     description: "Visit these properties this weekend. Find your dream home."
   }
   return (
-    <PropertyListings status="on-show" pageDetails={pageDetails}/>
+    <PropertyListings pageDetails={pageDetails}/>
   );
 }
