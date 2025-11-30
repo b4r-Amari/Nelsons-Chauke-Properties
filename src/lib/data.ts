@@ -93,4 +93,3 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
   }
   return docToObj(snapshot.docs[0]) as BlogPost;
 }
-

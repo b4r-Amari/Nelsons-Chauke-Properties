@@ -232,4 +232,3 @@ export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { pu
     </div>
   );
 }
-
