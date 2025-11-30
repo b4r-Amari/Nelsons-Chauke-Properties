@@ -47,7 +47,7 @@ function HeroSection({ properties }: { properties: Property[] }) {
         <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl drop-shadow-md">
           Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
         </p>
-        <div className="w-full max-w-4xl mx-auto mt-8 bg-black/30 backdrop-blur-md border border-black/20 p-4 rounded-lg shadow-2xl">
+        <div className="w-full max-w-4xl mx-auto mt-8 bg-black/50 backdrop-blur-md border border-black/20 p-4 rounded-lg shadow-2xl">
             <PropertyFilter properties={properties} onFilterChange={() => {}} />
         </div>
       </div>
@@ -91,13 +91,6 @@ function FeaturedPropertiesSection() {
           <CarouselPrevious />
           <CarouselNext />
         </Carousel>
-        <div className="text-center mt-12">
-          <Link href="/properties">
-            <Button size="lg" className="bg-brand-bright hover:bg-brand-deep transition-colors">
-              View All Properties <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
-        </div>
       </div>
     </section>
   );
