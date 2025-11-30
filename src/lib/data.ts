@@ -59,6 +59,7 @@ function docToObj(d: DocumentSnapshot<DocumentData>) {
 
 // Properties
 export async function getProperties(options: { featuredOnly?: boolean; status?: 'on-show' | 'sold' } = {}): Promise<Property[]> {
+  console.log('Attempting to fetch properties from Firestore...');
   let q;
   const propertiesCol = collection(db, 'properties');
 
@@ -75,7 +76,9 @@ export async function getProperties(options: { featuredOnly?: boolean; status?: 
   }
 
   const snapshot = await getDocs(q);
-  return snapshot.docs.map(docToObj) as Property[];
+  const properties = snapshot.docs.map(docToObj) as Property[];
+  console.log(`Successfully connected to Firebase. Fetched ${properties.length} properties.`);
+  return properties;
 }
 
 export async function getProperty(id: string): Promise<Property | null> {
@@ -85,9 +88,12 @@ export async function getProperty(id: string): Promise<Property | null> {
 
 // Agents
 export async function getAgents(): Promise<Agent[]> {
+  console.log('Attempting to fetch agents from Firestore...');
   const agentsCol = collection(db, 'agents');
   const snapshot = await getDocs(agentsCol);
-  return snapshot.docs.map(docToObj) as Agent[];
+  const agents = snapshot.docs.map(docToObj) as Agent[];
+  console.log(`Successfully connected to Firebase. Fetched ${agents.length} agents.`);
+  return agents;
 }
 
 export async function getAgent(slug: string): Promise<Agent | null> {
@@ -101,9 +107,12 @@ export async function getAgent(slug: string): Promise<Agent | null> {
 
 // Blog Posts
 export async function getBlogPosts(): Promise<BlogPost[]> {
+    console.log('Attempting to fetch blog posts from Firestore...');
     const blogCol = collection(db, 'blogPosts');
     const snapshot = await getDocs(blogCol);
-    return snapshot.docs.map(docToObj) as BlogPost[];
+    const posts = snapshot.docs.map(docToObj) as BlogPost[];
+    console.log(`Successfully connected to Firebase. Fetched ${posts.length} blog posts.`);
+    return posts;
 }
 
 export async function getBlogPost(slug: string): Promise<BlogPost | null> {
