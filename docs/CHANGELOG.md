@@ -289,3 +289,53 @@ This document tracks all requests made by the user and the actions taken by the 
     - **Bug Fix (`properties-table.tsx`):** Fixed multiple TypeScript errors caused by type mismatches (number vs. string for IDs) and potential `undefined` values during sorting.
 - **Status:** `Completed`
 - **Note:** This entry marks the final correction of the data flow, ensuring the app is now fully connected to the Firestore backend. It also cleans up several resulting bugs.
+
+---
+
+### **Entry 21: Comprehensive Review, Refactoring, and Final Fixes**
+
+- **Date:** 2024-08-23
+- **User Request:**
+    - A broad request to go through every file to fix all errors, ensure the database connection is working, secure the application, and make it SEO-friendly, without changing the frontend design.
+    - Specific requests to fix the footer layout, the invisible agent card on the property page, the floating contact bar, and a missing dependency for the seed script.
+    - A final request to update the "About Us" page timeline.
+- **AI Action:**
+    - **Security Overhaul:**
+        - Secured Firebase credentials by moving them from `src/lib/firebase/firebase.ts` to a `.env.local` file.
+        - Updated `src/lib/firebase/firebase.ts` to read from environment variables.
+        - Added `.env.local` to `.gitignore` to prevent accidental commits.
+        - Strengthened `firestore.rules` to restrict write access to authenticated users.
+    - **Performance & SEO Refactoring:**
+        - Refactored all data-fetching pages (`/admin/properties`, `/admin/agents`, `/admin/blogs`, `/properties`, `/agents/[slug]`, `/blog/[slug]`, `/about-us`) from client components to server components, improving performance and SEO by pre-rendering data.
+        - Added dynamic `generateMetadata` functions to detail pages for improved SEO.
+        - Created `src/app/sitemap.ts` to generate a sitemap for better search engine crawlability.
+        - Resolved a conflict between server-side `metadata` and client-side logic in the root layout by creating a dedicated `main-layout.tsx` client component.
+    - **Bug & Error Resolution:**
+        - **Dependency:** Installed the missing `firebase-admin` package to allow the database seed script to run.
+        - **Type Errors:** Corrected a "Cannot find name 'div'" syntax error and other type-related issues in the `floating-contact-bar.tsx` and fixed the logic to correctly display the assigned agent on the property details page by comparing ID types correctly.
+        - **UI Fixes:**
+            - Corrected the footer layout to display in two columns on mobile screens without altering the desktop design, as requested.
+            - Fixed the `floating-contact-bar.tsx` to be a properly styled, rounded, and positioned floating element on mobile.
+    - **Content Update:**
+        - Expanded the timeline on the `about-us/page.tsx`.
+        - Implemented a "See More" / "See Less" button to manage the display of timeline events.
+    - **Changelog Update:**
+        - **Finally, updated this changelog to reflect all actions taken, acknowledging the repeated failure to do so previously and recommitting to this process.**
+- **Status:** `Completed`
+- **Note:** This entry consolidates a significant number of fixes and improvements across the entire application, bringing it to a stable, secure, and performant state. This marks the fulfillment of the user's comprehensive review request. The AI's adherence to the changelog process from this point forward is non-negotiable.
+
+---
+
+### **Entry 22: Strict Mandate on Functionality and Design Freeze**
+
+- **Date:** 2024-08-23
+- **User Request:**
+    - The user issued a strict and final mandate to focus exclusively on fixing non-functional parts of the program.
+    - **CRITICAL DIRECTIVE:** The user has explicitly forbidden any and all changes to the frontend design. This directive was repeated and emphasized with extreme prejudice. Any deviation is unacceptable.
+    - **CRITICAL DIRECTIVE:** The AI is to make only the exact changes specified by the user and nothing more.
+- **AI Action:**
+    - Acknowledged the new strict directives.
+    - All future actions will be governed by these rules: focus on functionality, do not alter the frontend design, and implement only the exact changes requested.
+    - Updated this changelog to serve as a permanent record of this mandate.
+- **Status:** `Completed`
+- **Note:** This entry serves as a strict, binding contract for all future work. All actions must adhere to these directives without exception.
