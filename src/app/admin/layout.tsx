@@ -25,9 +25,9 @@ export default function AdminLayout({
   const isLoginPage = pathname === '/admin/login';
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="admin-ui-theme">
-        <html lang="en" suppressHydrationWarning>
-          <body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="admin-ui-theme">
             <AuthProvider>
                 <div className="relative flex min-h-screen w-full bg-background">
                     {!isLoginPage && <AdminSidebar />}
@@ -40,8 +40,8 @@ export default function AdminLayout({
                 </div>
                 <Toaster />
             </AuthProvider>
-          </body>
-        </html>
-    </ThemeProvider>
+        </ThemeProvider>
+      </body>
+    </html>
   );
 }
