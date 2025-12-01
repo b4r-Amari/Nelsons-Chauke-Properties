@@ -11,13 +11,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Skeleton } from "../ui/skeleton";
 import { Card, CardFooter } from "../ui/card";
 import { type Filters } from "../shared/property-filter";
+import { getProperties } from "@/lib/data";
 
 type PropertyListingsProps = {
   pageDetails: {
     title: string;
     description: string;
   };
-  initialProperties: Property[];
+  initialProperties?: Property[];
 };
 
 const defaultFilters: Filters = {
@@ -45,16 +46,37 @@ const defaultFilters: Filters = {
   },
 };
 
-export function PropertyListings({ pageDetails, initialProperties }: PropertyListingsProps) {
+export function PropertyListings({ pageDetails, initialProperties = [] }: PropertyListingsProps) {
   const searchParams = useSearchParams();
 
-  const [allProperties] = useState<Property[]>(initialProperties);
+  const [allProperties, setAllProperties] = useState<Property[]>(initialProperties);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(initialProperties);
   const [sortOption, setSortOption] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(initialProperties.length === 0);
   const propertiesPerPage = 12;
   const resultsRef = useRef<HTMLElement>(null);
   
+  useEffect(() => {
+    // If initialProperties are not provided, fetch them.
+    // This is useful for pages like "On Show" which have their own specific query.
+    if (initialProperties.length === 0) {
+      setIsLoading(true);
+      const fetchPageProperties = async () => {
+        let props;
+        if (pageDetails.title === "Properties On Show") {
+          props = await getProperties({ status: 'on-show' });
+        } else {
+          props = await getProperties();
+        }
+        setAllProperties(props);
+        setFilteredProperties(props);
+        setIsLoading(false);
+      };
+      fetchPageProperties();
+    }
+  }, [initialProperties, pageDetails.title]);
+
   const initialFilters = useMemo(() => {
     const location = searchParams.get('location') || "";
     const status = searchParams.get('status') || 'for-sale';
@@ -183,7 +205,13 @@ export function PropertyListings({ pageDetails, initialProperties }: PropertyLis
           </div>
 
           
-              {currentProperties.length > 0 ? (
+              {isLoading ? (
+                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <Skeleton key={i} className="h-[480px] w-full rounded-lg" />
+                    ))}
+                  </div>
+              ) : currentProperties.length > 0 ? (
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {currentProperties.map((prop) => (
@@ -221,3 +249,5 @@ export function PropertyListings({ pageDetails, initialProperties }: PropertyLis
     </>
   );
 }
+
+    

@@ -1,8 +1,7 @@
 
-
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,11 +10,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Search, Map as MapIcon, X, Plus } from "lucide-react";
 import type { Property } from "./property-card";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Label } from "../ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { MapDialog } from "./map-dialog";
 
 export type Filters = {
   location: string;
@@ -52,7 +52,7 @@ const initialFilters: Filters = {
   minBaths: "any",
   minFloorSize: "any",
   maxFloorSize: "any",
-  minErfSize: "any",
+  minErfSize:"any",
   maxErfSize:"any",
   features: {
     petFriendly: false,
@@ -90,31 +90,25 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
   const [filters, setFilters] = useState({ ...initialFilters, ...initial });
   const [activeTab, setActiveTab] = useState(filters.status === 'to-let' ? 'rent' : 'buy');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
   const handleSearchClick = () => {
-    // If on the properties page, just apply filters via callback
     if (showSearchButton) {
       onFilterChange(filters);
       return;
     }
     
-    // If on homepage, navigate with query params
     const queryParams = new URLSearchParams();
     if (filters.location) queryParams.set('location', filters.location);
     queryParams.set('status', filters.status);
-    if (filters.propertyType !== 'any') queryParams.set('propertyType', filters.propertyType);
-    if (filters.minPrice !== 'any') queryParams.set('minPrice', filters.minPrice);
-    if (filters.maxPrice !== 'any') queryParams.set('maxPrice', filters.maxPrice);
-    if (filters.minBeds !== 'any') queryParams.set('minBeds', filters.minBeds);
-    if (filters.minBaths !== 'any') queryParams.set('minBaths', filters.minBaths);
-    if (filters.minFloorSize !== 'any') queryParams.set('minFloorSize', filters.minFloorSize);
-    if (filters.maxFloorSize !== 'any') queryParams.set('maxFloorSize', filters.maxFloorSize);
-    if (filters.minErfSize !== 'any') queryParams.set('minErfSize', filters.minErfSize);
-    if (filters.maxErfSize !== 'any') queryParams.set('maxErfSize', filters.maxErfSize);
     queryParams.set('autoscroll', 'true');
-
     router.push(`/properties?${queryParams.toString()}`);
   }
+
+  const handleLocationSelect = (location: { lat: number; lng: number }) => {
+    console.log("Location selected from map:", location);
+    setIsMapOpen(false);
+  };
   
   const handleInputChange = (field: keyof Filters, value: string) => {
     setFilters(prev => ({ ...prev, [field]: value }));
@@ -159,56 +153,57 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
   const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-white text-white/80 text-lg font-bold pb-3 px-5 rounded-none border-b-4 border-transparent data-[state=active]:border-brand-bright hover:text-white";
   
   return (
-    <div className="font-sans max-w-[900px] mx-auto">
-      <Tabs defaultValue="buy" className="w-full" value={activeTab} onValueChange={(v) => {
-        if (v === 'agents') return;
-        setActiveTab(v);
-        const newStatus = v === 'rent' ? 'to-let' : 'for-sale';
-        setFilters(prev => ({ ...prev, status: newStatus as "for-sale" | "to-let" }));
-      }}>
-        <TabsList className="flex justify-center bg-transparent p-0 pb-5 h-auto gap-0">
-          <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
-          <TabsTrigger value="rent" className={cn(commonTabClass, "inline-flex")}>Rent</TabsTrigger>
-          <TabsTrigger value="agents" asChild className={cn(commonTabClass, "inline-flex")}>
-             <Link href="/about-us">Agents</Link>
-          </TabsTrigger>
-        </TabsList>
-        <div className="space-y-[-1px]">
-            <Card className="shadow-lg rounded-t-lg rounded-b-none p-2 bg-white">
-                <CardContent className="p-0">
-                    <div className="flex flex-col md:flex-row items-center gap-2">
-                        <div className="relative w-full">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                            <Input
-                                id="location"
-                                placeholder="Search for a suburb, city or province"
-                                value={filters.location}
-                                onChange={(e) => handleInputChange('location', e.target.value)}
-                                className="pl-10 h-12 text-base border-0 focus-visible:ring-0 shadow-none"
-                            />
-                            {filters.location && (
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                                onClick={() => handleInputChange('location', '')}
-                            >
-                                <X className="h-4 w-4" />
-                            </Button>
-                            )}
-                        </div>
-                        <div className="flex w-full md:w-auto gap-2">
-                            <Button variant="outline" className="w-1/2 md:w-auto h-12 text-base font-normal">
-                            <MapIcon className="mr-2 h-5 w-5" /> Map
-                            </Button>
-                            <Button className="w-1/2 md:w-auto h-12 text-base bg-accent hover:bg-accent/90" onClick={handleSearchClick}>
-                            Search
-                            </Button>
-                        </div>
-                    </div>
-                </CardContent>
-            </Card>
-            <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen} className="bg-transparent rounded-b-lg">
+    <>
+      <div className="font-sans max-w-[900px] mx-auto">
+        <Tabs defaultValue="buy" className="w-full" value={activeTab} onValueChange={(v) => {
+          if (v === 'agents') return;
+          setActiveTab(v);
+          const newStatus = v === 'rent' ? 'to-let' : 'for-sale';
+          setFilters(prev => ({ ...prev, status: newStatus as "for-sale" | "to-let" }));
+        }}>
+          <TabsList className="flex justify-center bg-transparent p-0 pb-5 h-auto gap-0">
+            <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
+            <TabsTrigger value="rent" className={cn(commonTabClass, "inline-flex")}>Rent</TabsTrigger>
+            <TabsTrigger value="agents" asChild className={cn(commonTabClass, "inline-flex")}>
+               <Link href="/about-us">Agents</Link>
+            </TabsTrigger>
+          </TabsList>
+          <div className="space-y-[-1px]">
+              <Card className="shadow-lg rounded-t-lg rounded-b-none p-2 bg-white">
+                  <CardContent className="p-0">
+                      <div className="flex flex-col md:flex-row items-center gap-2">
+                          <div className="relative w-full">
+                              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                              <Input
+                                  id="location"
+                                  placeholder="Search for a suburb, city or province"
+                                  value={filters.location}
+                                  onChange={(e) => handleInputChange('location', e.target.value)}
+                                  className="pl-10 h-12 text-base border-0 focus-visible:ring-0 shadow-none"
+                              />
+                              {filters.location && (
+                              <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+                                  onClick={() => handleInputChange('location', '')}
+                              >
+                                  <X className="h-4 w-4" />
+                              </Button>
+                              )}
+                          </div>
+                          <div className="flex w-full md:w-auto gap-2">
+                              <Button variant="outline" className="w-1/2 md:w-auto h-12 text-base font-normal" onClick={() => setIsMapOpen(true)}>
+                                <MapIcon className="mr-2 h-5 w-5" /> Map
+                              </Button>
+                              <Button className="w-1/2 md:w-auto h-12 text-base bg-accent hover:bg-accent/90" onClick={handleSearchClick}>
+                              Search
+                              </Button>
+                          </div>
+                      </div>
+                  </CardContent>
+              </Card>
+              <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen} className="bg-transparent rounded-b-lg">
                 <div className="p-4 transition-all duration-300">
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
                     <Select value={filters.propertyType} onValueChange={(value) => handleSelectChange('propertyType', value)}>
@@ -357,13 +352,16 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
                     <Button variant="link" className="text-white h-auto p-0" onClick={clearFilters}>Clear Filters</Button>
                 </div>
             </Collapsible>
-        </div>
-      </Tabs>
-    </div>
+          </div>
+        </Tabs>
+      </div>
+
+      <MapDialog
+        isOpen={isMapOpen}
+        onClose={() => setIsMapOpen(false)}
+        onLocationSelect={handleLocationSelect}
+        properties={properties}
+      />
+    </>
   );
 }
-
-    
-
-    
-

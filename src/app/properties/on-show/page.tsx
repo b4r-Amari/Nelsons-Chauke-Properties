@@ -2,6 +2,7 @@
 
 import type { Metadata } from 'next';
 import { PropertyListings } from '@/components/sections/property-listings';
+import { getProperties } from '@/lib/data';
 
 export const metadata: Metadata = {
   title: 'Properties On Show This Weekend | NC Properties',
@@ -14,12 +15,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function OnShowPropertiesPage() {
+export default async function OnShowPropertiesPage() {
+  const propertiesOnShow = await getProperties({ status: 'on-show' });
   const pageDetails = {
     title: "Properties On Show",
     description: "Visit these properties this weekend. Find your dream home."
   }
   return (
-    <PropertyListings pageDetails={pageDetails}/>
+    <PropertyListings pageDetails={pageDetails} initialProperties={propertiesOnShow} />
   );
 }
+
+    

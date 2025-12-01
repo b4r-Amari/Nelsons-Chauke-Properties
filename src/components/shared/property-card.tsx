@@ -28,6 +28,8 @@ export type Property = {
   onShow?: boolean;
   agentIds: string[];
   videoUrl?: string;
+  latitude?: number;
+  longitude?: number;
   createdAt?: string;
   updatedAt?: string;
 };
