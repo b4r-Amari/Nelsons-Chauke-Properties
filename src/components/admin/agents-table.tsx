@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { type Agent } from '@/components/shared/agent-card';
 import { deleteAgent } from '@/lib/firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 type AgentWithCount = Agent & {
     propertyCount: number;
@@ -131,9 +132,11 @@ export function AgentsTable({ initialAgents }: { initialAgents: AgentWithCount[]
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                    <DropdownMenuItem>
-                      <Pencil className="mr-2 h-4 w-4" /> Edit
-                      </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href={`/admin/agents/edit/${agent.id}`}>
+                        <Pencil className="mr-2 h-4 w-4" /> Edit
+                      </Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleDelete(String(agent.id), agent.name)}>
                       <Trash2 className="mr-2 h-4 w-4" /> Delete
                     </DropdownMenuItem>

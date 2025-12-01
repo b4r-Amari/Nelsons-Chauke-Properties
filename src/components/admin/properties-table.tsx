@@ -213,8 +213,10 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>
-                            <Pencil className="mr-2 h-4 w-4" /> Edit
+                            <DropdownMenuItem asChild>
+                              <Link href={`/admin/properties/edit/${property.id}`}>
+                                <Pencil className="mr-2 h-4 w-4" /> Edit
+                              </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => handleDelete(String(property.id), property.address)}>
                             <Trash2 className="mr-2 h-4 w-4" /> Delete

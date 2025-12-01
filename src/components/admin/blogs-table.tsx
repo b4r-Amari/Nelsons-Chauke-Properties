@@ -11,6 +11,7 @@ import Image from 'next/image';
 import { type BlogPost } from '@/components/shared/blog-card';
 import { useToast } from '@/hooks/use-toast';
 import { deleteBlogPost } from '@/lib/firebase/firestore';
+import Link from 'next/link';
 
 export function BlogsTable({ initialPosts }: { initialPosts: BlogPost[] }) {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>(initialPosts);
@@ -79,7 +80,11 @@ export function BlogsTable({ initialPosts }: { initialPosts: BlogPost[] }) {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                  <DropdownMenuItem><Pencil className="mr-2 h-4 w-4" /> Edit</DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/admin/blogs/edit/${post.id}`}>
+                        <Pencil className="mr-2 h-4 w-4" /> Edit
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => handleDelete(post.id, post.title)}><Trash2 className="mr-2 h-4 w-4" /> Delete</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>

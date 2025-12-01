@@ -61,14 +61,14 @@ export async function getProperties(options: { featuredOnly?: boolean; status?: 
   const properties = snapshot.docs.map(docToObj) as Property[];
   console.log(`Successfully connected to Firebase. Fetched ${properties.length} properties.`);
   
-  // If no specific status is requested, and it's not a featured query, filter out 'sold' properties for general listing pages
-  if (!options.status && !options.featuredOnly) {
-    return properties.filter(p => p.status !== 'sold');
-  }
-
-  // For the dashboard (no options), return all properties.
+  // If no specific options are provided, return all properties.
   if (Object.keys(options).length === 0) {
       return properties;
+  }
+  
+  // For general listing pages, filter out sold properties unless specifically requested
+  if (!options.status) {
+      return properties.filter(p => p.status !== 'sold');
   }
   
   return properties;
@@ -99,6 +99,11 @@ export async function getAgent(slug: string): Promise<Agent | null> {
   return docToObj(snapshot.docs[0]) as Agent;
 }
 
+export async function getAgentById(id: string): Promise<Agent | null> {
+    const agentDoc = await getDoc(doc(db, 'agents', id));
+    return agentDoc.exists() ? docToObj(agentDoc) as Agent : null;
+}
+
 // Blog Posts
 export async function getBlogPosts(): Promise<BlogPost[]> {
     console.log('Attempting to fetch blog posts from Firestore...');
@@ -116,4 +121,9 @@ export async function getBlogPost(slug: string): Promise<BlogPost | null> {
       return null;
   }
   return docToObj(snapshot.docs[0]) as BlogPost;
+}
+
+export async function getBlogPostById(id: string): Promise<BlogPost | null> {
+    const blogDoc = await getDoc(doc(db, 'blogPosts', id));
+    return blogDoc.exists() ? docToObj(blogDoc) as BlogPost : null;
 }

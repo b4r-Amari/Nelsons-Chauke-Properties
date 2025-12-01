@@ -62,6 +62,21 @@ export async function addAgent(agentData: DataObject) {
     }
 }
 
+export async function updateAgent(id: string, agentData: DataObject) {
+    try {
+        const slug = agentData.name.toLowerCase().replace(/\s+/g, '-');
+        const agentRef = doc(db, 'agents', id);
+        await updateDoc(agentRef, {
+            ...agentData,
+            slug,
+            updatedAt: Timestamp.now(),
+        });
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
 export async function deleteAgent(id: string) {
     try {
         await deleteDoc(doc(db, 'agents', id));
@@ -82,6 +97,21 @@ export async function addBlogPost(blogData: DataObject) {
             slug,
             date: Timestamp.now(),
             createdAt: Timestamp.now(),
+            updatedAt: Timestamp.now(),
+        });
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function updateBlogPost(id: string, blogData: DataObject) {
+    try {
+        const slug = blogData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+        const blogRef = doc(db, 'blogPosts', id);
+        await updateDoc(blogRef, {
+            ...blogData,
+            slug,
             updatedAt: Timestamp.now(),
         });
         return { success: true };
