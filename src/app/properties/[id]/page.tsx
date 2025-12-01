@@ -40,7 +40,8 @@ export default function PropertyDetailPage() {
       }
       
       const allAgents = await getAgents();
-      const agents = allAgents.filter(a => prop.agentIds.includes(a.id as never));
+      // FIX: Ensure IDs are compared as strings to avoid type mismatches
+      const agents = allAgents.filter(a => prop.agentIds.map(String).includes(String(a.id)));
       
       setProperty(prop);
       setPropertyAgents(agents);
@@ -225,5 +226,3 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
-
-    
