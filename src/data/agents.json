@@ -1,0 +1,58 @@
+
+[
+  {
+    "id": "1",
+    "slug": "natalia-cromwell",
+    "name": "Natalia Cromwell",
+    "role": "Principal Agent",
+    "imageUrl": "https://picsum.photos/seed/agent1/200/200",
+    "imageHint": "smiling professional woman",
+    "phone": "082 123 4567",
+    "email": "natalia.c@ncproperties.com",
+    "bio": "<p>With over 15 years of experience in the Johannesburg North real estate market, Natalia is the founder and principal of NC Properties. Her dedication to client satisfaction and her unparalleled market knowledge have made her one of the most respected agents in the industry.</p><p>Natalia specializes in luxury residential properties and new developments, offering a bespoke service to discerning buyers and sellers.</p>"
+  },
+  {
+    "id": "2",
+    "slug": "john-bishop",
+    "name": "John Bishop",
+    "role": "Head of Sales (Gauteng)",
+    "imageUrl": "https://picsum.photos/seed/agent2/200/200",
+    "imageHint": "confident man suit",
+    "phone": "083 987 6543",
+    "email": "john.b@ncproperties.com",
+    "bio": "<p>John leads the sales team in Gauteng with a focus on results-driven strategies and mentorship. He has a keen eye for investment opportunities and excels at negotiating complex deals. His clients value his direct approach and unwavering commitment.</p><p>John's expertise covers Sandton, Rosebank, and the surrounding affluent suburbs.</p>"
+  },
+  {
+    "id": "3",
+    "slug": "samantha-grey",
+    "name": "Samantha Grey",
+    "role": "Head of Sales (Cape Town)",
+    "imageUrl": "https://picsum.photos/seed/agent3/200/200",
+    "imageHint": "friendly woman outdoors",
+    "phone": "072 555 1234",
+    "email": "samantha.g@ncproperties.com",
+    "bio": "<p>Samantha is a top-performing agent with a passion for the Cape Town property market. She is known for her exceptional service, strong negotiation skills, and her ability to match clients with their perfect homes on the Atlantic Seaboard and in the Southern Suburbs.</p><p>Her warm personality and professional demeanor make the buying or selling process a pleasure.</p>"
+  },
+  {
+    "id": "4",
+    "slug": "david-chen",
+    "name": "David Chen",
+    "role": "Winelands Specialist",
+    "imageUrl": "https://picsum.photos/seed/agent4/200/200",
+    "imageHint": "man vineyard background",
+    "phone": "071 888 9900",
+    "email": "david.c@ncproperties.com",
+    "bio": "<p>David is our resident expert for the Cape Winelands. Having lived in the area for over 20 years, his local knowledge is second to none. He specializes in lifestyle farms, historic homes, and luxury estates in areas like Stellenbosch, Franschhoek, and Paarl.</p>"
+  },
+  {
+    "id": "5",
+    "slug": "zanele-mthembu",
+    "name": "Zanele Mthembu",
+    "role": "Coastal Property Expert (KZN)",
+    "imageUrl": "https://picsum.photos/seed/agent5/200/200",
+    "imageHint": "woman beach background",
+    "phone": "060 111 2222",
+    "email": "zanele.m@ncproperties.com",
+    "bio": "<p>Zanele manages our KwaZulu-Natal portfolio, with a special focus on the North Coast, from Umhlanga to Ballito. She has a deep understanding of the coastal property market and helps clients find their dream holiday homes and permanent residences.</p>"
+  }
+]

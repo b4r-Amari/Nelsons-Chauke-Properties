@@ -4,9 +4,9 @@ import { CollectionReference, Timestamp } from 'firebase-admin/firestore';
 import 'dotenv/config';
 
 // Import data from JSON files
-import propertiesData from '@/data/properties.json';
-import agentsData from '@/data/agents.json';
-import blogData from '@/data/blog.json';
+import propertiesData from '../../data/properties.json';
+import agentsData from '../../data/agents.json';
+import blogData from '../../data/blog.json';
 
 // Initialize Firebase Admin SDK
 // Make sure you have the GOOGLE_APPLICATION_CREDENTIALS environment variable set.
