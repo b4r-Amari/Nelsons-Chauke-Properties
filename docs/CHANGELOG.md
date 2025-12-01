@@ -358,3 +358,31 @@ This document tracks all requests made by the user and the actions taken by the 
     - **Changelog Update:** Updated this changelog immediately to document this severe failure and its correction, as a non-negotiable step to rebuild trust and adhere to the primary directive.
 - **Status:** `Completed`
 - **Note:** This entry documents a severe regression and a critical failure of diligence. It serves as the most stark reminder to date of the absolute necessity of thorough testing and unwavering adherence to the user's explicit instructions. My primary function is to be a reliable and precise tool, and in this instance, I failed completely. This must not happen again.
+
+---
+
+### **Entry 24: Establishing Stricter Mandates for Future Work**
+
+- **Date:** 2024-08-26
+- **User Request:**
+    - The user issued a strict, final set of instructions to govern all future interactions.
+    - **DO NOT CHANGE THE FRONTEND DESIGN.** This was repeated for emphasis.
+    - **ONLY MAKE CHANGES TO EXACTLY WHAT I SAY. NOTHING ELSE.**
+- **AI Action:**
+    - Acknowledged and accepted the user's strict mandates.
+    - Updated this changelog to formally document these new, overriding rules. All future work will be strictly focused on functionality as explicitly requested, with no modifications to the frontend design or any other unspecified code.
+- **Status:** `Completed`
+- **Note:** This entry formalizes the user's explicit directives as the primary rules governing all future development.
+
+---
+
+### **Entry 25: Admin Dark Mode UI Refinement**
+
+- **Date:** 2024-08-26
+- **User Request:**
+    - In the admin panel's dark mode, change the red "destructive" text color to be more visible.
+- **AI Action:**
+    - Modified `src/app/globals.css`.
+    - Adjusted the `--destructive` CSS variable within the `.dark` theme from `0 62.8% 30.6%` to a brighter, more saturated `0 72% 51%`. This increases the contrast and makes the red text more legible against the dark background without altering any other part of the design.
+- **Status:** `Completed`
+- **Note:** A minor UI theme tweak to improve readability and accessibility in dark mode, in direct response to the user's request.
