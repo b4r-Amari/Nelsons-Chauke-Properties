@@ -108,7 +108,7 @@ export function AgentsTable({ initialAgents }: { initialAgents: AgentWithCount[]
       <TableBody>
         {sortedAgents.map((agent) => (
           <TableRow key={agent.id}>
-            <TableCell className="font-mono text-xs hidden sm:table-cell">{String(agent.id).substring(0,5)}...</TableCell>
+            <TableCell className="font-mono text-xs hidden sm:table-cell">{String(agent.id).substring(0,5)}</TableCell>
             <TableCell>
               <div className="flex items-center gap-4">
                   <Avatar className="hidden h-9 w-9 sm:flex">

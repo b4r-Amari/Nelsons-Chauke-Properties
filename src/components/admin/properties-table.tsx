@@ -174,7 +174,7 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
                 const propertyAgents = agents.filter(agent => property.agentIds.includes(String(agent.id)));
                 return (
                 <TableRow key={property.id}>
-                    <TableCell className="font-mono text-xs hidden sm:table-cell">{String(property.id).substring(0, 5)}...</TableCell>
+                    <TableCell className="font-mono text-xs hidden sm:table-cell">{String(property.id).substring(0, 5)}</TableCell>
                     <TableCell className="font-medium">{property.address}</TableCell>
                     <TableCell className="hidden lg:table-cell">
                     {propertyAgents.length > 0 ? (

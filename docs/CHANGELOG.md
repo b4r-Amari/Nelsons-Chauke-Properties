@@ -386,3 +386,15 @@ This document tracks all requests made by the user and the actions taken by the 
     - Adjusted the `--destructive` CSS variable within the `.dark` theme from `0 62.8% 30.6%` to a brighter, more saturated `0 72% 51%`. This increases the contrast and makes the red text more legible against the dark background without altering any other part of the design.
 - **Status:** `Completed`
 - **Note:** A minor UI theme tweak to improve readability and accessibility in dark mode, in direct response to the user's request.
+
+---
+
+### **Entry 26: Admin Table ID Display Correction**
+
+- **Date:** 2024-08-27
+- **User Action:**
+    - The user manually removed the trailing `...` from the ID display in the `agents-table.tsx` and `properties-table.tsx` components.
+- **AI Action:**
+    - This changelog has been updated to document the user's direct modification. The change provides a cleaner display of the truncated ID in the admin panel tables.
+- **Status:** `Completed`
+- **Note:** This was a UI refinement performed by the user.
