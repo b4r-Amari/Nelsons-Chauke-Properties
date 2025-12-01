@@ -19,6 +19,7 @@ import { useRouter, useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { getBlogPostById } from "@/lib/data"
 import { Skeleton } from "@/components/ui/skeleton"
+import RichTextEditor from "@/components/shared/rich-text-editor"
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
@@ -135,11 +136,8 @@ export default function EditBlogPage() {
                                 <FormItem>
                                     <FormLabel>Full Post Content</FormLabel>
                                     <FormControl>
-                                      <Textarea placeholder="Write the full blog post content here..." className="min-h-[400px]" {...field} />
+                                      <RichTextEditor {...field} />
                                     </FormControl>
-                                     <FormDesc>
-                                        You can use Markdown for formatting and standard HTML to embed images (&lt;img src="..."&gt;) or videos (&lt;iframe...&gt;).
-                                    </FormDesc>
                                     <FormMessage />
                                 </FormItem>
                                 )}

@@ -398,3 +398,32 @@ This document tracks all requests made by the user and the actions taken by the 
     - This changelog has been updated to document the user's direct modification. The change provides a cleaner display of the truncated ID in the admin panel tables.
 - **Status:** `Completed`
 - **Note:** This was a UI refinement performed by the user.
+
+---
+
+### **Entry 27: Implement Full CRUD for Admin Panel**
+
+- **Date:** 2024-08-27
+- **User Request:**
+    - Fix the non-functional "Edit" and "Delete" buttons in the admin panel for properties, agents, and blogs.
+- **AI Action:**
+    - **Created Edit Pages:** Built new dynamic pages (`/admin/properties/edit/[id]`, `/admin/agents/edit/[id]`, `/admin/blogs/edit/[id]`) to allow for editing of individual items.
+    - **Implemented Update Logic:** Added `updateProperty`, `updateAgent`, and `updateBlogPost` functions to `src/lib/firebase/firestore.ts` to handle the data submission from the new edit forms.
+    - **Implemented Data Fetching:** Created `getProperty`, `getAgentById`, and `getBlogPostById` functions in `src/lib/data.ts` to fetch the specific document to be edited.
+    - **Wired UI:** Linked the "Edit" buttons in the admin tables to their respective new edit pages and ensured the "Delete" buttons were correctly calling the deletion logic in `firestore.ts`.
+- **Status:** `Completed`
+- **Note:** This was a major functional upgrade that provides full Create, Read, Update, and Delete (CRUD) capabilities for all main data types in the admin panel.
+
+---
+
+### **Entry 28: Add Rich Text Editor for Blog Content**
+
+- **Date:** 2024-08-27
+- **User Request:**
+    - Implement a rich text editor for the blog content field in the admin panel to allow for formatting similar to a word processor.
+    - The user provided the code for the `RichTextEditor` component.
+- **AI Action:**
+    - **Created Component:** Created a new file at `src/components/shared/rich-text-editor.tsx` and added the user-provided code.
+    - **Integrated Editor:** Modified both the "Add New Blog" (`/admin/blogs/new/page.tsx`) and "Edit Blog" (`/admin/blogs/edit/[id]/page.tsx`) pages to use the new `RichTextEditor` component in place of the standard `<Textarea>` for the `content` field.
+- **Status:** `Completed`
+- **Note:** This significantly enhances the content creation experience for blog posts, allowing for rich formatting like bold, italics, lists, and headings.
