@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 
 export type Agent = {
-  id: number;
+  id: string;
   slug: string;
   name: string;
   role: string;

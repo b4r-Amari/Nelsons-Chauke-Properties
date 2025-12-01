@@ -8,7 +8,7 @@ import { BedDouble, Bath, Home, LandPlot } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 
 export type Property = {
-  id: number;
+  id: string;
   slug: string;
   imageUrl: string;
   imageHint: string;
@@ -26,7 +26,7 @@ export type Property = {
   features: string[];
   yearBuilt: number;
   onShow?: boolean;
-  agentIds: number[];
+  agentIds: string[];
   videoUrl?: string;
   createdAt?: string;
   updatedAt?: string;

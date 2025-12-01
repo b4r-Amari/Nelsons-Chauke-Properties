@@ -49,10 +49,16 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
     let sortableProperties = [...propertyList];
     if (sortConfig !== null) {
       sortableProperties.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+        
+        if (aValue === undefined || aValue === null) return 1;
+        if (bValue === undefined || bValue === null) return -1;
+
+        if (aValue < bValue) {
           return sortConfig.direction === 'asc' ? -1 : 1;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
+        if (aValue > bValue) {
           return sortConfig.direction === 'asc' ? 1 : -1;
         }
         return 0;
@@ -84,8 +90,8 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
   const handleAgentAssigned = async (propertyId: string, newAgentId: string) => {
     const result = await updateProperty(propertyId, { agentIds: [newAgentId] });
     if (result.success) {
-      const agentName = agents.find(a => a.id === newAgentId)?.name;
-      const propertyAddress = propertyList.find(p => p.id === propertyId)?.address;
+        const agentName = agents.find(a => String(a.id) === newAgentId)?.name || 'The assigned agent';
+        const propertyAddress = propertyList.find(p => p.id === propertyId)?.address || 'the property';
       toast({
         title: "Agent Reassigned",
         description: `${agentName} has been assigned to ${propertyAddress}.`,
@@ -210,7 +216,7 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
                             <DropdownMenuItem>
                             <Pencil className="mr-2 h-4 w-4" /> Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(property.id, property.address)}>
+                            <DropdownMenuItem onClick={() => handleDelete(String(property.id), property.address)}>
                             <Trash2 className="mr-2 h-4 w-4" /> Delete
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -245,11 +251,11 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
 
 function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Property; agents: Agent[]; onAgentAssigned: (propertyId: string, agentId: string) => void; }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(String(property.agentIds[0]));
+  const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(property.agentIds[0] || undefined);
 
   const handleSubmit = () => {
     if (selectedAgentId) {
-      onAgentAssigned(property.id, selectedAgentId);
+      onAgentAssigned(String(property.id), selectedAgentId);
       setIsOpen(false);
     }
   };
@@ -279,7 +285,8 @@ function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Pr
                         <SelectItem key={agent.id} value={String(agent.id)}>
                             {agent.name}
                         </SelectItem>
-                    ))}
+                    ))
+                }
                 </SelectContent>
             </Select>
         </div>
