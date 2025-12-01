@@ -13,6 +13,7 @@ import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const formatCurrency = (value: number) => {
+    if (isNaN(value) || value === null) return "";
     return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
 };
 
@@ -105,9 +106,15 @@ export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { pu
 
   useEffect(() => {
     const subscription = form.watch((values) => {
-      calculateResults(values as FormData);
+      const validValues = formSchema.safeParse(values);
+      if (validValues.success) {
+        calculateResults(validValues.data);
+      }
     });
-    calculateResults(form.getValues());
+    const initialValues = formSchema.safeParse(form.getValues());
+    if(initialValues.success) {
+        calculateResults(initialValues.data);
+    }
     return () => subscription.unsubscribe();
   }, [form, calculateResults]);
   
@@ -116,6 +123,11 @@ export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { pu
           form.setValue('purchasePrice', initialPurchasePrice);
       }
   }, [initialPurchasePrice, form]);
+  
+  const handleNumericInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+      const numericValue = e.target.value.replace(/[^0-9]/g, '');
+      field.onChange(numericValue === '' ? 0 : parseInt(numericValue, 10));
+  };
 
   return (
     <div>
@@ -132,7 +144,13 @@ export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { pu
                             <FormControl>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
-                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={field.value.toLocaleString('en-ZA')} className="pl-8" />
+                                    <Input 
+                                      type="text"
+                                      inputMode="decimal"
+                                      value={field.value.toLocaleString('en-ZA')}
+                                      onChange={(e) => handleNumericInputChange(e, field)}
+                                      className="pl-8" 
+                                    />
                                 </div>
                             </FormControl>
                             <FormMessage />
@@ -144,7 +162,13 @@ export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { pu
                             <FormControl>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
-                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={(field.value || 0).toLocaleString('en-ZA')} className="pl-8" />
+                                    <Input
+                                      type="text"
+                                      inputMode="decimal"
+                                      value={(field.value || 0).toLocaleString('en-ZA')}
+                                      onChange={(e) => handleNumericInputChange(e, field)}
+                                      className="pl-8" 
+                                    />
                                 </div>
                             </FormControl>
                             <FormMessage />
@@ -155,7 +179,7 @@ export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { pu
                             <FormLabel className="text-brand-deep font-semibold">Interest Rate</FormLabel>
                             <FormControl>
                                 <div className="relative">
-                                    <Input type="number" {...field} step="0.01" className="pr-8" />
+                                    <Input type="number" {...field} step="0.01" className="pr-8" onChange={e => field.onChange(parseFloat(e.target.value))}/>
                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
                                 </div>
                             </FormControl>

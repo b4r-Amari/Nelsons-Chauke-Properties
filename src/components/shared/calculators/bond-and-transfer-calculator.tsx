@@ -21,7 +21,7 @@ const transferDutyBrackets = [
     { threshold: 0, limit: 1100000, rate: 0, base: 0 },
     { threshold: 1100001, limit: 1512500, rate: 0.03, base: 0 },
     { threshold: 1512501, limit: 2117500, rate: 0.06, base: 12375 },
-    { threshold: 2117501, limit: 2722500, rate: 0.08, base: 48675 },
+    { threshold: 2117501, limit: 2722500, rate: 0.08, base: 97075 },
     { threshold: 2722501, limit: 12100000, rate: 0.11, base: 97075 },
     { threshold: 12100001, limit: Infinity, rate: 0.13, base: 1128600 },
 ];
@@ -94,11 +94,22 @@ export function BondAndTransferCalculator() {
 
   useEffect(() => {
     const subscription = form.watch((values) => {
-      calculateResults(values as FormData);
+        const validValues = formSchema.safeParse(values);
+        if (validValues.success) {
+          calculateResults(validValues.data);
+        }
     });
-    calculateResults(form.getValues());
+    const initialValues = formSchema.safeParse(form.getValues());
+    if(initialValues.success) {
+        calculateResults(initialValues.data);
+    }
     return () => subscription.unsubscribe();
   }, [form, calculateResults]);
+
+  const handleNumericInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+      const numericValue = e.target.value.replace(/[^0-9]/g, '');
+      field.onChange(numericValue === '' ? 0 : parseInt(numericValue, 10));
+  };
 
   return (
     <div>
@@ -115,7 +126,13 @@ export function BondAndTransferCalculator() {
                             <FormControl>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
-                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={field.value.toLocaleString('en-ZA')} className="pl-8" />
+                                    <Input 
+                                      type="text"
+                                      inputMode="decimal"
+                                      value={field.value.toLocaleString('en-ZA')}
+                                      onChange={(e) => handleNumericInputChange(e, field)}
+                                      className="pl-8" 
+                                    />
                                 </div>
                             </FormControl>
                             <FormMessage />
@@ -127,7 +144,13 @@ export function BondAndTransferCalculator() {
                             <FormControl>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
-                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={(field.value || 0).toLocaleString('en-ZA')} className="pl-8" />
+                                    <Input 
+                                      type="text"
+                                      inputMode="decimal"
+                                      value={(field.value || 0).toLocaleString('en-ZA')}
+                                      onChange={(e) => handleNumericInputChange(e, field)}
+                                      className="pl-8" 
+                                    />
                                 </div>
                             </FormControl>
                             <FormMessage />

@@ -45,7 +45,6 @@ export function AffordabilityCalculator() {
   const calculateResults = useCallback((values: FormData) => {
     const { grossIncome, monthlyExpenses = 0, loanTerm, interestRate } = values;
     
-    // Banks typically allow 30% of gross income to go towards a bond repayment.
     const maxRepayment = grossIncome * 0.3;
     const disposableForBond = Math.max(0, maxRepayment - monthlyExpenses);
     
@@ -60,7 +59,6 @@ export function AffordabilityCalculator() {
         ? maxLoanAmount * (monthlyInterestRate * Math.pow(1 + monthlyInterestRate, numberOfPayments)) / (Math.pow(1 + monthlyInterestRate, numberOfPayments) - 1)
         : 0;
 
-    // Simplified once-off costs for this calculator
     const transferDuty = maxLoanAmount > 1100000 ? (maxLoanAmount - 1100000) * 0.03 : 0;
     const attorneyFees = maxLoanAmount * 0.01;
     const onceOffCosts = transferDuty + attorneyFees;
@@ -70,12 +68,22 @@ export function AffordabilityCalculator() {
 
   useEffect(() => {
     const subscription = form.watch((values) => {
-      calculateResults(values as FormData);
+        const validValues = formSchema.safeParse(values);
+        if (validValues.success) {
+          calculateResults(validValues.data);
+        }
     });
-    calculateResults(form.getValues());
+    const initialValues = formSchema.safeParse(form.getValues());
+    if(initialValues.success) {
+        calculateResults(initialValues.data);
+    }
     return () => subscription.unsubscribe();
   }, [form, calculateResults]);
 
+  const handleNumericInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
+      const numericValue = e.target.value.replace(/[^0-9]/g, '');
+      field.onChange(numericValue === '' ? 0 : parseInt(numericValue, 10));
+  };
 
   return (
     <div>
@@ -92,7 +100,13 @@ export function AffordabilityCalculator() {
                             <FormControl>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
-                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={field.value.toLocaleString('en-ZA')} className="pl-8" />
+                                    <Input 
+                                      type="text"
+                                      inputMode="decimal"
+                                      value={field.value.toLocaleString('en-ZA')}
+                                      onChange={(e) => handleNumericInputChange(e, field)}
+                                      className="pl-8" 
+                                    />
                                 </div>
                             </FormControl>
                             <FormMessage />
@@ -104,7 +118,13 @@ export function AffordabilityCalculator() {
                             <FormControl>
                                 <div className="relative">
                                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
-                                    <Input type="text" {...field} onChange={e => field.onChange(Number(e.target.value.replace(/\s/g, '')))} value={(field.value || 0).toLocaleString('en-ZA')} className="pl-8" />
+                                    <Input 
+                                      type="text"
+                                      inputMode="decimal"
+                                      value={(field.value || 0).toLocaleString('en-ZA')}
+                                      onChange={(e) => handleNumericInputChange(e, field)}
+                                      className="pl-8" 
+                                    />
                                 </div>
                             </FormControl>
                             <FormMessage />
@@ -115,7 +135,7 @@ export function AffordabilityCalculator() {
                             <FormLabel className="text-brand-deep font-semibold">Interest Rate</FormLabel>
                             <FormControl>
                                 <div className="relative">
-                                    <Input type="number" {...field} step="0.01" className="pr-8" />
+                                    <Input type="number" {...field} step="0.01" className="pr-8" onChange={e => field.onChange(parseFloat(e.target.value))}/>
                                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">%</span>
                                 </div>
                             </FormControl>

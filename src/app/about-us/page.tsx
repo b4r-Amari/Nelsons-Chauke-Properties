@@ -124,7 +124,7 @@ export default function AboutUsPage() {
           </div>
         </section>
         
-        <section className="py-24 bg-background">
+        <section id='team' className="py-24 bg-background">
           <div className="container">
             <h2 className="text-3xl font-bold text-center font-headline mb-12">Meet Our Team</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
