@@ -5,8 +5,6 @@ import Link from 'next/link';
 import { getProperties, getAgents } from '@/lib/data';
 import { PropertiesTable } from '@/components/admin/properties-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import type { Property } from '@/components/shared/property-card';
-import type { Agent } from '@/components/shared/agent-card';
 
 export default async function AdminPropertiesPage() {
   const [propertyList, agents] = await Promise.all([getProperties(), getAgents()]);
@@ -25,7 +23,7 @@ export default async function AdminPropertiesPage() {
       <Card>
         <CardHeader>
           <CardTitle>Property List</CardTitle>
-          <CardDescription>Here you can view, edit, assign, and delete properties.</CardDescription>
+          <CardDescription>Here you can add, edit, assign, and delete properties.</CardDescription>
         </CardHeader>
         <CardContent>
               <PropertiesTable initialProperties={propertyList} allAgents={agents} />

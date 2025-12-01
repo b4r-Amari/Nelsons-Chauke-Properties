@@ -30,7 +30,7 @@ export default async function AdminAgentsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Agent List</CardTitle>
-          <CardDescription>Here you can view, edit, and delete agents.</CardDescription>
+          <CardDescription>Here you can add, edit, and delete agents.</CardDescription>
         </CardHeader>
         <CardContent>
             <AgentsTable initialAgents={agentsWithCount} />

@@ -24,7 +24,7 @@ export default async function AdminBlogsPage() {
       <Card>
         <CardHeader>
           <CardTitle>Blog Post List</CardTitle>
-          <CardDescription>Here you can view, edit, and delete blog posts.</CardDescription>
+          <CardDescription>Here you can add, edit, and delete blog posts.</CardDescription>
         </CardHeader>
         <CardContent>
             <BlogsTable initialPosts={blogPosts} />
