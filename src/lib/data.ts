@@ -44,7 +44,11 @@ export async function getProperties(options: { featuredOnly?: boolean; status?: 
     q = query(propertiesCol, where('isFavorite', '==', true), where('status', '==', 'for-sale'), limit(8));
   } else if (options.status) {
     if (options.status === 'on-show') {
-      q = query(propertiesCol, where('onShow', '==', true), where('status', '!=', 'sold'));
+      q = query(propertiesCol, where('onShow', '==', true));
+      const snapshot = await getDocs(q);
+      const properties = snapshot.docs.map(docToObj).filter(p => p && p.status !== 'sold') as Property[];
+      console.log(`Successfully connected to Firebase. Fetched ${properties.length} 'on-show' properties.`);
+      return properties;
     } else {
       q = query(propertiesCol, where('status', '==', options.status));
     }
