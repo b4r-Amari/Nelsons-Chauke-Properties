@@ -25,23 +25,23 @@ export default function AdminLayout({
   const isLoginPage = pathname === '/admin/login';
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <AuthProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="admin-ui-theme">
-              <div className="relative flex min-h-screen w-full bg-background">
-                {!isLoginPage && <AdminSidebar />}
-                <main className={cn(
-                  "flex-1",
-                  !isLoginPage && "p-4 sm:p-6 md:p-8 md:ml-[220px] lg:ml-[280px]"
-                )}>
-                  {children}
-                </main>
-              </div>
-              <Toaster />
-            </ThemeProvider>
-        </AuthProvider>
-      </body>
-    </html>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="admin-ui-theme">
+        <html lang="en" suppressHydrationWarning>
+          <body>
+            <AuthProvider>
+                <div className="relative flex min-h-screen w-full bg-background">
+                    {!isLoginPage && <AdminSidebar />}
+                    <main className={cn(
+                    "flex-1",
+                    !isLoginPage && "p-4 sm:p-6 md:p-8 md:ml-[220px] lg:ml-[280px]"
+                    )}>
+                    {children}
+                    </main>
+                </div>
+                <Toaster />
+            </AuthProvider>
+          </body>
+        </html>
+    </ThemeProvider>
   );
 }
