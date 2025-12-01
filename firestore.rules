@@ -13,31 +13,35 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
     // Allow public read on properties, agents, and blog posts
     match /properties/{propertyId} {
       allow read: if isPublic();
-      allow write: if false; // To be secured later
+      allow create, update, delete: if isSignedIn(); 
     }
 
     match /agents/{agentId} {
       allow read: if isPublic();
-      allow write: if false; // To be secured later
+      allow create, update, delete: if isSignedIn();
     }
 
     match /blogPosts/{postId} {
       allow read: if isPublic();
-      allow write: if false; // To be secured later
+      allow create, update, delete: if isSignedIn();
     }
 
     // Users can only manage their own data
     match /users/{userId} {
-      allow read, write: if isSignedIn() && request.auth.uid == userId;
+      allow read, write: if isSignedIn() && isOwner(userId);
     }
 
     // Only signed-in users can create enquiries
     match /enquiries/{enquiryId} {
        allow create: if isSignedIn();
-       allow read, update, delete: if false; // To be secured later
+       allow read, update, delete: if isSignedIn();
     }
   }
 }

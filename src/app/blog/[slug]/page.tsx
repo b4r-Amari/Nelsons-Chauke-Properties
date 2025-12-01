@@ -1,4 +1,3 @@
-"use client";
 
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -7,24 +6,34 @@ import { ArrowLeft, User, Calendar } from 'lucide-react';
 import { getBlogPost } from '@/lib/data';
 import { type BlogPost } from '@/components/shared/blog-card';
 import { Badge } from '@/components/ui/badge';
-import { useEffect, useState } from 'react';
+import type { Metadata } from 'next';
 
-export default function BlogPostPage({ params }: { params: { slug:string } }) {
-  const [post, setPost] = useState<BlogPost | null>(null);
+type Props = {
+  params: { slug: string }
+}
 
-  useEffect(() => {
-    const fetchPost = async () => {
-      const postData = await getBlogPost(params.slug);
-      if (!postData) {
-        notFound();
-      }
-      setPost(postData);
-    };
-    fetchPost();
-  }, [params.slug]);
-
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const post = await getBlogPost(params.slug);
   if (!post) {
-    return null;
+    return {
+      title: 'Blog Post Not Found'
+    }
+  }
+  return {
+    title: post.title,
+    description: post.content.substring(0, 160),
+    openGraph: {
+        title: post.title,
+        description: post.content.substring(0, 160),
+        images: [post.imageUrl]
+    }
+  }
+}
+
+export default async function BlogPostPage({ params }: Props) {
+  const post = await getBlogPost(params.slug);
+  if (!post) {
+    notFound();
   }
 
   return (

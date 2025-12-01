@@ -4,7 +4,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
-import { getProperties } from '@/lib/data';
 import { Button } from "../ui/button";
 import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { useSearchParams } from "next/navigation";
@@ -18,15 +17,40 @@ type PropertyListingsProps = {
     title: string;
     description: string;
   };
+  initialProperties: Property[];
 };
 
-export function PropertyListings({ pageDetails }: PropertyListingsProps) {
+const defaultFilters: Filters = {
+  location: "",
+  status: "for-sale",
+  propertyType: "any",
+  minPrice: "any",
+  maxPrice: "any",
+  minBeds: "any",
+  minBaths: "any",
+  minFloorSize: "any",
+  maxFloorSize: "any",
+  minErfSize: "any",
+  maxErfSize:"any",
+  features: {
+    petFriendly: false,
+    garden: false,
+    pool: false,
+    flatlet: false,
+  },
+  other: {
+    retirement: false,
+    onShow: false,
+    securityEstate: false,
+  },
+};
+
+export function PropertyListings({ pageDetails, initialProperties }: PropertyListingsProps) {
   const searchParams = useSearchParams();
 
-  const [allProperties, setAllProperties] = useState<Property[]>([]);
-  const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
+  const [allProperties] = useState<Property[]>(initialProperties);
+  const [filteredProperties, setFilteredProperties] = useState<Property[]>(initialProperties);
   const [sortOption, setSortOption] = useState('newest');
-  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const propertiesPerPage = 12;
   const resultsRef = useRef<HTMLElement>(null);
@@ -38,10 +62,6 @@ export function PropertyListings({ pageDetails }: PropertyListingsProps) {
     const minBeds = searchParams.get('beds') || 'any';
     const minPrice = searchParams.get('minPrice') || 'any';
     const maxPrice = searchParams.get('maxPrice') || 'any';
-    const minFloorSize = searchParams.get('minFloorSize') || 'any';
-    const maxFloorSize = searchParams.get('maxFloorSize') || 'any';
-    const minErfSize = searchParams.get('minErfSize') || 'any';
-    const maxErfSize = searchParams.get('maxErfSize') || 'any';
     
     if (searchParams.get('autoscroll') === 'true' && resultsRef.current) {
         setTimeout(() => {
@@ -49,34 +69,18 @@ export function PropertyListings({ pageDetails }: PropertyListingsProps) {
         }, 100);
     }
     
-    return { location, status, propertyType, minBeds, minPrice, maxPrice, minFloorSize, maxFloorSize, minErfSize, maxErfSize } as Partial<Filters>;
+    return { location, status, propertyType, minBeds, minPrice, maxPrice } as Partial<Filters>;
   }, [searchParams]);
 
   useEffect(() => {
-    async function fetchAndFilterProperties() {
-      setIsLoading(true);
-      const props = await getProperties({status: initialFilters.status as 'on-show' | 'sold' | undefined});
-      setAllProperties(props);
-      
-      // Apply initial filters from URL
-      const filtered = props.filter(p => {
-        const filters = initialFilters as Filters;
-        if (filters.status && p.status !== filters.status) return false;
-        if (filters.location && !p.location.toLowerCase().includes(filters.location.toLowerCase()) && !p.address.toLowerCase().includes(filters.location.toLowerCase())) return false;
-        if (filters.propertyType !== 'any' && p.type !== filters.propertyType) return false;
-        if (filters.minBeds !== 'any' && p.beds < parseInt(filters.minBeds)) return false;
-        if (filters.minPrice !== 'any' && p.price < parseInt(filters.minPrice)) return false;
-        if (filters.maxPrice !== 'any' && p.price > parseInt(filters.maxPrice)) return false;
-        return true;
-      });
-      setFilteredProperties(filtered);
-      setIsLoading(false);
-    }
-
-    fetchAndFilterProperties();
-  }, [initialFilters]);
+    // Apply initial filters from URL when the component mounts
+    handleFilterChange(initialFilters as Filters);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialFilters, allProperties]);
   
-  const handleFilterChange = (newFilters: Filters) => {
+  const handleFilterChange = (newFiltersInput: Partial<Filters>) => {
+    const newFilters = { ...defaultFilters, ...newFiltersInput };
+    
     const filtered = allProperties.filter(p => {
       if (newFilters.status && newFilters.status !== 'any' && p.status !== newFilters.status) return false;
       if (newFilters.location && !p.location.toLowerCase().includes(newFilters.location.toLowerCase()) && !p.address.toLowerCase().includes(newFilters.location.toLowerCase())) return false;
@@ -135,19 +139,6 @@ export function PropertyListings({ pageDetails }: PropertyListingsProps) {
     if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
-
-  const LoadingSkeleton = () => (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-      {Array.from({ length: 12 }).map((_, i) => (
-        <div key={i} className="space-y-4">
-          <Skeleton className="h-[250px] w-full" />
-          <Skeleton className="h-6 w-3/4" />
-          <Skeleton className="h-4 w-1/2" />
-        </div>
-      ))}
-    </div>
-  );
-
   return (
     <>
       <section className="relative h-[300px] flex items-center justify-center bg-white">
@@ -167,7 +158,6 @@ export function PropertyListings({ pageDetails }: PropertyListingsProps) {
             />
           </div>
       </section>
-
 
       <main className="py-8 bg-background" ref={resultsRef} id="property-results">
         <div className="container">
@@ -193,9 +183,7 @@ export function PropertyListings({ pageDetails }: PropertyListingsProps) {
           </div>
 
           
-              {isLoading ? (
-                <LoadingSkeleton />
-              ) : currentProperties.length > 0 ? (
+              {currentProperties.length > 0 ? (
                 <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {currentProperties.map((prop) => (

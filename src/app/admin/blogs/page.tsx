@@ -1,4 +1,3 @@
-"use client";
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,19 +5,10 @@ import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import { getBlogPosts } from '@/lib/data';
 import { BlogsTable } from '@/components/admin/blogs-table';
-import { useEffect, useState } from 'react';
 import { type BlogPost } from '@/components/shared/blog-card';
 
-export default function AdminBlogsPage() {
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const posts = await getBlogPosts();
-      setBlogPosts(posts);
-    };
-    fetchPosts();
-  }, []);
+export default async function AdminBlogsPage() {
+  const blogPosts = await getBlogPosts();
 
   return (
     <div>

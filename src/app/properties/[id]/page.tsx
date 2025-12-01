@@ -40,7 +40,7 @@ export default function PropertyDetailPage() {
       }
       
       const allAgents = await getAgents();
-      const agents = allAgents.filter(a => prop.agentIds.includes(a.id));
+      const agents = allAgents.filter(a => prop.agentIds.includes(a.id as never));
       
       setProperty(prop);
       setPropertyAgents(agents);
@@ -82,10 +82,10 @@ export default function PropertyDetailPage() {
   ];
 
   const listingDate = new Date();
-  listingDate.setDate(listingDate.getDate() - (property.id % 30));
+  listingDate.setDate(listingDate.getDate() - (parseInt(property.id) % 30));
 
   const propertyDetails = [
-      { label: "Listing Number", value: `T${property.id * 12345}`, icon: Hash },
+      { label: "Listing Number", value: `T${parseInt(property.id) * 12345}`, icon: Hash },
       { label: "Property Type", value: property.type, icon: Building },
       { label: "Listing Date", value: listingDate.toLocaleDateString('en-ZA', { year: 'numeric', month: 'short', day: 'numeric' }), icon: Calendar },
       { label: "Floor Size", value: `${property.sqft} m²`, icon: Home },

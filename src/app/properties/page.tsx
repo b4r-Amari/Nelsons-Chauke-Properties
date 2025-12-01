@@ -1,7 +1,7 @@
 
-
 import type { Metadata } from 'next';
 import { PropertyListings } from '@/components/sections/property-listings';
+import { getProperties } from '@/lib/data';
 
 export const metadata: Metadata = {
   title: 'Properties for Sale and To Let in South Africa | NC Properties',
@@ -14,12 +14,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function PropertiesPage() {
+export default async function PropertiesPage() {
+  const properties = await getProperties();
   const pageDetails = {
     title: "All Properties",
     description: "Find your next home from our curated listings across South Africa."
   }
   return (
-    <PropertyListings pageDetails={pageDetails} />
+    <PropertyListings pageDetails={pageDetails} initialProperties={properties} />
   );
 }

@@ -1,4 +1,3 @@
-"use client";
 
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -10,30 +9,39 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { PropertyCard, type Property } from '@/components/shared/property-card';
 import { type Agent } from '@/components/shared/agent-card';
-import { useEffect, useState } from 'react';
+import type { Metadata } from 'next';
 
-export default function AgentProfilePage({ params }: { params: { slug: string } }) {
-  const [agent, setAgent] = useState<Agent | null>(null);
-  const [agentProperties, setAgentProperties] = useState<Property[]>([]);
+type Props = {
+  params: { slug: string }
+}
 
-  useEffect(() => {
-    const fetchAgentData = async () => {
-      const agentData = await getAgent(params.slug);
-      if (!agentData) {
-        notFound();
-      }
-      setAgent(agentData);
-      
-      const allProperties = await getProperties();
-      setAgentProperties(allProperties.filter(p => p.agentIds.includes(agentData.id) && p.status !== 'sold'));
-    }
-    fetchAgentData();
-  }, [params.slug]);
-
-
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const agent = await getAgent(params.slug);
   if (!agent) {
-    return null;
+    return {
+      title: 'Agent Not Found'
+    }
   }
+  return {
+    title: `${agent.name} - ${agent.role}`,
+    description: `Learn more about ${agent.name}, a dedicated real estate agent at NC Properties. View their listings and contact them for expert advice.`,
+    openGraph: {
+        title: `${agent.name} - ${agent.role}`,
+        description: `Learn more about ${agent.name}, a dedicated real estate agent at NC Properties. View their listings and contact them for expert advice.`,
+        images: [agent.imageUrl]
+    }
+  }
+}
+
+
+export default async function AgentProfilePage({ params }: Props) {
+  const agent = await getAgent(params.slug);
+  if (!agent) {
+    notFound();
+  }
+  
+  const allProperties = await getProperties();
+  const agentProperties = allProperties.filter(p => p.agentIds.includes(agent.id as never) && p.status !== 'sold');
 
   return (
     <div className="bg-background">

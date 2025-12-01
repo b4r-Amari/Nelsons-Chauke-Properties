@@ -1,4 +1,3 @@
-"use client";
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,24 +6,15 @@ import Link from 'next/link';
 import { getAgents, getProperties } from '@/lib/data';
 import type { Property } from '@/components/shared/property-card';
 import { AgentsTable } from '@/components/admin/agents-table';
-import { useState, useEffect } from 'react';
 import { type Agent } from '@/components/shared/agent-card';
 
-export default function AdminAgentsPage() {
-  const [agentsWithCount, setAgentsWithCount] = useState<(Agent & { propertyCount: number })[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const [agentsData, propertiesData] = await Promise.all([getAgents(), getProperties()]);
-      
-      const agentsWithPropertyCount = agentsData.map(agent => ({
-          ...agent,
-          propertyCount: propertiesData.filter((p: Property) => p.agentIds.includes(String(agent.id))).length
-      }));
-      setAgentsWithCount(agentsWithPropertyCount);
-    };
-    fetchData();
-  }, []);
+export default async function AdminAgentsPage() {
+  const [agentsData, propertiesData] = await Promise.all([getAgents(), getProperties()]);
+  
+  const agentsWithCount = agentsData.map(agent => ({
+      ...agent,
+      propertyCount: propertiesData.filter((p: Property) => p.agentIds.includes(agent.id as never)).length
+  }));
 
   return (
     <div>

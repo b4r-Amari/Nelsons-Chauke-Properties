@@ -1,16 +1,12 @@
 
-"use client";
-
+import type { Metadata } from 'next';
 import './globals.css';
-import { Header } from '@/components/layout/header';
-import { Footer } from '@/components/layout/footer';
-import { Toaster } from "@/components/ui/toaster"
 import { AuthProvider } from '@/context/auth-context';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
-import { cn } from '@/lib/utils';
 import { Poppins, Lato, Roboto } from 'next/font/google';
+import MainLayout from '@/components/layout/main-layout'; // Import the new client component
+import { cn } from '@/lib/utils';
 
+// Font configuration
 const poppins = Poppins({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
@@ -29,37 +25,22 @@ const roboto = Roboto({
   variable: '--font-roboto',
 });
 
+// SEO Metadata
+export const metadata: Metadata = {
+  // ... [Your existing metadata object]
+};
 
+// Root Layout (Server Component)
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const pathname = usePathname();
-  const isAdminPage = pathname.startsWith('/admin');
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // The admin layout handles its own html and body tags.
-  // We only render the main layout for public-facing pages.
-  if (isAdminPage) {
-    return <>{children}</>;
-  }
-
   return (
     <html lang="en" className={cn("scroll-smooth", poppins.variable, lato.variable, roboto.variable)} suppressHydrationWarning>
-      <body className={cn(
-        "font-body antialiased text-foreground/90",
-        mobileMenuOpen && "overflow-hidden"
-      )}>
+      <body className="font-body antialiased text-foreground/90">
         <AuthProvider>
-            <div className="flex flex-col min-h-screen">
-              <Header setMobileMenuOpen={setMobileMenuOpen} />
-              <main className="flex-grow">
-                {children}
-              </main>
-              <Footer />
-            </div>
-            <Toaster />
+            <MainLayout>{children}</MainLayout>
         </AuthProvider>
       </body>
     </html>

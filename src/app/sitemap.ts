@@ -1,54 +1,56 @@
 
 import { MetadataRoute } from 'next'
-import { getProperties, getBlogPosts, getAgents } from '@/lib/data';
-
-const BASE_URL = 'https://nelson-chauke-prop.web.app';
+import { getProperties } from '@/lib/data'
+import { getAgents } from '@/lib/data'
+import { getBlogPosts } from '@/lib/data'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  
-  const staticPages = [
-    '/',
-    '/properties',
-    '/properties/on-show',
-    '/sell',
-    '/blog',
-    '/about-us',
-    '/contact-us',
-  ].map(route => ({
-    url: `${BASE_URL}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: route === '/' ? 1 : 0.8,
-  }));
-  
-  const properties = await getProperties();
-  const propertyPages = properties.map(property => ({
-    url: `${BASE_URL}/properties/${property.id}`,
-    lastModified: new Date(), 
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
-  
-  const blogPosts = await getBlogPosts();
-  const blogPostPages = blogPosts.map(post => ({
-    url: `${BASE_URL}/blog/${post.slug}`,
-    lastModified: new Date(post.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.6,
-  }));
+    const baseUrl = 'https://nc-properties.vercel.app'
 
-  const agents = await getAgents();
-  const agentPages = agents.map(agent => ({
-    url: `${BASE_URL}/agents/${agent.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'monthly' as const,
-    priority: 0.5,
-  }));
+    const properties = await getProperties()
+    const agents = await getAgents()
+    const blogPosts = await getBlogPosts()
 
-  return [
-    ...staticPages,
-    ...propertyPages,
-    ...blogPostPages,
-    ...agentPages,
-  ];
+    const propertyUrls = properties.map((property) => {
+        return {
+            url: `${baseUrl}/properties/${property.id}`,
+            lastModified: new Date(),
+        }
+    })
+
+    const agentUrls = agents.map((agent) => {
+        return {
+            url: `${baseUrl}/agents/${agent.slug}`,
+            lastModified: new Date(),
+        }
+    })
+
+    const blogPostUrls = blogPosts.map((post) => {
+        return {
+            url: `${baseUrl}/blog/${post.slug}`,
+            lastModified: new Date(),
+        }
+    })
+
+    return [
+        {
+            url: baseUrl,
+            lastModified: new Date(),
+        },
+        {
+            url: `${baseUrl}/properties`,
+            lastModified: new Date(),
+        },
+        {
+            url: `${baseUrl}/agents`,
+            lastModified: new Date(),
+        },
+        {
+            url: `${baseUrl}/blog`,
+            lastModified: new Date(),
+        },
+        ...propertyUrls,
+        ...agentUrls,
+        ...blogPostUrls,
+    ]
 }

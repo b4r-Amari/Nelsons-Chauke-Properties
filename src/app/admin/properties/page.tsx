@@ -1,4 +1,3 @@
-"use client";
 
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
@@ -6,22 +5,11 @@ import Link from 'next/link';
 import { getProperties, getAgents } from '@/lib/data';
 import { PropertiesTable } from '@/components/admin/properties-table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState, useEffect } from 'react';
 import type { Property } from '@/components/shared/property-card';
 import type { Agent } from '@/components/shared/agent-card';
 
-export default function AdminPropertiesPage() {
-  const [propertyList, setPropertyList] = useState<Property[]>([]);
-  const [agents, setAgents] = useState<Agent[]>([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const [properties, allAgents] = await Promise.all([getProperties(), getAgents()]);
-      setPropertyList(properties);
-      setAgents(allAgents);
-    };
-    fetchData();
-  }, []);
+export default async function AdminPropertiesPage() {
+  const [propertyList, agents] = await Promise.all([getProperties(), getAgents()]);
 
   return (
     <div>
