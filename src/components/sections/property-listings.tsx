@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useMemo, useRef } from "react";
@@ -149,14 +150,10 @@ export function PropertyListings({ pageDetails }: PropertyListingsProps) {
 
   return (
     <>
-      <section 
-        className="relative h-[400px] flex items-center justify-center text-white bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/backgrounds/hero-banner-2.webp')"}}
-      >
-        <div className="absolute inset-0 bg-black/60" />
+      <section className="relative h-[300px] flex items-center justify-center bg-white">
         <div className="relative z-10 container text-center">
-            <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">{pageDetails.title}</h1>
-            <p className="text-lg md:text-xl text-white/90 mb-8 max-w-3xl mx-auto drop-shadow-md">{pageDetails.description}</p>
+            <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4 tracking-tight text-brand-deep">{pageDetails.title}</h1>
+            <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">{pageDetails.description}</p>
         </div>
       </section>
 
