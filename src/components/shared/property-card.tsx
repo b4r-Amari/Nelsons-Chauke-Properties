@@ -28,6 +28,8 @@ export type Property = {
   onShow?: boolean;
   agentIds: number[];
   videoUrl?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 type PropertyCardProps = {
