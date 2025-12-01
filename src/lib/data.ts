@@ -42,23 +42,22 @@ export async function getProperties(options: { featuredOnly?: boolean; status?: 
 
   if (options.featuredOnly) {
     q = query(propertiesCol, where('isFavorite', '==', true), where('status', '==', 'for-sale'), limit(8));
-  } else if (options.status) {
-    if (options.status === 'on-show') {
-      q = query(propertiesCol, where('onShow', '==', true));
-      const snapshot = await getDocs(q);
-      const properties = snapshot.docs.map(docToObj).filter(p => p && p.status !== 'sold') as Property[];
-      console.log(`Successfully connected to Firebase. Fetched ${properties.length} 'on-show' properties.`);
-      return properties;
-    } else { // 'sold'
-      q = query(propertiesCol, where('status', '==', options.status));
-    }
+  } else if (options.status === 'on-show') {
+    q = query(propertiesCol, where('onShow', '==', true));
+    const snapshot = await getDocs(q);
+    const properties = snapshot.docs.map(docToObj).filter(p => p !== null) as Property[];
+    const onShowProperties = properties.filter(p => p.status !== 'sold');
+    console.log(`Successfully connected to Firebase. Fetched ${onShowProperties.length} 'on-show' properties.`);
+    return onShowProperties;
+  } else if (options.status === 'sold') {
+    q = query(propertiesCol, where('status', '==', 'sold'));
   } else {
      // Default query for all properties (e.g., for the main dashboard count)
      q = query(propertiesCol);
   }
 
   const snapshot = await getDocs(q);
-  const properties = snapshot.docs.map(docToObj) as Property[];
+  const properties = snapshot.docs.map(docToObj).filter(p => p !== null) as Property[];
   console.log(`Successfully connected to Firebase. Fetched ${properties.length} properties.`);
   
   // If no specific options are provided, return all properties.
@@ -85,7 +84,7 @@ export async function getAgents(): Promise<Agent[]> {
   console.log('Attempting to fetch agents from Firestore...');
   const agentsCol = collection(db, 'agents');
   const snapshot = await getDocs(agentsCol);
-  const agents = snapshot.docs.map(docToObj) as Agent[];
+  const agents = snapshot.docs.map(docToObj).filter(Boolean) as Agent[];
   console.log(`Successfully connected to Firebase. Fetched ${agents.length} agents.`);
   return agents;
 }
@@ -109,7 +108,7 @@ export async function getBlogPosts(): Promise<BlogPost[]> {
     console.log('Attempting to fetch blog posts from Firestore...');
     const blogCol = collection(db, 'blogPosts');
     const snapshot = await getDocs(blogCol);
-    const posts = snapshot.docs.map(docToObj) as BlogPost[];
+    const posts = snapshot.docs.map(docToObj).filter(Boolean) as BlogPost[];
     console.log(`Successfully connected to Firebase. Fetched ${posts.length} blog posts.`);
     return posts;
 }
