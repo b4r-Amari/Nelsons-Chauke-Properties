@@ -49,18 +49,31 @@ export async function getProperties(options: { featuredOnly?: boolean; status?: 
       const properties = snapshot.docs.map(docToObj).filter(p => p && p.status !== 'sold') as Property[];
       console.log(`Successfully connected to Firebase. Fetched ${properties.length} 'on-show' properties.`);
       return properties;
-    } else {
+    } else { // 'sold'
       q = query(propertiesCol, where('status', '==', options.status));
     }
   } else {
-     q = query(propertiesCol, where('status', '!=', 'sold'));
+     // Default query for all properties (e.g., for the main dashboard count)
+     q = query(propertiesCol);
   }
 
   const snapshot = await getDocs(q);
   const properties = snapshot.docs.map(docToObj) as Property[];
   console.log(`Successfully connected to Firebase. Fetched ${properties.length} properties.`);
+  
+  // If no specific status is requested, and it's not a featured query, filter out 'sold' properties for general listing pages
+  if (!options.status && !options.featuredOnly) {
+    return properties.filter(p => p.status !== 'sold');
+  }
+
+  // For the dashboard (no options), return all properties.
+  if (Object.keys(options).length === 0) {
+      return properties;
+  }
+  
   return properties;
 }
+
 
 export async function getProperty(id: string): Promise<Property | null> {
   const propertyDoc = await getDoc(doc(db, 'properties', id));

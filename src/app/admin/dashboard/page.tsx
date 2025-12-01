@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,8 +20,9 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     const fetchStats = async () => {
+      // Pass empty object to get ALL properties including sold
       const [propertiesData, agentsData, blogData] = await Promise.all([
-        getProperties(),
+        getProperties({}), 
         getAgents(),
         getBlogPosts(),
       ]);
