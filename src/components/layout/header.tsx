@@ -25,6 +25,7 @@ const navLinks = [
       { href: "/properties", label: "Buy" },
       { href: "/sell", label: "Sell" },
       { href: "/properties/on-show", label: "On Show" },
+      { href: "/about-us#team", label: "Our Team" },
     ]
   },
   { href: "/calculators", label: "Calculators" },

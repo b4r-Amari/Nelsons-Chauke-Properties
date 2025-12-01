@@ -258,3 +258,34 @@ This document tracks all requests made by the user and the actions taken by the 
     - Corrected the `docToObj` function to ensure it always assigns the document's own ID (`d.id`) to the `id` property of the resulting object.
 - **Status:** `Completed`
 - **Note:** This bug fix resolves why agents were not being displayed correctly throughout the application. It was a critical data integrity issue.
+
+---
+
+### **Entry 19: Add Connection Logging and Restore Missing Seed Data**
+
+- **Date:** 2024-08-23
+- **User Request:**
+    - Add console messages to verify Firebase connection.
+    - Questioned why the properties being displayed were not the ones from the database.
+- **AI Action:**
+    - **Connection Logging:** Modified `src/lib/data.ts` to add `console.log` statements to the `getProperties`, `getAgents`, and `getBlogPosts` functions to confirm when data is being fetched from Firestore.
+    - **Identified Root Cause:** Discovered that the `src/data` directory and the necessary JSON files (`properties.json`, `agents.json`, `blog.json`) were missing from the project. This meant the database seeding script (`npm run db:seed`) was failing, and the application was falling back to hardcoded data that had not yet been removed.
+    - **Created Data Files:** Created the `src/data` directory and populated the three JSON files with the correct seed data.
+- **Status:** `Completed`
+- **Note:** This was a critical discovery. The lack of seed data was the root cause of many downstream issues, including why the database appeared empty and why certain relationships (like agents to properties) were not working.
+
+---
+
+### **Entry 20: Correct Data Source and Fix Multiple Bugs**
+
+- **Date:** 2024-08-23
+- **User Request:**
+    - Pointed out that the property count was still incorrect and that the application was clearly not reading from the database.
+    - Reported several TypeScript errors in `properties-table.tsx` and a runtime error in `property-listings.tsx`.
+- **AI Action:**
+    - **Corrected Data Source:** Acknowledged the previous error and removed the final pieces of hardcoded data fetching from `src/lib/data.ts`, ensuring the app now **exclusively** reads from Firestore. This corrected the incorrect property count issue.
+    - **UI Refinement:** Modified `src/components/sections/property-listings.tsx` to remove the hero background image and set the background to white with contrasting text, as requested.
+    - **Bug Fix (`property-listings.tsx`):** Added the `createdAt` and `updatedAt` fields to the `Property` type in `src/components/shared/property-card.tsx` to fix a sorting error. Also fixed a runtime error by ensuring the filter logic always has a complete default `features` object.
+    - **Bug Fix (`properties-table.tsx`):** Fixed multiple TypeScript errors caused by type mismatches (number vs. string for IDs) and potential `undefined` values during sorting.
+- **Status:** `Completed`
+- **Note:** This entry marks the final correction of the data flow, ensuring the app is now fully connected to the Firestore backend. It also cleans up several resulting bugs.

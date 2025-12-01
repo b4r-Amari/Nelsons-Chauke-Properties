@@ -169,7 +169,7 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
         <TabsList className="flex justify-center bg-transparent p-0 pb-5 h-auto gap-0">
           <TabsTrigger value="buy" className={cn(commonTabClass, "inline-flex")}>Buy</TabsTrigger>
           <TabsTrigger value="rent" className={cn(commonTabClass, "inline-flex")}>Rent</TabsTrigger>
-          <TabsTrigger value="agents" asChild className={cn(commonTabClass, "hidden sm:inline-flex")}>
+          <TabsTrigger value="agents" asChild className={cn(commonTabClass, "inline-flex")}>
              <Link href="/about-us">Agents</Link>
           </TabsTrigger>
         </TabsList>
