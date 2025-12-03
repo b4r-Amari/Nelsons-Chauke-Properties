@@ -13,6 +13,8 @@ import { Logo } from "@/components/shared/logo";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { signIn } from "@/lib/firebase/auth";
+import { useAuth } from "@/context/auth-context";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -23,6 +25,7 @@ export default function AdminLoginPage() {
   const { toast } = useToast();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { user, isAdmin, isLoading: isAuthLoading } = useAuth();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -32,20 +35,40 @@ export default function AdminLoginPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  // Redirect if already logged in as an admin
+  if (!isAuthLoading && user && isAdmin) {
+    router.replace('/admin/dashboard');
+    return null;
+  }
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    // In a real application, you would verify admin credentials here.
-    // For this prototype, we'll simulate a successful login.
-    console.log("Admin Login Attempt:", values);
-    
-    setTimeout(() => {
+    try {
+      await signIn(values.email, values.password);
+      // The useAuth hook will handle role checking and redirection
+      // We add a small delay to allow the auth state to propagate
+      setTimeout(() => {
+        // If the user is still on this page, it means they are not an admin.
         toast({
-        title: "Admin Login Successful",
-        description: "Redirecting to the admin dashboard...",
+          variant: "destructive",
+          title: "Access Denied",
+          description: "You do not have administrative privileges.",
         });
-        router.push('/admin/dashboard');
         setIsLoading(false);
-    }, 1500);
+      }, 2000);
+      
+    } catch (error: any) {
+        let errorMessage = "An unexpected error occurred.";
+        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+            errorMessage = "Invalid credentials. Please check your email and password."
+        }
+        toast({
+            variant: "destructive",
+            title: "Login Failed",
+            description: errorMessage,
+        });
+        setIsLoading(false);
+    }
   }
 
   return (

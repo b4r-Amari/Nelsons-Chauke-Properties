@@ -16,32 +16,41 @@ service cloud.firestore {
     function isOwner(userId) {
       return request.auth.uid == userId;
     }
+
+    function isAdmin() {
+      // Check if the user's document in the 'users' collection has isAdmin set to true.
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+    }
     
     // Allow public read on properties, agents, and blog posts
     match /properties/{propertyId} {
       allow read: if isPublic();
-      allow create, update, delete: if isSignedIn(); 
+      allow create, update, delete: if isSignedIn() && isAdmin();
     }
 
     match /agents/{agentId} {
       allow read: if isPublic();
-      allow create, update, delete: if isSignedIn();
+      allow create, update, delete: if isSignedIn() && isAdmin();
     }
 
     match /blogPosts/{postId} {
       allow read: if isPublic();
-      allow create, update, delete: if isSignedIn();
+      allow create, update, delete: if isSignedIn() && isAdmin();
     }
 
-    // Users can only manage their own data
+    // Users can read their own profile, but only admins can write/create roles.
     match /users/{userId} {
-      allow read, write: if isSignedIn() && isOwner(userId);
+      allow read, update: if isSignedIn() && isOwner(userId);
+      // Prevent users from making themselves admins
+      allow create: if isSignedIn();
+      allow write: if isSignedIn() && isAdmin();
     }
 
     // Only signed-in users can create enquiries
     match /enquiries/{enquiryId} {
        allow create: if isSignedIn();
-       allow read, update, delete: if isSignedIn();
+       // Only admins can view/manage enquiries
+       allow read, update, delete: if isSignedIn() && isAdmin();
     }
   }
 }

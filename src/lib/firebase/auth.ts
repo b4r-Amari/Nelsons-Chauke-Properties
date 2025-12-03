@@ -4,22 +4,53 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
   signOut,
+  onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
   type User
 } from "firebase/auth";
 import { firebaseApp } from "./firebase";
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore"; 
+import { db } from "./firebase";
 
 export const auth = getAuth(firebaseApp);
 
 const googleProvider = new GoogleAuthProvider();
 
-export const signInWithGoogle = () => {
-  return signInWithPopup(auth, googleProvider);
+// Function to create a user document in Firestore
+const createUserProfileDocument = async (user: User) => {
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    const snapshot = await getDoc(userRef);
+
+    if (!snapshot.exists()) {
+        const { email, uid } = user;
+        const createdAt = serverTimestamp();
+        try {
+            await setDoc(userRef, {
+                uid,
+                email,
+                createdAt,
+                // New users are not admins by default
+                isAdmin: false,
+            });
+        } catch (error) {
+            console.error("Error creating user profile", error);
+        }
+    }
 };
 
-export const signUp = (email: string, password: string) => {
-  return createUserWithEmailAndPassword(auth, email, password);
+
+export const signInWithGoogle = async () => {
+  const userCredential = await signInWithPopup(auth, googleProvider);
+  await createUserProfileDocument(userCredential.user);
+  return userCredential;
+};
+
+export const signUp = async (email: string, password: string) => {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  await createUserProfileDocument(userCredential.user);
+  return userCredential;
 };
 
 export const signIn = (email: string, password: string) => {
@@ -29,5 +60,12 @@ export const signIn = (email: string, password: string) => {
 export const logOut = () => {
   return signOut(auth);
 };
+
+// Monitor auth state to create user profiles
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        createUserProfileDocument(user);
+    }
+})
 
 export type { User };

@@ -16,6 +16,7 @@ Stores public-facing user profile information.
   - `displayName`: (string) The user's display name.
   - `photoURL`: (string) URL to the user's profile picture.
   - `createdAt`: (timestamp) Server timestamp of account creation.
+  - `isAdmin`: (boolean, optional) Flag to denote administrator status.
 
 ### `agents`
 
