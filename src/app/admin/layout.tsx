@@ -1,7 +1,6 @@
 
 "use client";
 
-import type { Metadata } from 'next';
 import { usePathname } from 'next/navigation';
 import { AuthProvider } from '@/context/auth-context';
 import { Toaster } from '@/components/ui/toaster';
@@ -10,11 +9,7 @@ import { ThemeProvider } from '@/context/theme-provider';
 import { cn } from '@/lib/utils';
 import '../globals.css';
 
-// This metadata is not used in a client component, but we keep it for reference
-// export const metadata: Metadata = {
-//   title: 'Admin - NC Properties',
-//   description: 'Admin portal for NC Properties.',
-// };
+// Metadata is now defined in the parent layout, so this is not needed here.
 
 export default function AdminLayout({
   children,
@@ -25,23 +20,19 @@ export default function AdminLayout({
   const isLoginPage = pathname === '/admin/login';
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="admin-ui-theme">
-            <AuthProvider>
-                <div className="relative flex min-h-screen w-full bg-background">
-                    {!isLoginPage && <AdminSidebar />}
-                    <main className={cn(
-                    "flex-1",
-                    !isLoginPage && "p-4 sm:p-6 md:p-8 md:ml-[220px] lg:ml-[280px]"
-                    )}>
-                    {children}
-                    </main>
-                </div>
-                <Toaster />
-            </AuthProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="admin-ui-theme">
+        <AuthProvider>
+            <div className="relative flex min-h-screen w-full bg-background">
+                {!isLoginPage && <AdminSidebar />}
+                <main className={cn(
+                "flex-1",
+                !isLoginPage && "p-4 sm:p-6 md:p-8 md:ml-[220px] lg:ml-[280px]"
+                )}>
+                {children}
+                </main>
+            </div>
+            <Toaster />
+        </AuthProvider>
+    </ThemeProvider>
   );
 }
