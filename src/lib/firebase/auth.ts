@@ -17,22 +17,23 @@ export const auth = getAuth(firebaseApp);
 
 const googleProvider = new GoogleAuthProvider();
 
-// Function to create a user document in Firestore
+// Function to create a user document in Firestore in the 'users' collection
 const createUserProfileDocument = async (user: User) => {
     if (!user) return;
     const userRef = doc(db, "users", user.uid);
     const snapshot = await getDoc(userRef);
 
+    // Create a profile for every new user, which can be used for marketing lists etc.
     if (!snapshot.exists()) {
-        const { email, uid } = user;
+        const { email, uid, displayName, photoURL } = user;
         const createdAt = serverTimestamp();
         try {
             await setDoc(userRef, {
                 uid,
                 email,
+                displayName,
+                photoURL,
                 createdAt,
-                // New users are not admins by default
-                isAdmin: false,
             });
         } catch (error) {
             console.error("Error creating user profile", error);

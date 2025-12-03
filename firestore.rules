@@ -18,8 +18,9 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      // Check if the user's document in the 'users' collection has isAdmin set to true.
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true;
+      // Admin status is determined by the existence of a document in the 'admins' collection
+      // with the user's UID as the document ID.
+      return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
     
     // Allow public read on properties, agents, and blog posts
@@ -38,12 +39,20 @@ service cloud.firestore {
       allow create, update, delete: if isSignedIn() && isAdmin();
     }
 
-    // Users can read their own profile, but only admins can write/create roles.
+    // Any signed-in user can have a user profile document created for them.
+    // Users can only read or update their own profile.
+    // Admins can write to any user profile.
     match /users/{userId} {
       allow read, update: if isSignedIn() && isOwner(userId);
-      // Prevent users from making themselves admins
       allow create: if isSignedIn();
       allow write: if isSignedIn() && isAdmin();
+    }
+
+    // Admins collection is restricted. Only admins can read it. No one can write to it via client SDK.
+    // Admin creation must be done server-side or directly in the Firebase console.
+    match /admins/{userId} {
+      allow read: if isSignedIn() && isAdmin();
+      allow write: if false;
     }
 
     // Only signed-in users can create enquiries
