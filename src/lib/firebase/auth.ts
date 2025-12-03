@@ -1,4 +1,6 @@
 
+"use client";
+
 import { 
   getAuth, 
   createUserWithEmailAndPassword, 
@@ -17,27 +19,41 @@ export const auth = getAuth(firebaseApp);
 
 const googleProvider = new GoogleAuthProvider();
 
-// Function to create a user document in Firestore in the 'users' collection
+// Function to create/update a user document in Firestore in the 'users' collection
 const createUserProfileDocument = async (user: User) => {
     if (!user) return;
+    
     const userRef = doc(db, "users", user.uid);
-    const snapshot = await getDoc(userRef);
+    const adminDocRef = doc(db, "admins", user.uid);
+    
+    try {
+        const [userSnapshot, adminSnapshot] = await Promise.all([
+            getDoc(userRef),
+            getDoc(adminDocRef)
+        ]);
 
-    // Create a profile for every new user, which can be used for marketing lists etc.
-    if (!snapshot.exists()) {
-        const { email, uid, displayName, photoURL } = user;
-        const createdAt = serverTimestamp();
-        try {
+        const userIsAdmin = adminSnapshot.exists();
+
+        if (!userSnapshot.exists()) {
+            // New user, create profile
+            const { email, uid, displayName, photoURL } = user;
+            const createdAt = serverTimestamp();
             await setDoc(userRef, {
                 uid,
                 email,
                 displayName,
                 photoURL,
                 createdAt,
+                isAdmin: userIsAdmin,
             });
-        } catch (error) {
-            console.error("Error creating user profile", error);
+        } else {
+            // Existing user, update admin status if necessary
+            if (userSnapshot.data()?.isAdmin !== userIsAdmin) {
+                await setDoc(userRef, { isAdmin: userIsAdmin }, { merge: true });
+            }
         }
+    } catch (error) {
+        console.error("Error creating or updating user profile", error);
     }
 };
 
@@ -50,12 +66,16 @@ export const signInWithGoogle = async () => {
 
 export const signUp = async (email: string, password: string) => {
   const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  // This will create a standard user profile. Admin must be designated separately.
   await createUserProfileDocument(userCredential.user);
   return userCredential;
 };
 
-export const signIn = (email: string, password: string) => {
-  return signInWithEmailAndPassword(auth, email, password);
+export const signIn = async (email: string, password: string) => {
+  const userCredential = await signInWithEmailAndPassword(auth, email, password);
+  // On sign-in, check and update their admin status on their user profile
+  await createUserProfileDocument(userCredential.user);
+  return userCredential;
 };
 
 export const logOut = () => {
