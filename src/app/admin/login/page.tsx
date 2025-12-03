@@ -45,17 +45,9 @@ export default function AdminLoginPage() {
     setIsLoading(true);
     try {
       await signIn(values.email, values.password);
-      // The useAuth hook will handle role checking and redirection
-      // We add a small delay to allow the auth state to propagate
-      setTimeout(() => {
-        // If the user is still on this page, it means they are not an admin.
-        toast({
-          variant: "destructive",
-          title: "Access Denied",
-          description: "You do not have administrative privileges.",
-        });
-        setIsLoading(false);
-      }, 2000);
+      // The AuthProvider will handle the redirection automatically upon successful login and admin check.
+      // If the user is not an admin, the AuthProvider will keep them from accessing admin routes.
+      // We no longer need the faulty setTimeout logic here.
       
     } catch (error: any) {
         let errorMessage = "An unexpected error occurred.";
