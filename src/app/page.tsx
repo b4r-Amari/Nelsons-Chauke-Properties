@@ -41,7 +41,7 @@ async function HeroSection() {
           Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
         </p>
         <div className="w-full max-w-4xl mx-auto mt-8 bg-black/50 backdrop-blur-md border border-black/20 p-4 rounded-lg shadow-2xl">
-            <PropertyFilter properties={properties} onFilterChange={() => {}} />
+            <PropertyFilter properties={properties} />
         </div>
       </div>
     </section>

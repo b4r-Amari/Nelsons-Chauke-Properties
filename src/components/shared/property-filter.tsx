@@ -84,7 +84,7 @@ const erfSizeOptions = [
 ];
 
 
-export function PropertyFilter({ properties, onFilterChange, initial, showSearchButton = false }: { properties: Property[], onFilterChange: (filters: Filters) => void, initial?: Partial<Filters>, showSearchButton?: boolean }) {
+export function PropertyFilter({ properties, onFilterChange, initial, showSearchButton = false }: { properties: Property[], onFilterChange?: (filters: Filters) => void, initial?: Partial<Filters>, showSearchButton?: boolean }) {
   const router = useRouter();
 
   const [filters, setFilters] = useState({ ...initialFilters, ...initial });
@@ -93,7 +93,7 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   const handleSearchClick = () => {
-    if (showSearchButton) {
+    if (showSearchButton && onFilterChange) {
       onFilterChange(filters);
       return;
     }
@@ -132,7 +132,7 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
     const status = activeTab === 'buy' ? 'for-sale' : 'to-let';
     const newFilters = {...initialFilters, status: status as "for-sale" | "to-let" };
     setFilters(newFilters);
-    if (showSearchButton) {
+    if (showSearchButton && onFilterChange) {
       onFilterChange(newFilters);
     }
   }
