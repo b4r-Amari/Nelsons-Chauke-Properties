@@ -464,3 +464,21 @@ This document tracks all requests made by the user and the actions taken by the 
         - Modified `firestore.rules` to allow public write access to the `users` and `valuationRequests` collections to enable lead capture from the public-facing forms.
 - **Status:** `Completed`
 - **Note:** This is a major feature enhancement for marketing and lead generation, providing a structured way to capture and segment user data from multiple sources.
+
+---
+
+### **Entry 31: Architectural Refactor and Documentation**
+
+- **Date:** 2024-08-28
+- **User Request:**
+    - Create a document explaining the frontend architecture and data flow.
+    - Update the architecture if needed to improve performance and simplicity.
+- **AI Action:**
+    - **Architectural Refactoring:**
+        - Converted several key pages (`/`, `/blog`, `/properties/sold`) from Client Components to Server Components.
+        - This improves performance and SEO by fetching data on the server-side before rendering, removing the need for client-side `useEffect` hooks for data fetching.
+    - **Documentation:**
+        - Created a new `docs/frontend-architecture.md` file.
+        - This document details the application's rendering strategy (Server vs. Client Components), data fetching patterns (server-side `await`), and data mutation flow (client-side calls to Firestore functions).
+- **Status:** `Completed`
+- **Note:** This is a significant architectural improvement that makes the application faster and more aligned with modern Next.js best practices. The new documentation provides crucial insight into the project's structure.

@@ -1,33 +1,26 @@
-"use client";
 
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from 'lucide-react';
 import { PropertyCard } from '@/components/shared/property-card';
 import type { Property } from '@/components/shared/property-card';
-import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { CtaTabsSection, NewsletterSection } from '@/components/sections/home-page-sections';
 import { getProperties } from '@/lib/data';
-import { useEffect, useState } from 'react';
 import { PropertyFilter } from '@/components/shared/property-filter';
 
-function HeroSection({ properties }: { properties: Property[] }) {
-  const [bannerImage, setBannerImage] = useState('/images/backgrounds/hero-banner-1.webp');
-
-  useEffect(() => {
-    const heroBanners = [
-      '/images/backgrounds/hero-banner-1.webp',
-      '/images/backgrounds/hero-banner-2.webp',
-      '/images/backgrounds/hero-banner-3.webp',
-      '/images/backgrounds/hero-banner-4.webp'
-    ];
-    if (typeof window !== 'undefined') {
-      const randomBanner = heroBanners[Math.floor(Math.random() * heroBanners.length)];
-      setBannerImage(randomBanner);
-    }
-  }, []);
+// Since this is a Server Component, we need to make it async to fetch data
+async function HeroSection() {
+  const properties = await getProperties();
+  const heroBanners = [
+    '/images/backgrounds/hero-banner-1.webp',
+    '/images/backgrounds/hero-banner-2.webp',
+    '/images/backgrounds/hero-banner-3.webp',
+    '/images/backgrounds/hero-banner-4.webp'
+  ];
+  // Note: Math.random() is safe to use in a Server Component for this use case
+  // because it runs once at build time or request time, not on the client.
+  const bannerImage = heroBanners[Math.floor(Math.random() * heroBanners.length)];
 
   return (
     <section className="relative h-[70vh] min-h-[550px] flex items-center justify-center text-white">
@@ -55,17 +48,9 @@ function HeroSection({ properties }: { properties: Property[] }) {
   );
 }
 
-
-function FeaturedPropertiesSection() {
-  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
-
-  useEffect(() => {
-    const fetchFeatured = async () => {
-      const props = await getProperties({ featuredOnly: true });
-      setFeaturedProperties(props);
-    };
-    fetchFeatured();
-  }, []);
+// Fetching featured properties on the server
+async function FeaturedPropertiesSection() {
+  const featuredProperties = await getProperties({ featuredOnly: true });
 
   return (
     <section className="py-24 bg-background relative mt-32 md:mt-0">
@@ -115,18 +100,8 @@ function ShortAboutSection() {
   );
 }
 
-export default function Home() {
-    const [properties, setProperties] = useState<Property[]>([]);
-
-    useEffect(() => {
-        const fetchProps = async () => {
-            const props = await getProperties();
-            setProperties(props);
-        }
-        fetchProps();
-    }, []);
-
-    const websiteSchema = {
+export default async function Home() {
+  const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "url": "https://nelson-chauke-prop.web.app/",
@@ -144,7 +119,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
       />
       <div className="flex flex-col bg-background">
-        <HeroSection properties={properties} />
+        <HeroSection />
         <FeaturedPropertiesSection />
         <ShortAboutSection />
         <CtaTabsSection />

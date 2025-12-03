@@ -1,19 +1,22 @@
-"use client";
 
 import { PropertyCard, type Property } from "@/components/shared/property-card";
 import { getProperties } from "@/lib/data";
-import { useState, useEffect } from "react";
+import type { Metadata } from 'next';
 
-export default function SoldPropertiesPage() {
-  const [soldProperties, setSoldProperties] = useState<Property[]>([]);
+export const metadata: Metadata = {
+    title: 'Sold Properties | NC Properties',
+    description: 'A showcase of properties successfully sold by NC Properties. See our track record of connecting buyers and sellers.',
+    openGraph: {
+      title: 'Sold Properties | NC Properties',
+      description: 'A showcase of properties successfully sold by NC Properties.',
+      type: 'website',
+      url: '/properties/sold',
+    },
+};
 
-  useEffect(() => {
-    const fetchSold = async () => {
-      const props = await getProperties({ status: 'sold' });
-      setSoldProperties(props);
-    };
-    fetchSold();
-  }, []);
+
+export default async function SoldPropertiesPage() {
+  const soldProperties = await getProperties({ status: 'sold' });
 
   return (
     <>

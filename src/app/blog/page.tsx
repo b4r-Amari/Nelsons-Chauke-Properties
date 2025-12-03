@@ -1,4 +1,3 @@
-"use client";
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,18 +5,9 @@ import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { BlogCard, type BlogPost } from '@/components/shared/blog-card';
 import { getBlogPosts } from '@/lib/data';
-import { useEffect, useState } from 'react';
 
-export default function BlogPage() {
-  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
-
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const posts = await getBlogPosts();
-      setAllPosts(posts);
-    };
-    fetchPosts();
-  }, []);
+export default async function BlogPage() {
+  const allPosts = await getBlogPosts();
 
   const featuredPost = allPosts[0];
   const otherPosts = allPosts.slice(1);
