@@ -61,10 +61,6 @@ export default function AboutUsPage() {
                 <h2 className="text-3xl font-bold font-headline mb-4">Redefining Real Estate</h2>
                 <p>Since our inception, NC Properties has been driven by a singular vision: to create a real estate experience that is seamless, transparent, and built on trust. We believe that finding a home is more than a transaction; it's the beginning of a new chapter in life.</p>
                 <p>Our team of dedicated professionals combines deep market knowledge with a passion for client satisfaction. We leverage innovative technology and a personalized approach to ensure that every client—whether buying, selling, or renting—achieves their property goals with confidence.</p>
-                <Button className="mt-4 bg-brand-bright hover:bg-brand-deep transition-colors">
-                  <Download className="mr-2 h-4 w-4" />
-                  Download Our Brochure
-                </Button>
               </article>
               <div>
                 <Image src={placeholders.modernOffice.url} alt="The modern and bright office interior of NC Properties with team members collaborating." data-ai-hint={placeholders.modernOffice.hint} width={600} height={400} className="rounded-lg shadow-lg" />
