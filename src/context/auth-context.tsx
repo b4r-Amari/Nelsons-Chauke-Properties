@@ -25,35 +25,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setIsLoading(true); // Start loading state
       setUser(user);
       if (user) {
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists() && userDoc.data().isAdmin === true) {
-          setIsAdmin(true);
-          // If user is admin and trying to access a non-admin page, redirect them.
-          // This is a basic example; more complex logic might be needed.
-          if (!pathname.startsWith('/admin')) {
-             // router.push('/admin/dashboard');
-          }
-        } else {
-          setIsAdmin(false);
-          // If a non-admin user tries to access an admin page, redirect them.
-          if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-            router.replace('/');
-          }
+        const userIsAdmin = userDoc.exists() && userDoc.data().isAdmin === true;
+        setIsAdmin(userIsAdmin);
+
+        // If user is not an admin but trying to access admin pages (not login)
+        if (!userIsAdmin && pathname.startsWith('/admin') && pathname !== '/admin/login') {
+          router.replace('/');
         }
       } else {
+        // No user is logged in
         setIsAdmin(false);
-        // If not logged in, redirect any attempts to access admin pages away.
+        // If not logged in, redirect any attempts to access admin pages away from login
          if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
             router.replace('/admin/login');
          }
       }
-      setIsLoading(false);
+      setIsLoading(false); // End loading state
     });
     return () => unsubscribe();
   }, [pathname, router]);
+
+  // While loading, or if unauthorized on an admin page, don't render children
+  const isProtectedAdminRoute = pathname.startsWith('/admin') && pathname !== '/admin/login';
+  if (isLoading && isProtectedAdminRoute) {
+    return null; // Or return a full-page loader
+  }
+  
+  // After loading, if user is not admin and on a protected route, they will be redirected by the effect.
+  // Returning null here prevents flashing the content.
+  if (!isLoading && !isAdmin && isProtectedAdminRoute) {
+    return null;
+  }
 
   return (
     <AuthContext.Provider value={{ user, isAdmin, isLoading }}>
