@@ -66,7 +66,7 @@ export default function NewAgentPage() {
        <div className="mb-4">
             <Link href="/admin/agents" className="inline-flex items-center text-brand-deep hover:text-brand-bright transition-colors font-semibold">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Agents List
+              Back to Estate Agents
             </Link>
         </div>
       <Card>

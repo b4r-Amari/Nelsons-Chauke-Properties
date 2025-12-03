@@ -427,3 +427,19 @@ This document tracks all requests made by the user and the actions taken by the 
     - **Integrated Editor:** Modified both the "Add New Blog" (`/admin/blogs/new/page.tsx`) and "Edit Blog" (`/admin/blogs/edit/[id]/page.tsx`) pages to use the new `RichTextEditor` component in place of the standard `<Textarea>` for the `content` field.
 - **Status:** `Completed`
 - **Note:** This significantly enhances the content creation experience for blog posts, allowing for rich formatting like bold, italics, lists, and headings.
+
+---
+
+### **Entry 29: Database Collection Renaming**
+
+- **Date:** 2024-08-27
+- **User Request:**
+    - Rename the Firestore collection `admins` to `adminUsers`.
+    - Rename the Firestore collection `agents` to `estateAgents`.
+- **AI Action:**
+    - Conducted a comprehensive find-and-replace across the entire codebase.
+    - Updated all Firestore queries, data fetching functions, and security rules in `src/lib/firebase/firestore.ts`, `src/lib/firebase/auth.ts`, `src/lib/data.ts`, and `firestore.rules` to use the new collection names.
+    - Updated the database seeding script in `src/lib/firebase/seed.ts`.
+    - Updated relevant frontend components in the admin panel (`/admin/agents/*`) to ensure they continue to function correctly with the new collection names.
+- **Status:** `Completed`
+- **Note:** This is a structural change to the database schema for improved clarity and organization.

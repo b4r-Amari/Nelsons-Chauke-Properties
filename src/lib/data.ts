@@ -82,7 +82,7 @@ export async function getProperty(id: string): Promise<Property | null> {
 // Agents
 export async function getAgents(): Promise<Agent[]> {
   console.log('Attempting to fetch agents from Firestore...');
-  const agentsCol = collection(db, 'agents');
+  const agentsCol = collection(db, 'estateAgents');
   const snapshot = await getDocs(agentsCol);
   const agents = snapshot.docs.map(docToObj).filter(Boolean) as Agent[];
   console.log(`Successfully connected to Firebase. Fetched ${agents.length} agents.`);
@@ -90,7 +90,7 @@ export async function getAgents(): Promise<Agent[]> {
 }
 
 export async function getAgent(slug: string): Promise<Agent | null> {
-  const q = query(collection(db, 'agents'), where('slug', '==', slug), limit(1));
+  const q = query(collection(db, 'estateAgents'), where('slug', '==', slug), limit(1));
   const snapshot = await getDocs(q);
   if (snapshot.empty) {
     return null;
@@ -99,7 +99,7 @@ export async function getAgent(slug: string): Promise<Agent | null> {
 }
 
 export async function getAgentById(id: string): Promise<Agent | null> {
-    const agentDoc = await getDoc(doc(db, 'agents', id));
+    const agentDoc = await getDoc(doc(db, 'estateAgents', id));
     return agentDoc.exists() ? docToObj(agentDoc) as Agent : null;
 }
 

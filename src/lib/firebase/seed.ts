@@ -74,7 +74,7 @@ async function seedDatabase() {
     await seedCollection(propertiesCollection, propertiesData);
 
     // Seed Agents
-    const agentsCollection = db.collection('agents');
+    const agentsCollection = db.collection('estateAgents');
     await seedCollection(agentsCollection, agentsData);
 
     // Seed Blog Posts

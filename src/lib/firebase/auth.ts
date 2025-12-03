@@ -24,7 +24,7 @@ const createUserProfileDocument = async (user: User) => {
     if (!user) return;
     
     const userRef = doc(db, "users", user.uid);
-    const adminDocRef = doc(db, "admins", user.uid);
+    const adminDocRef = doc(db, "adminUsers", user.uid);
     
     try {
         const [userSnapshot, adminSnapshot] = await Promise.all([

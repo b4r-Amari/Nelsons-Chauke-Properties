@@ -49,7 +49,7 @@ export async function addAgent(agentData: DataObject) {
     try {
         // Create slug from name
         const slug = agentData.name.toLowerCase().replace(/\s+/g, '-');
-        const agentsCol = collection(db, 'agents');
+        const agentsCol = collection(db, 'estateAgents');
         await addDoc(agentsCol, {
             ...agentData,
             slug,
@@ -65,7 +65,7 @@ export async function addAgent(agentData: DataObject) {
 export async function updateAgent(id: string, agentData: DataObject) {
     try {
         const slug = agentData.name.toLowerCase().replace(/\s+/g, '-');
-        const agentRef = doc(db, 'agents', id);
+        const agentRef = doc(db, 'estateAgents', id);
         await updateDoc(agentRef, {
             ...agentData,
             slug,
@@ -79,7 +79,7 @@ export async function updateAgent(id: string, agentData: DataObject) {
 
 export async function deleteAgent(id: string) {
     try {
-        await deleteDoc(doc(db, 'agents', id));
+        await deleteDoc(doc(db, 'estateAgents', id));
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };

@@ -28,8 +28,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(true); // Start loading state
       setUser(user);
       if (user) {
-        // Check if the user is an admin by looking for their UID in the 'admins' collection
-        const adminDocRef = doc(db, "admins", user.uid);
+        // Check if the user is an admin by looking for their UID in the 'adminUsers' collection
+        const adminDocRef = doc(db, "adminUsers", user.uid);
         const adminDoc = await getDoc(adminDocRef);
         const userIsAdmin = adminDoc.exists();
         setIsAdmin(userIsAdmin);
