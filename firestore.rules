@@ -39,13 +39,11 @@ service cloud.firestore {
       allow create, update, delete: if isSignedIn() && isAdmin();
     }
 
-    // Any signed-in user can have a user profile document created for them.
-    // Users can only read or update their own profile.
-    // Admins can write to any user profile.
-    match /users/{userId} {
-      allow read, update: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn();
-      allow write: if isSignedIn() && isAdmin();
+    // `users` collection is for marketing leads. Anyone can create a document.
+    // To prevent abuse, further updates could be restricted.
+    match /users/{email} {
+      allow write: if true;
+      allow read: if isSignedIn() && isAdmin(); // Only admins can read the full list
     }
 
     // adminUsers collection is restricted. Only admins can read it. No one can write to it via client SDK.
@@ -55,10 +53,16 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Only signed-in users can create enquiries
+    // Anyone can create enquiries or valuation requests.
     match /enquiries/{enquiryId} {
-       allow create: if isSignedIn();
-       // Only admins can view/manage enquiries
+       allow create: if true;
+       // Only admins can view/manage them.
+       allow read, update, delete: if isSignedIn() && isAdmin();
+    }
+    
+    match /valuationRequests/{requestId} {
+       allow create: if true;
+       // Only admins can view/manage them.
        allow read, update, delete: if isSignedIn() && isAdmin();
     }
   }

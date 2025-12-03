@@ -1,58 +1,57 @@
-
 [
   {
     "id": "1",
-    "slug": "natalia-cromwell",
-    "name": "Natalia Cromwell",
+    "slug": "nelson-chauke",
+    "name": "Nelson Chauke",
     "role": "Principal Agent",
-    "imageUrl": "https://picsum.photos/seed/agent1/200/200",
-    "imageHint": "smiling professional woman",
-    "phone": "082 123 4567",
-    "email": "natalia.c@ncproperties.com",
-    "bio": "<p>With over 15 years of experience in the Johannesburg North real estate market, Natalia is the founder and principal of NC Properties. Her dedication to client satisfaction and her unparalleled market knowledge have made her one of the most respected agents in the industry.</p><p>Natalia specializes in luxury residential properties and new developments, offering a bespoke service to discerning buyers and sellers.</p>"
+    "imageUrl": "https://picsum.photos/seed/nelsonchauke/200/200",
+    "imageHint": "professional headshot",
+    "phone": "076 290 6426",
+    "email": "nelson.c@ncproperties.com",
+    "bio": "Nelson Chauke is the founder, principal agent and managing director of Nelson Chauke Properties, a Pretoria-based estate agency formally registered on 20 October 2020. Public records and major property portals show the agency actively marketing houses, apartments and small commercial properties across Pretoria and surrounding suburbs, operating openly under his name. With more than 20 years’ sales experience in the local real-estate market, Nelson specialises in residential and commercial stock across Pretoria East and neighbouring areas. He is known for deep local market knowledge, a client-focused approach and the ability to guide buyers and sellers through transactions. Nelson maintains a visible, client-facing presence on listing platforms and social media. No definitive public employment record links him to Rawson Property Group; available evidence confirms his role as director of his own agency and his active work in the Pretoria property market."
   },
   {
     "id": "2",
     "slug": "john-bishop",
     "name": "John Bishop",
-    "role": "Head of Sales (Gauteng)",
+    "role": "Head of Sales (Pretoria)",
     "imageUrl": "https://picsum.photos/seed/agent2/200/200",
     "imageHint": "confident man suit",
     "phone": "083 987 6543",
     "email": "john.b@ncproperties.com",
-    "bio": "<p>John leads the sales team in Gauteng with a focus on results-driven strategies and mentorship. He has a keen eye for investment opportunities and excels at negotiating complex deals. His clients value his direct approach and unwavering commitment.</p><p>John's expertise covers Sandton, Rosebank, and the surrounding affluent suburbs.</p>"
+    "bio": "John leads the sales team in Pretoria, focusing on results-driven strategies and mentorship. He excels at identifying investment opportunities and negotiating complex deals. Clients value his straightforward approach and dedication. His expertise covers Pretoria East, Menlyn, Hatfield, and Centurion."
   },
   {
     "id": "3",
     "slug": "samantha-grey",
     "name": "Samantha Grey",
-    "role": "Head of Sales (Cape Town)",
+    "role": "Sales Specialist (Pretoria East)",
     "imageUrl": "https://picsum.photos/seed/agent3/200/200",
     "imageHint": "friendly woman outdoors",
     "phone": "072 555 1234",
     "email": "samantha.g@ncproperties.com",
-    "bio": "<p>Samantha is a top-performing agent with a passion for the Cape Town property market. She is known for her exceptional service, strong negotiation skills, and her ability to match clients with their perfect homes on the Atlantic Seaboard and in the Southern Suburbs.</p><p>Her warm personality and professional demeanor make the buying or selling process a pleasure.</p>"
+    "bio": "Samantha is a top-performing agent with a passion for the Pretoria East property market. She is known for her exceptional client service, strong negotiation skills, and ability to match buyers with homes in suburbs like Garsfontein, Faerie Glen, and Menlyn. Her professional yet approachable demeanor makes the buying or selling process smooth for clients."
   },
   {
     "id": "4",
     "slug": "david-chen",
     "name": "David Chen",
-    "role": "Winelands Specialist",
+    "role": "Pretoria Family Home Specialist",
     "imageUrl": "https://picsum.photos/seed/agent4/200/200",
-    "imageHint": "man vineyard background",
+    "imageHint": "man standing in residential street",
     "phone": "071 888 9900",
     "email": "david.c@ncproperties.com",
-    "bio": "<p>David is our resident expert for the Cape Winelands. Having lived in the area for over 20 years, his local knowledge is second to none. He specializes in lifestyle farms, historic homes, and luxury estates in areas like Stellenbosch, Franschhoek, and Paarl.</p>"
+    "bio": "David specialises in family homes across Pretoria and Centurion. With over 15 years living and working in the area, he offers unmatched local knowledge. He helps clients find properties in family-friendly suburbs with good schools, amenities, and long-term investment potential."
   },
   {
     "id": "5",
     "slug": "zanele-mthembu",
     "name": "Zanele Mthembu",
-    "role": "Coastal Property Expert (KZN)",
+    "role": "Investment Property Specialist (Gauteng)",
     "imageUrl": "https://picsum.photos/seed/agent5/200/200",
-    "imageHint": "woman beach background",
+    "imageHint": "woman standing outside modern townhouse",
     "phone": "060 111 2222",
     "email": "zanele.m@ncproperties.com",
-    "bio": "<p>Zanele manages our KwaZulu-Natal portfolio, with a special focus on the North Coast, from Umhlanga to Ballito. She has a deep understanding of the coastal property market and helps clients find their dream holiday homes and permanent residences.</p>"
+    "bio": "Zanele focuses on investment properties across Pretoria and Gauteng, helping clients identify rental opportunities and portfolio growth options. She is particularly knowledgeable about high-demand areas near universities, business hubs, and transport nodes, providing guidance on maximizing returns and managing long-term investments."
   }
 ]

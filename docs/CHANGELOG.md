@@ -443,3 +443,24 @@ This document tracks all requests made by the user and the actions taken by the 
     - Updated relevant frontend components in the admin panel (`/admin/agents/*`) to ensure they continue to function correctly with the new collection names.
 - **Status:** `Completed`
 - **Note:** This is a structural change to the database schema for improved clarity and organization.
+
+---
+
+### **Entry 30: Implement Marketing Lead Capture**
+
+- **Date:** 2024-08-28
+- **User Request:**
+    - Store users from the "Property Alerts", "Newsletter", and "Sell Your Property" forms in the database for marketing purposes.
+    - Add unique identifiers to track the source of each lead.
+    - Create a separate collection for "Free Valuation" requests.
+- **AI Action:**
+    - **Created Firestore Functions:**
+        - `addMarketingLead`: A new function in `firestore.ts` to add or update leads in the `users` collection. It uses the email as a unique ID and stores signup sources (e.g., 'newsletter', 'valuation-request') in an array.
+        - `addValuationRequest`: A new function to save detailed valuation requests to a new `valuationRequests` collection.
+    - **Updated UI Forms:**
+        - Modified the Property Alert, Newsletter, and Sell forms to call the new Firestore functions on submission.
+        - The Sell form now correctly saves data to both the `valuationRequests` and `users` collections.
+    - **Updated Security Rules:**
+        - Modified `firestore.rules` to allow public write access to the `users` and `valuationRequests` collections to enable lead capture from the public-facing forms.
+- **Status:** `Completed`
+- **Note:** This is a major feature enhancement for marketing and lead generation, providing a structured way to capture and segment user data from multiple sources.

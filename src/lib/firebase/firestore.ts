@@ -2,7 +2,7 @@
 'use client';
 
 import { db } from './firebase';
-import { collection, addDoc, doc, updateDoc, deleteDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, deleteDoc, Timestamp, setDoc, arrayUnion } from "firebase/firestore";
 
 // Generic type for data to be added
 type DataObject = { [key: string]: any };
@@ -123,6 +123,36 @@ export async function updateBlogPost(id: string, blogData: DataObject) {
 export async function deleteBlogPost(id: string) {
     try {
         await deleteDoc(doc(db, 'blogPosts', id));
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+// Marketing & Leads
+export async function addMarketingLead(data: { email: string, name?: string, source: string }) {
+    try {
+        const userRef = doc(db, 'users', data.email); // Use email as the document ID
+        await setDoc(userRef, {
+            email: data.email,
+            name: data.name || '',
+            sources: arrayUnion(data.source), // Add the new source to an array
+            lastUpdatedAt: Timestamp.now()
+        }, { merge: true }); // Merge to avoid overwriting existing data
+        return { success: true };
+    } catch (error: any) {
+        return { success: false, error: error.message };
+    }
+}
+
+export async function addValuationRequest(data: DataObject) {
+    try {
+        const valuationCol = collection(db, 'valuationRequests');
+        await addDoc(valuationCol, {
+            ...data,
+            createdAt: Timestamp.now(),
+            status: 'new', // Initial status
+        });
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };

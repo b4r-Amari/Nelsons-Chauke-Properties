@@ -18,6 +18,7 @@ import placeholders from '@/lib/placeholder-images.json';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Building, KeyRound, Handshake } from 'lucide-react';
+import { addMarketingLead } from '@/lib/firebase/firestore';
 
 
 const alertFormSchema = z.object({
@@ -25,7 +26,7 @@ const alertFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
 });
 
-function PropertyAlertForm() {
+function PropertyAlertForm({ source }: { source: string }) {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,14 +38,22 @@ function PropertyAlertForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof alertFormSchema>) {
-    console.log(values);
-    toast({
-      title: "Subscribed!",
-      description: "You've been signed up for property alerts.",
-    });
-    form.reset();
-    setIsOpen(false);
+  async function onSubmit(values: z.infer<typeof alertFormSchema>) {
+    const result = await addMarketingLead({ name: values.fullName, email: values.email, source });
+    if (result.success) {
+      toast({
+        title: "Subscribed!",
+        description: "You've been signed up for property alerts.",
+      });
+      form.reset();
+      setIsOpen(false);
+    } else {
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: result.error || "Could not subscribe for alerts.",
+      });
+    }
   }
 
   return (
@@ -90,7 +99,9 @@ function PropertyAlertForm() {
               )}
             />
              <DialogFooter>
-                <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep">Send</Button>
+                <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Subscribing..." : "Subscribe"}
+                </Button>
              </DialogFooter>
           </form>
         </Form>
@@ -110,7 +121,7 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, h
         <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep group-hover:text-brand-bright transition-colors">{title}</h3>
         <p className="text-muted-foreground flex-grow mb-6">{description}</p>
         {isAlertForm ? (
-          <PropertyAlertForm />
+          <PropertyAlertForm source={id} />
         ) : (
           <Link href={href || '#'}><Button variant="outline" className="border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors w-full mt-auto">
              {buttonText}
@@ -180,7 +191,12 @@ export function CtaTabsSection() {
   );
 }
 
+const newsletterFormSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address." }),
+});
+
 export function NewsletterSection() {
+  const { toast } = useToast();
   const mailImages = [
     'url("/images/backgrounds/mail-image.webp")',
     'url("/images/backgrounds/mail-image-2.webp")',
@@ -190,12 +206,35 @@ export function NewsletterSection() {
   
   const [bgImages, setBgImages] = useState(mailImages.slice(0,3).join(', '));
 
+  const form = useForm<z.infer<typeof newsletterFormSchema>>({
+    resolver: zodResolver(newsletterFormSchema),
+    defaultValues: { email: "" },
+  });
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const shuffled = [...mailImages].sort(() => 0.5 - Math.random());
       setBgImages(shuffled.slice(0, 3).join(', '));
     }
   }, []);
+
+  async function onSubmit(values: z.infer<typeof newsletterFormSchema>) {
+    const result = await addMarketingLead({ email: values.email, source: 'newsletter' });
+    if (result.success) {
+      toast({
+        title: "Subscribed!",
+        description: "You're now on our newsletter list. Welcome!",
+      });
+      form.reset();
+    } else {
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: result.error || "Could not subscribe to the newsletter.",
+      });
+    }
+  }
+
 
   return (
     <section 
@@ -216,10 +255,25 @@ export function NewsletterSection() {
             <p className="text-muted-foreground">Subscribe to our newsletter for the latest property listings, market news, and exclusive tips.</p>
           </CardHeader>
           <CardContent>
-            <form className="flex flex-col sm:flex-row gap-4">
-              <Input type="email" placeholder="Enter your email address" className="flex-grow h-12" aria-label="Email for newsletter"/>
-              <Button type="submit" size="lg" className="h-12 bg-brand-bright hover:bg-brand-deep transition-colors">Subscribe</Button>
-            </form>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4">
+                 <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="flex-grow">
+                      <FormControl>
+                        <Input type="email" placeholder="Enter your email address" className="h-12" aria-label="Email for newsletter" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" size="lg" className="h-12 bg-brand-bright hover:bg-brand-deep transition-colors" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Subscribing..." : "Subscribe"}
+                </Button>
+              </form>
+            </Form>
           </CardContent>
         </Card>
       </div>
