@@ -34,13 +34,13 @@ export function FloatingContactBar({ agent }: { agent: Agent }) {
               WhatsApp
             </a>
           </Button>
-          <Button asChild variant="secondary" className="flex-1">
+          <Button asChild variant="outline" className="flex-1 bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:text-red-800">
             <a href={`tel:${agent.phone}`} className="flex items-center justify-center gap-2">
               <Phone className="h-5 w-5" />
               Call
             </a>
           </Button>
-          <Button asChild variant="secondary" className="flex-1">
+          <Button asChild variant="outline" className="flex-1 bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:text-red-800">
             <a href={`mailto:${agent.email}`} className="flex items-center justify-center gap-2">
               <Mail className="h-5 w-5" />
               Email
