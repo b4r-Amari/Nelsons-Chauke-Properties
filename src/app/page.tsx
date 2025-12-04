@@ -33,7 +33,7 @@ async function HeroSection() {
         priority
       />
       <div className="absolute inset-0 bg-black/60" />
-      <div className="relative z-10 container text-center flex flex-col items-center pt-24">
+      <div className="relative z-10 container text-center flex flex-col items-center pt-32">
         <h1 className="text-4xl md:text-6xl font-bold font-headline mb-4 tracking-tight text-white drop-shadow-md">
           We have space for you
         </h1>
@@ -53,7 +53,7 @@ async function FeaturedPropertiesSection() {
   const featuredProperties = await getProperties({ featuredOnly: true });
 
   return (
-    <section className="py-24 bg-background relative mt-32 md:mt-0">
+    <section className="py-24 bg-background relative">
       <div className="container">
         <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties in South Africa, offering the perfect blend of luxury, comfort, and style.</p>
