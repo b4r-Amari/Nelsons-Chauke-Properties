@@ -18,6 +18,7 @@ export type BlogPost = {
   excerpt: string;
   content: string;
   category: string;
+  updatedAt: any; // Or a more specific Timestamp type
 };
 
 type BlogCardProps = {

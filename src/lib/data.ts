@@ -36,7 +36,6 @@ function docToObj(d: DocumentSnapshot<DocumentData>) {
 
 // Properties
 export async function getProperties(options: { featuredOnly?: boolean; status?: 'on-show' | 'sold' } = {}): Promise<Property[]> {
-  console.log('Attempting to fetch properties from Firestore...');
   let q;
   const propertiesCol = collection(db, 'properties');
 
@@ -47,7 +46,6 @@ export async function getProperties(options: { featuredOnly?: boolean; status?: 
     const snapshot = await getDocs(q);
     const properties = snapshot.docs.map(docToObj).filter(p => p !== null) as Property[];
     const onShowProperties = properties.filter(p => p.status !== 'sold');
-    console.log(`Successfully connected to Firebase. Fetched ${onShowProperties.length} 'on-show' properties.`);
     return onShowProperties;
   } else if (options.status === 'sold') {
     q = query(propertiesCol, where('status', '==', 'sold'));
@@ -58,7 +56,6 @@ export async function getProperties(options: { featuredOnly?: boolean; status?: 
 
   const snapshot = await getDocs(q);
   const properties = snapshot.docs.map(docToObj).filter(p => p !== null) as Property[];
-  console.log(`Successfully connected to Firebase. Fetched ${properties.length} properties.`);
   
   // If no specific options are provided, return all properties.
   if (Object.keys(options).length === 0) {
@@ -81,11 +78,9 @@ export async function getProperty(id: string): Promise<Property | null> {
 
 // Agents
 export async function getAgents(): Promise<Agent[]> {
-  console.log('Attempting to fetch agents from Firestore...');
   const agentsCol = collection(db, 'estateAgents');
   const snapshot = await getDocs(agentsCol);
   const agents = snapshot.docs.map(docToObj).filter(Boolean) as Agent[];
-  console.log(`Successfully connected to Firebase. Fetched ${agents.length} agents.`);
   return agents;
 }
 
@@ -105,11 +100,9 @@ export async function getAgentById(id: string): Promise<Agent | null> {
 
 // Blog Posts
 export async function getBlogPosts(): Promise<BlogPost[]> {
-    console.log('Attempting to fetch blog posts from Firestore...');
     const blogCol = collection(db, 'blogPosts');
     const snapshot = await getDocs(blogCol);
     const posts = snapshot.docs.map(docToObj).filter(Boolean) as BlogPost[];
-    console.log(`Successfully connected to Firebase. Fetched ${posts.length} blog posts.`);
     return posts;
 }
 

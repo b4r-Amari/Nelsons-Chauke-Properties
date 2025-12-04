@@ -15,6 +15,7 @@ export type Agent = {
   phone: string;
   email: string;
   bio: string;
+  updatedAt: any; // Or a more specific Timestamp type
 };
 
 type AgentCardProps = {

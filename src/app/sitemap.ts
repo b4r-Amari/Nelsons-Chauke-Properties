@@ -1,56 +1,79 @@
 
-import { MetadataRoute } from 'next'
-import { getProperties } from '@/lib/data'
-import { getAgents } from '@/lib/data'
-import { getBlogPosts } from '@/lib/data'
+import { MetadataRoute } from 'next';
+import { getProperties, getAgents, getBlogPosts } from '@/lib/data';
+import { Property } from '@/components/shared/property-card';
+import { Agent } from '@/components/shared/agent-card';
+import { BlogPost } from '@/components/shared/blog-card';
+
+// Helper function to convert Firestore Timestamps or date strings to ISO 8601 strings
+const toISOString = (timestamp: any): string => {
+  if (!timestamp) {
+    return new Date().toISOString();
+  }
+  if (typeof timestamp.toDate === 'function') {
+    return timestamp.toDate().toISOString();
+  }
+  // Attempt to parse if it's a string date
+  const date = new Date(timestamp);
+  if (!isNaN(date.getTime())) {
+    return date.toISOString();
+  }
+  return new Date().toISOString();
+};
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://nc-properties.vercel.app'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://nc-properties.vercel.app';
 
-    const properties = await getProperties()
-    const agents = await getAgents()
-    const blogPosts = await getBlogPosts()
+  // Define static pages
+  const staticPages = [
+    '/',
+    '/about-us',
+    '/properties',
+    '/properties/sold',
+    '/blog',
+    '/calculators',
+    '/contact-us',
+    '/sell',
+    '/login',
+  ];
 
-    const propertyUrls = properties.map((property) => {
-        return {
-            url: `${baseUrl}/properties/${property.id}`,
-            lastModified: new Date(),
-        }
-    })
+  const staticUrls = staticPages.map((path) => ({
+    url: `${baseUrl}${path}`,
+    lastModified: new Date().toISOString(),
+    changeFrequency: 'monthly' as 'monthly',
+    priority: path === '/' ? 1.0 : 0.8,
+  }));
 
-    const agentUrls = agents.map((agent) => {
-        return {
-            url: `${baseUrl}/agents/${agent.slug}`,
-            lastModified: new Date(),
-        }
-    })
+  // Fetch dynamic data
+  const properties = (await getProperties()) as Property[];
+  const agents = (await getAgents()) as Agent[];
+  const blogPosts = (await getBlogPosts()) as BlogPost[];
 
-    const blogPostUrls = blogPosts.map((post) => {
-        return {
-            url: `${baseUrl}/blog/${post.slug}`,
-            lastModified: new Date(),
-        }
-    })
+  const propertyUrls = properties.map((property) => ({
+    url: `${baseUrl}/properties/${property.id}`,
+    lastModified: toISOString(property.updatedAt),
+    changeFrequency: 'weekly' as 'weekly',
+    priority: 0.9,
+  }));
 
-    return [
-        {
-            url: baseUrl,
-            lastModified: new Date(),
-        },
-        {
-            url: `${baseUrl}/properties`,
-            lastModified: new Date(),
-        },
-        {
-            url: `${baseUrl}/agents`,
-            lastModified: new Date(),
-        },
-        {
-            url: `${baseUrl}/blog`,
-            lastModified: new Date(),
-        },
-        ...propertyUrls,
-        ...agentUrls,
-        ...blogPostUrls,
-    ]
+  const agentUrls = agents.map((agent) => ({
+    url: `${baseUrl}/agents/${agent.slug}`,
+    lastModified: toISOString(agent.updatedAt), // Defaults to now if updatedAt is missing
+    changeFrequency: 'monthly' as 'monthly',
+    priority: 0.7,
+  }));
+
+  const blogPostUrls = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: toISOString(post.updatedAt || post.date), // Fallback to the post's date
+    changeFrequency: 'weekly' as 'weekly',
+    priority: 0.7,
+  }));
+
+  return [
+    ...staticUrls,
+    ...propertyUrls,
+    ...agentUrls,
+    ...blogPostUrls,
+  ];
 }
