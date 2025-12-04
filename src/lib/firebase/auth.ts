@@ -12,27 +12,31 @@ import {
   type User
 } from "firebase/auth";
 import { firebaseApp } from "./firebase";
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore"; 
+import { doc, setDoc, getDoc, serverTimestamp, collection, query, where, getDocs, limit } from "firebase/firestore"; 
 import { db } from "./firebase";
 
 export const auth = getAuth(firebaseApp);
 
 const googleProvider = new GoogleAuthProvider();
 
+// Function to check if a user is an admin by querying the adminUsers collection
+const checkIsAdmin = async (userId: string): Promise<boolean> => {
+    if (!userId) return false;
+    const adminQuery = query(collection(db, "adminUsers"), where("uid", "==", userId), limit(1));
+    const adminSnapshot = await getDocs(adminQuery);
+    return !adminSnapshot.empty;
+};
+
+
 // Function to create/update a user document in Firestore in the 'users' collection
 const createUserProfileDocument = async (user: User) => {
     if (!user) return;
     
     const userRef = doc(db, "users", user.uid);
-    const adminDocRef = doc(db, "adminUsers", user.uid);
     
     try {
-        const [userSnapshot, adminSnapshot] = await Promise.all([
-            getDoc(userRef),
-            getDoc(adminDocRef)
-        ]);
-
-        const userIsAdmin = adminSnapshot.exists();
+        const userIsAdmin = await checkIsAdmin(user.uid);
+        const userSnapshot = await getDoc(userRef);
 
         if (!userSnapshot.exists()) {
             // New user, create profile

@@ -4,7 +4,7 @@
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, type User } from "@/lib/firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -15,6 +15,15 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+// Function to check if a user is an admin by querying the adminUsers collection
+const checkIsAdmin = async (userId: string): Promise<boolean> => {
+    if (!userId) return false;
+    const adminQuery = query(collection(db, "adminUsers"), where("uid", "==", userId), limit(1));
+    const adminSnapshot = await getDocs(adminQuery);
+    return !adminSnapshot.empty;
+};
+
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -28,10 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(true); // Start loading state
       setUser(user);
       if (user) {
-        // Check if the user is an admin by looking for their UID in the 'adminUsers' collection
-        const adminDocRef = doc(db, "adminUsers", user.uid);
-        const adminDoc = await getDoc(adminDocRef);
-        const userIsAdmin = adminDoc.exists();
+        const userIsAdmin = await checkIsAdmin(user.uid);
         setIsAdmin(userIsAdmin);
 
         // If user is not an admin but trying to access admin pages (not login)
