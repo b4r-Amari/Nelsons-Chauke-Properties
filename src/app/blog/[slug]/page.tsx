@@ -88,13 +88,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 </div>
 
                 <div
-                  className="prose dark:prose-invert max-w-none prose-p:text-foreground prose-h2:text-muted-foreground prose-a:text-brand-bright prose-strong:text-brand-deep"
+                  className="prose prose-xs xs:prose-base dark:prose-invert max-w-none prose-p:text-foreground prose-headings:text-primary prose-a:text-brand-bright prose-ul:text-foreground prose-li:text-foreground"
                   dangerouslySetInnerHTML={{ __html: post.content }}
                 />
 
               </article>
             </div>
-            <aside className="lg:col-span-1 lg:sticky top-24 self-start bg-card p-6 rounded-lg">
+            <aside className="lg:col-span-1 lg:sticky top-0 self-start bg-card p-6 rounded-lg">
               <BlogSidebar posts={otherPosts} />
             </aside>
           </div>

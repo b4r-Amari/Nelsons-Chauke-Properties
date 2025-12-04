@@ -60,7 +60,7 @@ export function BlogSidebar({ posts }: { posts: BlogPost[] }) {
                     <CardTitle className="font-headline text-2xl">Recent Articles</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 p-0 mt-4">
-                    {posts.slice(0, 4).map((post) => (
+                    {posts.slice(0, 3).map((post) => (
                         <Link key={post.slug} href={`/blog/${post.slug}`} className="group flex items-start gap-4">
                             <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0">
                                 <Image
