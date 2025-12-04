@@ -84,13 +84,6 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
     const minPrice = searchParams.get('minPrice') || 'any';
     const maxPrice = searchParams.get('maxPrice') || 'any';
     
-    // Auto-scroll logic
-    if (searchParams.get('autoscroll') === 'true' && resultsRef.current) {
-        setTimeout(() => {
-            resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }, 100);
-    }
-    
     // Reconstruct selectedLocations from URL slugs
     let selectedLocations: SearchSuggestion[] = [];
     if (locationsParam && allProperties.length > 0) {
@@ -118,6 +111,15 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
     
     return { location, status, propertyType, minBeds, minPrice, maxPrice, selectedLocations } as Partial<Filters>;
   }, [searchParams, allProperties]);
+
+    // Auto-scroll logic moved to its own useEffect
+    useEffect(() => {
+        if (searchParams.get('autoscroll') === 'true' && resultsRef.current) {
+            setTimeout(() => {
+                resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+    }, [searchParams]);
 
   useEffect(() => {
     handleFilterChange(initialFilters);
