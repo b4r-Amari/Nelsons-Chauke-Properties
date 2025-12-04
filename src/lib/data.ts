@@ -1,18 +1,33 @@
 
 import { db } from './firebase/firebase';
-import { collection, getDocs, doc, getDoc, query, where, orderBy, limit } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, query, where, orderBy, limit, Timestamp } from "firebase/firestore";
 import { Property } from '@/components/shared/property-card';
 import { Agent } from '@/components/shared/agent-card';
 import { BlogPost } from '@/components/shared/blog-card';
 
-// Helper function to convert Firestore doc to a plain object
+// Helper function to convert Firestore doc to a plain, serializable object
 const docToObj = (d: any) => {
     const data = d.data();
+    const serializableData: { [key: string]: any } = {};
+
+    for (const key in data) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+            const value = data[key];
+            if (value instanceof Timestamp) {
+                // Convert Firestore Timestamp to a serializable ISO string
+                serializableData[key] = value.toDate().toISOString();
+            } else {
+                serializableData[key] = value;
+            }
+        }
+    }
+
     return {
-        ...data,
+        ...serializableData,
         id: d.id, // Ensure the document ID is always included
     };
 };
+
 
 // Fetch all properties with optional filtering and sorting
 export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number } = {}): Promise<Property[]> => {
@@ -76,10 +91,10 @@ export const getBlogPosts = async (options: { limit?: number } = {}): Promise<Bl
     
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => {
-        const data = doc.data();
+        const data = docToObj(doc); // Use the serializing helper
         return {
-            ...docToObj(doc),
-            date: data.date.toDate().toLocaleDateString('en-US', {
+            ...data,
+            date: new Date(data.date).toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -95,11 +110,10 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
     if (snapshot.empty) {
         return null;
     }
-    const doc = snapshot.docs[0];
-    const data = doc.data();
+    const data = docToObj(snapshot.docs[0]); // Use the serializing helper
     return {
-        ...docToObj(doc),
-        date: data.date.toDate().toLocaleDateString('en-US', {
+        ...data,
+        date: new Date(data.date).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
@@ -114,10 +128,10 @@ export const getBlogPostById = async (id: string): Promise<BlogPost | null> => {
      if (!docSnap.exists()) {
         return null;
     }
-    const data = docSnap.data();
+    const data = docToObj(docSnap); // Use the serializing helper
     return {
-        ...docToObj(docSnap),
-        date: data.date.toDate().toLocaleDateString('en-US', {
+        ...data,
+        date: new Date(data.date).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
