@@ -25,8 +25,8 @@ export function FloatingContactBar({ agent }: { agent: Agent }) {
   const whatsappLink = `https://wa.me/27${whatsappNumber.substring(whatsappNumber.length - 9)}`;
 
   return (
-    <div className="fixed bottom-2 left-2 right-2 z-50 lg:hidden">
-      <div className="bg-background/80 backdrop-blur-lg border shadow-2xl rounded-xl p-2 max-w-sm mx-auto">
+    <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden p-2">
+      <div className="bg-background/80 backdrop-blur-lg border shadow-2xl rounded-xl p-2 w-full">
         <div className="grid grid-cols-3 items-center gap-1">
           <Button asChild variant="outline" className="flex-1 bg-green-50 text-green-700 border-green-200 hover:bg-green-100 hover:text-green-800">
             <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2">
@@ -51,4 +51,3 @@ export function FloatingContactBar({ agent }: { agent: Agent }) {
     </div>
   );
 }
-
