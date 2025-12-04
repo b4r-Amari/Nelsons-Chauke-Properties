@@ -18,11 +18,9 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      // Admin status is determined by checking if a document exists in 'adminUsers'
-      // where the 'uid' field matches the requesting user's UID.
-      return exists(
-        /databases/$(database)/documents/adminUsers?resource.data.uid == request.auth.uid
-      );
+      // Admin status is determined by checking if a document exists for the user in the adminUsers collection.
+      // The document ID must be the user's UID.
+      return exists(/databases/$(database)/documents/adminUsers/$(request.auth.uid));
     }
     
     // Allow public read on properties, agents, and blog posts

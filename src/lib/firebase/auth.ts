@@ -12,19 +12,19 @@ import {
   type User
 } from "firebase/auth";
 import { firebaseApp } from "./firebase";
-import { doc, setDoc, getDoc, serverTimestamp, collection, query, where, getDocs, limit } from "firebase/firestore"; 
+import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore"; 
 import { db } from "./firebase";
 
 export const auth = getAuth(firebaseApp);
 
 const googleProvider = new GoogleAuthProvider();
 
-// Function to check if a user is an admin by querying the adminUsers collection
+// Function to check if a user is an admin
 const checkIsAdmin = async (userId: string): Promise<boolean> => {
     if (!userId) return false;
-    const adminQuery = query(collection(db, "adminUsers"), where("uid", "==", userId), limit(1));
-    const adminSnapshot = await getDocs(adminQuery);
-    return !adminSnapshot.empty;
+    const adminDocRef = doc(db, "adminUsers", userId);
+    const adminDoc = await getDoc(adminDocRef);
+    return adminDoc.exists();
 };
 
 
