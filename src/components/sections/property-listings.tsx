@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
 import { Card, CardFooter } from "../ui/card";
-import { type Filters } from "../shared/property-filter";
+import { type Filters, type SearchSuggestion } from "../shared/property-filter";
 import { getProperties } from "@/lib/data";
 
 type PropertyListingsProps = {
@@ -21,7 +21,7 @@ type PropertyListingsProps = {
   initialProperties?: Property[];
 };
 
-const defaultFilters: Filters = {
+const defaultFilters: Omit<Filters, 'selectedLocations'> = {
   location: "",
   status: "for-sale",
   propertyType: "any",
@@ -58,8 +58,6 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
   const resultsRef = useRef<HTMLElement>(null);
   
   useEffect(() => {
-    // If initialProperties are not provided, fetch them.
-    // This is useful for pages like "On Show" which have their own specific query.
     if (initialProperties.length === 0) {
       setIsLoading(true);
       const fetchPageProperties = async () => {
@@ -78,6 +76,7 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
   }, [initialProperties, pageDetails.title]);
 
   const initialFilters = useMemo(() => {
+    const locationsParam = searchParams.get('locations');
     const location = searchParams.get('location') || "";
     const status = searchParams.get('status') || 'for-sale';
     const propertyType = searchParams.get('type') || 'any';
@@ -85,27 +84,52 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
     const minPrice = searchParams.get('minPrice') || 'any';
     const maxPrice = searchParams.get('maxPrice') || 'any';
     
+    // Auto-scroll logic
     if (searchParams.get('autoscroll') === 'true' && resultsRef.current) {
         setTimeout(() => {
             resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 100);
     }
     
-    return { location, status, propertyType, minBeds, minPrice, maxPrice } as Partial<Filters>;
-  }, [searchParams]);
+    // Reconstruct selectedLocations from URL slugs
+    let selectedLocations: SearchSuggestion[] = [];
+    if (locationsParam && allProperties.length > 0) {
+        const locationSlugs = locationsParam.split(',');
+        const locationMap = new Map<string, SearchSuggestion>();
+
+        allProperties.forEach((prop, index) => {
+            const parts = prop.location.split(',').map(p => p.trim());
+            parts.forEach((part, i) => {
+                const slug = part.toLowerCase().replace(/\s+/g, '-');
+                if (!locationMap.has(slug)) {
+                    locationMap.set(slug, {
+                        id: `loc-${slug}-${index}-${i}`,
+                        type: i === 0 ? 'suburb' : 'city',
+                        value: part,
+                        slug: slug,
+                        displayLabel: part,
+                    });
+                }
+            });
+        });
+        
+        selectedLocations = locationSlugs.map(slug => locationMap.get(slug)).filter(Boolean) as SearchSuggestion[];
+    }
+    
+    return { location, status, propertyType, minBeds, minPrice, maxPrice, selectedLocations } as Partial<Filters>;
+  }, [searchParams, allProperties]);
 
   useEffect(() => {
-    // Apply initial filters from URL when the component mounts
-    handleFilterChange(initialFilters as Filters);
+    handleFilterChange(initialFilters);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialFilters, allProperties]);
   
   const handleFilterChange = (newFiltersInput: Partial<Filters>) => {
     const newFilters = { ...defaultFilters, ...newFiltersInput };
+    const locationsToFilter = newFilters.selectedLocations || [];
     
     const filtered = allProperties.filter(p => {
       if (newFilters.status && newFilters.status !== 'any' && p.status !== newFilters.status) return false;
-      if (newFilters.location && !p.location.toLowerCase().includes(newFilters.location.toLowerCase()) && !p.address.toLowerCase().includes(newFilters.location.toLowerCase())) return false;
       if (newFilters.propertyType !== 'any' && p.type !== newFilters.propertyType) return false;
       if (newFilters.minBeds !== 'any' && p.beds < parseInt(newFilters.minBeds)) return false;
       if (newFilters.minBaths !== 'any' && p.baths < parseInt(newFilters.minBaths)) return false;
@@ -122,6 +146,18 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
       if (newFilters.maxFloorSize !== 'any' && p.sqft > parseInt(newFilters.maxFloorSize)) return false;
       if (newFilters.minErfSize !== 'any' && p.erfSize < parseInt(newFilters.minErfSize)) return false;
       if (newFilters.maxErfSize !== 'any' && p.erfSize > parseInt(newFilters.maxErfSize)) return false;
+      
+      // Handle location filtering from both text input and badges
+      if (locationsToFilter.length > 0) {
+        const propertyMatchesLocation = locationsToFilter.some(sl => 
+          p.location.toLowerCase().includes(sl.value.toLowerCase()) || 
+          p.address.toLowerCase().includes(sl.value.toLowerCase())
+        );
+        if (!propertyMatchesLocation) return false;
+      } else if (newFilters.location) {
+          if (!p.location.toLowerCase().includes(newFilters.location.toLowerCase()) && !p.address.toLowerCase().includes(newFilters.location.toLowerCase())) return false;
+      }
+
       return true;
     });
     setFilteredProperties(filtered);

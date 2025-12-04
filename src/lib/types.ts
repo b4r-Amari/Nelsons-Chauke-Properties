@@ -49,7 +49,7 @@ export type Filters = {
     onShow: boolean;
     securityEstate: boolean;
   };
-  selectedLocations: SearchSuggestion[];
+  selectedLocations?: SearchSuggestion[];
 };
 
 export type SearchSuggestion = {
