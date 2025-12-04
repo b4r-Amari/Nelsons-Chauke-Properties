@@ -19,9 +19,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Function to check if a user is an admin by checking for a document with their UID as the ID
 const checkIsAdmin = async (userId: string): Promise<boolean> => {
     if (!userId) return false;
-    const adminDocRef = doc(db, "adminUsers", userId);
-    const adminDoc = await getDoc(adminDocRef);
-    return adminDoc.exists();
+    try {
+        const adminDocRef = doc(db, "adminUsers", userId);
+        const adminDoc = await getDoc(adminDocRef);
+        return adminDoc.exists();
+    } catch (error) {
+        console.error("Error checking admin status:", error);
+        return false;
+    }
 };
 
 
@@ -43,6 +48,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         // If user is not an admin but trying to access admin pages (not login)
         if (!userIsAdmin && pathname.startsWith('/admin') && pathname !== '/admin/login') {
           router.replace('/');
+        } else if (userIsAdmin && pathname === '/admin/login') {
+            router.replace('/admin/dashboard');
         }
       } else {
         // No user is logged in
