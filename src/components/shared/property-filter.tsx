@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
@@ -228,7 +229,7 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
   const parentBg = 'dark';
   const isDarkBg = parentBg === 'dark';
   const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none text-lg font-bold pb-3 px-5 rounded-none border-b-4 data-[state=active]:border-brand-bright border-transparent";
-  const textColorClass = isDarkBg ? "text-white/80 hover:text-white data-[state=active]:text-white" : "text-foreground/70 hover:text-foreground data-[state=active]:text-foreground";
+  const textColorClass = "text-white/80 hover:text-white data-[state=active]:text-white";
   const selectTriggerClass = isDarkBg ? "bg-primary-foreground/10 text-white border-white/50" : "bg-background text-foreground border-input";
   const moreFiltersClass = isDarkBg ? "bg-transparent text-white hover:bg-primary-foreground/10 border-white/50 hover:text-white" : "bg-background text-foreground";
   const checkboxBorderClass = isDarkBg ? "border-white" : "border-primary";
@@ -244,9 +245,9 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
           setFilters(prev => ({ ...prev, status: newStatus as "for-sale" | "to-let" }));
         }}>
           <TabsList className="flex justify-center bg-transparent p-0 pb-5 h-auto gap-0">
-            <TabsTrigger value="buy" className={cn(commonTabClass, textColorClass, "data-[state=inactive]:hover:border-b-0")}>Buy</TabsTrigger>
-            <TabsTrigger value="rent" className={cn(commonTabClass, textColorClass, "data-[state=inactive]:hover:border-b-0")}>Rent</TabsTrigger>
-            <TabsTrigger value="agents" asChild className={cn(commonTabClass, textColorClass, "data-[state=inactive]:hover:border-b-0")}>
+            <TabsTrigger value="buy" className={cn(commonTabClass, textColorClass)}>Buy</TabsTrigger>
+            <TabsTrigger value="rent" className={cn(commonTabClass, textColorClass)}>Rent</TabsTrigger>
+            <TabsTrigger value="agents" asChild className={cn(commonTabClass, textColorClass)}>
                <Link href="/about-us#team">Agents</Link>
             </TabsTrigger>
           </TabsList>
