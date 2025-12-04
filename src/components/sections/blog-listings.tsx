@@ -148,7 +148,7 @@ export function BlogListings({ initialPosts }: { initialPosts: BlogPost[] }) {
                         variant="ghost"
                         onClick={() => setSelectedCategory(category)}
                         className={cn(
-                            "rounded-none px-4 py-6 hover:bg-transparent hover:shadow-[inset_0_-2px_0_0_hsl(var(--primary))] focus:shadow-[inset_0_-2px_0_0_hsl(var(--primary))]",
+                            "rounded-none px-4 py-6 hover:bg-transparent hover:text-foreground hover:shadow-[inset_0_-2px_0_0_hsl(var(--primary))] focus:shadow-[inset_0_-2px_0_0_hsl(var(--primary))]",
                             selectedCategory === category
                                 ? "shadow-[inset_0_-2px_0_0_hsl(var(--accent))] text-brand-deep font-bold"
                                 : "text-muted-foreground"
