@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button';
 import { HomeLoanCalculator } from '@/components/shared/calculators/home-loan-calculator';
 import { Card, CardContent } from '@/components/ui/card';
 import { FloatingContactBar } from '@/components/shared/floating-contact-bar';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { type Agent } from '@/components/shared/agent-card';
 import { useToast } from '@/hooks/use-toast';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -36,6 +36,7 @@ export default function PropertyDetailPage() {
   const [propertyAgents, setPropertyAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -86,12 +87,10 @@ export default function PropertyDetailPage() {
                 url: window.location.href,
             });
             return true; // Indicates success
-        } catch (error: any) {
-            // AbortError is common if the user cancels the share.
-            if (error.name !== 'AbortError') {
-                console.error("Native share failed:", error);
-            }
-            return false; // Indicates failure or cancellation
+        } catch (error) {
+            // This can be AbortError if the user cancels, or another error.
+            // In any failure case, we'll let the fallback logic take over.
+            return false;
         }
     }
     return false; // Native share not available
@@ -147,33 +146,38 @@ export default function PropertyDetailPage() {
     const encodedUrl = encodeURIComponent(window.location.href);
     const encodedTitle = encodeURIComponent(`Check out this property: ${property.address}`);
 
-    const handleShareClick = async () => {
+    const handleShareClick = async (e: React.MouseEvent) => {
+        e.preventDefault();
         const shared = await handleNativeShare();
         if (!shared) {
-            // For desktop, the popover will be triggered, so no action needed here.
-            // On mobile, if native share fails, we can fallback to copying.
-            if(isMobile) handleCopyToClipboard();
+            if (isMobile) {
+                // On mobile, if native share fails, fallback to copy
+                handleCopyToClipboard();
+            } else {
+                // On desktop, programmatically open the popover
+                setIsPopoverOpen(true);
+            }
         }
     };
 
     const fallbackShareContent = (
-        <PopoverContent className="w-auto p-2" align="end">
+        <PopoverContent className="w-auto p-2" align="end" onOpenAutoFocus={(e) => e.preventDefault()}>
             <div className="flex flex-col gap-1">
-                <Button variant="ghost" className="w-full justify-start gap-3" onClick={handleCopyToClipboard}>
+                <Button variant="ghost" className="w-full justify-start gap-3" onClick={() => { handleCopyToClipboard(); setIsPopoverOpen(false); }}>
                     <Copy className="h-4 w-4" /> Copy Link
                 </Button>
                 <Button variant="ghost" className="w-full justify-start gap-3" asChild>
-                    <Link href={`https://wa.me/?text=${encodedTitle}%20${encodedUrl}`} target="_blank" rel="noopener noreferrer">
+                    <Link href={`https://wa.me/?text=${encodedTitle}%20${encodedUrl}`} target="_blank" rel="noopener noreferrer" onClick={() => setIsPopoverOpen(false)}>
                        <WhatsAppIcon className="h-4 w-4 text-green-500" /> WhatsApp
                     </Link>
                 </Button>
                 <Button variant="ghost" className="w-full justify-start gap-3" asChild>
-                    <Link href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noopener noreferrer">
+                    <Link href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noopener noreferrer" onClick={() => setIsPopoverOpen(false)}>
                         <Facebook className="h-4 w-4 text-blue-600" /> Facebook
                     </Link>
                 </Button>
                 <Button variant="ghost" className="w-full justify-start gap-3" asChild>
-                    <Link href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`} target="_blank" rel="noopener noreferrer">
+                    <Link href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`} target="_blank" rel="noopener noreferrer" onClick={() => setIsPopoverOpen(false)}>
                         <Twitter className="h-4 w-4 text-sky-500" /> Twitter (X)
                     </Link>
                 </Button>
@@ -191,13 +195,9 @@ export default function PropertyDetailPage() {
     
     // Desktop: Popover as the fallback
     return (
-        <Popover>
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
             <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" onClick={async (e) => {
-                    e.preventDefault();
-                    const shared = await handleNativeShare();
-                    // If native share is not used, the popover will open automatically.
-                }}>
+                <Button variant="ghost" size="icon" onClick={handleShareClick}>
                     <Share2 className="h-5 w-5" />
                     <span className="sr-only">Share Property</span>
                 </Button>
@@ -357,5 +357,7 @@ export default function PropertyDetailPage() {
   );
 }
 
+
+    
 
     
