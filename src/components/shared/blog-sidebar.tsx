@@ -1,3 +1,4 @@
+
 "use client"
 
 import Image from "next/image"
@@ -54,11 +55,11 @@ export function BlogSidebar({ posts }: { posts: BlogPost[] }) {
 
     return (
         <div className="space-y-8">
-            <Card>
-                <CardHeader>
+            <Card className="bg-transparent border-none shadow-none">
+                <CardHeader className="p-0">
                     <CardTitle className="font-headline text-2xl">Recent Articles</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-0 mt-4">
                     {posts.slice(0, 4).map((post) => (
                         <Link key={post.slug} href={`/blog/${post.slug}`} className="group flex items-start gap-4">
                             <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0">
@@ -76,19 +77,19 @@ export function BlogSidebar({ posts }: { posts: BlogPost[] }) {
                         </Link>
                     ))}
                 </CardContent>
-                 <CardFooter>
+                 <CardFooter className="p-0 mt-4">
                     <Button variant="outline" className="w-full" asChild>
                         <Link href="/blog">View All Articles</Link>
                     </Button>
                 </CardFooter>
             </Card>
 
-             <Card>
-                <CardHeader>
+             <Card className="bg-transparent border-none shadow-none">
+                <CardHeader className="p-0">
                     <CardTitle className="font-headline text-2xl">Stay Updated</CardTitle>
                     <CardDescription>Get the latest blog posts delivered to your inbox.</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0 mt-4">
                      <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                             <FormField
