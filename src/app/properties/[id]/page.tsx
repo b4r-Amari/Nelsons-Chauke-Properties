@@ -3,7 +3,7 @@
 
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
-import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, Video, Map, Camera, Share2, Building, Calendar, Hash } from 'lucide-react';
+import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, Video, Map, Camera, Share2, Building, Calendar, Hash, Link as LinkIcon, Copy, Facebook, Twitter } from 'lucide-react';
 import { getProperty, getAgents } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
 import { AgentCard } from '@/components/shared/agent-card';
@@ -20,6 +20,13 @@ import { FloatingContactBar } from '@/components/shared/floating-contact-bar';
 import { useEffect, useState } from 'react';
 import { type Agent } from '@/components/shared/agent-card';
 import { useToast } from '@/hooks/use-toast';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import Link from 'next/link';
+
+const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" {...props}><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.487 5.235 3.487 8.413 0 6.557-5.338 11.892-11.894 11.892-1.99 0-3.903-.52-5.586-1.456l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.447-4.435-9.884-9.888-9.884-5.448 0-9.886 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.371-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.5-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.289.173-1.413z" /></svg>
+);
+
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -54,39 +61,40 @@ export default function PropertyDetailPage() {
     fetchPropertyData();
   }, [id]);
 
-  const handleShare = async () => {
-    const copyToClipboard = async () => {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        toast({
-          title: "Link Copied",
-          description: "Property link copied to clipboard.",
-        });
-      } catch (copyError) {
-        toast({
-          variant: "destructive",
-          title: "Could not copy link",
-          description: "Your browser does not support this feature.",
-        });
-      }
-    };
-  
-    if (navigator.share && property) {
-      try {
-        await navigator.share({
-          title: property.address,
-          text: `Check out this property: ${property.address}`,
-          url: window.location.href,
-        });
-      } catch (error: any) {
-        // If sharing is cancelled or fails, fall back to copying the link
-        if (error.name !== 'AbortError') {
-          await copyToClipboard();
-        }
-      }
-    } else {
-      await copyToClipboard();
+  const handleCopyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link Copied",
+        description: "Property link copied to clipboard.",
+      });
+    } catch (copyError) {
+      toast({
+        variant: "destructive",
+        title: "Could not copy link",
+        description: "Please copy the link from the address bar.",
+      });
     }
+  };
+
+  const handleNativeShare = async () => {
+    if (navigator.share && property) {
+        try {
+            await navigator.share({
+                title: property.address,
+                text: `Check out this property: ${property.address}`,
+                url: window.location.href,
+            });
+            return true; // Indicates success
+        } catch (error: any) {
+            // AbortError is common if the user cancels the share.
+            if (error.name !== 'AbortError') {
+                console.error("Native share failed:", error);
+            }
+            return false; // Indicates failure or cancellation
+        }
+    }
+    return false; // Native share not available
   };
 
 
@@ -135,6 +143,70 @@ export default function PropertyDetailPage() {
       { label: "Security", value: property.features.some(f => f.toLowerCase().includes('secure estate')) ? 'Yes' : 'No', icon: null },
   ];
 
+  const ShareButton = ({ isMobile = false }) => {
+    const encodedUrl = encodeURIComponent(window.location.href);
+    const encodedTitle = encodeURIComponent(`Check out this property: ${property.address}`);
+
+    const handleShareClick = async () => {
+        const shared = await handleNativeShare();
+        if (!shared) {
+            // For desktop, the popover will be triggered, so no action needed here.
+            // On mobile, if native share fails, we can fallback to copying.
+            if(isMobile) handleCopyToClipboard();
+        }
+    };
+
+    const fallbackShareContent = (
+        <PopoverContent className="w-auto p-2" align="end">
+            <div className="flex flex-col gap-1">
+                <Button variant="ghost" className="w-full justify-start gap-3" onClick={handleCopyToClipboard}>
+                    <Copy className="h-4 w-4" /> Copy Link
+                </Button>
+                <Button variant="ghost" className="w-full justify-start gap-3" asChild>
+                    <Link href={`https://wa.me/?text=${encodedTitle}%20${encodedUrl}`} target="_blank" rel="noopener noreferrer">
+                       <WhatsAppIcon className="h-4 w-4 text-green-500" /> WhatsApp
+                    </Link>
+                </Button>
+                <Button variant="ghost" className="w-full justify-start gap-3" asChild>
+                    <Link href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noopener noreferrer">
+                        <Facebook className="h-4 w-4 text-blue-600" /> Facebook
+                    </Link>
+                </Button>
+                <Button variant="ghost" className="w-full justify-start gap-3" asChild>
+                    <Link href={`https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`} target="_blank" rel="noopener noreferrer">
+                        <Twitter className="h-4 w-4 text-sky-500" /> Twitter (X)
+                    </Link>
+                </Button>
+            </div>
+        </PopoverContent>
+    );
+
+    if (isMobile) {
+        return (
+            <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground" onClick={handleShareClick}>
+                <Share2 className="h-5 w-5" />Share
+            </Button>
+        );
+    }
+    
+    // Desktop: Popover as the fallback
+    return (
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={async (e) => {
+                    e.preventDefault();
+                    const shared = await handleNativeShare();
+                    // If native share is not used, the popover will open automatically.
+                }}>
+                    <Share2 className="h-5 w-5" />
+                    <span className="sr-only">Share Property</span>
+                </Button>
+            </PopoverTrigger>
+            {fallbackShareContent}
+        </Popover>
+    );
+};
+
   return (
     <div className="bg-white">
         <div className="container py-4">
@@ -163,9 +235,7 @@ export default function PropertyDetailPage() {
               </a>
             </Button>
           )}
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground" onClick={handleShare}>
-            <Share2 className="h-5 w-5" />Share
-          </Button>
+          <ShareButton isMobile={true} />
         </div>
 
 
@@ -183,7 +253,10 @@ export default function PropertyDetailPage() {
                                 </p>
                             </div>
                             <div className="text-left sm:text-right flex-shrink-0">
-                                <p className="text-3xl font-bold text-brand-bright">{formatPrice(property.price)}</p>
+                                <div className="flex items-center gap-2">
+                                    <p className="text-3xl font-bold text-brand-bright">{formatPrice(property.price)}</p>
+                                    <ShareButton />
+                                </div>
                                 {property.status === 'sold' && <Badge variant="destructive" className="mt-2">SOLD</Badge>}
                             </div>
                         </div>
@@ -283,3 +356,6 @@ export default function PropertyDetailPage() {
     </div>
   );
 }
+
+
+    
