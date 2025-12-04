@@ -12,12 +12,13 @@ type PropertyImageGalleryProps = {
   images: string[];
   mainImageHint: string;
   isOnShow?: boolean;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
-export function PropertyImageGallery({ images, mainImageHint, isOnShow }: PropertyImageGalleryProps) {
+export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, onOpenChange }: PropertyImageGalleryProps) {
   const [api, setApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     if (!api) return;
@@ -35,7 +36,7 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow }: Proper
   }, [api]);
   
   const handleImageClick = (index: number) => {
-    setIsOpen(true);
+    onOpenChange(true);
     setTimeout(() => {
       if(api) {
         api.scrollTo(index, true);
@@ -44,7 +45,7 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow }: Proper
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <div className="md:container">
          <div className="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-2 md:h-[500px] h-[350px] relative md:rounded-lg overflow-hidden">
           {/* Main Image */}

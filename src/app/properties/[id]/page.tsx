@@ -19,6 +19,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { FloatingContactBar } from '@/components/shared/floating-contact-bar';
 import { useEffect, useState } from 'react';
 import { type Agent } from '@/components/shared/agent-card';
+import { useToast } from '@/hooks/use-toast';
 
 export default function PropertyDetailPage() {
   const params = useParams();
@@ -27,6 +28,8 @@ export default function PropertyDetailPage() {
   const [property, setProperty] = useState<Property | null>(null);
   const [propertyAgents, setPropertyAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!id) return;
@@ -50,6 +53,40 @@ export default function PropertyDetailPage() {
 
     fetchPropertyData();
   }, [id]);
+
+  const handleShare = async () => {
+    if (navigator.share && property) {
+      try {
+        await navigator.share({
+          title: property.address,
+          text: `Check out this property: ${property.address}`,
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+        toast({
+          variant: "destructive",
+          title: "Could not share",
+          description: "Something went wrong while trying to share.",
+        });
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Link Copied",
+          description: "Property link copied to clipboard.",
+        });
+      } catch (error) {
+        toast({
+          variant: "destructive",
+          title: "Could not copy link",
+          description: "Your browser does not support sharing or copying to clipboard.",
+        });
+      }
+    }
+  };
+
 
   if (loading || !property) {
     // Return a minimal loading state or null to prevent layout shifts
@@ -102,13 +139,31 @@ export default function PropertyDetailPage() {
           <BackButton>Back to listings</BackButton>
         </div>
         
-        <PropertyImageGallery images={galleryImages} mainImageHint={property.imageHint} isOnShow={property.onShow} />
+        <PropertyImageGallery 
+            images={galleryImages} 
+            mainImageHint={property.imageHint} 
+            isOnShow={property.onShow}
+            isOpen={isGalleryOpen}
+            onOpenChange={setIsGalleryOpen}
+        />
 
         <div className="flex justify-around items-center bg-card text-center border-y p-2 md:hidden">
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Camera className="h-5 w-5" />Photos</Button>
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Map className="h-5 w-5" />Map</Button>
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Video className="h-5 w-5" />Video</Button>
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground"><Share2 className="h-5 w-5" />Share</Button>
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground" onClick={() => setIsGalleryOpen(true)}>
+            <Camera className="h-5 w-5" />Photos
+          </Button>
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground">
+            <Map className="h-5 w-5" />Map
+          </Button>
+          {property.videoUrl && (
+            <Button asChild variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground">
+              <a href={property.videoUrl} target="_blank" rel="noopener noreferrer">
+                <Video className="h-5 w-5" />Video
+              </a>
+            </Button>
+          )}
+          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground" onClick={handleShare}>
+            <Share2 className="h-5 w-5" />Share
+          </Button>
         </div>
 
 
