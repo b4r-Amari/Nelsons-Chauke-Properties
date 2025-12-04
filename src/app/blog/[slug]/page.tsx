@@ -94,7 +94,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
               </article>
             </div>
-            <aside className="lg:col-span-1 lg:sticky top-0 self-start bg-card p-6 rounded-lg">
+            <aside className="lg:col-span-1 lg:sticky top-14 self-start bg-card p-6 rounded-lg">
               <BlogSidebar posts={otherPosts} />
             </aside>
           </div>
