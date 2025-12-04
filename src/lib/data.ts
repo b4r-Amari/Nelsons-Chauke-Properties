@@ -1,121 +1,134 @@
 
-import { type Property } from '@/components/shared/property-card';
-import { type Agent } from '@/components/shared/agent-card';
-import { type BlogPost } from '@/components/shared/blog-card';
-import { collection, getDocs, doc, getDoc, query, where, limit, Timestamp } from 'firebase/firestore';
-import type { DocumentData, DocumentSnapshot } from 'firebase/firestore';
 import { db } from './firebase/firebase';
+import { collection, getDocs, doc, getDoc, query, where, orderBy, limit } from "firebase/firestore";
+import { Property } from '@/components/shared/property-card';
+import { Agent } from '@/components/shared/agent-card';
+import { BlogPost } from '@/components/shared/blog-card';
 
-
-// Helper to convert Firestore document to a plain object
-function docToObj(d: DocumentSnapshot<DocumentData>) {
+// Helper function to convert Firestore doc to a plain object
+const docToObj = (d: any) => {
     const data = d.data();
-    if (!data) return null;
+    return {
+        ...data,
+        id: d.id, // Ensure the document ID is always included
+    };
+};
 
-    // Safely convert Firestore Timestamps to serializable strings
-    const serializedData: { [key: string]: any } = {};
-    for (const key in data) {
-        const value = data[key];
-        if (value instanceof Timestamp) {
-            if (key === 'date') { // For blog posts
-                 serializedData[key] = value.toDate().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-            } else { // for createdAt, updatedAt
-                serializedData[key] = value.toDate().toISOString();
-            }
-        } else {
-            serializedData[key] = value;
-        }
+// Fetch all properties with optional filtering and sorting
+export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number } = {}): Promise<Property[]> => {
+    const propertiesCol = collection(db, 'properties');
+    let q = query(propertiesCol);
+
+    if (options.featuredOnly) {
+        q = query(q, where('isFavorite', '==', true));
+    }
+    if (options.status) {
+        q = query(q, where('status', '==', options.status));
+    }
+    if (options.limit) {
+        q = query(q, limit(options.limit));
     }
 
-    return {
-        id: d.id, // Ensure the document ID is always assigned
-        ...serializedData,
-    };
-}
-
-
-// Properties
-export async function getProperties(options: { featuredOnly?: boolean; status?: 'on-show' | 'sold' } = {}): Promise<Property[]> {
-  let q;
-  const propertiesCol = collection(db, 'properties');
-
-  if (options.featuredOnly) {
-    q = query(propertiesCol, where('isFavorite', '==', true), where('status', '==', 'for-sale'), limit(8));
-  } else if (options.status === 'on-show') {
-    q = query(propertiesCol, where('onShow', '==', true));
     const snapshot = await getDocs(q);
-    const properties = snapshot.docs.map(docToObj).filter(p => p !== null) as Property[];
-    const onShowProperties = properties.filter(p => p.status !== 'sold');
-    return onShowProperties;
-  } else if (options.status === 'sold') {
-    q = query(propertiesCol, where('status', '==', 'sold'));
-  } else {
-     // Default query for all properties (e.g., for the main dashboard count)
-     q = query(propertiesCol);
-  }
+    return snapshot.docs.map(docToObj) as Property[];
+};
 
-  const snapshot = await getDocs(q);
-  const properties = snapshot.docs.map(docToObj).filter(p => p !== null) as Property[];
-  
-  // If no specific options are provided, return all properties.
-  if (Object.keys(options).length === 0) {
-      return properties;
-  }
-  
-  // For general listing pages, filter out sold properties unless specifically requested
-  if (!options.status) {
-      return properties.filter(p => p.status !== 'sold');
-  }
-  
-  return properties;
-}
+// Fetch a single property by ID
+export const getProperty = async (id: string): Promise<Property | null> => {
+    const docRef = doc(db, 'properties', id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? docToObj(docSnap) as Property : null;
+};
+
+// Fetch all agents
+export const getAgents = async (): Promise<Agent[]> => {
+    const agentsCol = collection(db, 'estateAgents');
+    const snapshot = await getDocs(agentsCol);
+    return snapshot.docs.map(docToObj) as Agent[];
+};
+
+// Fetch a single agent by their slug
+export const getAgent = async (slug: string): Promise<Agent | null> => {
+    const agentsQuery = query(collection(db, 'estateAgents'), where('slug', '==', slug), limit(1));
+    const snapshot = await getDocs(agentsQuery);
+    if (snapshot.empty) {
+        return null;
+    }
+    return docToObj(snapshot.docs[0]) as Agent;
+};
+
+// Fetch a single agent by their ID
+export const getAgentById = async (id: string): Promise<Agent | null> => {
+    const docRef = doc(db, 'estateAgents', id);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists() ? docToObj(docSnap) as Agent : null;
+};
 
 
-export async function getProperty(id: string): Promise<Property | null> {
-  const propertyDoc = await getDoc(doc(db, 'properties', id));
-  return propertyDoc.exists() ? docToObj(propertyDoc) as Property : null;
-}
+// Fetch all blog posts
+export const getBlogPosts = async (options: { limit?: number } = {}): Promise<BlogPost[]> => {
+    const postsCol = collection(db, 'blogPosts');
+    let q = query(postsCol, orderBy('date', 'desc'));
 
-// Agents
-export async function getAgents(): Promise<Agent[]> {
-  const agentsCol = collection(db, 'estateAgents');
-  const snapshot = await getDocs(agentsCol);
-  const agents = snapshot.docs.map(docToObj).filter(Boolean) as Agent[];
-  return agents;
-}
+    if (options.limit) {
+        q = query(q, limit(options.limit));
+    }
+    
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            ...docToObj(doc),
+            date: data.date.toDate().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            }),
+        } as BlogPost;
+    });
+};
 
-export async function getAgent(slug: string): Promise<Agent | null> {
-  const q = query(collection(db, 'estateAgents'), where('slug', '==', slug), limit(1));
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) {
-    return null;
-  }
-  return docToObj(snapshot.docs[0]) as Agent;
-}
+// Fetch a single blog post by its slug
+export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
+    const postsQuery = query(collection(db, 'blogPosts'), where('slug', '==', slug), limit(1));
+    const snapshot = await getDocs(postsQuery);
+    if (snapshot.empty) {
+        return null;
+    }
+    const doc = snapshot.docs[0];
+    const data = doc.data();
+    return {
+        ...docToObj(doc),
+        date: data.date.toDate().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        }),
+    } as BlogPost;
+};
 
-export async function getAgentById(id: string): Promise<Agent | null> {
-    const agentDoc = await getDoc(doc(db, 'estateAgents', id));
-    return agentDoc.exists() ? docToObj(agentDoc) as Agent : null;
-}
+// Fetch a single blog post by its ID
+export const getBlogPostById = async (id: string): Promise<BlogPost | null> => {
+    const docRef = doc(db, 'blogPosts', id);
+    const docSnap = await getDoc(docRef);
+     if (!docSnap.exists()) {
+        return null;
+    }
+    const data = docSnap.data();
+    return {
+        ...docToObj(docSnap),
+        date: data.date.toDate().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        }),
+    } as BlogPost;
+};
 
-// Blog Posts
-export async function getBlogPosts(): Promise<BlogPost[]> {
-    const blogCol = collection(db, 'blogPosts');
-    const snapshot = await getDocs(blogCol);
-    const posts = snapshot.docs.map(docToObj).filter(Boolean) as BlogPost[];
-    return posts;
-}
-
-export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  const q = query(collection(db, 'blogPosts'), where('slug', '==', slug), limit(1));
-  const snapshot = await getDocs(q);
-  if (snapshot.empty) {
-      return null;
-  }
-  return docToObj(snapshot.docs[0]) as BlogPost;
-}
-
-export async function getBlogPostById(id: string): Promise<BlogPost | null> {
-    const blogDoc = await getDoc(doc(db, 'blogPosts', id));
-    return blogDoc.exists() ? docToObj(blogDoc) as BlogPost : null;
-}
+// Fetch unique locations from all properties
+export const getUniqueLocations = async (): Promise<string[]> => {
+    const properties = await getProperties();
+    const locations = properties.map(p => p.location);
+    // Use a Set to get unique values and convert back to an array
+    return [...new Set(locations)];
+};
