@@ -24,17 +24,8 @@ const checkIsAdmin = async (userId: string): Promise<boolean> => {
     }
     try {
         const adminDocRef = doc(db, "adminUsers", userId);
-        console.log(`[Auth Check] Checking for admin document at path: adminUsers/${userId}`);
-
         const adminDoc = await getDoc(adminDocRef);
-        
-        if (adminDoc.exists()) {
-            console.log("[Auth Check] SUCCESS: Admin document found. User is an admin.");
-            return true;
-        } else {
-            console.log("[Auth Check] FAILURE: Admin document not found. User is NOT an admin.");
-            return false;
-        }
+        return adminDoc.exists();
     } catch (error) {
         console.error("[Auth Check] Error checking admin status:", error);
         return false;
@@ -50,45 +41,37 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    console.log("[Auth Provider] Initializing authentication listener...");
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      console.log("[Auth Provider] Auth state changed.");
       setIsLoading(true); 
       
       if (user) {
-        console.log(`[Auth Provider] User is logged in. UID: ${user.uid}`);
         setUser(user);
         const userIsAdmin = await checkIsAdmin(user.uid);
         setIsAdmin(userIsAdmin);
-        console.log(`[Auth Provider] Final admin status set to: ${userIsAdmin}`);
 
-        // If user is not an admin but trying to access admin pages (not login)
-        if (!userIsAdmin && pathname.startsWith('/admin') && pathname !== '/admin/login') {
-          console.log("[Auth Provider] Redirecting non-admin from admin area.");
-          router.replace('/');
-        } else if (userIsAdmin && pathname === '/admin/login') {
-            console.log("[Auth Provider] Redirecting logged-in admin from login page to dashboard.");
-            router.replace('/admin/dashboard');
+        if (userIsAdmin) {
+            // If the user is an admin and on the login page, redirect to the dashboard.
+            if (pathname === '/admin/login') {
+                router.replace('/admin/dashboard');
+            }
+        } else {
+            // If the user is not an admin but is trying to access any admin page, redirect them.
+            if (pathname.startsWith('/admin')) {
+                router.replace('/');
+            }
         }
       } else {
         // No user is logged in
-        console.log("[Auth Provider] No user is logged in.");
         setUser(null);
         setIsAdmin(false);
-        // If not logged in, redirect any attempts to access admin pages away from login
          if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-            console.log("[Auth Provider] Redirecting non-authenticated user to login page.");
             router.replace('/admin/login');
          }
       }
-      console.log("[Auth Provider] Auth processing finished.");
       setIsLoading(false); // End loading state
     });
 
-    return () => {
-      console.log("[Auth Provider] Cleaning up authentication listener.");
-      unsubscribe();
-    }
+    return () => unsubscribe();
   }, [pathname, router]);
 
   // While loading, or if unauthorized on an admin page, don't render children
