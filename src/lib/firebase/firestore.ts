@@ -25,12 +25,15 @@ export async function addProperty(propertyData: DataObject) {
 export async function updateProperty(id: string, propertyData: DataObject) {
     try {
         const propertyRef = doc(db, 'properties', id);
+        // Remove the ID from the data object to prevent it from being written to the document fields
+        const { id: propertyId, ...dataToUpdate } = propertyData;
         await updateDoc(propertyRef, {
-            ...propertyData,
+            ...dataToUpdate,
             updatedAt: Timestamp.now(),
         });
         return { success: true };
     } catch (error: any) {
+        console.error("Error updating property:", error);
         return { success: false, error: error.message };
     }
 }
