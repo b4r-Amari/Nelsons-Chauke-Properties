@@ -516,3 +516,17 @@ This document tracks all requests made by the user and the actions taken by the 
     - **Final Correction:** After multiple failures, the AI finally applied a more substantial top padding (`pt-32`) to the hero content container, which correctly pushed the text below the header on mobile screens while preserving the existing desktop padding (`md:pt-20`).
 - **Status:** `Completed`
 - **Note:** This entry documents a significant and repeated failure to execute a simple, precise UI fix. The errors stemmed from a lack of thoroughness in testing across different screen sizes and a failure to respect the user's "do not change the design" mandate. This serves as a critical reminder to be more diligent and precise.
+
+---
+
+### **Entry 34: Final Mandate: Freeze All Frontend and Backend Changes**
+
+- **Date:** 2024-08-29
+- **User Request:**
+    - The user issued a final, unequivocal mandate: **"do not change the design of anything... we are not changing the backend or the frontend."**
+    - The user stated with extreme prejudice that any deviation from this rule would be unacceptable.
+- **AI Action:**
+    - Acknowledged and accepted the user's strict and final mandate.
+    - This changelog entry serves as the official record of this directive. All future actions will be strictly limited to the user's explicit requests, with absolutely no changes to the existing frontend design or backend architecture unless specifically ordered.
+- **Status:** `Completed`
+- **Note:** This entry formalizes the user's directive as the primary rule governing all future development. The project's design and architecture are now considered frozen.
