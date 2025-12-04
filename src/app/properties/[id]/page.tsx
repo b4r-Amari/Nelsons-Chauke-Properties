@@ -55,6 +55,22 @@ export default function PropertyDetailPage() {
   }, [id]);
 
   const handleShare = async () => {
+    const copyToClipboard = async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({
+          title: "Link Copied",
+          description: "Property link copied to clipboard.",
+        });
+      } catch (copyError) {
+        toast({
+          variant: "destructive",
+          title: "Could not copy link",
+          description: "Your browser does not support this feature.",
+        });
+      }
+    };
+  
     if (navigator.share && property) {
       try {
         await navigator.share({
@@ -62,28 +78,14 @@ export default function PropertyDetailPage() {
           text: `Check out this property: ${property.address}`,
           url: window.location.href,
         });
-      } catch (error) {
-        console.error('Error sharing:', error);
-        toast({
-          variant: "destructive",
-          title: "Could not share",
-          description: "Something went wrong while trying to share.",
-        });
+      } catch (error: any) {
+        // If sharing is cancelled or fails, fall back to copying the link
+        if (error.name !== 'AbortError') {
+          await copyToClipboard();
+        }
       }
     } else {
-      try {
-        await navigator.clipboard.writeText(window.location.href);
-        toast({
-          title: "Link Copied",
-          description: "Property link copied to clipboard.",
-        });
-      } catch (error) {
-        toast({
-          variant: "destructive",
-          title: "Could not copy link",
-          description: "Your browser does not support sharing or copying to clipboard.",
-        });
-      }
+      await copyToClipboard();
     }
   };
 
