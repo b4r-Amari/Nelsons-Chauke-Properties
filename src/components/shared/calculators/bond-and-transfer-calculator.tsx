@@ -1,208 +1,154 @@
-
 "use client"
 
-import { useState, useEffect, useCallback } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
+import { useState } from "react"
+import { Separator } from "@/components/ui/separator"
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Info } from "lucide-react";
-import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-
-
-const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+type CalculationResults = {
+  transferDuty: number;
+  bondRegistrationCost: number;
+  propertyTransferCost: number;
+  totalOnceOffCosts: number;
+  monthlyRepayment: number;
 };
-
-const transferDutyBrackets = [
-    { threshold: 0, limit: 1100000, rate: 0, base: 0 },
-    { threshold: 1100001, limit: 1512500, rate: 0.03, base: 0 },
-    { threshold: 1512501, limit: 2117500, rate: 0.06, base: 12375 },
-    { threshold: 2117501, limit: 2722500, rate: 0.08, base: 97075 },
-    { threshold: 2722501, limit: 12100000, rate: 0.11, base: 97075 },
-    { threshold: 12100001, limit: Infinity, rate: 0.13, base: 1128600 },
-];
-
-const calculateTransferDuty = (price: number) => {
-    for (const bracket of transferDutyBrackets) {
-        if (price <= bracket.limit) {
-            return bracket.base + (price - (bracket.threshold > 0 ? bracket.threshold -1 : 0)) * bracket.rate;
-        }
-    }
-    return 0;
-};
-  
-const calculateAttorneyFee = (amount: number) => (amount * 0.0075) + 5000;
 
 const formSchema = z.object({
-  purchasePrice: z.coerce.number().min(50000, "Must be at least 50,000"),
-  loanAmount: z.coerce.number().min(0).optional(),
-  isFirstTimeBuyer: z.boolean().default(false),
+  purchasePrice: z.preprocess((a) => parseInt(z.string().parse(a)), z.number().positive("Purchase price must be a positive number")),
+  loanTerm: z.preprocess((a) => parseInt(z.string().parse(a)), z.number().positive("Loan term must be a positive number")),
+  interestRate: z.preprocess((a) => parseFloat(z.string().parse(a)), z.number().positive("Interest rate must be a positive number")),
 });
 
-type FormData = z.infer<typeof formSchema>;
-
+type FormValues = z.infer<typeof formSchema>;
 
 export function BondAndTransferCalculator() {
-  const [result, setResult] = useState({
-    totalCost: 0,
-    transferCost: 0,
-    bondCost: 0,
-    transferDuty: 0,
-    propertyTransferFee: 0,
-    bondRegistrationFee: 0
-  });
-
-  const form = useForm<FormData>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      purchasePrice: 1000000,
-      loanAmount: 1000000,
-      isFirstTimeBuyer: false,
-    },
-  });
+    purchasePrice: 2000000,
+    loanTerm: 20,
+    interestRate: 10.5,
+  }});
 
-  const calculateResults = useCallback((values: FormData) => {
-    const { purchasePrice, loanAmount = purchasePrice, isFirstTimeBuyer } = values;
+  const [results, setResults] = useState<CalculationResults | null>(null);
 
+  function onSubmit(values: FormValues) {
+    const { purchasePrice, loanTerm, interestRate } = values;
+
+    // Transfer Duty Calculation
     let transferDuty = 0;
-    if (!isFirstTimeBuyer || purchasePrice > 1100000) {
-        transferDuty = calculateTransferDuty(purchasePrice);
+    if (purchasePrice > 1100000 && purchasePrice <= 1512500) {
+        transferDuty = (purchasePrice - 1100000) * 0.03;
+    } else if (purchasePrice > 1512500 && purchasePrice <= 2117500) {
+        transferDuty = 12375 + (purchasePrice - 1512500) * 0.06;
+    } else if (purchasePrice > 2117500 && purchasePrice <= 2722500) {
+        transferDuty = 48675 + (purchasePrice - 2117500) * 0.08;
+    } else if (purchasePrice > 2722500 && purchasePrice <= 12100000) {
+        transferDuty = 97075 + (purchasePrice - 2722500) * 0.11;
+    } else if (purchasePrice > 12100000) {
+        transferDuty = 1131600 + (purchasePrice - 12100000) * 0.13;
     }
-    
-    const transferAttorneyFee = calculateAttorneyFee(purchasePrice);
-    const deedsOfficeFeeTransfer = Math.min(1500 + (purchasePrice / 100000) * 5, 7000);
-    const propertyTransferFee = transferAttorneyFee + deedsOfficeFeeTransfer;
-    const transferCost = transferDuty + propertyTransferFee;
 
-    let bondCost = 0;
-    let bondRegistrationFee = 0;
-    if (loanAmount > 0) {
-        const bondAttorneyFee = calculateAttorneyFee(loanAmount);
-        const deedsOfficeFeeBond = Math.min(1000 + (loanAmount / 100000) * 4, 5000);
-        bondRegistrationFee = bondAttorneyFee + deedsOfficeFeeBond;
-        bondCost = bondRegistrationFee;
-    }
-    
-    const totalCost = transferCost + bondCost;
+    // Bond Registration Cost Calculation (Simplified)
+    const bondRegistrationCost = 5000 + (purchasePrice * 0.005); 
 
-    setResult({ totalCost, transferCost, bondCost, transferDuty, propertyTransferFee, bondRegistrationFee });
-  }, []);
+    // Property Transfer Cost Calculation (Simplified)
+    const propertyTransferCost = 5000 + (purchasePrice * 0.007);
 
-  useEffect(() => {
-    const subscription = form.watch((values) => {
-        const validValues = formSchema.safeParse(values);
-        if (validValues.success) {
-          calculateResults(validValues.data);
-        }
+    const totalOnceOffCosts = transferDuty + bondRegistrationCost + propertyTransferCost;
+
+    // Monthly Repayment Calculation
+    const P = purchasePrice;
+    const i = (interestRate / 100) / 12;
+    const n = loanTerm * 12;
+    const monthlyRepayment = P * (i * Math.pow(1 + i, n)) / (Math.pow(1 + i, n) - 1);
+
+    setResults({
+        transferDuty,
+        bondRegistrationCost,
+        propertyTransferCost,
+        totalOnceOffCosts,
+        monthlyRepayment
     });
-    const initialValues = formSchema.safeParse(form.getValues());
-    if(initialValues.success) {
-        calculateResults(initialValues.data);
-    }
-    return () => subscription.unsubscribe();
-  }, [form, calculateResults]);
-
-  const handleNumericInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: any) => {
-      const numericValue = e.target.value.replace(/[^0-9]/g, '');
-      field.onChange(numericValue === '' ? 0 : parseInt(numericValue, 10));
+  }
+  
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR' }).format(value);
   };
 
   return (
-    <div>
-        <div className="text-center mb-8">
-            <h2 className="text-2xl md:text-3xl font-bold font-headline">Calculate your bond and transfer costs</h2>
-            <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Get a detailed breakdown of the once-off costs involved in buying a property, including bond registration fees, transfer duty, and attorney fees. This helps you budget for the upfront expenses beyond the purchase price.</p>
-        </div>
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-            <Form {...form}>
-                <form className="space-y-6">
-                    <FormField control={form.control} name="purchasePrice" render={({ field }) => (
-                        <FormItem>
-                            <FormLabel className="text-brand-deep font-semibold">Purchase Price</FormLabel>
-                            <FormControl>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
-                                    <Input 
-                                      type="text"
-                                      inputMode="decimal"
-                                      value={field.value.toLocaleString('en-ZA')}
-                                      onChange={(e) => handleNumericInputChange(e, field)}
-                                      className="pl-8" 
-                                    />
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )} />
-                    <FormField control={form.control} name="loanAmount" render={({ field }) => (
-                        <FormItem>
-                            <FormLabel className="text-brand-deep font-semibold">Loan Amount (Optional)</FormLabel>
-                            <FormControl>
-                                <div className="relative">
-                                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R</span>
-                                    <Input 
-                                      type="text"
-                                      inputMode="decimal"
-                                      value={(field.value || 0).toLocaleString('en-ZA')}
-                                      onChange={(e) => handleNumericInputChange(e, field)}
-                                      className="pl-8" 
-                                    />
-                                </div>
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )} />
-                    <FormField control={form.control} name="isFirstTimeBuyer" render={({ field }) => (
-                        <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                            <FormControl>
-                                <Checkbox checked={field.value} onCheckedChange={field.onChange} id="first-time-buyer" />
-                            </FormControl>
-                            <div className="space-y-1 leading-none">
-                                <label htmlFor="first-time-buyer" className="font-medium cursor-pointer">I am a first-time home buyer</label>
-                            </div>
-                        </FormItem>
-                    )} />
-                </form>
-            </Form>
-
-            <div className="space-y-6">
-                <div className="flex justify-between items-center py-4 border-b">
-                    <span className="font-semibold text-lg">Total Once-off Cost</span>
-                    <span className="font-bold text-2xl text-brand-bright">{formatCurrency(result.totalCost)}</span>
+    <Card className="max-w-lg mx-auto">
+       <CardHeader>
+        <CardTitle>Bond & Transfer Cost Calculator</CardTitle>
+      </CardHeader>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="purchasePrice"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Purchase Price (ZAR)</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="loanTerm"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Loan Term (Years)</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="interestRate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Interest Rate (%)</FormLabel>
+                  <FormControl>
+                    <Input type="number" step="0.1" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+          </CardContent>
+          <CardFooter className="flex-col items-stretch">
+            <Button type="submit" className="w-full bg-brand-deep hover:bg-brand-deep/90">Calculate</Button>
+            {results && (
+              <div className="mt-6 w-full text-sm">
+                <h3 className="text-lg font-semibold mb-3 text-center">Estimated Costs</h3>
+                <Separator className="mb-4" />
+                <div className="space-y-2">
+                    <div className="flex justify-between"><span>Monthly Repayment:</span> <span className="font-medium">{formatCurrency(results.monthlyRepayment)}</span></div>
+                    <Separator className="my-1" />
+                    <div className="flex justify-between"><span>Transfer Duty:</span> <span>{formatCurrency(results.transferDuty)}</span></div>
+                    <div className="flex justify-between"><span>Bond Registration:</span> <span>{formatCurrency(results.bondRegistrationCost)}</span></div>
+                    <div className="flex justify-between"><span>Property Transfer:</span> <span>{formatCurrency(results.propertyTransferCost)}</span></div>
+                     <Separator className="my-2" />
+                    <div className="flex justify-between font-bold text-base"><span>Total Once-off Costs:</span> <span>{formatCurrency(results.totalOnceOffCosts)}</span></div>
                 </div>
-
-                <div className="space-y-4 py-4 border-b">
-                     <div className="flex justify-between items-center">
-                        <span className="font-semibold text-lg">Property Transfer Costs</span>
-                        <span className="font-bold text-xl text-brand-bright">{formatCurrency(result.transferCost)}</span>
-                    </div>
-                     <div className="flex justify-between items-center text-sm text-muted-foreground pl-4">
-                        <span>Transfer Duty</span>
-                        <span>{formatCurrency(result.transferDuty)}</span>
-                    </div>
-                     <div className="flex justify-between items-center text-sm text-muted-foreground pl-4">
-                        <span>Transfer Attorney Fee (Est.)</span>
-                        <span>{formatCurrency(result.propertyTransferFee)}</span>
-                    </div>
-                </div>
-
-                 <div className="py-4">
-                     <div className="flex justify-between items-center">
-                        <span className="font-semibold text-lg">Bond Registration Costs</span>
-                        <span className="font-bold text-xl text-brand-bright">{formatCurrency(result.bondCost)}</span>
-                    </div>
-                     <div className="flex justify-between items-center text-sm text-muted-foreground pl-4">
-                        <span>Bond Attorney Fee (Est.)</span>
-                        <span>{formatCurrency(result.bondRegistrationFee)}</span>
-                    </div>
-                     <p className="text-xs text-muted-foreground text-left pt-4">These are estimates. Your conveyancer will provide a final statement of account.</p>
-                </div>
-            </div>
-        </div>
-    </div>
+              </div>
+            )}
+          </CardFooter>
+        </form>
+      </Form>
+    </Card>
   );
 }
+

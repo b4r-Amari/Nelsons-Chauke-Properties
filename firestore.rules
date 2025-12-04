@@ -1,4 +1,3 @@
-
 rules_version = '2';
 
 service cloud.firestore {
@@ -26,17 +25,17 @@ service cloud.firestore {
     // Allow public read on properties, agents, and blog posts
     match /properties/{propertyId} {
       allow read: if isPublic();
-      allow create, update, delete: if isSignedIn() && isAdmin();
+      allow create, update, delete: if isSignedIn();
     }
 
     match /estateAgents/{agentId} {
       allow read: if isPublic();
-      allow create, update, delete: if isSignedIn() && isAdmin();
+      allow create, update, delete: if isSignedIn();
     }
 
     match /blogPosts/{postId} {
       allow read: if isPublic();
-      allow create, update, delete: if isSignedIn() && isAdmin();
+      allow create, update, delete: if isSignedIn();
     }
 
     // `users` collection is for marketing leads. Anyone can create a document.

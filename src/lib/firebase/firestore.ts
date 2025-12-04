@@ -1,8 +1,7 @@
-
 'use client';
 
 import { db } from './firebase';
-import { collection, addDoc, doc, updateDoc, deleteDoc, Timestamp, setDoc, arrayUnion } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, deleteDoc, Timestamp, setDoc, arrayUnion, getDoc } from "firebase/firestore";
 
 // Generic type for data to be added
 type DataObject = { [key: string]: any };
@@ -25,8 +24,8 @@ export async function addProperty(propertyData: DataObject) {
 export async function updateProperty(id: string, propertyData: DataObject) {
     try {
         const propertyRef = doc(db, 'properties', id);
-        // Remove the ID from the data object to prevent it from being written to the document fields
-        const { id: propertyId, ...dataToUpdate } = propertyData;
+        const dataToUpdate = { ...propertyData };
+        delete (dataToUpdate as { id?: string }).id;
         await updateDoc(propertyRef, {
             ...dataToUpdate,
             updatedAt: Timestamp.now(),
@@ -40,7 +39,12 @@ export async function updateProperty(id: string, propertyData: DataObject) {
 
 export async function deleteProperty(id: string) {
     try {
-        await deleteDoc(doc(db, 'properties', id));
+        const docRef = doc(db, 'properties', id);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+            return { success: false, error: "Property does not exist." };
+        }
+        await deleteDoc(docRef);
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -69,8 +73,10 @@ export async function updateAgent(id: string, agentData: DataObject) {
     try {
         const slug = agentData.name.toLowerCase().replace(/\s+/g, '-');
         const agentRef = doc(db, 'estateAgents', id);
+        const dataToUpdate = { ...agentData };
+        delete (dataToUpdate as { id?: string }).id;
         await updateDoc(agentRef, {
-            ...agentData,
+            ...dataToUpdate,
             slug,
             updatedAt: Timestamp.now(),
         });
@@ -82,7 +88,12 @@ export async function updateAgent(id: string, agentData: DataObject) {
 
 export async function deleteAgent(id: string) {
     try {
-        await deleteDoc(doc(db, 'estateAgents', id));
+        const docRef = doc(db, 'estateAgents', id);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+            return { success: false, error: "Agent does not exist." };
+        }
+        await deleteDoc(docRef);
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -112,8 +123,10 @@ export async function updateBlogPost(id: string, blogData: DataObject) {
     try {
         const slug = blogData.title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
         const blogRef = doc(db, 'blogPosts', id);
+        const dataToUpdate = { ...blogData };
+        delete (dataToUpdate as { id?: string }).id;
         await updateDoc(blogRef, {
-            ...blogData,
+            ...dataToUpdate,
             slug,
             updatedAt: Timestamp.now(),
         });
@@ -125,7 +138,12 @@ export async function updateBlogPost(id: string, blogData: DataObject) {
 
 export async function deleteBlogPost(id: string) {
     try {
-        await deleteDoc(doc(db, 'blogPosts', id));
+        const docRef = doc(db, 'blogPosts', id);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+            return { success: false, error: "Blog post does not exist." };
+        }
+        await deleteDoc(docRef);
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
