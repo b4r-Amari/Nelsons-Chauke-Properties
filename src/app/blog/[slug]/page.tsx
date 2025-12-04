@@ -58,7 +58,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-12">
             <div className="lg:col-span-2">
-              <article className="bg-card p-6 sm:p-8 rounded-lg shadow-md">
+              <article>
                 <header className="mb-6">
                   <Badge variant="outline" className="text-brand-bright border-brand-bright mb-4">{post.category}</Badge>
                   <h1 className="text-3xl md:text-4xl font-bold font-headline text-brand-deep leading-tight mb-4">
