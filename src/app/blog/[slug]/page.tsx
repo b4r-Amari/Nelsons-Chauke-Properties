@@ -2,84 +2,100 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowLeft, User, Calendar } from 'lucide-react';
-import { getBlogPost } from '@/lib/data';
-import { type BlogPost } from '@/components/shared/blog-card';
+import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import type { Metadata } from 'next';
+import { getBlogPost, getBlogPosts } from '@/lib/data';
+import { type BlogPost } from '@/components/shared/blog-card';
+import { BlogSidebar } from '@/components/shared/blog-sidebar';
+import { Metadata } from 'next';
 
-type Props = {
-  params: { slug: string }
-}
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const post = await getBlogPost(params.slug);
   if (!post) {
     return {
-      title: 'Blog Post Not Found'
-    }
+      title: 'Post Not Found',
+    };
   }
   return {
     title: post.title,
-    description: post.content.substring(0, 160),
+    description: post.excerpt,
     openGraph: {
         title: post.title,
-        description: post.content.substring(0, 160),
-        images: [post.imageUrl]
-    }
-  }
+        description: post.excerpt,
+        images: [
+            {
+                url: post.imageUrl,
+                width: 1200,
+                height: 630,
+                alt: post.title,
+            },
+        ],
+    },
+  };
 }
 
-export default async function BlogPostPage({ params }: Props) {
-  const post = await getBlogPost(params.slug);
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const { slug } = params;
+  const post = await getBlogPost(slug);
+  const allPosts = await getBlogPosts();
+
   if (!post) {
     notFound();
   }
 
+  const otherPosts = allPosts.filter((p: BlogPost) => p.slug !== slug);
+
   return (
-    <div className="bg-background">
-      <div className="container py-12 md:py-24">
-        <div className="max-w-4xl mx-auto">
-          <div className="mb-8">
-            <Link href="/blog" className="inline-flex items-center text-brand-deep hover:text-brand-bright transition-colors font-semibold">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Property News
-            </Link>
-          </div>
-          <article>
-            <header className="mb-8">
-              <Badge variant="outline" className="text-brand-bright border-brand-bright mb-4">{post.category}</Badge>
-              <h1 className="text-4xl md:text-5xl font-bold font-headline text-brand-deep leading-tight mb-4">
-                {post.title}
-              </h1>
-              <div className="flex items-center space-x-4 text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  <span>{post.author}</span>
+    <div className="bg-muted/40">
+      <div className="container py-12 md:py-16">
+        <div className="mb-8">
+          <Link href="/blog" className="inline-flex items-center text-brand-deep hover:text-brand-bright transition-colors font-semibold">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Property News
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-12">
+          <div className="lg:col-span-2">
+            <article className="bg-card p-6 sm:p-8 rounded-lg shadow-md">
+              <header className="mb-6">
+                <Badge variant="outline" className="text-brand-bright border-brand-bright mb-4">{post.category}</Badge>
+                <h1 className="text-3xl md:text-4xl font-bold font-headline text-brand-deep leading-tight mb-4">
+                  {post.title}
+                </h1>
+                <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <User className="h-4 w-4" />
+                    <span>{post.author}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" />
+                    <time>{post.date}</time>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{post.date}</span>
-                </div>
+              </header>
+
+              <div className="relative aspect-video w-full rounded-lg overflow-hidden my-6 shadow-md">
+                <Image
+                  src={post.imageUrl}
+                  alt={`Featured image for blog post titled: ${post.title}`}
+                  data-ai-hint={post.imageHint}
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
-            </header>
 
-            <div className="relative aspect-video w-full rounded-lg overflow-hidden my-8 shadow-lg">
-              <Image
-                src={post.imageUrl}
-                alt={`Featured image for blog post titled: ${post.title}`}
-                data-ai-hint={post.imageHint}
-                fill
-                className="object-cover"
-                priority
+              <div
+                className="prose prose-sm sm:prose-base dark:prose-invert max-w-none prose-p:text-foreground prose-h2:text-muted-foreground prose-a:text-brand-bright prose-strong:text-brand-deep"
+                dangerouslySetInnerHTML={{ __html: post.content }}
               />
-            </div>
 
-            <div
-              className="prose prose-lg dark:prose-invert max-w-none prose-p:text-foreground prose-headings:text-muted-foreground prose-h2:text-muted-foreground prose-h3:text-muted-foreground prose-h4:text-muted-foreground prose-strong:text-brand-deep prose-a:text-brand-bright prose-ul:text-foreground prose-li:text-foreground"
-              dangerouslySetInnerHTML={{ __html: post.content }}
-            />
-          </article>
+            </article>
+          </div>
+          <aside className="lg:col-span-1 lg:sticky top-24 self-start">
+            <BlogSidebar posts={otherPosts} />
+          </aside>
         </div>
       </div>
     </div>
