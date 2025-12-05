@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
 import { Card, CardFooter } from "../ui/card";
-import { type Filters, type SearchSuggestion } from "../shared/property-filter";
+import { type Filters, type SearchSuggestion } from "@/lib/types";
 import { getProperties } from "@/lib/data";
 
 type PropertyListingsProps = {
@@ -287,5 +287,3 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
     </>
   );
 }
-
-    

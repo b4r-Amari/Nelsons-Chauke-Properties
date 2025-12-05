@@ -53,7 +53,7 @@ function GoogleIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSuccess?: () => void, initialTab?: "signin" | "signup" }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const [activeTab, setActiveTab] = useState<"signin" | "signup">(initialTab);
   const { toast } = useToast();
   const router = useRouter();
 
@@ -63,7 +63,7 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
   });
 
   const handleTabChange = (value: string) => {
-    setActiveTab(value);
+    setActiveTab(value as "signin" | "signup");
     form.reset();
   };
 
