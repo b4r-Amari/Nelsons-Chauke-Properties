@@ -22,7 +22,6 @@ export async function addProperty(propertyData: DataObject) {
 }
 
 export async function updateProperty(id: string, propertyData: DataObject) {
-    console.log("3. updateProperty function started with id:", id);
     try {
         const propertyRef = doc(db, 'properties', id);
         const dataToUpdate = { ...propertyData };
@@ -31,14 +30,9 @@ export async function updateProperty(id: string, propertyData: DataObject) {
             ...dataToUpdate,
             updatedAt: Timestamp.now(),
         };
-
-        console.log("4. Attempting to update document with data:", dataToUpdateWithTimestamp);
         await updateDoc(propertyRef, dataToUpdateWithTimestamp);
-        console.log("5. Document successfully updated.");
-
         return { success: true };
     } catch (error: any) {
-        console.error("6. Error updating property in firestore.ts:", error);
         return { success: false, error: error.message };
     }
 }
