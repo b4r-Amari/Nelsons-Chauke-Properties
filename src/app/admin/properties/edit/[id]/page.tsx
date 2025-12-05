@@ -5,8 +5,9 @@ import { EditPropertyForm } from "@/components/admin/edit-property-form";
 import type { Agent } from "@/components/shared/agent-card";
 import type { Property } from "@/components/shared/property-card";
 
-export default async function EditPropertyPage({ params }: { params: { id: string } }) {
-  const { id } = await params; // Await params before destructuring
+// Correctly type `params` as a Promise to satisfy Next.js 15 and TypeScript
+export default async function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   
   // Fetch data on the server
   const [propertyData, agentsData] = await Promise.all([
