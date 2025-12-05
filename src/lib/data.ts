@@ -6,7 +6,7 @@ import { Agent } from '@/components/shared/agent-card';
 import { BlogPost } from '@/components/shared/blog-card';
 
 // Helper function to convert Firestore doc to a plain, serializable object
-const docToObj = (d: any) => {
+const docToObj = <T>(d: any): T & { id: string } => {
     const data = d.data();
     const serializableData: { [key: string]: any } = {};
 
@@ -25,7 +25,7 @@ const docToObj = (d: any) => {
     return {
         ...serializableData,
         id: d.id, // Ensure the document ID is always included
-    };
+    } as T & { id: string };
 };
 
 
@@ -45,21 +45,21 @@ export const getProperties = async (options: { featuredOnly?: boolean; status?: 
     }
 
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(docToObj) as Property[];
+    return snapshot.docs.map(d => docToObj<Property>(d));
 };
 
 // Fetch a single property by ID
 export const getProperty = async (id: string): Promise<Property | null> => {
     const docRef = doc(db, 'properties', id);
     const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? docToObj(docSnap) as Property : null;
+    return docSnap.exists() ? docToObj<Property>(docSnap) : null;
 };
 
 // Fetch all agents
 export const getAgents = async (): Promise<Agent[]> => {
     const agentsCol = collection(db, 'estateAgents');
     const snapshot = await getDocs(agentsCol);
-    return snapshot.docs.map(docToObj) as Agent[];
+    return snapshot.docs.map(d => docToObj<Agent>(d));
 };
 
 // Fetch a single agent by their slug
@@ -69,14 +69,14 @@ export const getAgent = async (slug: string): Promise<Agent | null> => {
     if (snapshot.empty) {
         return null;
     }
-    return docToObj(snapshot.docs[0]) as Agent;
+    return docToObj<Agent>(snapshot.docs[0]);
 };
 
 // Fetch a single agent by their ID
 export const getAgentById = async (id: string): Promise<Agent | null> => {
     const docRef = doc(db, 'estateAgents', id);
     const docSnap = await getDoc(docRef);
-    return docSnap.exists() ? docToObj(docSnap) as Agent : null;
+    return docSnap.exists() ? docToObj<Agent>(docSnap) : null;
 };
 
 
@@ -91,7 +91,7 @@ export const getBlogPosts = async (options: { limit?: number } = {}): Promise<Bl
     
     const snapshot = await getDocs(q);
     return snapshot.docs.map(doc => {
-        const data = docToObj(doc); // Use the serializing helper
+        const data = docToObj<BlogPost>(doc); // Use the serializing helper
         return {
             ...data,
             date: new Date(data.date).toLocaleDateString('en-US', {
@@ -110,7 +110,7 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
     if (snapshot.empty) {
         return null;
     }
-    const data = docToObj(snapshot.docs[0]); // Use the serializing helper
+    const data = docToObj<BlogPost>(snapshot.docs[0]); // Use the serializing helper
     return {
         ...data,
         date: new Date(data.date).toLocaleDateString('en-US', {
@@ -128,7 +128,7 @@ export const getBlogPostById = async (id: string): Promise<BlogPost | null> => {
      if (!docSnap.exists()) {
         return null;
     }
-    const data = docToObj(docSnap); // Use the serializing helper
+    const data = docToObj<BlogPost>(docSnap); // Use the serializing helper
     return {
         ...data,
         date: new Date(data.date).toLocaleDateString('en-US', {
