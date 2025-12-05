@@ -104,6 +104,7 @@ export function EditPropertyForm({ initialData, allAgents }: EditPropertyFormPro
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    // Explicitly parse all numeric fields to ensure correct data types are sent to Firestore.
     const dataToUpdate = {
         ...values,
         price: Number(values.price),
@@ -196,7 +197,7 @@ export function EditPropertyForm({ initialData, allAgents }: EditPropertyFormPro
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                 {imageUrls.map((url, index) => (
                                 <div key={index} className="relative group aspect-video">
-                                    <Image src={url} alt={`Property image ${index + 1}`} fill className="rounded-md object-cover" />
+                                    <Image src={url} alt={`Property image ${'${index + 1}'}`} fill className="rounded-md object-cover" />
                                     <Button
                                     type="button"
                                     variant="destructive"
