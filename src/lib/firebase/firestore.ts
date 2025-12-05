@@ -1,3 +1,4 @@
+
 'use client';
 
 import { db } from './firebase';
@@ -25,12 +26,13 @@ export async function updateProperty(id: string, propertyData: DataObject) {
     try {
         const propertyRef = doc(db, 'properties', id);
         const dataToUpdate = { ...propertyData };
-        delete (dataToUpdate as { id?: string }).id;
-        const dataToUpdateWithTimestamp = {
+        // Ensure the ID field is not sent back to Firestore, as it cannot be updated.
+        delete (dataToUpdate as { id?: string }).id; 
+        
+        await updateDoc(propertyRef, {
             ...dataToUpdate,
             updatedAt: Timestamp.now(),
-        };
-        await updateDoc(propertyRef, dataToUpdateWithTimestamp);
+        });
         return { success: true };
     } catch (error: any) {
         return { success: false, error: error.message };
@@ -179,3 +181,5 @@ export async function addValuationRequest(data: DataObject) {
         return { success: false, error: error.message };
     }
 }
+
+    
