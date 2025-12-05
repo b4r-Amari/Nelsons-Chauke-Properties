@@ -10,8 +10,9 @@ import { BlogSidebar } from '@/components/shared/blog-sidebar';
 import { Metadata } from 'next';
 
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const post = await getBlogPost(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getBlogPost(slug);
   if (!post) {
     return {
       title: 'Post Not Found',
@@ -35,8 +36,8 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const post = await getBlogPost(slug);
   const allPosts = await getBlogPosts();
 
