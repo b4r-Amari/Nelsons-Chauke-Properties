@@ -5,7 +5,12 @@ import { EditPropertyForm } from "@/components/admin/edit-property-form";
 import type { Agent } from "@/components/shared/agent-card";
 import type { Property } from "@/components/shared/property-card";
 
-export default async function EditPropertyPage({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: { id: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
+
+export default async function EditPropertyPage({ params }: PageProps) {
   const { id } = params;
   
   // Fetch data on the server
