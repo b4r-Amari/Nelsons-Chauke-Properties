@@ -12,11 +12,12 @@ import { type Agent } from '@/components/shared/agent-card';
 import type { Metadata } from 'next';
 
 type Props = {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const agent = await getAgent(params.slug);
+  const { slug } = await params;
+  const agent = await getAgent(slug);
   if (!agent) {
     return {
       title: 'Agent Not Found'
@@ -35,7 +36,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 
 export default async function AgentProfilePage({ params }: Props) {
-  const agent = await getAgent(params.slug);
+  const { slug } = await params;
+  const agent = await getAgent(slug);
   if (!agent) {
     notFound();
   }
