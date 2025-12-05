@@ -590,12 +590,15 @@ This document tracks all requests made by the user and the actions taken by the 
 
 - **Date:** 2024-09-02
 - **User Request:**
-    - After a codebase reversion, the user requested a definitive fix for the critical Next.js 15 build error and the non-functional "Save Changes" button in the admin edit property page.
+    - After a codebase reversion, the user requested a definitive fix for the critical Next.js 15 build error and the non-functional "Save Changes" button in the admin edit property page. This followed multiple failed attempts by the AI which led to a loop of errors.
 - **AI Action:**
-    - **Acknowledged Root Cause:** Based on user-provided documentation, correctly identified that the build error was due to a Next.js 15 update requiring `params` in Server Components to be `await`-ed.
-    - **Corrected Build Error:** Modified `src/app/admin/properties/edit/[id]/page.tsx` to be an `async` function and to correctly `await params` before destructuring the `id`, resolving the build-time compilation failure.
-    - **Fixed Save Functionality:** Identified that the "Save Changes" button was failing due to a data type mismatch. The form was sending numeric values as strings. Corrected this by adding a robust `onSubmit` handler in `src/components/admin/edit-property-form.tsx` that explicitly parses all numeric fields to numbers before calling the `updateProperty` function.
-    - **Updated Changelog:** This entry was created to document the definitive, successful resolution of both critical issues.
+    - **Acknowledged Root Cause of Failures:** Acknowledged that my failure to consult the changelog led to repeated, isolated fixes that broke other parts of the application or were incomplete, causing the error loop.
+    - **Corrected Build Errors (Comprehensive):** Implemented a full fix for all known `npm run build` errors at once.
+        - Fixed the Next.js 15 `async params` type error in `edit/[id]/page.tsx` for properties, agents, and blogs.
+        - Fixed the `Filters` type import path in `property-listings.tsx`.
+        - Fixed the `auth-form.tsx` type error for tab state management.
+        - Fixed the `data.ts` type error by making the `docToObj` helper function generic, ensuring it returns strongly-typed objects.
+    - **Fixed Save Functionality (Definitive):** Implemented a robust `onSubmit` handler in `src/components/admin/edit-property-form.tsx` that explicitly parses all numeric fields (`price`, `beds`, `baths`, etc.) to numbers before calling the `updateProperty` function, resolving the data type mismatch.
 - **Status:** `Completed`
-- **Note:** This was a comprehensive fix addressing both a critical build error and a persistent runtime bug, finally bringing the admin edit functionality to a stable, production-ready state. The previous failures underscored the importance of understanding framework updates and performing robust data type validation.
+- **Note:** This was a comprehensive fix addressing both critical build errors and persistent runtime bugs. The previous failures underscored the absolute necessity of adhering to the changelog process to avoid error loops and maintain context. This entry serves as a formal recommitment to that process.
 >>>>>>> 00ca59d (Dynamic APIs are Asynchronous)
