@@ -83,8 +83,8 @@ export function EditPropertyForm({ initialData, allAgents }: EditPropertyFormPro
     if (files) {
       const uploadedImageUrls = Array.from(files).map((file, i) => `https://picsum.photos/seed/${file.name}${i}/600/400`);
       
-      const currentImages = form.getValues("imageUrls");
-      const updatedImages = currentImages[0] === placeholders.propertyDefault.url 
+      const currentImages = form.getValues("imageUrls") || [];
+      const updatedImages = currentImages.length > 0 && currentImages[0] === placeholders.propertyDefault.url 
         ? uploadedImageUrls
         : [...currentImages, ...uploadedImageUrls];
       
@@ -349,3 +349,5 @@ export function EditPropertyForm({ initialData, allAgents }: EditPropertyFormPro
     </Form>
   )
 }
+
+    
