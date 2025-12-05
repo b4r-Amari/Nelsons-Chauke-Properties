@@ -23,3 +23,4 @@ export default async function EditPropertyPage({ params }: { params: { id: strin
     <EditPropertyForm initialData={propertyData as Property} allAgents={agentsData as Agent[]} />
   );
 }
+

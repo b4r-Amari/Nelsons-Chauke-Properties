@@ -102,13 +102,7 @@ export function EditPropertyForm({ initialData, allAgents }: EditPropertyFormPro
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Sanitize features array before submission
-    const dataToSubmit = {
-      ...values,
-      features: Array.isArray(values.features) ? values.features : (values.features as any).split(',').map((s: string) => s.trim()),
-    };
-
-    const result = await updateProperty(initialData.id, dataToSubmit);
+    const result = await updateProperty(initialData.id, values);
 
     if (result.success) {
         toast({
