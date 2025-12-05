@@ -103,7 +103,17 @@ export function EditPropertyForm({ initialData, allAgents }: EditPropertyFormPro
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const result = await updateProperty(initialData.id, values);
+    const dataToUpdate = {
+        ...values,
+        price: Number(values.price),
+        beds: Number(values.beds),
+        baths: Number(values.baths),
+        sqft: Number(values.sqft),
+        erfSize: Number(values.erfSize),
+        yearBuilt: Number(values.yearBuilt),
+    };
+    
+    const result = await updateProperty(initialData.id, dataToUpdate);
 
     if (result.success) {
         toast({

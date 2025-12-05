@@ -105,7 +105,8 @@ export default function NewPropertyPage() {
       const uploadedImageUrls = Array.from(files).map((file, i) => `https://picsum.photos/seed/${file.name}${i}/600/400`);
       
       const currentImages = form.getValues("imageUrls") || [];
-      const updatedImages = currentImages.length > 0 && currentImages[0] === placeholders.propertyDefault.url 
+      const isPlaceholder = currentImages.length === 1 && currentImages[0] === placeholders.propertyDefault.url;
+      const updatedImages = isPlaceholder
         ? uploadedImageUrls
         : [...currentImages, ...uploadedImageUrls];
       
