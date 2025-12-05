@@ -6,7 +6,7 @@ import type { Agent } from "@/components/shared/agent-card";
 import type { Property } from "@/components/shared/property-card";
 
 export default async function EditPropertyPage({ params }: { params: { id: string } }) {
-  const { id } = params;
+  const { id } = await params; // Await params before destructuring
   
   // Fetch data on the server
   const [propertyData, agentsData] = await Promise.all([

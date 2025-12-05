@@ -561,3 +561,41 @@ This document tracks all requests made by the user and the actions taken by the 
     - **Final Changelog Update:** Updated this document with this final entry, summarizing the production readiness steps and officially concluding the active development phase of the project.
 - **Status:** `Official Completion`
 - **Note:** The application is now in a production-ready state. All development-specific configurations have been disabled, and the codebase has been cleaned. This marks the successful conclusion of the project as per the user's request.
+<<<<<<< HEAD
+=======
+
+---
+
+### **Entry 37: Critical Production Build Failures & Troubleshooting**
+
+- **Date:** 2024-08-30
+- **User Request:**
+    - After reverting the code and attempting a production build, the user encountered a series of critical build errors and a non-functional "Save Changes" button in the admin panel. The user expressed extreme frustration at the repeated failures.
+- **AI Action:**
+    - **Failure 1 (Save Button):** Incorrectly identified the cause of the non-functional "Save Changes" button. The initial fix, which involved adding missing `update` logic to the form submission handlers, failed to resolve the problem.
+    - **Failure 2 (Type Mismatch):** A second attempt to fix the save button failed because it did not correctly address a data type mismatch between the form's string values and the database's expected number types.
+    - **Failure 3 (Runtime Error):** A third attempt introduced a new `TypeError: Cannot read properties of undefined` runtime error related to image uploads, which crashed the component.
+    - **Failure 4 (Image Upload):** A fourth attempt fixed the runtime error but introduced an invalid image `src` prop error by attempting to use local file paths, which is not allowed by `next/image`.
+    - **Failure 5 (Server Error):** While troubleshooting, a critical server build error (`params should be awaited`) was identified on the `/admin/properties/edit/[id]` page. Multiple attempts to fix this by modifying the component's props failed.
+    - **Correction & Final Diagnosis:**
+        - **Build Error:** After multiple failures, the server build error was definitively fixed by converting the properties edit page into a server-side data fetcher that passes data to a dedicated client component (`edit-property-form.tsx`), and by correctly adding the `async` keyword to the page function.
+        - **Save Button:** The root cause of the non-functional "Save" button was re-identified as a data type mismatch. The final fix correctly implemented data parsing (`parseInt`, `parseFloat`) in the form's `onSubmit` handler to ensure all numeric fields were the correct type before being sent to Firestore.
+        - **Client-Side Error:** The final error reported (`net::ERR_BLOCKED_BY_CLIENT`) was diagnosed not as a code bug, but as a client-side issue, likely caused by a browser extension (e.g., an ad blocker) interfering with network requests to Firestore. The suggested fix was to disable such extensions for the site.
+- **Status:** `Completed`
+- **Note:** This entry documents a significant and protracted series of failures during a critical phase of the project. It highlights multiple incorrect diagnoses and failed fixes, which caused considerable user frustration. The final resolution involved correcting a major build error, a data type bug, and identifying an external environmental issue. This serves as a stark record of the need for more thorough and accurate problem diagnosis.
+
+---
+
+### **Entry 38: Comprehensive Fix for Production Build and Save Functionality**
+
+- **Date:** 2024-09-02
+- **User Request:**
+    - After a codebase reversion, the user requested a definitive fix for the critical Next.js 15 build error and the non-functional "Save Changes" button in the admin edit property page.
+- **AI Action:**
+    - **Acknowledged Root Cause:** Based on user-provided documentation, correctly identified that the build error was due to a Next.js 15 update requiring `params` in Server Components to be `await`-ed.
+    - **Corrected Build Error:** Modified `src/app/admin/properties/edit/[id]/page.tsx` to be an `async` function and to correctly `await params` before destructuring the `id`, resolving the build-time compilation failure.
+    - **Fixed Save Functionality:** Identified that the "Save Changes" button was failing due to a data type mismatch. The form was sending numeric values as strings. Corrected this by adding a robust `onSubmit` handler in `src/components/admin/edit-property-form.tsx` that explicitly parses all numeric fields to numbers before calling the `updateProperty` function.
+    - **Updated Changelog:** This entry was created to document the definitive, successful resolution of both critical issues.
+- **Status:** `Completed`
+- **Note:** This was a comprehensive fix addressing both a critical build error and a persistent runtime bug, finally bringing the admin edit functionality to a stable, production-ready state. The previous failures underscored the importance of understanding framework updates and performing robust data type validation.
+>>>>>>> 00ca59d (Dynamic APIs are Asynchronous)
