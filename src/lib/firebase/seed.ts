@@ -44,15 +44,15 @@ async function seedCollection<T extends { [key: string]: any }>(collection: Coll
         // Use a specific ID if it exists, otherwise let Firestore auto-generate one
         const docRef = item.id ? collection.doc(String(item.id)) : collection.doc();
         
-        const dataWithTimestamp = {
+        const dataWithTimestamp: { [key: string]: any } = {
             ...item,
             createdAt: Timestamp.now(),
             updatedAt: Timestamp.now(),
         };
 
         // Convert date strings to Timestamps for blog posts
-        if (collection.id === 'blogPosts' && item.date) {
-            dataWithTimestamp.date = Timestamp.fromDate(new Date(item.date));
+        if (collection.id === 'blogPosts' && (item as any).date) {
+            dataWithTimestamp.date = Timestamp.fromDate(new Date((item as any).date));
         }
 
         batch.set(docRef, dataWithTimestamp);
