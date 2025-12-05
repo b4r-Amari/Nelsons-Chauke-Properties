@@ -85,7 +85,8 @@ export function EditPropertyForm({ initialData, allAgents }: EditPropertyFormPro
       const uploadedImageUrls = Array.from(files).map((file, i) => `https://picsum.photos/seed/${file.name}${i}/600/400`);
       
       const currentImages = form.getValues("imageUrls") || [];
-      const updatedImages = currentImages.length > 0 && currentImages[0] === placeholders.propertyDefault.url 
+      const isPlaceholder = currentImages.length > 0 && currentImages[0] === placeholders.propertyDefault.url;
+      const updatedImages = isPlaceholder
         ? uploadedImageUrls
         : [...currentImages, ...uploadedImageUrls];
       
@@ -103,6 +104,7 @@ export function EditPropertyForm({ initialData, allAgents }: EditPropertyFormPro
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("1. onSubmit triggered");
     const dataToUpdate = {
         ...values,
         price: Number(values.price),
@@ -113,6 +115,7 @@ export function EditPropertyForm({ initialData, allAgents }: EditPropertyFormPro
         yearBuilt: Number(values.yearBuilt),
     };
     
+    console.log("2. Calling updateProperty with data:", dataToUpdate);
     const result = await updateProperty(initialData.id, dataToUpdate);
 
     if (result.success) {
