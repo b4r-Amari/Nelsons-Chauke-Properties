@@ -10,6 +10,7 @@ const ContentSecurityPolicy = `
   media-src 'none';
   connect-src *;
   font-src 'self' *.googleapis.com *.gstatic.com;
+  manifest-src 'self' *.cloudworkstations.dev;
 `;
 
 const nextConfig: NextConfig = {
