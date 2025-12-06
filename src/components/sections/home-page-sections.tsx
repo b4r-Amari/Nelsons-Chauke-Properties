@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Building, Handshake, KeyRound } from "lucide-react";
 import placeholders from "@/lib/placeholder-images.json";
 import { getProperties, getBlogPosts } from "@/lib/data";
 import { useState, useEffect } from "react";
@@ -18,8 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
-import { cn } from "@/lib/utils";
-
+import { Card, CardContent, CardHeader } from "../ui/card";
 
 // Section: Featured Properties
 export function FeaturedPropertiesSection() {
@@ -138,13 +137,13 @@ export function CtaTabsSection() {
     { id: 'selling-guides', title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: placeholders.sellingGuides.url, imageHint: placeholders.sellingGuides.hint, href: "/blog" },
   ];
 
+  const { toast } = useToast();
+
   const newsletterFormSchema = z.object({
     email: z.string().email({ message: "Please enter a valid email address." }),
   });
 
-  const { toast } = useToast();
-
-  const CtaCard = ({ title, description, buttonText, imageSrc, imageHint, href = "#", id }: { title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string, id?: string }) => {
+  const CtaTabCard = ({ title, description, buttonText, imageSrc, imageHint, href = "#", id }: { title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string, id?: string }) => {
     const form = useForm<z.infer<typeof newsletterFormSchema>>({
       resolver: zodResolver(newsletterFormSchema),
       defaultValues: { email: "" },
@@ -170,7 +169,7 @@ export function CtaTabsSection() {
     const showForm = id === 'property-alerts' || id === 'rental-alerts';
 
     return (
-      <div className="relative rounded-lg overflow-hidden text-white group aspect-video">
+      <div className="relative rounded-lg overflow-hidden text-white group aspect-[4/3] sm:aspect-video">
         <Image
           src={imageSrc}
           alt={imageHint}
@@ -183,7 +182,7 @@ export function CtaTabsSection() {
           <p className="mb-4 text-white/90">{description}</p>
           {showForm ? (
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-2">
                 <FormField
                   control={form.control}
                   name="email"
@@ -216,38 +215,43 @@ export function CtaTabsSection() {
     );
   };
   
-    const commonTabClass = "data-[state=active]:bg-brand-deep data-[state=active]:shadow-md text-muted-foreground data-[state=inactive]:bg-muted/50 data-[state=active]:text-white text-md font-semibold py-3 px-5 sm:px-8";
-
   return (
     <section className="py-24 bg-background">
       <div className="container">
-        <h2 className="text-3xl font-bold text-center font-headline mb-4">Your Journey Starts Here</h2>
-        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
-          Whether you are looking to buy your dream home, sell a property, or find the perfect rental, our expert resources and dedicated team are here to guide you every step of the way.
-        </p>
-
-        <Tabs defaultValue="buyer" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 h-auto p-1 rounded-lg bg-muted/50">
-            <TabsTrigger value="buyer" className={cn(commonTabClass, "rounded-l-md")}>I'm a Buyer</TabsTrigger>
-            <TabsTrigger value="seller" className={cn(commonTabClass, "rounded-none")}>I'm a Seller</TabsTrigger>
-            <TabsTrigger value="renter" className={cn(commonTabClass, "rounded-r-md")}>I'm a Renter</TabsTrigger>
-          </TabsList>
-          <TabsContent value="buyer" className="mt-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              {buyerOptions.map(opt => <CtaCard key={opt.title} {...opt} />)}
-            </div>
-          </TabsContent>
-          <TabsContent value="seller" className="mt-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              {sellerOptions.map(opt => <CtaCard key={opt.title} {...opt} />)}
-            </div>
-          </TabsContent>
-          <TabsContent value="renter" className="mt-8">
-             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {renterOptions.map(opt => <CtaCard key={opt.title} {...opt} />)}
-            </div>
-          </TabsContent>
-        </Tabs>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold font-headline">Discover All Things Property</h2>
+          <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">Whether you're buying, renting, or selling, we have the tools and resources to help you succeed.</p>
+        </div>
+        <div className="bg-card p-4 sm:p-8 rounded-lg shadow-lg">
+          <Tabs defaultValue="buying" className="w-full">
+            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-3 bg-muted p-1 h-12 rounded-full">
+              <TabsTrigger value="buying" className="rounded-full text-md data-[state=active]:bg-brand-bright data-[state=active]:text-white transition-all duration-300 flex items-center gap-2">
+                <Building className="h-5 w-5" /> Buying
+              </TabsTrigger>
+              <TabsTrigger value="renting" className="rounded-full text-md data-[state=active]:bg-brand-bright data-[state=active]:text-white transition-all duration-300 flex items-center gap-2">
+                <KeyRound className="h-5 w-5" /> Renting
+              </TabsTrigger>
+              <TabsTrigger value="selling" className="rounded-full text-md data-[state=active]:bg-brand-bright data-[state=active]:text-white transition-all duration-300 flex items-center gap-2">
+                <Handshake className="h-5 w-5" /> Selling
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="buying" className="mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {buyerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
+              </div>
+            </TabsContent>
+            <TabsContent value="renting" className="mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {renterOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
+              </div>
+            </TabsContent>
+            <TabsContent value="selling" className="mt-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {sellerOptions.map(opt => <CtaTabCard key={opt.title} {...opt} />)}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </section>
   );
@@ -283,43 +287,92 @@ export function BlogSection() {
 }
 
 // Section: Newsletter
+const newsletterFormSchema = z.object({
+  email: z.string().email({ message: "Please enter a valid email address." }),
+});
+
 export function NewsletterSection() {
-    const { toast } = useToast();
-    const [email, setEmail] = useState('');
+  const { toast } = useToast();
+  const mailImages = [
+    'url("/images/backgrounds/mail-image.webp")',
+    'url("/images/backgrounds/mail-image-2.webp")',
+    'url("/images/backgrounds/mail-image-3.webp")',
+    'url("/images/backgrounds/mail-image-4.webp")',
+  ];
+  
+  const [bgImages, setBgImages] = useState(mailImages.slice(0,3).join(', '));
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!email) {
-            toast({ variant: "destructive", title: "Error", description: "Please enter your email address." });
-            return;
-        }
-        
-        const result = await addMarketingLead({ email, source: 'newsletter-footer' });
-        
-        if (result.success) {
-            toast({ title: "Subscribed!", description: "Thank you for joining our newsletter." });
-            setEmail('');
-        } else {
-            toast({ variant: "destructive", title: "Error", description: result.error });
-        }
-    };
+  const form = useForm<z.infer<typeof newsletterFormSchema>>({
+    resolver: zodResolver(newsletterFormSchema),
+    defaultValues: { email: "" },
+  });
 
-    return (
-        <div className="bg-muted/40 py-16">
-            <div className="container mx-auto px-4 text-center">
-                <h2 className="text-3xl font-bold">Stay Updated</h2>
-                <p className="text-muted-foreground mt-2 max-w-xl mx-auto">Subscribe to our newsletter for the latest property news, market updates, and exclusive listings directly to your inbox.</p>
-                <form onSubmit={handleSubmit} className="mt-6 flex max-w-md mx-auto">
-                    <Input 
-                        type="email" 
-                        placeholder="Enter your email" 
-                        className="rounded-r-none focus:ring-brand-bright/50" 
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Button type="submit" className="rounded-l-none bg-brand-bright hover:bg-brand-deep">Subscribe</Button>
-                </form>
-            </div>
-        </div>
-    )
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const shuffled = [...mailImages].sort(() => 0.5 - Math.random());
+      setBgImages(shuffled.slice(0, 3).join(', '));
+    }
+  }, []);
+
+  async function onSubmit(values: z.infer<typeof newsletterFormSchema>) {
+    const result = await addMarketingLead({ email: values.email, source: 'newsletter' });
+    if (result.success) {
+      toast({
+        title: "Subscribed!",
+        description: "You're now on our newsletter list. Welcome!",
+      });
+      form.reset();
+    } else {
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: result.error || "Could not subscribe to the newsletter.",
+      });
+    }
+  }
+
+
+  return (
+    <section 
+      className="py-24 bg-card relative"
+      style={{
+        backgroundImage: bgImages,
+        backgroundSize: '300px, 250px, 200px',
+        backgroundPosition: 'right bottom, left top, center center',
+        backgroundRepeat: 'no-repeat',
+      }}
+      aria-label="Newsletter subscription section"
+    >
+      <div className="absolute inset-0 bg-black/60" />
+      <div className="container relative">
+        <Card className="max-w-2xl mx-auto shadow-xl bg-card/80 backdrop-blur-sm">
+          <CardHeader className="text-center">
+            <h2 className="text-3xl font-bold font-headline">Stay Ahead of the Market</h2>
+            <p className="text-muted-foreground">Subscribe to our newsletter for the latest property listings, market news, and exclusive tips.</p>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4">
+                 <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem className="flex-grow">
+                      <FormControl>
+                        <Input type="email" placeholder="Enter your email address" className="h-12" aria-label="Email for newsletter" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" size="lg" className="h-12 bg-brand-bright hover:bg-brand-deep transition-colors" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Subscribing..." : "Subscribe"}
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  );
 }
