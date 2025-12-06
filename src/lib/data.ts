@@ -1,4 +1,5 @@
 
+
 import { db } from './firebase/firebase';
 import { collection, getDocs, doc, getDoc, query, where, orderBy, limit, Timestamp } from "firebase/firestore";
 import { Property } from '@/components/shared/property-card';
@@ -30,9 +31,9 @@ const docToObj = <T>(d: any): T & { id: string } => {
 
 
 // Fetch all properties with optional filtering and sorting
-export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number } = {}): Promise<Property[]> => {
+export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number, onShow?: boolean } = {}): Promise<Property[]> => {
     const propertiesCol = collection(db, 'properties');
-    let q = query(propertiesCol);
+    let q = query(propertiesCol, where('status', '!=', 'sold'));
 
     if (options.featuredOnly) {
         q = query(q, where('isFavorite', '==', true));
@@ -40,10 +41,13 @@ export const getProperties = async (options: { featuredOnly?: boolean; status?: 
     if (options.status) {
         q = query(q, where('status', '==', options.status));
     }
+     if (options.onShow) {
+        q = query(q, where('onShow', '==', true));
+    }
     if (options.limit) {
         q = query(q, limit(options.limit));
     }
-
+    
     const snapshot = await getDocs(q);
     return snapshot.docs.map(d => docToObj<Property>(d));
 };
