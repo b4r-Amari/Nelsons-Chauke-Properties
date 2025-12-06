@@ -18,32 +18,30 @@ function BlogHero({ post }: { post: BlogPost }) {
   if (!post) return null;
   
   return (
-    <section className="bg-background text-foreground pt-24 pb-12">
-      <div className="container">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-            <article>
-                <p className="font-semibold text-sm mb-2 text-brand-bright">FEATURED POST</p>
-                <h1 className="text-4xl font-bold font-headline mb-4 leading-tight">
-                    <Link href={`/blog/${post.slug}`} className="hover:text-brand-deep transition-colors">
+    <section className="relative text-white py-24 md:py-32 flex items-center min-h-[50vh]">
+        <Image 
+            src={post.imageUrl}
+            alt={`Featured image for: ${post.title}`}
+            data-ai-hint={post.imageHint}
+            fill
+            className="object-cover"
+            priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-transparent" />
+        <div className="container relative">
+            <div className="max-w-2xl">
+                <p className="font-semibold text-sm mb-2 text-brand-bright uppercase tracking-wider">FEATURED POST</p>
+                <h1 className="text-4xl md:text-5xl font-bold font-headline mb-4 leading-tight">
+                    <Link href={`/blog/${post.slug}`} className="hover:text-white/80 transition-colors">
                         {post.title}
                     </Link>
                 </h1>
-                <p className="text-muted-foreground mb-6">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
-                <Button asChild variant="outline">
+                <p className="text-white/80 mb-6">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                <Button asChild size="lg" className="bg-brand-bright hover:bg-brand-deep text-white">
                     <Link href={`/blog/${post.slug}`}>Read article</Link>
                 </Button>
-            </article>
-             <div className="relative aspect-video rounded-lg overflow-hidden hidden md:block">
-                <Image 
-                    src={post.imageUrl}
-                    alt={`Featured image for: ${post.title}`}
-                    data-ai-hint={post.imageHint}
-                    fill
-                    className="object-cover"
-                />
             </div>
         </div>
-      </div>
     </section>
   );
 }
@@ -56,7 +54,7 @@ export default async function BlogPage() {
   return (
     <>
       <BlogHero post={featuredPost} />
-      <main className="py-16 bg-white">
+      <main className="py-16 bg-background">
         <div className="container">
            <BlogListings initialPosts={allPosts} />
         </div>
