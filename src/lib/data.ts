@@ -33,13 +33,17 @@ const docToObj = <T>(d: any): T & { id: string } => {
 // Fetch all properties with optional filtering and sorting
 export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number, onShow?: boolean } = {}): Promise<Property[]> => {
     const propertiesCol = collection(db, 'properties');
-    let q = query(propertiesCol, where('status', '!=', 'sold'));
+    let q;
+
+    // Use a more efficient 'in' query instead of '!='
+    if (options.status) {
+        q = query(propertiesCol, where('status', '==', options.status));
+    } else {
+        q = query(propertiesCol, where('status', 'in', ['for-sale', 'to-let']));
+    }
 
     if (options.featuredOnly) {
         q = query(q, where('isFavorite', '==', true));
-    }
-    if (options.status) {
-        q = query(q, where('status', '==', options.status));
     }
      if (options.onShow) {
         q = query(q, where('onShow', '==', true));
