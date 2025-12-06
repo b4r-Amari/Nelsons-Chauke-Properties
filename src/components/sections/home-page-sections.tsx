@@ -1,125 +1,137 @@
 
-"use client"
+"use client";
 
-import { PropertyCard, type Property } from "@/components/shared/property-card";
-import { BlogCard, type BlogPost } from "@/components/shared/blog-card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import Link from "next/link";
-import { ArrowRight, Building, Handshake, KeyRound } from "lucide-react";
-import placeholders from "@/lib/placeholder-images.json";
-import { getProperties, getBlogPosts } from "@/lib/data";
-import { useState, useEffect } from "react";
-import { Input } from "../ui/input";
-import { addMarketingLead } from "@/lib/firebase/firestore";
-import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
-import { Card, CardContent, CardHeader } from "../ui/card";
+import * as z from "zod";
+import { useToast } from '@/hooks/use-toast';
+import { PropertyFilter } from '../shared/property-filter';
+import type { Property } from '../shared/property-card';
+import placeholders from '@/lib/placeholder-images.json';
+import Link from 'next/link';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Building, KeyRound, Handshake } from 'lucide-react';
+import { addMarketingLead } from '@/lib/firebase/firestore';
 
-// Section: Featured Properties
-export function FeaturedPropertiesSection() {
-    const [properties, setProperties] = useState<Property[]>([]);
-    useEffect(() => {
-        const fetchData = async () => {
-            const props = await getProperties({ featuredOnly: true });
-            setProperties(props);
-        };
-        fetchData();
-    }, []);
+
+const alertFormSchema = z.object({
+  fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+});
+
+function PropertyAlertForm({ source }: { source: string }) {
+  const { toast } = useToast();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof alertFormSchema>>({
+    resolver: zodResolver(alertFormSchema),
+    defaultValues: {
+      fullName: "",
+      email: "",
+    },
+  });
+
+  async function onSubmit(values: z.infer<typeof alertFormSchema>) {
+    const result = await addMarketingLead({ name: values.fullName, email: values.email, source });
+    if (result.success) {
+      toast({
+        title: "Subscribed!",
+        description: "You've been signed up for property alerts.",
+      });
+      form.reset();
+      setIsOpen(false);
+    } else {
+       toast({
+        variant: "destructive",
+        title: "Error",
+        description: result.error || "Could not subscribe for alerts.",
+      });
+    }
+  }
 
   return (
-    <div className="container mx-auto px-4">
-      <h2 className="text-3xl font-bold text-center mb-8">Featured Properties</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {properties.map(property => <PropertyCard key={property.id} property={property} />)}
-      </div>
-    </div>
-  );
-}
-
-// Section: For Sale Properties
-export function ForSalePropertiesSection() {
-     const [properties, setProperties] = useState<Property[]>([]);
-    useEffect(() => {
-        const fetchData = async () => {
-            const props = await getProperties({ status: 'for-sale', limit: 6 });
-            setProperties(props);
-        };
-        fetchData();
-    }, []);
-
-  return (
-    <div className="container mx-auto px-4">
-      <div className="flex justify-between items-center mb-8">
-        <h2 className="text-3xl font-bold">For Sale</h2>
-        <Button variant="outline" asChild>
-            <Link href="/properties?status=for-sale">View All <ArrowRight className="ml-2 h-4 w-4" /></Link>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors w-full mt-auto">
+          Sign Up Now
         </Button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {properties.map(property => <PropertyCard key={property.id} property={property} />)}
-      </div>
-    </div>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle className="font-headline text-2xl">Property Alerts</DialogTitle>
+          <DialogDescription>
+            Get notified about new properties that match your criteria. Fill out your details below.
+          </DialogDescription>
+        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 py-4">
+            <FormField
+              control={form.control}
+              name="fullName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Full Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="John Doe" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email Address</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="you@example.com" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+             <DialogFooter>
+                <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? "Subscribing..." : "Subscribe"}
+                </Button>
+             </DialogFooter>
+          </form>
+        </Form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
-// Section: For Rent Properties
-export function ForRentPropertiesSection() {
-     const [properties, setProperties] = useState<Property[]>([]);
-    useEffect(() => {
-        const fetchData = async () => {
-            const props = await getProperties({ status: 'to-let', limit: 6 });
-            setProperties(props);
-        };
-        fetchData();
-    }, []);
+
+function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, href }: { id?:string, title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string }) {
+  const isAlertForm = id === 'property-alerts' || id === 'rental-alerts';
 
   return (
-    <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold">For Rent</h2>
-            <Button variant="outline" asChild>
-                <Link href="/properties?status=to-let">View All <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {properties.map(property => <PropertyCard key={property.id} property={property} />)}
-      </div>
-    </div>
+    <Card className="text-center shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col bg-card h-full group">
+      <CardContent className="p-6 flex-grow flex flex-col items-center">
+        <Image src={imageSrc} data-ai-hint={imageHint} alt={description} width={150} height={150} className="rounded-full w-32 h-32 object-cover mb-6 border-4 border-white shadow-md" />
+        <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep group-hover:text-brand-bright transition-colors">{title}</h3>
+        <p className="text-muted-foreground flex-grow mb-6">{description}</p>
+        {isAlertForm ? (
+          <PropertyAlertForm source={id} />
+        ) : (
+          <Link href={href || '#'}><Button variant="outline" className="border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors w-full mt-auto">
+             {buttonText}
+          </Button></Link>
+        )}
+      </CardContent>
+    </Card>
   );
 }
 
-// Section: Recently Sold Properties
-export function RecentlySoldPropertiesSection() {
-     const [properties, setProperties] = useState<Property[]>([]);
-    useEffect(() => {
-        const fetchData = async () => {
-            const props = await getProperties({ status: 'sold', limit: 3 });
-            setProperties(props);
-        };
-        fetchData();
-    }, []);
-
-  return (
-    <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold">Recently Sold</h2>
-            <Button variant="outline" asChild>
-                <Link href="/properties/sold">View All <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {properties.map(property => <PropertyCard key={property.id} property={property} />)}
-        </div>
-    </div>
-  );
-}
-
-// Section: CTA Tabs
 export function CtaTabsSection() {
   const buyerOptions = [
     { id: 'property-alerts', title: "Property Alerts", description: "Get instant alerts on new properties that match your unique search criteria.", buttonText: "Sign Up Now", imageSrc: placeholders.propertyAlert.url, imageHint: placeholders.propertyAlert.hint },
@@ -137,84 +149,6 @@ export function CtaTabsSection() {
     { id: 'selling-guides', title: "Selling Guides", description: "Our guides provide all the information you need to sell your property successfully.", buttonText: "View Guides", imageSrc: placeholders.sellingGuides.url, imageHint: placeholders.sellingGuides.hint, href: "/blog" },
   ];
 
-  const { toast } = useToast();
-
-  const newsletterFormSchema = z.object({
-    email: z.string().email({ message: "Please enter a valid email address." }),
-  });
-
-  const CtaTabCard = ({ title, description, buttonText, imageSrc, imageHint, href = "#", id }: { title: string, description: string, buttonText: string, imageSrc: string, imageHint: string, href?: string, id?: string }) => {
-    const form = useForm<z.infer<typeof newsletterFormSchema>>({
-      resolver: zodResolver(newsletterFormSchema),
-      defaultValues: { email: "" },
-    });
-
-    async function onSubmit(values: z.infer<typeof newsletterFormSchema>) {
-      const result = await addMarketingLead({ email: values.email, source: id || 'cta-card-signup' });
-      if (result.success) {
-        toast({
-          title: "Thank You!",
-          description: "You've been signed up for alerts.",
-        });
-        form.reset();
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: result.error || "Could not sign up.",
-        });
-      }
-    }
-
-    const showForm = id === 'property-alerts' || id === 'rental-alerts';
-
-    return (
-      <div className="relative rounded-lg overflow-hidden text-white group aspect-[4/3] sm:aspect-video">
-        <Image
-          src={imageSrc}
-          alt={imageHint}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent" />
-        <div className="relative z-10 p-6 sm:p-8 flex flex-col h-full justify-end">
-          <h3 className="text-2xl font-bold mb-2">{title}</h3>
-          <p className="mb-4 text-white/90">{description}</p>
-          {showForm ? (
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-2">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="flex-grow">
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="Your email address"
-                          className="bg-white/10 border-white/30 text-white h-11 placeholder:text-white/70"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className="text-red-300" />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" size="lg" className="h-11 bg-brand-bright hover:bg-brand-deep transition-colors" disabled={form.formState.isSubmitting}>
-                  {form.formState.isSubmitting ? "..." : buttonText}
-                </Button>
-              </form>
-            </Form>
-          ) : (
-            <Button asChild className="bg-brand-bright hover:bg-brand-deep w-fit">
-              <Link href={href}>{buttonText}</Link>
-            </Button>
-          )}
-        </div>
-      </div>
-    );
-  };
-  
   return (
     <section className="py-24 bg-background">
       <div className="container">
@@ -257,36 +191,6 @@ export function CtaTabsSection() {
   );
 }
 
-
-// Section: From the Blog
-export function BlogSection() {
-    const [posts, setPosts] = useState<BlogPost[]>([]);
-    useEffect(() => {
-        const fetchData = async () => {
-            const blogPosts = await getBlogPosts({ limit: 3 });
-            setPosts(blogPosts);
-        };
-        fetchData();
-    }, []);
-
-    return (
-        <div className="container mx-auto px-4">
-            <div className="flex justify-between items-center mb-8">
-                 <h2 className="text-3xl font-bold">From the Blog</h2>
-                <Button variant="outline" asChild>
-                    <Link href="/blog">View All <ArrowRight className="ml-2 h-4 w-4" /></Link>
-                </Button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {posts.map(post => (
-                    <BlogCard key={post.slug} post={post} />
-                ))}
-            </div>
-        </div>
-    );
-}
-
-// Section: Newsletter
 const newsletterFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
 });
