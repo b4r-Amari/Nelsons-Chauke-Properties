@@ -561,8 +561,6 @@ This document tracks all requests made by the user and the actions taken by the 
     - **Final Changelog Update:** Updated this document with this final entry, summarizing the production readiness steps and officially concluding the active development phase of the project.
 - **Status:** `Official Completion`
 - **Note:** The application is now in a production-ready state. All development-specific configurations have been disabled, and the codebase has been cleaned. This marks the successful conclusion of the project as per the user's request.
-<<<<<<< HEAD
-=======
 
 ---
 
@@ -598,7 +596,9 @@ This document tracks all requests made by the user and the actions taken by the 
         - Fixed the `Filters` type import path in `property-listings.tsx`.
         - Fixed the `auth-form.tsx` type error for tab state management.
         - Fixed the `data.ts` type error by making the `docToObj` helper function generic, ensuring it returns strongly-typed objects.
+        - Corrected a TypeScript error in the `seed.ts` file related to generic types.
+        - Wrapped dynamic components in `React.Suspense` to resolve `useSearchParams` errors during static generation.
+        - Modified a Firestore query in `data.ts` to be more efficient and avoid the need for a custom composite index during the build.
     - **Fixed Save Functionality (Definitive):** Implemented a robust `onSubmit` handler in `src/components/admin/edit-property-form.tsx` that explicitly parses all numeric fields (`price`, `beds`, `baths`, etc.) to numbers before calling the `updateProperty` function, resolving the data type mismatch.
-- **Status:** `Completed`
-- **Note:** This was a comprehensive fix addressing both critical build errors and persistent runtime bugs. The previous failures underscored the absolute necessity of adhering to the changelog process to avoid error loops and maintain context. This entry serves as a formal recommitment to that process.
->>>>>>> 00ca59d (Dynamic APIs are Asynchronous)
+- **Status:** `Official Completion`
+- **Note:** This was a comprehensive fix addressing all critical build errors and persistent runtime bugs at once. The previous failures underscored the absolute necessity of adhering to the changelog process to avoid error loops and maintain context. The application is now in a stable, buildable, and production-ready state.

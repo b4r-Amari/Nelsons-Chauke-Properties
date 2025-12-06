@@ -1,10 +1,9 @@
 
-
 import { db } from './firebase/firebase';
 import { collection, getDocs, doc, getDoc, query, where, orderBy, limit, Timestamp } from "firebase/firestore";
-import { Property } from '@/components/shared/property-card';
-import { Agent } from '@/components/shared/agent-card';
-import { BlogPost } from '@/components/shared/blog-card';
+import type { Property } from '@/components/shared/property-card';
+import type { Agent } from '@/components/shared/agent-card';
+import type { BlogPost } from '@/components/shared/blog-card';
 
 // Helper function to convert Firestore doc to a plain, serializable object
 const docToObj = <T>(d: any): T & { id: string } => {
@@ -28,7 +27,6 @@ const docToObj = <T>(d: any): T & { id: string } => {
         id: d.id, // Ensure the document ID is always included
     } as T & { id: string };
 };
-
 
 // Fetch all properties with optional filtering and sorting
 export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number, onShow?: boolean } = {}): Promise<Property[]> => {
