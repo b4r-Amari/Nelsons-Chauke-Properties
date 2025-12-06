@@ -49,11 +49,24 @@ function BlogHero({ post }: { post: BlogPost }) {
 
 export default async function BlogPage() {
   const allPosts = await getBlogPosts();
-  const featuredPost = allPosts[0];
+  
+  let featuredPost = null;
+
+  if (allPosts.length > 0) {
+    // Calculate the index for the featured post, changing every 2 days
+    const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000;
+    const today = new Date();
+    // Get the number of 2-day intervals since the Unix epoch
+    const periodIndex = Math.floor(today.getTime() / twoDaysInMilliseconds);
+    // Use modulo to cycle through the available posts
+    const featuredIndex = periodIndex % allPosts.length;
+    featuredPost = allPosts[featuredIndex];
+  }
+
 
   return (
     <>
-      <BlogHero post={featuredPost} />
+      <BlogHero post={featuredPost!} />
       <main className="py-16 bg-background">
         <div className="container">
            <BlogListings initialPosts={allPosts} />
