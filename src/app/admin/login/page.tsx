@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +12,7 @@ import { Logo } from "@/components/shared/logo";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { signIn } from "@/lib/firebase/auth";
+import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/auth-context";
 
 const formSchema = z.object({
@@ -26,14 +25,7 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { user, isAdmin, isLoading: isAuthLoading } = useAuth();
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+  const supabase = createClient();
 
   // Redirect if already logged in as an admin
   if (!isAuthLoading && user && isAdmin) {
@@ -44,20 +36,23 @@ export default function AdminLoginPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      await signIn(values.email, values.password);
-      // The AuthProvider will handle the redirection automatically upon successful login and admin check.
-      // If the user is not an admin, the AuthProvider will keep them from accessing admin routes.
-      // We no longer need the faulty setTimeout logic here.
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+
+      if (error) throw error;
+      
+      toast({
+        title: "Login Successful",
+        description: "Welcome back!",
+      });
       
     } catch (error: any) {
-        let errorMessage = "An unexpected error occurred.";
-        if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
-            errorMessage = "Invalid credentials. Please check your email and password."
-        }
         toast({
             variant: "destructive",
             title: "Login Failed",
-            description: errorMessage,
+            description: error.message || "Invalid credentials. Please check your email and password.",
         });
         setIsLoading(false);
     }

@@ -9,8 +9,6 @@ import { ThemeProvider } from '@/context/theme-provider';
 import { cn } from '@/lib/utils';
 import '../globals.css';
 
-// Metadata is now defined in the parent layout, so this is not needed here.
-
 export default function AdminLayout({
   children,
 }: {

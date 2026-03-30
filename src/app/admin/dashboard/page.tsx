@@ -1,46 +1,55 @@
 
-"use client";
-
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Building, Users, DollarSign, Newspaper, KeyRound, Archive } from 'lucide-react';
 import Link from 'next/link';
 import { getProperties, getAgents, getBlogPosts } from '@/lib/data';
-import { type Property } from '@/components/shared/property-card';
-import { useEffect, useState } from 'react';
-import { type Agent } from '@/components/shared/agent-card';
-import { type BlogPost } from '@/components/shared/blog-card';
 
-export default function AdminDashboardPage() {
-  const [stats, setStats] = useState([
-    { title: "Total Properties", value: 0, icon: Building, description: "All properties listed" },
-    { title: "For Sale", value: 0, icon: DollarSign, description: "Properties currently for sale" },
-    { title: "To Let", value: 0, icon: KeyRound, description: "Properties currently for rent" },
-    { title: "Sold", value: 0, icon: Archive, description: "Properties that have been sold" },
-    { title: "Total Agents", value: 0, icon: Users, description: "Active real estate agents" },
-    { title: "Blog Posts", value: 0, icon: Newspaper, description: "Published articles" },
+export default async function AdminDashboardPage() {
+  // Fetch all data on the server in parallel
+  const [propertiesData, agentsData, blogData] = await Promise.all([
+    getProperties({}), // Get ALL properties
+    getAgents(),
+    getBlogPosts(),
   ]);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      // Pass empty object to get ALL properties including sold
-      const [propertiesData, agentsData, blogData] = await Promise.all([
-        getProperties({}), 
-        getAgents(),
-        getBlogPosts(),
-      ]);
-
-      setStats([
-        { title: "Total Properties", value: propertiesData.length, icon: Building, description: "All properties listed" },
-        { title: "For Sale", value: propertiesData.filter((p: Property) => p.status === 'for-sale').length, icon: DollarSign, description: "Properties currently for sale" },
-        { title: "To Let", value: propertiesData.filter((p: Property) => p.status === 'to-let').length, icon: KeyRound, description: "Properties currently for rent" },
-        { title: "Sold", value: propertiesData.filter((p: Property) => p.status === 'sold').length, icon: Archive, description: "Properties that have been sold" },
-        { title: "Total Agents", value: agentsData.length, icon: Users, description: "Active real estate agents" },
-        { title: "Blog Posts", value: blogData.length, icon: Newspaper, description: "Published articles" },
-      ]);
-    };
-
-    fetchStats();
-  }, []);
+  const stats = [
+    { 
+      title: "Total Properties", 
+      value: propertiesData.length, 
+      icon: Building, 
+      description: "All properties listed" 
+    },
+    { 
+      title: "For Sale", 
+      value: propertiesData.filter(p => p.status === 'for-sale').length, 
+      icon: DollarSign, 
+      description: "Properties currently for sale" 
+    },
+    { 
+      title: "To Let", 
+      value: propertiesData.filter(p => p.status === 'to-let').length, 
+      icon: KeyRound, 
+      description: "Properties currently for rent" 
+    },
+    { 
+      title: "Sold", 
+      value: propertiesData.filter(p => p.status === 'sold').length, 
+      icon: Archive, 
+      description: "Properties that have been sold" 
+    },
+    { 
+      title: "Total Agents", 
+      value: agentsData.length, 
+      icon: Users, 
+      description: "Active real estate agents" 
+    },
+    { 
+      title: "Blog Posts", 
+      value: blogData.length, 
+      icon: Newspaper, 
+      description: "Published articles" 
+    },
+  ];
 
   return (
     <div>
@@ -62,24 +71,24 @@ export default function AdminDashboardPage() {
       <div className="mt-12">
         <h2 className="text-2xl font-bold font-headline mb-4">Quick Actions</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Link href="/admin/properties/new">
-                 <Card className="flex items-center justify-center p-6 text-center hover:bg-muted transition-colors cursor-pointer">
+            <Link href="/admin/properties/new" className="block">
+                 <Card className="flex items-center justify-center p-6 text-center hover:bg-muted transition-colors cursor-pointer h-full">
                     <div>
                         <Building className="h-8 w-8 mx-auto text-brand-deep mb-2" />
                         <p className="font-semibold">Add New Property</p>
                     </div>
                 </Card>
             </Link>
-             <Link href="/admin/agents/new">
-                <Card className="flex items-center justify-center p-6 text-center hover:bg-muted transition-colors cursor-pointer">
+             <Link href="/admin/agents/new" className="block">
+                <Card className="flex items-center justify-center p-6 text-center hover:bg-muted transition-colors cursor-pointer h-full">
                     <div>
                         <Users className="h-8 w-8 mx-auto text-brand-deep mb-2" />
                         <p className="font-semibold">Add New Agent</p>
                     </div>
                 </Card>
             </Link>
-            <Link href="/admin/blogs/new">
-                <Card className="flex items-center justify-center p-6 text-center hover:bg-muted transition-colors cursor-pointer">
+            <Link href="/admin/blogs/new" className="block">
+                <Card className="flex items-center justify-center p-6 text-center hover:bg-muted transition-colors cursor-pointer h-full">
                     <div>
                         <Newspaper className="h-8 w-8 mx-auto text-brand-deep mb-2" />
                         <p className="font-semibold">Add New Blog Post</p>

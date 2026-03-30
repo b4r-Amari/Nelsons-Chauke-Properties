@@ -3,15 +3,17 @@
 
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
 
-interface User {
+interface UserProfile {
   id: string;
   email: string;
+  display_name?: string;
+  photo_url?: string;
+  is_admin: boolean;
 }
 
 interface AuthContextType {
-  user: User | null;
+  user: UserProfile | null;
   isAdmin: boolean;
   isLoading: boolean;
 }
@@ -19,7 +21,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const supabase = createClient();
@@ -30,16 +32,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email! });
-        
-        // Check if user is admin in public.admin_users table
-        const { data: adminData } = await supabase
-          .from('admin_users')
-          .select('id')
+        const { data: profile } = await supabase
+          .from('users')
+          .select('*')
           .eq('id', session.user.id)
           .single();
         
-        setIsAdmin(!!adminData);
+        if (profile) {
+          setUser(profile as UserProfile);
+          setIsAdmin(profile.is_admin);
+        } else {
+          // If profile doesn't exist yet (unlikely with trigger), fallback to basic user info
+          setUser({
+            id: session.user.id,
+            email: session.user.email!,
+            is_admin: false
+          });
+          setIsAdmin(false);
+        }
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -51,23 +61,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        setUser({ id: session.user.id, email: session.user.email! });
-        const { data: adminData } = await supabase
-          .from('admin_users')
-          .select('id')
+        const { data: profile } = await supabase
+          .from('users')
+          .select('*')
           .eq('id', session.user.id)
           .single();
-        setIsAdmin(!!adminData);
+        
+        if (profile) {
+          setUser(profile as UserProfile);
+          setIsAdmin(profile.is_admin);
+        }
       } else {
         setUser(null);
         setIsAdmin(false);
       }
+      setIsLoading(false);
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   return (
     <AuthContext.Provider value={{ user, isAdmin, isLoading }}>
