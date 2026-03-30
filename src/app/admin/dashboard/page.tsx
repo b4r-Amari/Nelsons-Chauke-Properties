@@ -7,7 +7,7 @@ import { getProperties, getAgents, getBlogPosts } from '@/lib/data';
 export default async function AdminDashboardPage() {
   // Fetch all data on the server in parallel
   const [propertiesData, agentsData, blogData] = await Promise.all([
-    getProperties({}), // Get ALL properties
+    getProperties({}), 
     getAgents(),
     getBlogPosts(),
   ]);
@@ -23,19 +23,19 @@ export default async function AdminDashboardPage() {
       title: "For Sale", 
       value: propertiesData.filter(p => p.status === 'for-sale').length, 
       icon: DollarSign, 
-      description: "Properties currently for sale" 
+      description: "Properties for sale" 
     },
     { 
       title: "To Let", 
       value: propertiesData.filter(p => p.status === 'to-let').length, 
       icon: KeyRound, 
-      description: "Properties currently for rent" 
+      description: "Properties for rent" 
     },
     { 
       title: "Sold", 
       value: propertiesData.filter(p => p.status === 'sold').length, 
       icon: Archive, 
-      description: "Properties that have been sold" 
+      description: "Properties sold" 
     },
     { 
       title: "Total Agents", 
