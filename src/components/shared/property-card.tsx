@@ -1,3 +1,4 @@
+
 "use client"
 
 import Image from "next/image";
@@ -28,10 +29,10 @@ export function PropertyCard({ property }: PropertyCardProps) {
     <Link href={`/properties/${property.id}`} className="block group">
         <Card className="w-full min-h-[480px] h-full rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer overflow-hidden">
         <div className="relative w-full h-[250px] overflow-hidden">
-            {property.imageUrl ? (
+            {property.imageUrls && property.imageUrls[0] ? (
               <Image
-                src={property.imageUrl}
-                alt={`View of ${property.address}`}
+                src={property.imageUrls[0]}
+                alt={`View of ${property.title}`}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
               />
@@ -53,18 +54,18 @@ export function PropertyCard({ property }: PropertyCardProps) {
             )}
         </div>
         <CardContent className="p-6 bg-white flex flex-col flex-grow">
-            <h3 className="font-headline text-brand-deep font-semibold text-xl mb-2 truncate">{property.address}</h3>
+            <h3 className="font-headline text-brand-deep font-semibold text-xl mb-2 truncate">{property.title}</h3>
             <p className="text-sm text-muted-foreground mb-4">{property.location}</p>
             
             <div className="grid grid-cols-4 gap-2 border-y border-gray-200 py-4 my-auto">
                 <div className="text-center flex flex-col items-center gap-1">
                     <BedDouble className="h-5 w-5 text-brand-bright"/>
-                    <span className="text-sm text-gray-600">{property.beds}</span>
+                    <span className="text-sm text-gray-600">{property.bedrooms}</span>
                     <span className="text-xs text-gray-500">Beds</span>
                 </div>
                 <div className="text-center flex flex-col items-center gap-1">
                     <Bath className="h-5 w-5 text-brand-bright"/>
-                    <span className="text-sm text-gray-600">{property.baths}</span>
+                    <span className="text-sm text-gray-600">{property.bathrooms}</span>
                     <span className="text-xs text-gray-500">Baths</span>
                 </div>
                 <div className="text-center flex flex-col items-center gap-1">

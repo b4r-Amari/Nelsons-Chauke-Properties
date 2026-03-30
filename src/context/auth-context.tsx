@@ -1,8 +1,9 @@
+
 "use client";
 
 import React, { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface User {
   id: string;
@@ -21,8 +22,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-  const pathname = usePathname();
   const supabase = createClient();
 
   useEffect(() => {
@@ -33,14 +32,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         setUser({ id: session.user.id, email: session.user.email! });
         
-        // Check if user is admin in public.users table
-        const { data: userData } = await supabase
-          .from('users')
-          .select('is_admin')
+        // Check if user is admin in public.admin_users table
+        const { data: adminData } = await supabase
+          .from('admin_users')
+          .select('id')
           .eq('id', session.user.id)
           .single();
         
-        setIsAdmin(!!userData?.is_admin);
+        setIsAdmin(!!adminData);
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -53,12 +52,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
         setUser({ id: session.user.id, email: session.user.email! });
-        const { data: userData } = await supabase
-          .from('users')
-          .select('is_admin')
+        const { data: adminData } = await supabase
+          .from('admin_users')
+          .select('id')
           .eq('id', session.user.id)
           .single();
-        setIsAdmin(!!userData?.is_admin);
+        setIsAdmin(!!adminData);
       } else {
         setUser(null);
         setIsAdmin(false);

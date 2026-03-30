@@ -1,24 +1,55 @@
 
 export type Property = {
   id: string;
-  slug: string;
-  imageUrl: string;
+  agentId: string | null;
+  title: string;
+  description: string;
   price: number;
-  address: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  erfSize: number;
-  isFavorite: boolean;
   status: 'for-sale' | 'to-let' | 'sold';
   type: string;
+  bedrooms: number;
+  bathrooms: number;
   location: string;
-  description: string;
-  features: string[];
-  yearBuilt: number;
-  onShow?: boolean;
-  agentIds: string[];
+  sqft: number;
+  erfSize: number;
+  yearBuilt?: number;
+  features: any;
+  imageUrls: string[];
+  isFavorite: boolean;
+  onShow: boolean;
   videoUrl?: string;
+  published: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
+export type Agent = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  name: string; // Helper for legacy components
+  slug: string;
+  email: string;
+  phone?: string;
+  photoUrl?: string;
+  imageUrl?: string; // Helper for legacy components
+  bio?: string;
+  isActive: boolean;
+  updatedAt?: string;
+};
+
+export type BlogPost = {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  category?: string;
+  featuredImage?: string;
+  imageUrl?: string; // Helper for legacy components
+  published: boolean;
+  date?: string;
+  author?: string;
   createdAt?: string;
   updatedAt?: string;
 };

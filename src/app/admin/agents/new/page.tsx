@@ -12,18 +12,18 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import placeholders from "@/lib/placeholder-images.json";
-import { addAgent } from "@/lib/firebase/firestore"
+import { addAgent } from "@/lib/supabase/actions"
 import { useRouter } from "next/navigation"
 
 const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  role: z.string().min(2, { message: "Role must be at least 2 characters." }),
+  firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
+  lastName: z.string().min(2, { message: "Last name must be at least 2 characters." }),
+  slug: z.string().min(2, { message: "Slug is required." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
-  imageUrl: z.string().url({ message: "Please enter a valid URL." }),
-  imageHint: z.string().min(2, { message: "Image hint must be at least 2 characters." }),
-  bio: z.string().min(50, { message: "Bio must be at least 50 characters." }),
+  phone: z.string().optional(),
+  photoUrl: z.string().url().optional().or(z.literal("")),
+  bio: z.string().optional(),
+  isActive: z.boolean().default(true),
 })
 
 export default function NewAgentPage() {
@@ -33,13 +33,14 @@ export default function NewAgentPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      role: "",
+      firstName: "",
+      lastName: "",
+      slug: "",
       email: "",
       phone: "",
-      imageUrl: placeholders.agentProfile.url,
-      imageHint: placeholders.agentProfile.hint,
+      photoUrl: "",
       bio: "",
+      isActive: true,
     },
   })
 
@@ -47,10 +48,9 @@ export default function NewAgentPage() {
     const result = await addAgent(values);
     if (result.success) {
         toast({
-        title: "Agent Created",
-        description: `A new agent profile for ${values.name} has been created.`,
+          title: "Agent Created",
+          description: `A new agent profile for ${values.firstName} has been created.`,
         });
-        form.reset();
         router.push('/admin/agents');
     } else {
         toast({
@@ -80,12 +80,12 @@ export default function NewAgentPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
+                      <FormLabel>First Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Sarah Jones" {...field} />
+                        <Input placeholder="e.g. Sarah" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -93,12 +93,12 @@ export default function NewAgentPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="role"
+                  name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Role</FormLabel>
+                      <FormLabel>Last Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Sales Agent" {...field} />
+                        <Input placeholder="e.g. Jones" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -106,6 +106,19 @@ export default function NewAgentPage() {
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>URL Slug</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. sarah-jones" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                  <FormField
                     control={form.control}
                     name="email"
@@ -119,6 +132,8 @@ export default function NewAgentPage() {
                         </FormItem>
                     )}
                     />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                     control={form.control}
                     name="phone"
@@ -126,22 +141,7 @@ export default function NewAgentPage() {
                         <FormItem>
                         <FormLabel>Phone Number</FormLabel>
                         <FormControl>
-                            <Input placeholder="(123) 456-7890" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                    control={form.control}
-                    name="imageUrl"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Image URL</FormLabel>
-                        <FormControl>
-                            <Input placeholder="https://example.com/image.png" {...field} />
+                            <Input placeholder="082 123 4567" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -149,12 +149,12 @@ export default function NewAgentPage() {
                 />
                 <FormField
                     control={form.control}
-                    name="imageHint"
+                    name="photoUrl"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Image Hint</FormLabel>
+                        <FormLabel>Photo URL</FormLabel>
                         <FormControl>
-                            <Input placeholder="e.g. smiling man" {...field} />
+                            <Input placeholder="https://example.com/photo.png" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>

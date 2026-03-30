@@ -1,65 +1,69 @@
 
 import { createClient } from './supabase/server';
-import type { Property } from '@/lib/types';
-import type { Agent } from '@/components/shared/agent-card';
-import type { BlogPost } from '@/components/shared/blog-card';
+import type { Property, Agent, BlogPost } from '@/lib/types';
 
 const mapDbProperty = (p: any): Property => ({
   id: p.id,
-  slug: p.slug,
-  imageUrl: p.image_urls?.[0] || '',
+  agentId: p.agent_id,
+  title: p.title,
+  description: p.description,
   price: Number(p.price),
-  address: p.address,
-  beds: p.beds,
-  baths: p.baths,
-  sqft: p.sqft,
-  erfSize: p.erf_size,
-  isFavorite: p.is_favorite,
   status: p.status,
   type: p.type,
+  bedrooms: p.bedrooms,
+  bathrooms: Number(p.bathrooms),
   location: p.location,
-  description: p.description,
-  features: p.features || [],
+  sqft: p.sqft || 0,
+  erfSize: p.erf_size || 0,
   yearBuilt: p.year_built,
+  features: p.features || [],
+  imageUrls: p.image_urls || [],
+  isFavorite: p.is_favorite,
   onShow: p.on_show,
-  agentIds: p.property_agents?.map((pa: any) => pa.agent_id) || [],
   videoUrl: p.video_url,
+  published: p.published,
   createdAt: p.created_at,
   updatedAt: p.updated_at
 });
 
 const mapDbAgent = (a: any): Agent => ({
   id: a.id,
+  firstName: a.first_name,
+  lastName: a.last_name,
+  name: `${a.first_name} ${a.last_name}`,
   slug: a.slug,
-  name: a.name,
-  role: a.role,
-  imageUrl: a.image_url,
-  phone: a.phone,
   email: a.email,
+  phone: a.phone,
+  photoUrl: a.photo_url,
+  imageUrl: a.photo_url, // for legacy support
   bio: a.bio,
-  updatedAt: a.created_at
+  isActive: a.is_active,
+  updatedAt: a.updated_at
 });
 
 const mapDbBlogPost = (b: any): BlogPost => ({
   id: b.id,
-  slug: b.slug,
   title: b.title,
-  author: b.author,
-  date: new Date(b.date).toLocaleDateString('en-US', {
+  slug: b.slug,
+  content: b.content,
+  excerpt: b.excerpt,
+  category: b.category,
+  featuredImage: b.featured_image,
+  imageUrl: b.featured_image, // for legacy support
+  published: b.published,
+  date: new Date(b.created_at).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   }),
-  imageUrl: b.image_url,
-  excerpt: b.excerpt,
-  content: b.content,
-  category: b.category,
-  updatedAt: b.created_at
+  author: 'NC Properties', // Default author if not in schema
+  createdAt: b.created_at,
+  updatedAt: b.updated_at
 });
 
 export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number, onShow?: boolean } = {}): Promise<Property[]> => {
   const supabase = await createClient();
-  let query = supabase.from('properties').select('*, property_agents(agent_id)');
+  let query = supabase.from('properties').select('*');
 
   if (options.status && options.status !== 'any') {
     query = query.eq('status', options.status);
@@ -81,7 +85,7 @@ export const getProperty = async (id: string): Promise<Property | null> => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('properties')
-    .select('*, property_agents(agent_id)')
+    .select('*')
     .eq('id', id)
     .single();
 
@@ -92,7 +96,10 @@ export const getProperty = async (id: string): Promise<Property | null> => {
 export const getAgents = async (): Promise<Agent[]> => {
   const supabase = await createClient();
   const { data, error } = await supabase.from('estate_agents').select('*').eq('is_active', true);
-  if (error) return [];
+  if (error) {
+    console.error('Error fetching agents:', error.message);
+    return [];
+  }
   return data.map(mapDbAgent);
 };
 
@@ -105,10 +112,14 @@ export const getAgent = async (slug: string): Promise<Agent | null> => {
 
 export const getBlogPosts = async (options: { limit?: number } = {}): Promise<BlogPost[]> => {
   const supabase = await createClient();
-  let query = supabase.from('blog_posts').select('*').order('date', { ascending: false });
+  let query = supabase.from('blog_posts').select('*').eq('published', true);
   if (options.limit) query = query.limit(options.limit);
-  const { data, error } = await query;
-  if (error) return [];
+  
+  const { data, error } = await query.order('created_at', { ascending: false });
+  if (error) {
+    console.error('Error fetching blogs:', error.message);
+    return [];
+  }
   return data.map(mapDbBlogPost);
 };
 
