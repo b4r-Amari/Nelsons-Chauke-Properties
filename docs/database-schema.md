@@ -1,91 +1,179 @@
-# Firestore Database Schema
 
-This document outlines the proposed data structure for the Cloud Firestore database.
+-- 1. DROP EVERYTHING (Fresh Start)
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+DROP FUNCTION IF EXISTS public.handle_new_user();
+DROP FUNCTION IF EXISTS public.is_admin();
 
-## Collections
+DROP TABLE IF EXISTS public.property_agents CASCADE;
+DROP TABLE IF EXISTS public.enquiries CASCADE;
+DROP TABLE IF EXISTS public.valuation_requests CASCADE;
+DROP TABLE IF EXISTS public.properties CASCADE;
+DROP TABLE IF EXISTS public.estate_agents CASCADE;
+DROP TABLE IF EXISTS public.blog_posts CASCADE;
+DROP TABLE IF EXISTS public.users CASCADE;
+DROP TYPE IF EXISTS property_status;
 
-### `users`
+-- 2. CUSTOM TYPES
+CREATE TYPE property_status AS ENUM ('for-sale', 'to-let', 'sold');
 
-Stores public-facing user profile information.
+-- 3. TABLES
 
-- **Path**: `/users/{userId}`
-- **Document ID**: Firebase Auth User ID (`uid`)
-- **Schema**:
-  - `uid`: (string) The user's unique ID.
-  - `email`: (string) The user's email address.
-  - `displayName`: (string) The user's display name.
-  - `photoURL`: (string) URL to the user's profile picture.
-  - `createdAt`: (timestamp) Server timestamp of account creation.
-  - `isAdmin`: (boolean, optional) Flag to denote administrator status.
+-- Users: Synced with Supabase Auth
+CREATE TABLE public.users (
+    id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    display_name TEXT,
+    photo_url TEXT, -- Link to Supabase Storage avatar
+    is_admin BOOLEAN DEFAULT false,
+    signup_sources TEXT[] DEFAULT ARRAY['web'], 
+    created_at TIMESTAMPTZ DEFAULT now()
+);
 
-### `agents`
+-- Estate Agents
+CREATE TABLE public.estate_agents (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    role TEXT,
+    image_url TEXT, -- Link to Supabase Storage
+    phone TEXT,
+    email TEXT,
+    bio TEXT,
+    is_active BOOLEAN DEFAULT true,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
 
-Stores profiles for real estate agents.
+-- Properties
+CREATE TABLE public.properties (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    address TEXT NOT NULL,
+    slug TEXT UNIQUE NOT NULL,
+    location TEXT NOT NULL,
+    price NUMERIC NOT NULL,
+    status property_status NOT NULL DEFAULT 'for-sale',
+    type TEXT,
+    beds INTEGER,
+    baths INTEGER,
+    sqft INTEGER,
+    erf_size INTEGER,
+    year_built INTEGER,
+    description TEXT,
+    features TEXT[],
+    image_urls TEXT[], -- Array of links to Supabase Storage
+    is_favorite BOOLEAN DEFAULT false,
+    on_show BOOLEAN DEFAULT false,
+    video_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
 
-- **Path**: `/agents/{agentId}`
-- **Document ID**: Auto-generated ID.
-- **Schema**:
-  - `name`: (string) Agent's full name.
-  - `role`: (string) Agent's role (e.g., "Head of Sales").
-  - `imageUrl`: (string) URL to profile picture in Firebase Storage.
-  - `phone`: (string) Contact phone number.
-  - `email`: (string) Contact email.
-  - `bio`: (string) Agent's biography (can contain Markdown/HTML).
-  - `isActive`: (boolean) Whether the agent is currently active.
+-- Join Table (Properties <-> Agents)
+CREATE TABLE public.property_agents (
+    property_id UUID REFERENCES public.properties(id) ON DELETE CASCADE,
+    agent_id UUID REFERENCES public.estate_agents(id) ON DELETE CASCADE,
+    PRIMARY KEY (property_id, agent_id)
+);
 
-### `properties`
+-- Blog Posts
+CREATE TABLE public.blog_posts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    slug TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    author TEXT,
+    date TIMESTAMPTZ DEFAULT now(),
+    image_url TEXT, -- Link to Supabase Storage
+    category TEXT,
+    excerpt TEXT,
+    content TEXT,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
 
-Stores all property listings.
+-- Enquiries (Lead Capture)
+CREATE TABLE public.enquiries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT,
+    message TEXT NOT NULL,
+    property_id UUID REFERENCES public.properties(id) ON DELETE SET NULL,
+    source TEXT DEFAULT 'contact-form',
+    is_read BOOLEAN DEFAULT false,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
 
-- **Path**: `/properties/{propertyId}`
-- **Document ID**: Auto-generated ID.
-- **Schema**:
-  - `address`: (string) Full street address.
-  - `location`: (string) Suburb and province (e.g., "Sandton, Gauteng").
-  - `price`: (number) Listing price in ZAR.
-  - `status`: (string) "for-sale", "to-let", or "sold".
-  - `type`: (string) "House", "Apartment", etc.
-  - `beds`: (number) Number of bedrooms.
-  - `baths`: (number) Number of bathrooms.
-  - `sqft`: (number) Interior size in square meters.
-  - `erfSize`: (number) Land size in square meters.
-  - `description`: (string) Detailed property description.
-  - `features`: (array of strings) List of property features.
-  - `imageUrls`: (array of strings) URLs to images in Firebase Storage.
-  - `agentIds`: (array of strings) Document IDs of assigned agents from the `agents` collection.
-  - `isFavorite`: (boolean) If the property is featured.
-  - `onShow`: (boolean) If the property is currently on show.
-  - `createdAt`: (timestamp) Server timestamp of listing creation.
-  - `updatedAt`: (timestamp) Server timestamp of last update.
+-- Valuation Requests
+CREATE TABLE public.valuation_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT,
+    address TEXT NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT now()
+);
 
-### `blogPosts`
+-- 4. SECURITY & AUTH FUNCTIONS
 
-Stores all blog articles.
+-- Check if current user is admin
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN (
+    SELECT is_admin FROM public.users 
+    WHERE id = auth.uid()
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-- **Path**: `/blogPosts/{postId}`
-- **Document ID**: Auto-generated ID or a URL-friendly slug.
-- **Schema**:
-  - `slug`: (string) URL-friendly identifier.
-  - `title`: (string) The article title.
-  - `author`: (string) Name of the author.
-  - `date`: (timestamp) Publication date.
-  - `imageUrl`: (string) URL to the featured image in Firebase Storage.
-  - `category`: (string) e.g., "Buying Guide".
-  - `excerpt`: (string) A short summary of the post.
-  - `content`: (string) The full content of the post (can contain Markdown/HTML).
+-- Trigger: Auto-create profile when a user signs up via Supabase Auth
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.users (id, email, display_name, photo_url)
+  VALUES (
+    new.id, 
+    new.email, 
+    new.raw_user_meta_data->>'full_name', 
+    new.raw_user_meta_data->>'avatar_url'
+  );
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
-### `enquiries`
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
-Stores contact/enquiry form submissions.
+-- 5. ROW LEVEL SECURITY (RLS)
 
-- **Path**: `/enquiries/{enquiryId}`
-- **Document ID**: Auto-generated ID.
-- **Schema**:
-  - `name`: (string) User's name.
-  - `email`: (string) User's email.
-  - `phone`: (string) User's phone number.
-  - `message`: (string) User's message.
-  - `propertyId`: (string, optional) ID of the property the enquiry is about.
-  - `source`: (string) "Contact Form", "Property Enquiry", "Valuation Request".
-  - `isRead`: (boolean) Whether the enquiry has been addressed.
-  - `createdAt`: (timestamp) Server timestamp.
+-- Enable RLS on all tables
+ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.estate_agents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.property_agents ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.enquiries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.valuation_requests ENABLE ROW LEVEL SECURITY;
+
+-- PUBLIC READ ACCESS (For your website visitors)
+CREATE POLICY "Allow public read" ON public.properties FOR SELECT USING (true);
+CREATE POLICY "Allow public read" ON public.estate_agents FOR SELECT USING (true);
+CREATE POLICY "Allow public read" ON public.property_agents FOR SELECT USING (true);
+CREATE POLICY "Allow public read" ON public.blog_posts FOR SELECT USING (true);
+
+-- LEAD CAPTURE (Anyone can insert, only admin can read/manage)
+CREATE POLICY "Public insert enquiries" ON public.enquiries FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admin manage enquiries" ON public.enquiries FOR ALL USING (is_admin());
+
+CREATE POLICY "Public insert valuations" ON public.valuation_requests FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admin manage valuations" ON public.valuation_requests FOR ALL USING (is_admin());
+
+-- USER PROFILES
+CREATE POLICY "Users view own profile" ON public.users FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users update own profile" ON public.users FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Admins view all profiles" ON public.users FOR SELECT USING (is_admin());
+
+-- ADMIN FULL ACCESS (Write/Update/Delete everything)
+CREATE POLICY "Admin manage properties" ON public.properties FOR ALL USING (is_admin());
+CREATE POLICY "Admin manage agents" ON public.estate_agents FOR ALL USING (is_admin());
+CREATE POLICY "Admin manage property_agents" ON public.property_agents FOR ALL USING (is_admin());
+CREATE POLICY "Admin manage blog" ON public.blog_posts FOR ALL USING (is_admin());

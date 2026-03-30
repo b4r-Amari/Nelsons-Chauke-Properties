@@ -1,5 +1,4 @@
 
-
 "use client";
 
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
@@ -9,14 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Search, Map as MapIcon, X, Plus, Building, MapPin, Loader2 } from "lucide-react";
+import { Search, X, Plus, Building, MapPin, Loader2 } from "lucide-react";
 import type { Property, Filters, SearchSuggestion } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { MapDialog } from "./map-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Badge } from "../ui/badge";
 
@@ -68,7 +66,6 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
   const [filters, setFilters] = useState({ ...initialFilters, ...initial });
   const [activeTab, setActiveTab] = useState(filters.status === 'to-let' ? 'rent' : 'buy');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-  const [isMapOpen, setIsMapOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
   const [isSuggestionsLoading, setSuggestionsLoading] = useState(false);
   const [selectedLocations, setSelectedLocations] = useState<SearchSuggestion[]>(initial?.selectedLocations || []);
@@ -117,12 +114,6 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
     router.push(`/properties?${queryParams.toString()}`);
   }
 
-  const handleLocationSelect = (location: { lat: number; lng: number }) => {
-    console.log("Location selected from map:", location);
-    handleInputChange('location', `Map: ${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}`);
-    setIsMapOpen(false);
-  };
-  
   const handleInputChange = (field: keyof Omit<Filters, 'selectedLocations'>, value: string) => {
     setFilters(prev => ({ ...prev, [field]: value }));
   };
@@ -226,8 +217,7 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
     debouncedFetchSuggestions(filters.location);
   }, [filters.location, debouncedFetchSuggestions]);
 
-  const parentBg = 'dark';
-  const isDarkBg = parentBg === 'dark';
+  const isDarkBg = true; // Fixed for context as it was hardcoded relative to parent in original
   const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none text-lg font-bold pb-3 px-5 rounded-none border-b-4 data-[state=active]:border-brand-bright border-transparent";
   const textColorClass = "text-white/80 hover:text-white data-[state=active]:text-white";
   const selectTriggerClass = isDarkBg ? "bg-primary-foreground/10 text-white border-white/50" : "bg-background text-foreground border-input";
@@ -303,11 +293,8 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
                             </PopoverContent>
                           </Popover>
 
-                          <div className="flex w-full sm:w-auto gap-2">
-                              <Button variant="outline" className="w-1/2 sm:w-auto h-12 text-base font-normal" onClick={() => setIsMapOpen(true)}>
-                                <MapIcon className="mr-2 h-5 w-5" /> Map
-                              </Button>
-                              <Button className="w-1/2 sm:w-auto h-12 text-base bg-accent hover:bg-accent/90" onClick={handleSearchClick}>
+                          <div className="flex w-full sm:w-auto">
+                              <Button className="w-full sm:w-auto h-12 text-base bg-accent hover:bg-accent/90" onClick={handleSearchClick}>
                               Search
                               </Button>
                           </div>
@@ -447,13 +434,6 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
           </div>
         </Tabs>
       </div>
-
-      <MapDialog
-        isOpen={isMapOpen}
-        onClose={() => setIsMapOpen(false)}
-        onLocationSelect={handleLocationSelect}
-        properties={properties}
-      />
     </>
   );
 }

@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from "next/image";
@@ -6,33 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { BedDouble, Bath, Home, LandPlot } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
-
-export type Property = {
-  id: string;
-  slug: string;
-  imageUrl: string;
-  imageHint: string;
-  price: number;
-  address: string;
-  beds: number;
-  baths: number;
-  sqft: number;
-  erfSize: number;
-  isFavorite: boolean;
-  status: 'for-sale' | 'to-let' | 'sold';
-  type: string;
-  location: string;
-  description: string;
-  features: string[];
-  yearBuilt: number;
-  onShow?: boolean;
-  agentIds: string[];
-  videoUrl?: string;
-  latitude?: number;
-  longitude?: number;
-  createdAt?: string;
-  updatedAt?: string;
-};
+import type { Property } from "@/lib/types";
 
 type PropertyCardProps = {
   property: Property;
@@ -55,13 +28,16 @@ export function PropertyCard({ property }: PropertyCardProps) {
     <Link href={`/properties/${property.id}`} className="block group">
         <Card className="w-full min-h-[480px] h-full rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col cursor-pointer overflow-hidden">
         <div className="relative w-full h-[250px] overflow-hidden">
-            <Image
-            src={property.imageUrl}
-            alt={`View of ${property.address}`}
-            data-ai-hint={property.imageHint}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
-            />
+            {property.imageUrl ? (
+              <Image
+                src={property.imageUrl}
+                alt={`View of ${property.address}`}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
+              />
+            ) : (
+              <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">No Image</div>
+            )}
              <div className="absolute top-4 left-4 flex flex-col gap-2">
               <div className="bg-black/70 text-white px-4 py-1.5 rounded-md font-roboto font-bold text-lg w-fit">
                 {formatPrice(property.price)}

@@ -3,7 +3,6 @@ export type Property = {
   id: string;
   slug: string;
   imageUrl: string;
-  imageHint: string;
   price: number;
   address: string;
   beds: number;
@@ -20,8 +19,6 @@ export type Property = {
   onShow?: boolean;
   agentIds: string[];
   videoUrl?: string;
-  latitude?: number;
-  longitude?: number;
   createdAt?: string;
   updatedAt?: string;
 };

@@ -3,7 +3,7 @@
 
 import { notFound, useParams } from 'next/navigation';
 import Image from 'next/image';
-import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, Video, Map, Camera, Share2, Building, Calendar, Hash, Link as LinkIcon, Copy, Facebook, Twitter } from 'lucide-react';
+import { BedDouble, Bath, Home, LandPlot, MapPin, CheckCircle, Video, Camera, Share2, Building, Calendar, Hash, Link as LinkIcon, Copy, Facebook, Twitter } from 'lucide-react';
 import { getProperty, getAgents } from '@/lib/data';
 import { type Property } from '@/components/shared/property-card';
 import { AgentCard } from '@/components/shared/agent-card';
@@ -51,7 +51,6 @@ export default function PropertyDetailPage() {
       }
       
       const allAgents = await getAgents();
-      // FIX: Ensure IDs are compared as strings to avoid type mismatches
       const agents = allAgents.filter(a => prop.agentIds.map(String).includes(String(a.id)));
       
       setProperty(prop);
@@ -86,19 +85,16 @@ export default function PropertyDetailPage() {
                 text: `Check out this property: ${property.address}`,
                 url: window.location.href,
             });
-            return true; // Indicates success
+            return true;
         } catch (error) {
-            // This can be AbortError if the user cancels, or another error.
-            // In any failure case, we'll let the fallback logic take over.
             return false;
         }
     }
-    return false; // Native share not available
+    return false;
   };
 
 
   if (loading || !property) {
-    // Return a minimal loading state or null to prevent layout shifts
     return (
         <div className="container py-12 text-center">
             <p>Loading property details...</p>
@@ -151,10 +147,8 @@ export default function PropertyDetailPage() {
         const shared = await handleNativeShare();
         if (!shared) {
             if (isMobile) {
-                // On mobile, if native share fails, fallback to copy
                 handleCopyToClipboard();
             } else {
-                // On desktop, programmatically open the popover
                 setIsPopoverOpen(true);
             }
         }
@@ -193,7 +187,6 @@ export default function PropertyDetailPage() {
         );
     }
     
-    // Desktop: Popover as the fallback
     return (
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
             <PopoverTrigger asChild>
@@ -215,7 +208,7 @@ export default function PropertyDetailPage() {
         
         <PropertyImageGallery 
             images={galleryImages} 
-            mainImageHint={property.imageHint} 
+            mainImageHint="" 
             isOnShow={property.onShow}
             isOpen={isGalleryOpen}
             onOpenChange={setIsGalleryOpen}
@@ -224,9 +217,6 @@ export default function PropertyDetailPage() {
         <div className="flex justify-around items-center bg-card text-center border-y p-2 md:hidden">
           <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground" onClick={() => setIsGalleryOpen(true)}>
             <Camera className="h-5 w-5" />Photos
-          </Button>
-          <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground">
-            <Map className="h-5 w-5" />Map
           </Button>
           {property.videoUrl && (
             <Button asChild variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground">
