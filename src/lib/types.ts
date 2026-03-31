@@ -2,7 +2,7 @@
 export type Property = {
   id: string;
   agentId?: string;
-  agentIds: string[]; // UI compatibility
+  agentIds: string[]; // UI compatibility for legacy components
   title: string;
   description: string;
   price: number;
@@ -11,14 +11,8 @@ export type Property = {
   beds: number;
   baths: number;
   location: string;
-  sqft?: number;
-  erfSize?: number;
-  yearBuilt?: number;
   features: string[];
   imageUrls: string[];
-  isFavorite?: boolean;
-  onShow?: boolean;
-  videoUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -49,17 +43,6 @@ export type BlogPost = {
   createdAt?: string;
 };
 
-export type User = {
-  id: string;
-  email: string;
-  username?: string;
-  password?: string;
-  displayName?: string;
-  photoUrl?: string;
-  signupSources: string[];
-  createdAt: string;
-};
-
 export type AdminUser = {
   id: string;
   email: string;
@@ -74,20 +57,11 @@ export type Filters = {
   maxPrice: string;
   minBeds: string;
   minBaths: string;
-  minFloorSize: string;
-  maxFloorSize: string;
-  minErfSize: string;
-  maxErfSize: string;
   features: {
     petFriendly: boolean;
     garden: boolean;
     pool: boolean;
     flatlet: boolean;
-  };
-  other: {
-    retirement: boolean;
-    onShow: boolean;
-    securityEstate: boolean;
   };
   selectedLocations?: SearchSuggestion[];
 };

@@ -7,7 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 interface UserProfile {
   id: string;
   email: string;
-  username?: string;
 }
 
 interface AuthContextType {
@@ -30,25 +29,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        // Fetch standard profile
-        const { data: profile } = await supabase
-          .from('users')
-          .select('id, email, username')
-          .eq('id', session.user.id)
-          .single();
-        
-        // Fetch admin status from public.admin_users
+        // Verify admin status from public.admin_users (source of truth)
         const { data: adminData } = await supabase
           .from('admin_users')
           .select('id')
           .eq('id', session.user.id)
           .maybeSingle();
         
-        setUser(profile ? {
-          id: profile.id,
-          email: profile.email,
-          username: profile.username
-        } : {
+        setUser({
           id: session.user.id,
           email: session.user.email!,
         });
@@ -65,23 +53,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        const { data: profile } = await supabase
-          .from('users')
-          .select('id, email, username')
-          .eq('id', session.user.id)
-          .single();
-        
         const { data: adminData } = await supabase
           .from('admin_users')
           .select('id')
           .eq('id', session.user.id)
           .maybeSingle();
 
-        setUser(profile ? {
-          id: profile.id,
-          email: profile.email,
-          username: profile.username
-        } : {
+        setUser({
           id: session.user.id,
           email: session.user.email!,
         });

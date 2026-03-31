@@ -4,11 +4,9 @@ import type { Property, Agent, BlogPost } from '@/lib/types';
 
 const mapDbProperty = (p: any): Property => ({
   id: String(p.id),
-  slug: p.id, // Fallback to ID as slug if missing in DB
   agentId: p.agent_id,
   agentIds: p.agent_id ? [String(p.agent_id)] : [],
   title: p.title || '',
-  address: p.title || '',
   description: p.description || '',
   price: Number(p.price || 0),
   status: p.status || 'for-sale',
@@ -16,7 +14,7 @@ const mapDbProperty = (p: any): Property => ({
   beds: p.bedrooms || 0,
   baths: Number(p.bathrooms || 0),
   location: p.location || '',
-  features: Array.isArray(p.features) ? p.features : [],
+  features: Array.isArray(p.features) ? p.features : (p.features ? Object.values(p.features) : []),
   imageUrls: Array.isArray(p.image_urls) ? p.image_urls : [],
   createdAt: p.created_at,
   updatedAt: p.updated_at
@@ -31,10 +29,7 @@ const mapDbAgent = (a: any): Agent => ({
   phone: a.phone || '',
   imageUrl: a.photo_url || '',
   photoUrl: a.photo_url || '',
-  updatedAt: a.updated_at,
-  slug: String(a.id), // Use ID as slug since slug column is missing
-  role: 'Property Agent',
-  bio: ''
+  updatedAt: a.updated_at
 });
 
 const mapDbBlogPost = (b: any): BlogPost => ({
@@ -55,7 +50,7 @@ const mapDbBlogPost = (b: any): BlogPost => ({
   createdAt: b.created_at
 });
 
-export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number, onShow?: boolean } = {}): Promise<Property[]> => {
+export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number } = {}): Promise<Property[]> => {
   try {
     const supabase = await createClient();
     let query = supabase.from('properties').select('*');
@@ -96,24 +91,12 @@ export const getProperty = async (id: string): Promise<Property | null> => {
 export const getAgents = async (): Promise<Agent[]> => {
   try {
     const supabase = await createClient();
-    // Removed is_active filter as column does not exist
     const { data, error } = await supabase.from('estate_agents').select('*');
     if (error) throw error;
     return (data || []).map(mapDbAgent);
   } catch (err: any) {
     console.error('Error fetching agents:', err.message);
     return [];
-  }
-};
-
-export const getAgent = async (id: string): Promise<Agent | null> => {
-  try {
-    const supabase = await createClient();
-    const { data, error } = await supabase.from('estate_agents').select('*').eq('id', id).single();
-    if (error || !data) return null;
-    return mapDbAgent(data);
-  } catch (err: any) {
-    return null;
   }
 };
 

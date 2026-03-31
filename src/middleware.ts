@@ -61,7 +61,7 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin')) {
     if (request.nextUrl.pathname === '/admin/login') {
       if (user) {
-        // Verify admin status in public.admin_users
+        // Verify admin status in public.admin_users (source of truth)
         const { data: adminProfile } = await supabase
           .from('admin_users')
           .select('id')

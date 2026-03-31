@@ -34,16 +34,16 @@ export async function updateProperty(id: string, formData: any) {
   const supabase = await createClient();
   
   const dbData: any = {};
-  if (formData.address !== undefined || formData.title !== undefined) dbData.title = formData.address || formData.title;
+  if (formData.title !== undefined) dbData.title = formData.title;
   if (formData.location !== undefined) dbData.location = formData.location;
   if (formData.price !== undefined) dbData.price = Number(formData.price);
   if (formData.status !== undefined) dbData.status = formData.status;
   if (formData.type !== undefined) dbData.type = formData.type;
-  if (formData.beds !== undefined || formData.bedrooms !== undefined) dbData.bedrooms = Number(formData.beds || formData.bedrooms);
-  if (formData.baths !== undefined || formData.bathrooms !== undefined) dbData.bathrooms = Number(formData.baths || formData.bathrooms);
+  if (formData.beds !== undefined) dbData.bedrooms = Number(formData.beds);
+  if (formData.baths !== undefined) dbData.bathrooms = Number(formData.baths);
   if (formData.description !== undefined) dbData.description = formData.description;
   if (formData.features !== undefined) dbData.features = formData.features;
-  if (formData.imageUrls !== undefined || formData.image_urls !== undefined) dbData.image_urls = formData.imageUrls || formData.image_urls;
+  if (formData.imageUrls !== undefined) dbData.image_urls = formData.imageUrls;
   if (formData.agentId !== undefined) dbData.agent_id = formData.agentId || null;
 
   const { error } = await supabase.from('properties').update(dbData).eq('id', id);
@@ -70,7 +70,7 @@ export async function addAgent(formData: any) {
     last_name: formData.lastName,
     email: formData.email,
     phone: formData.phone,
-    photo_url: formData.photoUrl || formData.imageUrl
+    photo_url: formData.photoUrl
   };
 
   const { data, error } = await supabase.from('estate_agents').insert([dbData]).select();
@@ -84,11 +84,11 @@ export async function addAgent(formData: any) {
 export async function updateAgent(id: string, formData: any) {
   const supabase = await createClient();
   const dbData: any = {
-    first_name: formData.firstName || formData.name?.split(' ')[0],
-    last_name: formData.lastName || formData.name?.split(' ').slice(1).join(' '),
+    first_name: formData.firstName,
+    last_name: formData.lastName,
     email: formData.email,
     phone: formData.phone,
-    photo_url: formData.photoUrl || formData.imageUrl
+    photo_url: formData.photoUrl
   };
 
   const { error } = await supabase.from('estate_agents').update(dbData).eq('id', id);
@@ -135,7 +135,7 @@ export async function addValuationRequest(request: any) {
     name: request.fullName || request.name,
     email: request.email,
     phone: request.phone,
-    property_details: request.propertyAddress || request.address || request.property_details
+    property_details: request.propertyAddress || request.address
   };
 
   const { error } = await supabase.from('valuation_requests').insert([dbData]);
@@ -152,7 +152,7 @@ export async function addBlogPost(formData: any) {
     excerpt: formData.excerpt,
     category: formData.category,
     author: formData.author,
-    featured_image: formData.imageUrl || formData.featured_image,
+    featured_image: formData.imageUrl,
     published: formData.published ?? true
   };
 
@@ -172,7 +172,7 @@ export async function updateBlogPost(id: string, formData: any) {
     excerpt: formData.excerpt,
     category: formData.category,
     author: formData.author,
-    featured_image: formData.imageUrl || formData.featured_image,
+    featured_image: formData.imageUrl,
     published: formData.published
   };
   if (formData.slug) dbData.slug = formData.slug;
