@@ -29,7 +29,7 @@ export default async function AdminBlogsPage() {
         <CardContent>
             <BlogsTable initialPosts={blogPosts} />
         </CardContent>
-      </div>
+      </Card>
     </div>
   );
 }
