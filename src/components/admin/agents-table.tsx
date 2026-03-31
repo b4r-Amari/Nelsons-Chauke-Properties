@@ -116,7 +116,7 @@ export function AgentsTable({ initialAgents }: { initialAgents: AgentWithCount[]
             <TableCell>
               <div className="flex items-center gap-4">
                   <Avatar className="hidden h-9 w-9 sm:flex">
-                    <AvatarImage src={agent.imageUrl} alt={agent.name} />
+                    <AvatarImage src={agent.photoUrl || null} alt={agent.name} />
                     <AvatarFallback>{agent.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="font-medium">{agent.name}</div>
