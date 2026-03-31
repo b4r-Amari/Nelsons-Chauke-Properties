@@ -1,7 +1,8 @@
 
-import { PropertyCard, type Property } from "@/components/shared/property-card";
+import { PropertyCard } from "@/components/shared/property-card";
 import { getProperties } from "@/lib/data";
 import type { Metadata } from 'next';
+import type { Property } from "@/lib/types";
 
 export const metadata: Metadata = {
     title: 'Sold Properties | NC Properties',
