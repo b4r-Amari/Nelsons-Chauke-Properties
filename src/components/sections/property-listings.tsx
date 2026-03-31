@@ -117,8 +117,8 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
     const filtered = allProperties.filter(p => {
       if (newFilters.status && newFilters.status !== 'any' && p.status !== newFilters.status) return false;
       if (newFilters.propertyType !== 'any' && p.type !== newFilters.propertyType) return false;
-      if (newFilters.minBeds !== 'any' && p.beds < parseInt(newFilters.minBeds)) return false;
-      if (newFilters.minBaths !== 'any' && p.baths < parseInt(newFilters.minBaths)) return false;
+      if (newFilters.minBeds !== 'any' && p.bedrooms < parseInt(newFilters.minBeds)) return false;
+      if (newFilters.minBaths !== 'any' && p.bathrooms < parseInt(newFilters.minBaths)) return false;
       if (newFilters.minPrice !== 'any' && p.price < parseInt(newFilters.minPrice)) return false;
       if (newFilters.maxPrice !== 'any' && p.price > parseInt(newFilters.maxPrice)) return false;
       

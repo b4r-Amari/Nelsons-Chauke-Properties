@@ -166,22 +166,22 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
         if (selectedLocations.length > 0) {
           const propertyMatchesLocation = selectedLocations.some(sl => 
             p.location.toLowerCase().includes(sl.value.toLowerCase()) || 
-            p.address.toLowerCase().includes(sl.value.toLowerCase())
+            (p.address || p.title).toLowerCase().includes(sl.value.toLowerCase())
           );
           if (!propertyMatchesLocation) return false;
-        } else if (filters.location && !p.location.toLowerCase().includes(filters.location.toLowerCase()) && !p.address.toLowerCase().includes(filters.location.toLowerCase())) {
+        } else if (filters.location && !p.location.toLowerCase().includes(filters.location.toLowerCase()) && !(p.address || p.title).toLowerCase().includes(filters.location.toLowerCase())) {
           return false;
         }
         
         if (filters.propertyType !== 'any' && p.type !== filters.propertyType) return false;
-        if (filters.minBeds !== 'any' && p.beds < parseInt(filters.minBeds)) return false;
-        if (filters.minBaths !== 'any' && p.baths < parseInt(filters.minBaths)) return false;
+        if (filters.minBeds !== 'any' && p.bedrooms < parseInt(filters.minBeds)) return false;
+        if (filters.minBaths !== 'any' && p.bathrooms < parseInt(filters.minBaths)) return false;
         if (filters.minPrice !== 'any' && p.price < parseInt(filters.minPrice)) return false;
         if (filters.maxPrice !== 'any' && p.price > parseInt(filters.maxPrice)) return false;
-        if (filters.minFloorSize !== 'any' && p.sqft < parseInt(filters.minFloorSize)) return false;
-        if (filters.maxFloorSize !== 'any' && p.sqft > parseInt(filters.maxFloorSize)) return false;
-        if (filters.minErfSize !== 'any' && p.erfSize < parseInt(filters.minErfSize)) return false;
-        if (filters.maxErfSize !== 'any' && p.erfSize > parseInt(filters.maxErfSize)) return false;
+        if (filters.minFloorSize !== 'any' && (p.sqft || 0) < parseInt(filters.minFloorSize)) return false;
+        if (filters.maxFloorSize !== 'any' && (p.sqft || 0) > parseInt(filters.maxFloorSize)) return false;
+        if (filters.minErfSize !== 'any' && (p.erfSize || 0) < parseInt(filters.minErfSize)) return false;
+        if (filters.maxErfSize !== 'any' && (p.erfSize || 0) > parseInt(filters.maxErfSize)) return false;
         
         const pFeatures = Array.isArray(p.features) ? p.features : [];
         if (filters.features.petFriendly && !pFeatures.some(f => typeof f === 'string' && f.toLowerCase().includes('pet friendly'))) return false;
