@@ -44,6 +44,10 @@ export default async function AgentProfilePage({ params }: Props) {
   const agentProperties = await getProperties({ agentId: agent.id });
   const activeProperties = agentProperties.filter(p => p.status !== 'sold');
 
+  // WhatsApp Link Formatting
+  const whatsappNumber = (agent.phone || '').replace(/\D/g, '');
+  const whatsappLink = whatsappNumber ? `https://wa.me/27${whatsappNumber.slice(-9)}` : null;
+
   return (
     <div className="bg-background min-h-screen">
       <main className="container py-12 md:py-20">
@@ -97,9 +101,13 @@ export default async function AgentProfilePage({ params }: Props) {
                             )}
                         </div>
                         
-                        <Button className="w-full mt-8 bg-brand-bright hover:bg-brand-deep transition-all shadow-md hover:shadow-lg" size="lg">
-                            Contact {agent.name.split(' ')[0]}
-                        </Button>
+                        {whatsappLink && (
+                          <Button asChild className="w-full mt-8 bg-brand-bright hover:bg-brand-deep transition-all shadow-md hover:shadow-lg" size="lg">
+                              <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                                Contact {agent.name.split(' ')[0]} on WhatsApp
+                              </a>
+                          </Button>
+                        )}
                     </CardContent>
                 </Card>
             </aside>
