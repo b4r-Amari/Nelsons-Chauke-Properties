@@ -177,7 +177,7 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
                     {propertyAgent ? (
                         <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8 border-2 border-white">
-                                <AvatarImage src={propertyAgent.photoUrl} alt={propertyAgent.name} />
+                                <AvatarImage src={propertyAgent.photoUrl || undefined} alt={propertyAgent.name} />
                                 <AvatarFallback>{propertyAgent.name?.charAt(0)}</AvatarFallback>
                             </Avatar>
                             <span className="text-sm">{propertyAgent.name}</span>
