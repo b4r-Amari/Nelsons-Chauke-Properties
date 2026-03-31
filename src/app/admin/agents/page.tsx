@@ -4,16 +4,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import { getAgents, getProperties } from '@/lib/data';
-import type { Property } from '@/components/shared/property-card';
 import { AgentsTable } from '@/components/admin/agents-table';
-import { type Agent } from '@/components/shared/agent-card';
+import { type Property } from '@/lib/types';
 
 export default async function AdminAgentsPage() {
   const [agentsData, propertiesData] = await Promise.all([getAgents(), getProperties()]);
   
   const agentsWithCount = agentsData.map(agent => ({
       ...agent,
-      propertyCount: propertiesData.filter((p: Property) => p.agentIds.includes(agent.id as never)).length
+      // Fixed: Filter using the single agentId field
+      propertyCount: propertiesData.filter((p: Property) => String(p.agentId) === String(agent.id)).length
   }));
 
   return (

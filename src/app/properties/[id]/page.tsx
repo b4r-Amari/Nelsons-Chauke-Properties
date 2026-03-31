@@ -35,7 +35,8 @@ export default async function PropertyDetailPage({ params }: Props) {
   }
   
   const allAgents = await getAgents();
-  const propertyAgents = allAgents.filter(a => property.agentIds.map(String).includes(String(a.id)));
+  // Fixed: Filter using the single agentId field from the Supabase schema
+  const propertyAgents = allAgents.filter(a => String(a.id) === String(property.agentId));
 
   return (
     <PropertyDetailClient property={property} agents={propertyAgents} />

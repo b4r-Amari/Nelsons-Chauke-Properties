@@ -94,7 +94,8 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
         title: "Agent Reassigned",
         description: `${agentName} has been assigned to ${propertyAddress}.`,
       });
-      setPropertyList(propertyList.map(p => p.id === propertyId ? {...p, agentId: newAgentId, agentIds: [newAgentId]} : p));
+      // Fixed: Update using singular agentId
+      setPropertyList(propertyList.map(p => p.id === propertyId ? {...p, agentId: newAgentId} : p));
     } else {
       toast({
         variant: "destructive",
@@ -176,7 +177,7 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
                     {propertyAgent ? (
                         <div className="flex items-center gap-2">
                             <Avatar className="h-8 w-8 border-2 border-white">
-                                <AvatarImage src={propertyAgent.imageUrl} alt={propertyAgent.name} />
+                                <AvatarImage src={propertyAgent.photoUrl} alt={propertyAgent.name} />
                                 <AvatarFallback>{propertyAgent.name?.charAt(0)}</AvatarFallback>
                             </Avatar>
                             <span className="text-sm">{propertyAgent.name}</span>
@@ -260,7 +261,7 @@ function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Pr
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <button className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full">
+        <button className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 w-full text-left">
             <Users className="mr-2 h-4 w-4" /> Reassign Agent
         </button>
       </DialogTrigger>

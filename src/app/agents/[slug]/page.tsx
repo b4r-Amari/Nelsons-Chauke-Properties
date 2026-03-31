@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
         title: `${agent.name} - ${agent.role}`,
         description: `Learn more about ${agent.name}, a dedicated real estate agent at NC Properties. View their listings and contact them for expert advice.`,
-        images: [agent.imageUrl]
+        images: [agent.photoUrl || '']
     }
   }
 }
@@ -43,7 +43,8 @@ export default async function AgentProfilePage({ params }: Props) {
   }
   
   const allProperties = await getProperties();
-  const agentProperties = allProperties.filter(p => p.agentIds.includes(agent.id as never) && p.status !== 'sold');
+  // Fixed: Filter properties by comparing the agentId UUID
+  const agentProperties = allProperties.filter(p => String(p.agentId) === String(agent.id) && p.status !== 'sold');
 
   return (
     <div className="bg-background">
@@ -60,8 +61,7 @@ export default async function AgentProfilePage({ params }: Props) {
                 <Card className="sticky top-24 shadow-lg text-center">
                     <CardContent className="p-8">
                         <Image 
-                            src={agent.imageUrl} 
-                            data-ai-hint={agent.imageHint} 
+                            src={agent.photoUrl || '/images/placeholder-agent.webp'} 
                             alt={`Professional portrait of ${agent.name}, ${agent.role}`} 
                             width={200} 
                             height={200} 
@@ -77,10 +77,12 @@ export default async function AgentProfilePage({ params }: Props) {
                                 <Mail className="h-6 w-6 text-brand-deep" />
                                 <span className="text-muted-foreground group-hover:text-brand-bright transition-colors">{agent.email}</span>
                             </a>
-                            <a href={`tel:${agent.phone.replace(/\D/g, '')}`} className="flex items-center gap-4 group">
-                                <Phone className="h-6 w-6 text-brand-deep" />
-                                <span className="text-muted-foreground group-hover:text-brand-bright transition-colors">{agent.phone}</span>
-                            </a>
+                            {agent.phone && (
+                              <a href={`tel:${agent.phone.replace(/\D/g, '')}`} className="flex items-center gap-4 group">
+                                  <Phone className="h-6 w-6 text-brand-deep" />
+                                  <span className="text-muted-foreground group-hover:text-brand-bright transition-colors">{agent.phone}</span>
+                              </a>
+                            )}
                         </div>
                         <Button className="w-full mt-8 bg-brand-bright hover:bg-brand-deep transition-colors" size="lg">
                             Contact {agent.name.split(' ')[0]}
@@ -92,7 +94,7 @@ export default async function AgentProfilePage({ params }: Props) {
             <article className="lg:col-span-2">
                 <div className="prose prose-lg dark:prose-invert max-w-none prose-h2:font-headline prose-h2:text-brand-deep">
                     <h2>About {agent.name}</h2>
-                    <div dangerouslySetInnerHTML={{ __html: agent.bio }} />
+                    <div dangerouslySetInnerHTML={{ __html: agent.bio || '' }} />
 
                     {agentProperties.length > 0 && (
                         <>
