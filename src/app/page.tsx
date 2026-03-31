@@ -1,9 +1,7 @@
 
-
 import Image from 'next/image';
-import { Button } from "@/components/ui/button";
+import { Suspense } from 'react';
 import { PropertyCard } from '@/components/shared/property-card';
-import type { Property } from '@/lib/types';
 import { Separator } from '@/components/ui/separator';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { CtaTabsSection, NewsletterSection } from '@/components/sections/home-page-sections';
@@ -42,7 +40,9 @@ async function HeroSection() {
           Discover the finest properties for sale and rent across South Africa. Your new home is just a search away.
         </p>
         <div className="w-full max-w-4xl mx-auto mt-8 bg-black/50 backdrop-blur-md border border-black/20 p-4 rounded-lg shadow-2xl">
-            <PropertyFilter properties={properties} />
+            <Suspense fallback={<div className="h-20 w-full bg-muted/20 animate-pulse rounded-lg" />}>
+                <PropertyFilter properties={properties} />
+            </Suspense>
         </div>
       </div>
     </section>

@@ -5,9 +5,31 @@ import { useTheme } from "@/context/theme-provider"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function SettingsPage() {
-  const { theme, setTheme } = useTheme()
+  const { theme, setTheme, mounted } = useTheme()
+
+  if (!mounted) {
+    return (
+      <div>
+        <h1 className="text-3xl font-bold font-headline mb-8">Settings</h1>
+        <Card className="max-w-2xl">
+          <CardHeader>
+            <Skeleton className="h-8 w-48 mb-2" />
+            <Skeleton className="h-4 w-full" />
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-8 pt-2">
+              <Skeleton className="h-32 w-full rounded-md" />
+              <Skeleton className="h-32 w-full rounded-md" />
+              <Skeleton className="h-32 w-full rounded-md" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -61,7 +83,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="flex items-center space-x-2 rounded-md bg-slate-800 p-2 shadow-sm">
                     <div className="h-4 w-4 rounded-full bg-slate-400" />
-                    <div className="h-2 w-[100px]rounded-lg bg-slate-400" />
+                    <div className="h-2 w-[100px] rounded-lg bg-slate-400" />
                   </div>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 
 "use client";
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/logo';
 import { Facebook, Twitter, Instagram } from 'lucide-react';
@@ -19,6 +20,11 @@ const newsletterFormSchema = z.object({
 
 export function Footer() {
   const { toast } = useToast();
+  const [year, setYear] = useState<number | string>("");
+
+  useEffect(() => {
+    setYear(new Date().getFullYear());
+  }, []);
 
   const form = useForm<z.infer<typeof newsletterFormSchema>>({
     resolver: zodResolver(newsletterFormSchema),
@@ -102,7 +108,7 @@ export function Footer() {
         </div>
         
         <div className="mt-8 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center text-sm">
-          <p className="text-gray-400">&copy; {new Date().getFullYear()} NC Properties. All rights reserved.</p>
+          <p className="text-gray-400">&copy; {year} NC Properties. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="#" className="text-gray-400 hover:text-white transition-colors"><Facebook className="h-5 w-5" /></a>
             <a href="#" className="text-gray-400 hover:text-white transition-colors"><Twitter className="h-5 w-5" /></a>

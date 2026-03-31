@@ -22,5 +22,6 @@ export const useTheme = () => {
   return {
     theme: mounted ? theme ?? "system" : "system",
     setTheme,
+    mounted,
   };
 };
