@@ -1,8 +1,8 @@
 
 export type Property = {
   id: string;
-  slug: string;
-  agentId?: string; // Foreign key to estate_agents
+  slug?: string;
+  agentId?: string; // Foreign key to estate_agents (agent_id)
   agentIds: string[]; // For UI compatibility, derived from agentId
   title: string;
   description: string;
@@ -12,13 +12,13 @@ export type Property = {
   beds: number; // Mapped from bedrooms
   baths: number; // Mapped from bathrooms
   location: string;
-  sqft: number;
-  erfSize: number;
+  sqft?: number;
+  erfSize?: number;
   yearBuilt?: number;
   features: string[];
   imageUrls: string[];
-  isFavorite: boolean;
-  onShow: boolean;
+  isFavorite?: boolean;
+  onShow?: boolean;
   videoUrl?: string;
   createdAt?: string;
   updatedAt?: string;
@@ -29,15 +29,15 @@ export type Agent = {
   firstName: string;
   lastName: string;
   name: string; // Derived: firstName + lastName
-  slug: string;
   email: string;
   phone?: string;
   imageUrl?: string; // Mapped from photo_url
   photoUrl?: string; // Helper for legacy
-  role?: string;
-  bio?: string;
-  isActive: boolean;
   updatedAt?: string;
+  slug?: string; // Fallback for UI if needed
+  role?: string; // Fallback
+  bio?: string;  // Fallback
+  isActive?: boolean;
 };
 
 export type BlogPost = {

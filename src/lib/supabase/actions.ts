@@ -8,9 +8,8 @@ export async function addProperty(formData: any) {
   const supabase = await createClient();
   
   const propertyData = {
-    agent_id: formData.agentId || (formData.agentIds && formData.agentIds[0]),
+    agent_id: formData.agentId || null,
     title: formData.address || formData.title,
-    slug: formData.slug || (formData.address || formData.title).toLowerCase().replace(/\s+/g, '-'),
     description: formData.description,
     price: Number(formData.price),
     status: formData.status,
@@ -18,14 +17,8 @@ export async function addProperty(formData: any) {
     bedrooms: Number(formData.beds || formData.bedrooms),
     bathrooms: Number(formData.baths || formData.bathrooms),
     location: formData.location,
-    sqft: Number(formData.sqft || 0),
-    erf_size: Number(formData.erfSize || 0),
-    year_built: Number(formData.yearBuilt),
     features: formData.features,
-    image_urls: formData.imageUrls,
-    on_show: formData.onShow,
-    is_favorite: formData.isFavorite,
-    video_url: formData.videoUrl
+    image_urls: formData.imageUrls
   };
 
   const { data, error } = await supabase.from('properties').insert([propertyData]).select().single();
@@ -42,7 +35,6 @@ export async function updateProperty(id: string, formData: any) {
   
   const dbData: any = {};
   if (formData.address !== undefined || formData.title !== undefined) dbData.title = formData.address || formData.title;
-  if (formData.slug !== undefined) dbData.slug = formData.slug;
   if (formData.location !== undefined) dbData.location = formData.location;
   if (formData.price !== undefined) dbData.price = Number(formData.price);
   if (formData.status !== undefined) dbData.status = formData.status;
@@ -52,15 +44,7 @@ export async function updateProperty(id: string, formData: any) {
   if (formData.description !== undefined) dbData.description = formData.description;
   if (formData.features !== undefined) dbData.features = formData.features;
   if (formData.imageUrls !== undefined || formData.image_urls !== undefined) dbData.image_urls = formData.imageUrls || formData.image_urls;
-  if (formData.onShow !== undefined) dbData.on_show = formData.onShow;
-  if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
-  if (formData.sqft !== undefined) dbData.sqft = Number(formData.sqft);
-  if (formData.erfSize !== undefined) dbData.erf_size = Number(formData.erfSize);
-  if (formData.yearBuilt !== undefined) dbData.year_built = Number(formData.yearBuilt);
-  if (formData.videoUrl !== undefined) dbData.video_url = formData.videoUrl;
-  if (formData.agentId !== undefined || formData.agentIds !== undefined) {
-    dbData.agent_id = formData.agentId || (formData.agentIds && formData.agentIds[0]);
-  }
+  if (formData.agentId !== undefined) dbData.agent_id = formData.agentId || null;
 
   const { error } = await supabase.from('properties').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
@@ -84,13 +68,9 @@ export async function addAgent(formData: any) {
   const dbData = {
     first_name: formData.firstName,
     last_name: formData.lastName,
-    slug: formData.slug,
     email: formData.email,
     phone: formData.phone,
-    photo_url: formData.photoUrl || formData.imageUrl,
-    role: formData.role || 'Property Agent',
-    bio: formData.bio,
-    is_active: formData.isActive ?? true
+    photo_url: formData.photoUrl || formData.imageUrl
   };
 
   const { data, error } = await supabase.from('estate_agents').insert([dbData]).select();
@@ -108,18 +88,14 @@ export async function updateAgent(id: string, formData: any) {
     last_name: formData.lastName || formData.name?.split(' ').slice(1).join(' '),
     email: formData.email,
     phone: formData.phone,
-    photo_url: formData.photoUrl || formData.imageUrl,
-    role: formData.role,
-    bio: formData.bio,
-    is_active: formData.isActive
+    photo_url: formData.photoUrl || formData.imageUrl
   };
-  if (formData.slug) dbData.slug = formData.slug;
 
   const { error } = await supabase.from('estate_agents').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
   
   revalidatePath('/admin/agents');
-  revalidatePath(`/agents/${formData.slug}`);
+  revalidatePath('/about-us');
   return { success: true };
 }
 

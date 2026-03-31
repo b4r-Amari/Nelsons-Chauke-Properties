@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
@@ -20,10 +19,8 @@ const formSchema = z.object({
   firstName: z.string().min(2),
   lastName: z.string().min(2),
   email: z.string().email(),
-  phone: z.string().min(10),
+  phone: z.string().optional(),
   photoUrl: z.string().url(),
-  slug: z.string().min(2),
-  bio: z.string().min(10),
 })
 
 export function EditAgentForm({ initialData }: { initialData: Agent }) {
@@ -38,8 +35,6 @@ export function EditAgentForm({ initialData }: { initialData: Agent }) {
       email: initialData.email,
       phone: initialData.phone || "",
       photoUrl: initialData.photoUrl || "",
-      slug: initialData.slug,
-      bio: initialData.bio || ""
     },
   })
 
@@ -133,46 +128,18 @@ export function EditAgentForm({ initialData }: { initialData: Agent }) {
                     )}
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                    control={form.control}
-                    name="photoUrl"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Photo URL</FormLabel>
-                        <FormControl>
-                            <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="slug"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Slug</FormLabel>
-                        <FormControl>
-                            <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-              </div>
               <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Agent Biography</FormLabel>
-                    <FormControl>
-                      <Textarea className="min-h-[150px]" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                  control={form.control}
+                  name="photoUrl"
+                  render={({ field }) => (
+                      <FormItem>
+                      <FormLabel>Photo URL</FormLabel>
+                      <FormControl>
+                          <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                      </FormItem>
+                  )}
               />
               <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep" size="lg" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting ? "Saving..." : "Save Changes"}

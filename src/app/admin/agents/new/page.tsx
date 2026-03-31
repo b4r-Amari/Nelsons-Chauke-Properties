@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
@@ -18,12 +17,9 @@ import { useRouter } from "next/navigation"
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
   lastName: z.string().min(2, { message: "Last name must be at least 2 characters." }),
-  slug: z.string().min(2, { message: "Slug is required." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
   phone: z.string().optional(),
   photoUrl: z.string().url().optional().or(z.literal("")),
-  bio: z.string().optional(),
-  isActive: z.boolean().default(true),
 })
 
 export default function NewAgentPage() {
@@ -35,12 +31,9 @@ export default function NewAgentPage() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      slug: "",
       email: "",
       phone: "",
       photoUrl: "",
-      bio: "",
-      isActive: true,
     },
   })
 
@@ -106,19 +99,6 @@ export default function NewAgentPage() {
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <FormField
-                  control={form.control}
-                  name="slug"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>URL Slug</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g. sarah-jones" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
                  <FormField
                     control={form.control}
                     name="email"
@@ -132,8 +112,6 @@ export default function NewAgentPage() {
                         </FormItem>
                     )}
                     />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                     control={form.control}
                     name="phone"
@@ -147,32 +125,19 @@ export default function NewAgentPage() {
                         </FormItem>
                     )}
                 />
-                <FormField
-                    control={form.control}
-                    name="photoUrl"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Photo URL</FormLabel>
-                        <FormControl>
-                            <Input placeholder="https://example.com/photo.png" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
               </div>
               <FormField
-                control={form.control}
-                name="bio"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Agent Biography</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Write a short bio for the agent..." className="min-h-[150px]" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                  control={form.control}
+                  name="photoUrl"
+                  render={({ field }) => (
+                      <FormItem>
+                      <FormLabel>Photo URL</FormLabel>
+                      <FormControl>
+                          <Input placeholder="https://example.com/photo.png" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                      </FormItem>
+                  )}
               />
               <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep" size="lg" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting ? "Creating..." : "Create Agent Profile"}

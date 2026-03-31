@@ -4,7 +4,7 @@ import type { Property, Agent, BlogPost } from '@/lib/types';
 
 const mapDbProperty = (p: any): Property => ({
   id: String(p.id),
-  slug: p.slug || '',
+  slug: p.id, // Fallback to ID as slug if missing in DB
   agentId: p.agent_id,
   agentIds: p.agent_id ? [String(p.agent_id)] : [],
   title: p.title || '',
@@ -16,14 +16,8 @@ const mapDbProperty = (p: any): Property => ({
   beds: p.bedrooms || 0,
   baths: Number(p.bathrooms || 0),
   location: p.location || '',
-  sqft: p.sqft || 0,
-  erfSize: p.erf_size || 0,
-  yearBuilt: p.year_built,
   features: Array.isArray(p.features) ? p.features : [],
   imageUrls: Array.isArray(p.image_urls) ? p.image_urls : [],
-  isFavorite: p.is_favorite || false,
-  onShow: p.on_show || false,
-  videoUrl: p.video_url,
   createdAt: p.created_at,
   updatedAt: p.updated_at
 });
@@ -33,15 +27,14 @@ const mapDbAgent = (a: any): Agent => ({
   firstName: a.first_name || '',
   lastName: a.last_name || '',
   name: `${a.first_name || ''} ${a.last_name || ''}`.trim(),
-  slug: a.slug || '',
   email: a.email || '',
   phone: a.phone || '',
   imageUrl: a.photo_url || '',
   photoUrl: a.photo_url || '',
-  role: a.role || 'Property Agent',
-  bio: a.bio || '',
-  isActive: a.is_active !== false,
-  updatedAt: a.updated_at
+  updatedAt: a.updated_at,
+  slug: String(a.id), // Use ID as slug since slug column is missing
+  role: 'Property Agent',
+  bio: ''
 });
 
 const mapDbBlogPost = (b: any): BlogPost => ({
@@ -68,15 +61,9 @@ export const getProperties = async (options: { featuredOnly?: boolean; status?: 
     let query = supabase.from('properties').select('*');
 
     if (options.status && options.status !== 'any') {
-      if (options.status === 'on-show') {
-        query = query.eq('on_show', true);
-      } else {
-        query = query.eq('status', options.status);
-      }
+      query = query.eq('status', options.status);
     }
 
-    if (options.featuredOnly) query = query.eq('is_favorite', true);
-    if (options.onShow) query = query.eq('on_show', true);
     if (options.limit) query = query.limit(options.limit);
 
     const { data, error } = await query.order('created_at', { ascending: false });
@@ -109,7 +96,8 @@ export const getProperty = async (id: string): Promise<Property | null> => {
 export const getAgents = async (): Promise<Agent[]> => {
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('estate_agents').select('*').eq('is_active', true);
+    // Removed is_active filter as column does not exist
+    const { data, error } = await supabase.from('estate_agents').select('*');
     if (error) throw error;
     return (data || []).map(mapDbAgent);
   } catch (err: any) {
@@ -118,10 +106,10 @@ export const getAgents = async (): Promise<Agent[]> => {
   }
 };
 
-export const getAgent = async (slug: string): Promise<Agent | null> => {
+export const getAgent = async (id: string): Promise<Agent | null> => {
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('estate_agents').select('*').eq('slug', slug).single();
+    const { data, error } = await supabase.from('estate_agents').select('*').eq('id', id).single();
     if (error || !data) return null;
     return mapDbAgent(data);
   } catch (err: any) {
