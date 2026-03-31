@@ -86,6 +86,7 @@ export async function middleware(request: NextRequest) {
       .maybeSingle()
 
     if (!adminProfile) {
+      // User is authenticated but NOT an admin
       return NextResponse.redirect(new URL('/', request.url))
     }
   }

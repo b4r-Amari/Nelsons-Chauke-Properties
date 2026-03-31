@@ -32,7 +32,6 @@ export async function addProperty(formData: any) {
   const propertyData = {
     agent_id: formData.agentId || null,
     title: formData.address || formData.title,
-    slug: formData.slug || (formData.address || formData.title).toLowerCase().replace(/\s+/g, '-'),
     description: formData.description,
     price: Number(formData.price),
     status: formData.status,
@@ -40,11 +39,11 @@ export async function addProperty(formData: any) {
     bedrooms: Number(formData.beds || formData.bedrooms || 0),
     bathrooms: Number(formData.baths || formData.bathrooms || 0),
     location: formData.location,
+    features: formData.features || {},
+    image_urls: formData.imageUrls || [],
+    // Legacy fields if they exist in DB
     sqft: Number(formData.sqft || 0),
     erf_size: Number(formData.erfSize || 0),
-    features: formData.features || [],
-    image_urls: formData.imageUrls || [],
-    video_url: formData.videoUrl || null,
     on_show: formData.onShow || false,
     is_favorite: formData.isFavorite || false,
     year_built: formData.yearBuilt || null
@@ -74,9 +73,10 @@ export async function updateProperty(id: string, formData: any) {
   if (formData.features !== undefined) dbData.features = formData.features;
   if (formData.imageUrls !== undefined) dbData.image_urls = formData.imageUrls;
   if (formData.agentId !== undefined) dbData.agent_id = formData.agentId || null;
+  
+  // Optional columns
   if (formData.onShow !== undefined) dbData.on_show = formData.onShow;
   if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
-  if (formData.videoUrl !== undefined) dbData.video_url = formData.videoUrl;
 
   const { error } = await supabase.from('properties').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
@@ -103,9 +103,6 @@ export async function addAgent(formData: any) {
     email: formData.email,
     phone: formData.phone,
     photo_url: formData.photoUrl,
-    role: formData.role || 'Property Agent',
-    bio: formData.bio || null,
-    slug: formData.slug || `${formData.firstName}-${formData.lastName}`.toLowerCase()
   };
 
   const { data, error } = await supabase.from('estate_agents').insert([dbData]).select();
@@ -125,8 +122,6 @@ export async function updateAgent(id: string, formData: any) {
     phone: formData.phone,
     photo_url: formData.photoUrl
   };
-  if (formData.role) dbData.role = formData.role;
-  if (formData.bio) dbData.bio = formData.bio;
 
   const { error } = await supabase.from('estate_agents').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
@@ -186,9 +181,6 @@ export async function addBlogPost(formData: any) {
     title: formData.title,
     slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
     content: formData.content,
-    excerpt: formData.excerpt,
-    category: formData.category,
-    author: formData.author,
     featured_image: formData.imageUrl,
     published: formData.published ?? true
   };
@@ -206,9 +198,6 @@ export async function updateBlogPost(id: string, formData: any) {
   const dbData: any = {
     title: formData.title,
     content: formData.content,
-    excerpt: formData.excerpt,
-    category: formData.category,
-    author: formData.author,
     featured_image: formData.imageUrl,
     published: formData.published
   };

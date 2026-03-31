@@ -1,12 +1,15 @@
 
 -- ==========================================
--- 1. SETUP: Extensions & Utility Functions
+-- 1. CLEANUP (Optional: Only if you want to wipe previous attempts)
 -- ==========================================
+-- DROP TABLE IF EXISTS public.valuation_requests, public.marketing_leads, public.blog_posts, public.properties, public.estate_agents, public.admin_users CASCADE;
 
--- Enable UUID generation
+-- ==========================================
+-- 2. SETUP & EXTENSIONS
+-- ==========================================
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
--- Create a function to automatically update the 'updated_at' timestamp
+-- Function to handle 'updated_at' timestamps
 CREATE OR REPLACE FUNCTION update_modified_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -16,10 +19,10 @@ END;
 $$ language 'plpgsql';
 
 -- ==========================================
--- 2. TABLES & TRIGGERS
+-- 3. TABLES
 -- ==========================================
 
--- Admin Users (Links to Supabase Auth)
+-- Admin Users (Source of truth for Admin Portal access)
 CREATE TABLE public.admin_users (
     id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
     email text NOT NULL UNIQUE,
@@ -34,23 +37,15 @@ CREATE TABLE public.estate_agents (
     email text NOT NULL,
     phone text,
     photo_url text,
-    role text DEFAULT 'Property Agent',
-    bio text,
-    slug text UNIQUE,
     created_at timestamptz DEFAULT now(),
     updated_at timestamptz DEFAULT now()
 );
-
-CREATE TRIGGER update_estate_agents_modtime 
-BEFORE UPDATE ON public.estate_agents 
-FOR EACH ROW EXECUTE FUNCTION update_modified_column();
 
 -- Properties
 CREATE TABLE public.properties (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     agent_id uuid REFERENCES public.estate_agents(id) ON DELETE SET NULL,
     title text NOT NULL,
-    slug text UNIQUE,
     description text NOT NULL,
     price numeric NOT NULL,
     status text CHECK (status IN ('for-sale', 'to-let', 'sold')),
@@ -58,21 +53,11 @@ CREATE TABLE public.properties (
     bedrooms integer NOT NULL DEFAULT 0,
     bathrooms numeric NOT NULL DEFAULT 0,
     location text NOT NULL,
-    sqft integer DEFAULT 0,
-    erf_size integer DEFAULT 0,
-    features jsonb DEFAULT '[]'::jsonb,
+    features jsonb DEFAULT '{}'::jsonb,
     image_urls text[] DEFAULT '{}'::text[],
-    video_url text,
-    on_show boolean DEFAULT false,
-    is_favorite boolean DEFAULT false,
-    year_built integer,
     created_at timestamptz DEFAULT now(),
     updated_at timestamptz DEFAULT now()
 );
-
-CREATE TRIGGER update_properties_modtime 
-BEFORE UPDATE ON public.properties 
-FOR EACH ROW EXECUTE FUNCTION update_modified_column();
 
 -- Blog Posts
 CREATE TABLE public.blog_posts (
@@ -80,20 +65,13 @@ CREATE TABLE public.blog_posts (
     title text NOT NULL,
     slug text NOT NULL UNIQUE,
     content text NOT NULL,
-    excerpt text,
-    category text,
-    author text DEFAULT 'NC Properties',
     featured_image text,
     published boolean DEFAULT true,
     created_at timestamptz DEFAULT now(),
     updated_at timestamptz DEFAULT now()
 );
 
-CREATE TRIGGER update_blog_posts_modtime 
-BEFORE UPDATE ON public.blog_posts 
-FOR EACH ROW EXECUTE FUNCTION update_modified_column();
-
--- Marketing Leads (Newsletter/Alerts)
+-- Marketing Leads & Valuation Requests
 CREATE TABLE public.marketing_leads (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     email text NOT NULL UNIQUE,
@@ -102,7 +80,6 @@ CREATE TABLE public.marketing_leads (
     created_at timestamptz DEFAULT now()
 );
 
--- Valuation Requests
 CREATE TABLE public.valuation_requests (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     name text NOT NULL,
@@ -113,7 +90,7 @@ CREATE TABLE public.valuation_requests (
 );
 
 -- ==========================================
--- 3. THE AUTH BRIDGE (Automatic Admin Creation)
+-- 4. THE AUTH BRIDGE (Automatic Admin Creation)
 -- ==========================================
 
 -- This function automatically adds a new user to public.admin_users 
@@ -133,10 +110,8 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- ==========================================
--- 4. ROW LEVEL SECURITY (RLS)
+-- 5. SECURITY (RLS)
 -- ==========================================
-
--- Enable RLS on all tables
 ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.estate_agents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
@@ -144,45 +119,27 @@ ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.marketing_leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.valuation_requests ENABLE ROW LEVEL SECURITY;
 
--- Admin Users Policies: 
-CREATE POLICY "Admins can view their own status" ON public.admin_users FOR SELECT USING (auth.uid() = id);
+-- ADMIN CHECK HELPER: Used in policies below
+CREATE OR REPLACE FUNCTION is_admin() 
+RETURNS boolean AS $$
+  SELECT EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid());
+$$ LANGUAGE sql SECURITY DEFINER;
 
--- Estate Agents Policies:
-CREATE POLICY "Public read access for agents" ON public.estate_agents FOR SELECT USING (true);
-CREATE POLICY "Admin full access for agents" ON public.estate_agents USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+-- Policies
+CREATE POLICY "Public read agents/props/blogs" ON public.estate_agents FOR SELECT USING (true);
+CREATE POLICY "Public read agents/props/blogs" ON public.properties FOR SELECT USING (true);
+CREATE POLICY "Public read agents/props/blogs" ON public.blog_posts FOR SELECT USING (published = true);
 
--- Properties Policies:
-CREATE POLICY "Public read access for properties" ON public.properties FOR SELECT USING (true);
-CREATE POLICY "Admin full access for properties" ON public.properties USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+CREATE POLICY "Admin full access agents" ON public.estate_agents USING (is_admin());
+CREATE POLICY "Admin full access properties" ON public.properties USING (is_admin());
+CREATE POLICY "Admin full access blogs" ON public.blog_posts USING (is_admin());
 
--- Blog Posts Policies:
-CREATE POLICY "Public read access for published blogs" ON public.blog_posts FOR SELECT USING (published = true);
-CREATE POLICY "Admin full access for blogs" ON public.blog_posts USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
-
--- Marketing Leads Policies:
-CREATE POLICY "Public insert access for leads" ON public.marketing_leads FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admin full access for leads" ON public.marketing_leads USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
-
--- Valuation Requests Policies:
-CREATE POLICY "Public insert access for valuations" ON public.valuation_requests FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admin full access for valuations" ON public.valuation_requests USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+CREATE POLICY "Public insert leads" ON public.marketing_leads FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public insert valuations" ON public.valuation_requests FOR INSERT WITH CHECK (true);
 
 -- ==========================================
--- 5. STORAGE BUCKETS
+-- 6. TIMESTAMPS
 -- ==========================================
-
--- Note: Buckets often need to be created via the Supabase Dashboard UI or API.
--- These SQL statements assume the storage schema exists.
-INSERT INTO storage.buckets (id, name, public) VALUES ('property-images', 'property-images', true) ON CONFLICT DO NOTHING;
-INSERT INTO storage.buckets (id, name, public) VALUES ('agent-photos', 'agent-photos', true) ON CONFLICT DO NOTHING;
-INSERT INTO storage.buckets (id, name, public) VALUES ('blog-media', 'blog-media', true) ON CONFLICT DO NOTHING;
-
--- Enable public read access for the buckets
-CREATE POLICY "Public read property-images" ON storage.objects FOR SELECT USING (bucket_id = 'property-images');
-CREATE POLICY "Public read agent-photos" ON storage.objects FOR SELECT USING (bucket_id = 'agent-photos');
-CREATE POLICY "Public read blog-media" ON storage.objects FOR SELECT USING (bucket_id = 'blog-media');
-
--- Allow authenticated admins to upload/modify these buckets
-CREATE POLICY "Admins full access property-images" ON storage.objects USING (bucket_id = 'property-images' AND EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
-CREATE POLICY "Admins full access agent-photos" ON storage.objects USING (bucket_id = 'agent-photos' AND EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
-CREATE POLICY "Admins full access blog-media" ON storage.objects USING (bucket_id = 'blog-media' AND EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+CREATE TRIGGER update_estate_agents_modtime BEFORE UPDATE ON public.estate_agents FOR EACH ROW EXECUTE FUNCTION update_modified_column();
+CREATE TRIGGER update_properties_modtime BEFORE UPDATE ON public.properties FOR EACH ROW EXECUTE FUNCTION update_modified_column();
+CREATE TRIGGER update_blog_posts_modtime BEFORE UPDATE ON public.blog_posts FOR EACH ROW EXECUTE FUNCTION update_modified_column();

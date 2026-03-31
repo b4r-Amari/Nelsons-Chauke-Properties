@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Logo } from "@/components/shared/logo";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/auth-context";
 
@@ -36,20 +37,34 @@ export default function AdminLoginPage() {
   });
 
   // Redirect if already logged in as an admin
-  if (!isAuthLoading && user && isAdmin) {
-    router.replace('/admin/dashboard');
-    return null;
-  }
+  useEffect(() => {
+    if (!isAuthLoading && user && isAdmin) {
+      router.replace('/admin/dashboard');
+    }
+  }, [user, isAdmin, isAuthLoading, router]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: values.email,
         password: values.password,
       });
 
       if (error) throw error;
+
+      // Immediately check if the user is in public.admin_users
+      const { data: adminProfile } = await supabase
+        .from('admin_users')
+        .select('id')
+        .eq('id', data.user.id)
+        .maybeSingle();
+
+      if (!adminProfile) {
+        // Sign out if not an admin
+        await supabase.auth.signOut();
+        throw new Error("Unauthorized. This portal is for administrators only.");
+      }
       
       toast({
         title: "Login Successful",
@@ -60,10 +75,14 @@ export default function AdminLoginPage() {
         toast({
             variant: "destructive",
             title: "Login Failed",
-            description: error.message || "Invalid credentials. Please check your email and password.",
+            description: error.message || "Invalid credentials.",
         });
         setIsLoading(false);
     }
+  }
+
+  if (!isAuthLoading && user && isAdmin) {
+    return null;
   }
 
   return (
@@ -74,7 +93,7 @@ export default function AdminLoginPage() {
       <Card className="w-full max-w-sm shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="font-headline text-2xl">Admin Portal</CardTitle>
-          <CardDescription>Please sign in to continue.</CardDescription>
+          <CardDescription>Sign in with your admin account.</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>

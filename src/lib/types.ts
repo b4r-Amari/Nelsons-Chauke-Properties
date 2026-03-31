@@ -2,7 +2,7 @@
 export type Property = {
   id: string;
   agentId?: string;
-  agentIds: string[]; // UI compatibility for legacy components
+  agentIds: string[]; // UI compatibility
   title: string;
   description: string;
   price: number;
@@ -15,6 +15,14 @@ export type Property = {
   imageUrls: string[];
   createdAt?: string;
   updatedAt?: string;
+  // Extra fields for app features (keeping them optional if missing in DB)
+  slug?: string;
+  sqft?: number;
+  erfSize?: number;
+  onShow?: boolean;
+  isFavorite?: boolean;
+  yearBuilt?: number;
+  videoUrl?: string;
 };
 
 export type Agent = {
@@ -27,6 +35,10 @@ export type Agent = {
   imageUrl?: string;
   photoUrl?: string;
   updatedAt?: string;
+  // Extra fields for app features
+  role?: string;
+  bio?: string;
+  slug?: string;
 };
 
 export type BlogPost = {
@@ -57,11 +69,20 @@ export type Filters = {
   maxPrice: string;
   minBeds: string;
   minBaths: string;
+  minFloorSize: string;
+  maxFloorSize: string;
+  minErfSize: string;
+  maxErfSize: string;
   features: {
     petFriendly: boolean;
     garden: boolean;
     pool: boolean;
     flatlet: boolean;
+  };
+  other: {
+    retirement: boolean;
+    onShow: boolean;
+    securityEstate: boolean;
   };
   selectedLocations?: SearchSuggestion[];
 };
