@@ -55,7 +55,6 @@ const mobileNavLinks = [
   { href: "/calculators", label: "Calculators", icon: Calculator },
   { href: "/blog", label: "Property News", icon: Newspaper },
   { href: "/about-us", label: "Our Team", icon: Users },
-  { href: "/contact-us", label: "Contact Us", icon: Mail },
 ]
 
 
@@ -132,7 +131,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                     {item.label}
                     <span className={cn(
                         'absolute bottom-0 left-0 h-0.5 transition-all duration-300',
-                         (pathname === item.href || (isCalculatorsActive && item.label === 'Calculators')) ? 'w-full bg-brand-deep' : 'w-0 group-hover:w-full bg-brand-bright'
+                         (pathname === item.href || (isCalculatorsActive && item.label === 'Calculators')) ? "text-brand-deep" : "text-muted-foreground hover:text-brand-bright"
                     )}></span>
                     </Link>
                 )
@@ -182,13 +181,19 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                     </div>
 
                     <div className="mt-auto border-t p-6 shrink-0">
-                        <button
-                            onClick={handleLogout}
-                            className="flex items-center gap-4 px-4 py-2.5 w-full text-base font-medium text-foreground/80 hover:text-brand-bright hover:bg-muted rounded-lg transition-colors"
+                        <Link
+                            href="/contact-us"
+                            className={cn(
+                                "flex items-center gap-4 px-4 py-2.5 w-full text-base font-medium transition-colors rounded-lg",
+                                pathname === "/contact-us" 
+                                    ? "text-brand-bright bg-muted/50" 
+                                    : "text-foreground/80 hover:bg-muted hover:text-foreground"
+                            )}
+                            onClick={() => handleMobileMenuToggle(false)}
                         >
-                            <LogOut className="h-5 w-5 shrink-0" />
-                            Logout
-                        </button>
+                            <Mail className="h-5 w-5 shrink-0" />
+                            Contact Us
+                        </Link>
                     </div>
               </SheetContent>
             </Sheet>
