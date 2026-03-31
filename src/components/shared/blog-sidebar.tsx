@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { type BlogPost } from "@/lib/types"
+import type { BlogPost } from "@/lib/types"
 import { addMarketingLead } from "@/lib/supabase/actions"
 
 

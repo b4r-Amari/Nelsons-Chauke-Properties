@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { getBlogPost, getBlogPosts } from '@/lib/data';
-import { type BlogPost } from '@/lib/types';
+import type { BlogPost } from '@/lib/types';
 import { BlogSidebar } from '@/components/shared/blog-sidebar';
 import { Metadata } from 'next';
 

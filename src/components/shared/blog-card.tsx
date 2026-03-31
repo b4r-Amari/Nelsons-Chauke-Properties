@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
-import { type BlogPost } from "@/lib/types";
+import type { BlogPost } from "@/lib/types";
 
 type BlogCardProps = {
   post: BlogPost;
@@ -22,7 +22,6 @@ export function BlogCard({ post }: BlogCardProps) {
               <Image
                 src={post.imageUrl}
                 alt={`Featured image for blog post titled: ${post.title}`}
-                data-ai-hint={post.imageHint}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-500"
               />
