@@ -3,10 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { getBlogPosts } from '@/lib/data';
-import type { BlogPost } from '@/components/shared/blog-card';
+import type { BlogPost } from '@/lib/types';
 import { BlogListings } from '@/components/sections/blog-listings';
 import type { Metadata } from 'next';
-import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata: Metadata = {
     title: 'Property News & Real Estate Insights | NC Properties',

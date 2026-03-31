@@ -5,7 +5,7 @@ import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { type BlogPost } from '@/components/shared/blog-card';
+import { type BlogPost } from '@/lib/types';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,16 +22,14 @@ export function BlogListings({ initialPosts }: { initialPosts: BlogPost[] }) {
   const [visiblePosts, setVisiblePosts] = useState(9); // 9 remaining stories
 
   const categories = useMemo(() => {
-    const allCategories = initialPosts.map(post => post.category);
-    return ['All', ...Array.from(new Set(allCategories))];
+    const allCategories = initialPosts.map(post => post.category).filter(Boolean);
+    return ['All', ...Array.from(new Set(allCategories)) as string[]];
   }, [initialPosts]);
 
 
   useEffect(() => {
     if (initialPosts.length === 0) {
       setIsLoading(true);
-      // In a real scenario with client-only fetching, you would call getBlogPosts() here.
-      // Since we pass initialPosts, we can assume they are loaded.
       setIsLoading(false);
     }
   }, [initialPosts]);
@@ -46,12 +44,12 @@ export function BlogListings({ initialPosts }: { initialPosts: BlogPost[] }) {
     if (searchQuery) {
         filtered = filtered.filter(post =>
           post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase())
+          (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
         );
     }
 
     setFilteredPosts(filtered);
-    setVisiblePosts(9); // Reset pagination on new search/filter
+    setVisiblePosts(9); 
   }, [searchQuery, selectedCategory, allPosts]);
 
   const handleLoadMore = () => {
@@ -74,11 +72,15 @@ export function BlogListings({ initialPosts }: { initialPosts: BlogPost[] }) {
     <Link href={`/blog/${post.slug}`} className="block group">
         <Card className="flex gap-4 shadow-md hover:shadow-xl transition-shadow duration-300">
              <div className="relative w-1/3 aspect-square shrink-0 overflow-hidden rounded-l-lg">
-                 <Image src={post.imageUrl} alt={post.title} data-ai-hint={post.imageHint} fill className="object-cover group-hover:scale-105 transition-transform"/>
+                 {post.imageUrl ? (
+                   <Image src={post.imageUrl} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform"/>
+                 ) : (
+                   <div className="w-full h-full bg-muted" />
+                 )}
              </div>
              <CardContent className="py-4 pr-4 pl-0">
                  <h3 className="font-bold font-headline leading-tight mb-1 line-clamp-3">{post.title}</h3>
-                 <p className="text-xs text-muted-foreground">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                 <p className="text-xs text-muted-foreground">{new Date(post.date || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
              </CardContent>
         </Card>
     </Link>
@@ -88,11 +90,15 @@ export function BlogListings({ initialPosts }: { initialPosts: BlogPost[] }) {
       <Link href={`/blog/${post.slug}`} className="block group">
         <Card className="flex flex-col sm:flex-row gap-4 shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden">
              <div className="relative w-full sm:w-1/3 h-48 sm:h-auto shrink-0">
-                 <Image src={post.imageUrl} alt={post.title} data-ai-hint={post.imageHint} fill className="object-cover group-hover:scale-105 transition-transform"/>
+                 {post.imageUrl ? (
+                   <Image src={post.imageUrl} alt={post.title} fill className="object-cover group-hover:scale-105 transition-transform"/>
+                 ) : (
+                   <div className="w-full h-full bg-muted" />
+                 )}
              </div>
              <CardContent className="p-4 sm:p-6 flex flex-col">
                  <h3 className="font-bold text-xl font-headline leading-tight mb-2 group-hover:text-brand-bright transition-colors">{post.title}</h3>
-                 <p className="text-xs text-muted-foreground mb-3">{new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                 <p className="text-xs text-muted-foreground mb-3">{new Date(post.date || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                  <p className="text-sm text-muted-foreground line-clamp-2 sm:line-clamp-3 flex-grow">{post.excerpt}</p>
              </CardContent>
         </Card>
@@ -103,13 +109,16 @@ export function BlogListings({ initialPosts }: { initialPosts: BlogPost[] }) {
     <Link href={`/blog/${post.slug}`} className="block group">
       <Card className="h-full flex flex-col shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden rounded-lg">
         <div className="relative aspect-video w-full overflow-hidden">
-          <Image
-            src={post.imageUrl}
-            alt={`Featured image for: ${post.title}`}
-            data-ai-hint={post.imageHint}
-            fill
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
+          {post.imageUrl ? (
+            <Image
+              src={post.imageUrl}
+              alt={`Featured image for: ${post.title}`}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full bg-muted" />
+          )}
         </div>
         <CardContent className="p-4 flex flex-col flex-grow">
           <h3 className="text-lg font-bold font-headline text-brand-deep mb-2 line-clamp-2 flex-grow group-hover:text-brand-bright transition-colors">
@@ -117,7 +126,7 @@ export function BlogListings({ initialPosts }: { initialPosts: BlogPost[] }) {
           </h3>
           <p className="text-sm text-muted-foreground line-clamp-3 mb-3">{post.excerpt}</p>
           <p className="text-xs text-muted-foreground mt-auto">
-            {new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            {new Date(post.date || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </CardContent>
       </Card>

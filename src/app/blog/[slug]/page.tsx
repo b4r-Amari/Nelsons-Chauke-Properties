@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Calendar, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { getBlogPost, getBlogPosts } from '@/lib/data';
-import { type BlogPost } from '@/components/shared/blog-card';
+import { type BlogPost } from '@/lib/types';
 import { BlogSidebar } from '@/components/shared/blog-sidebar';
 import { Metadata } from 'next';
 
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         description: post.excerpt,
         images: [
             {
-                url: post.imageUrl,
+                url: post.imageUrl || '',
                 width: 1200,
                 height: 630,
                 alt: post.title,
@@ -77,16 +77,17 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   </div>
                 </header>
 
-                <div className="relative aspect-video w-full rounded-lg overflow-hidden my-6 shadow-md">
-                  <Image
-                    src={post.imageUrl}
-                    alt={`Featured image for blog post titled: ${post.title}`}
-                    data-ai-hint={post.imageHint}
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
+                {post.imageUrl && (
+                  <div className="relative aspect-video w-full rounded-lg overflow-hidden my-6 shadow-md">
+                    <Image
+                      src={post.imageUrl}
+                      alt={`Featured image for blog post titled: ${post.title}`}
+                      fill
+                      className="object-cover"
+                      priority
+                    />
+                  </div>
+                )}
 
                 <div
                   className="prose prose-xs xs:prose-base dark:prose-invert max-w-none prose-p:text-foreground prose-headings:text-primary prose-a:text-brand-bright prose-ul:text-foreground prose-li:text-foreground"

@@ -2,8 +2,7 @@
 import { getProperty, getAgents } from "@/lib/data";
 import { notFound } from "next/navigation";
 import { EditPropertyForm } from "@/components/admin/edit-property-form";
-import type { Agent } from "@/components/shared/agent-card";
-import type { Property } from "@/components/shared/property-card";
+import type { Agent, Property } from "@/lib/types";
 
 // Correctly type `params` as a Promise to satisfy Next.js 15 and TypeScript
 export default async function EditPropertyPage({ params }: { params: Promise<{ id: string }> }) {

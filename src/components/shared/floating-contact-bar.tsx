@@ -4,7 +4,7 @@
 import React from 'react';
 import { Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import type { Agent } from './agent-card';
+import type { Agent } from '@/lib/types';
 
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -21,7 +21,7 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function FloatingContactBar({ agent }: { agent: Agent }) {
 
-  const whatsappNumber = agent.phone.replace(/[^0-9]/g, '');
+  const whatsappNumber = (agent.phone || '').replace(/[^0-9]/g, '');
   const whatsappLink = `https://wa.me/27${whatsappNumber.substring(whatsappNumber.length - 9)}`;
 
   return (

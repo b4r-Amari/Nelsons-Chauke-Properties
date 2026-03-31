@@ -1,9 +1,7 @@
 
 import { MetadataRoute } from 'next';
 import { getProperties, getAgents, getBlogPosts } from '@/lib/data';
-import { Property } from '@/components/shared/property-card';
-import { Agent } from '@/components/shared/agent-card';
-import { BlogPost } from '@/components/shared/blog-card';
+import type { Property, Agent, BlogPost } from '@/lib/types';
 
 // Helper function to convert Firestore Timestamps or date strings to ISO 8601 strings
 const toISOString = (timestamp: any): string => {

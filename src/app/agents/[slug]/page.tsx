@@ -7,8 +7,8 @@ import { getAgent, getProperties } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { PropertyCard, type Property } from '@/components/shared/property-card';
-import { type Agent } from '@/components/shared/agent-card';
+import { PropertyCard } from '@/components/shared/property-card';
+import { type Agent, type Property } from '@/lib/types';
 import type { Metadata } from 'next';
 
 type Props = {

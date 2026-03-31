@@ -5,7 +5,7 @@ import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import { getBlogPosts } from '@/lib/data';
 import { BlogsTable } from '@/components/admin/blogs-table';
-import { type BlogPost } from '@/components/shared/blog-card';
+import { type BlogPost } from '@/lib/types';
 
 export default async function AdminBlogsPage() {
   const blogPosts = await getBlogPosts();
@@ -29,7 +29,7 @@ export default async function AdminBlogsPage() {
         <CardContent>
             <BlogsTable initialPosts={blogPosts} />
         </CardContent>
-      </Card>
+      </div>
     </div>
   );
 }
