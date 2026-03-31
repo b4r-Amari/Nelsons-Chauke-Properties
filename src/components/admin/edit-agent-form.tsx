@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation"
 import type { Agent } from "@/lib/types"
 import { useState } from "react"
 import Image from "next/image"
+import placeholders from "@/lib/placeholder-images.json"
 
 const formSchema = z.object({
   firstName: z.string().min(2),

@@ -34,7 +34,10 @@ const mapDbAgent = (a: any): Agent => ({
   email: a.email || '',
   phone: a.phone || '',
   photoUrl: a.photo_url || '',
-  updatedAt: a.updated_at
+  updatedAt: a.updated_at,
+  slug: a.slug || String(a.id),
+  role: a.role || 'Property Agent',
+  bio: a.bio || ''
 });
 
 const mapDbBlogPost = (b: any): BlogPost => ({
@@ -52,7 +55,8 @@ const mapDbBlogPost = (b: any): BlogPost => ({
     month: 'long',
     day: 'numeric',
   }),
-  createdAt: b.created_at
+  createdAt: b.created_at,
+  updatedAt: b.updated_at
 });
 
 export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number; onShow?: boolean } = {}): Promise<Property[]> => {
@@ -109,6 +113,22 @@ export const getAgents = async (): Promise<Agent[]> => {
   } catch (err: any) {
     console.error('Error fetching agents:', err.message);
     return [];
+  }
+};
+
+export const getAgent = async (slugOrId: string): Promise<Agent | null> => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('estate_agents')
+      .select('*')
+      .or(`id.eq.${slugOrId},slug.eq.${slugOrId}`)
+      .maybeSingle();
+
+    if (error || !data) return null;
+    return mapDbAgent(data);
+  } catch (err: any) {
+    return null;
   }
 };
 

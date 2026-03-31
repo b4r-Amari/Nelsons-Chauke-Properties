@@ -17,7 +17,6 @@ import { createClient } from "@/lib/supabase/client"
 import type { Agent } from "@/lib/types"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import placeholders from "@/lib/placeholder-images.json";
 import Image from "next/image"
 import { addProperty, uploadFile } from "@/lib/supabase/actions"
 
@@ -27,12 +26,12 @@ const formSchema = z.object({
   price: z.coerce.number().min(0, "Price must be a positive number."),
   status: z.enum(["for-sale", "to-let", "sold"]),
   type: z.string().min(3, "Type is required."),
-  beds: z.coerce.number().int().min(0),
-  baths: z.coerce.number().int().min(0),
+  bedrooms: z.coerce.number().int().min(0),
+  bathrooms: z.coerce.number().min(0),
   sqft: z.coerce.number().int().min(0),
   erfSize: z.coerce.number().int().min(0),
   description: z.string().min(20, "Description must be at least 20 characters."),
-  features: z.array(z.string()).optional().default([]),
+  features: z.any().optional().default({}),
   onShow: z.boolean().default(false),
   agentId: z.string().min(1, { message: "Assign an agent." }),
   imageUrls: z.array(z.string().url()).min(1, "Provide at least one image."),
@@ -74,12 +73,12 @@ export default function NewPropertyPage() {
       price: 0,
       status: "for-sale",
       type: "House",
-      beds: 3,
-      baths: 2,
+      bedrooms: 3,
+      bathrooms: 2,
       sqft: 180,
       erfSize: 500,
       description: "",
-      features: [],
+      features: {},
       onShow: false,
       agentId: "",
       imageUrls: [],
@@ -203,11 +202,11 @@ export default function NewPropertyPage() {
                     <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="for-sale">For Sale</SelectItem><SelectItem value="to-let">To Let</SelectItem><SelectItem value="sold">Sold</SelectItem></SelectContent></Select></FormItem>
                 )} />
                 <div className="grid grid-cols-2 gap-2">
-                  <FormField control={form.control} name="beds" render={({ field }) => (
+                  <FormField control={form.control} name="bedrooms" render={({ field }) => (
                       <FormItem><FormLabel>Beds</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                   )} />
-                  <FormField control={form.control} name="baths" render={({ field }) => (
-                      <FormItem><FormLabel>Baths</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                  <FormField control={form.control} name="bathrooms" render={({ field }) => (
+                      <FormItem><FormLabel>Baths</FormLabel><FormControl><Input type="number" step="0.5" {...field} /></FormControl></FormItem>
                   )} />
                 </div>
               </CardContent>

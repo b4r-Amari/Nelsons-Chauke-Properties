@@ -25,10 +25,10 @@ const formSchema = z.object({
   price: z.coerce.number(),
   status: z.enum(["for-sale", "to-let", "sold"]),
   type: z.string().min(3),
-  beds: z.coerce.number().int(),
-  baths: z.coerce.number(),
+  bedrooms: z.coerce.number().int(),
+  bathrooms: z.coerce.number(),
   description: z.string().min(20),
-  features: z.any(),
+  features: z.any().optional(),
   onShow: z.boolean(),
   agentId: z.string().min(1, "Assign an agent"),
   imageUrls: z.array(z.string().url()).min(1),
@@ -49,8 +49,8 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
       price: initialData.price,
       status: initialData.status,
       type: initialData.type,
-      beds: initialData.bedrooms,
-      baths: initialData.bathrooms,
+      bedrooms: initialData.bedrooms,
+      bathrooms: initialData.bathrooms,
       description: initialData.description,
       features: initialData.features || {},
       onShow: initialData.onShow || false,
@@ -151,10 +151,10 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
                     <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} value={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="for-sale">For Sale</SelectItem><SelectItem value="to-let">To Let</SelectItem><SelectItem value="sold">Sold</SelectItem></SelectContent></Select></FormItem>
                 )} />
                 <div className="grid grid-cols-2 gap-2">
-                  <FormField control={form.control} name="beds" render={({ field }) => (
+                  <FormField control={form.control} name="bedrooms" render={({ field }) => (
                       <FormItem><FormLabel>Bedrooms</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                   )} />
-                  <FormField control={form.control} name="baths" render={({ field }) => (
+                  <FormField control={form.control} name="bathrooms" render={({ field }) => (
                       <FormItem><FormLabel>Bathrooms</FormLabel><FormControl><Input type="number" step="0.5" {...field} /></FormControl></FormItem>
                   )} />
                 </div>

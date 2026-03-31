@@ -36,8 +36,8 @@ export async function addProperty(formData: any) {
     price: Number(formData.price),
     status: formData.status,
     type: formData.type,
-    bedrooms: Number(formData.beds || 0),
-    bathrooms: Number(formData.baths || 0),
+    bedrooms: Number(formData.bedrooms || 0),
+    bathrooms: Number(formData.bathrooms || 0),
     location: formData.location,
     features: formData.features || {},
     image_urls: formData.imageUrls || [],
@@ -67,14 +67,15 @@ export async function updateProperty(id: string, formData: any) {
   if (formData.price !== undefined) dbData.price = Number(formData.price);
   if (formData.status !== undefined) dbData.status = formData.status;
   if (formData.type !== undefined) dbData.type = formData.type;
-  if (formData.beds !== undefined) dbData.bedrooms = Number(formData.beds);
-  if (formData.baths !== undefined) dbData.bathrooms = Number(formData.baths);
+  if (formData.bedrooms !== undefined) dbData.bedrooms = Number(formData.bedrooms);
+  if (formData.bathrooms !== undefined) dbData.bathrooms = Number(formData.bathrooms);
   if (formData.description !== undefined) dbData.description = formData.description;
   if (formData.features !== undefined) dbData.features = formData.features;
   if (formData.imageUrls !== undefined) dbData.image_urls = formData.imageUrls;
   if (formData.agentId !== undefined) dbData.agent_id = formData.agentId || null;
   if (formData.onShow !== undefined) dbData.on_show = formData.onShow;
   if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
+  if (formData.videoUrl !== undefined) dbData.video_url = formData.videoUrl;
 
   const { error } = await supabase.from('properties').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
@@ -181,9 +182,6 @@ export async function addBlogPost(formData: any) {
     content: formData.content,
     featured_image: formData.imageUrl,
     published: formData.published ?? true,
-    author: formData.author,
-    category: formData.category,
-    excerpt: formData.excerpt
   };
 
   const { data, error } = await supabase.from('blog_posts').insert([dbData]).select().single();
@@ -201,9 +199,6 @@ export async function updateBlogPost(id: string, formData: any) {
     content: formData.content,
     featured_image: formData.imageUrl,
     published: formData.published,
-    author: formData.author,
-    category: formData.category,
-    excerpt: formData.excerpt
   };
   if (formData.slug) dbData.slug = formData.slug;
 

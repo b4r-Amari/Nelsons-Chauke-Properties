@@ -32,6 +32,9 @@ export type Agent = {
   phone?: string;
   photoUrl?: string;
   updatedAt?: string;
+  slug?: string;
+  role?: string;
+  bio?: string;
 };
 
 export type BlogPost = {
@@ -45,6 +48,7 @@ export type BlogPost = {
   imageUrl?: string;
   published: boolean;
   createdAt?: string;
+  updatedAt?: string;
   date?: string;
 };
 
