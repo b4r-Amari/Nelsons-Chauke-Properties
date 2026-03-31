@@ -3,22 +3,22 @@ import { createClient } from './supabase/server';
 import type { Property, Agent, BlogPost } from '@/lib/types';
 
 const mapDbProperty = (p: any): Property => ({
-  id: p.id,
+  id: String(p.id),
   slug: p.slug || '',
   agentId: p.agent_id,
-  agentIds: p.agent_id ? [p.agent_id] : [],
+  agentIds: p.agent_id ? [String(p.agent_id)] : [],
   title: p.title || '',
   address: p.title || '',
-  location: p.location || '',
+  description: p.description || '',
   price: Number(p.price || 0),
   status: p.status || 'for-sale',
   type: p.type || '',
   beds: p.bedrooms || 0,
   baths: Number(p.bathrooms || 0),
+  location: p.location || '',
   sqft: p.sqft || 0,
   erfSize: p.erf_size || 0,
   yearBuilt: p.year_built,
-  description: p.description || '',
   features: Array.isArray(p.features) ? p.features : [],
   imageUrls: Array.isArray(p.image_urls) ? p.image_urls : [],
   isFavorite: p.is_favorite || false,
@@ -29,7 +29,7 @@ const mapDbProperty = (p: any): Property => ({
 });
 
 const mapDbAgent = (a: any): Agent => ({
-  id: a.id,
+  id: String(a.id),
   firstName: a.first_name || '',
   lastName: a.last_name || '',
   name: `${a.first_name || ''} ${a.last_name || ''}`.trim(),
@@ -45,7 +45,7 @@ const mapDbAgent = (a: any): Agent => ({
 });
 
 const mapDbBlogPost = (b: any): BlogPost => ({
-  id: b.id,
+  id: String(b.id),
   title: b.title || '',
   slug: b.slug || '',
   content: b.content || '',
@@ -129,6 +129,17 @@ export const getAgent = async (slug: string): Promise<Agent | null> => {
   }
 };
 
+export const getAgentById = async (id: string): Promise<Agent | null> => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.from('estate_agents').select('*').eq('id', id).single();
+    if (error || !data) return null;
+    return mapDbAgent(data);
+  } catch (err: any) {
+    return null;
+  }
+};
+
 export const getBlogPosts = async (options: { limit?: number } = {}): Promise<BlogPost[]> => {
   try {
     const supabase = await createClient();
@@ -148,6 +159,17 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('blog_posts').select('*').eq('slug', slug).single();
+    if (error || !data) return null;
+    return mapDbBlogPost(data);
+  } catch (err: any) {
+    return null;
+  }
+};
+
+export const getBlogPostById = async (id: string): Promise<BlogPost | null> => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.from('blog_posts').select('*').eq('id', id).single();
     if (error || !data) return null;
     return mapDbBlogPost(data);
   } catch (err: any) {

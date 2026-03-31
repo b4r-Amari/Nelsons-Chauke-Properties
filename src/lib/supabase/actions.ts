@@ -10,13 +10,17 @@ export async function addProperty(formData: any) {
   const propertyData = {
     agent_id: formData.agentId || (formData.agentIds && formData.agentIds[0]),
     title: formData.address || formData.title,
+    slug: formData.slug || (formData.address || formData.title).toLowerCase().replace(/\s+/g, '-'),
     description: formData.description,
     price: Number(formData.price),
     status: formData.status,
     type: formData.type,
-    bedrooms: Number(formData.beds),
-    bathrooms: Number(formData.baths),
+    bedrooms: Number(formData.beds || formData.bedrooms),
+    bathrooms: Number(formData.baths || formData.bathrooms),
     location: formData.location,
+    sqft: Number(formData.sqft || 0),
+    erf_size: Number(formData.erfSize || 0),
+    year_built: Number(formData.yearBuilt),
     features: formData.features,
     image_urls: formData.imageUrls,
     on_show: formData.onShow,
@@ -38,17 +42,21 @@ export async function updateProperty(id: string, formData: any) {
   
   const dbData: any = {};
   if (formData.address !== undefined || formData.title !== undefined) dbData.title = formData.address || formData.title;
+  if (formData.slug !== undefined) dbData.slug = formData.slug;
   if (formData.location !== undefined) dbData.location = formData.location;
   if (formData.price !== undefined) dbData.price = Number(formData.price);
   if (formData.status !== undefined) dbData.status = formData.status;
   if (formData.type !== undefined) dbData.type = formData.type;
-  if (formData.beds !== undefined) dbData.bedrooms = Number(formData.beds);
-  if (formData.baths !== undefined) dbData.bathrooms = Number(formData.baths);
+  if (formData.beds !== undefined || formData.bedrooms !== undefined) dbData.bedrooms = Number(formData.beds || formData.bedrooms);
+  if (formData.baths !== undefined || formData.bathrooms !== undefined) dbData.bathrooms = Number(formData.baths || formData.bathrooms);
   if (formData.description !== undefined) dbData.description = formData.description;
   if (formData.features !== undefined) dbData.features = formData.features;
-  if (formData.imageUrls !== undefined) dbData.image_urls = formData.imageUrls;
+  if (formData.imageUrls !== undefined || formData.image_urls !== undefined) dbData.image_urls = formData.imageUrls || formData.image_urls;
   if (formData.onShow !== undefined) dbData.on_show = formData.onShow;
   if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
+  if (formData.sqft !== undefined) dbData.sqft = Number(formData.sqft);
+  if (formData.erfSize !== undefined) dbData.erf_size = Number(formData.erfSize);
+  if (formData.yearBuilt !== undefined) dbData.year_built = Number(formData.yearBuilt);
   if (formData.videoUrl !== undefined) dbData.video_url = formData.videoUrl;
   if (formData.agentId !== undefined || formData.agentIds !== undefined) {
     dbData.agent_id = formData.agentId || (formData.agentIds && formData.agentIds[0]);
@@ -80,6 +88,7 @@ export async function addAgent(formData: any) {
     email: formData.email,
     phone: formData.phone,
     photo_url: formData.photoUrl || formData.imageUrl,
+    role: formData.role || 'Property Agent',
     bio: formData.bio,
     is_active: formData.isActive ?? true
   };
@@ -100,15 +109,26 @@ export async function updateAgent(id: string, formData: any) {
     email: formData.email,
     phone: formData.phone,
     photo_url: formData.photoUrl || formData.imageUrl,
+    role: formData.role,
     bio: formData.bio,
     is_active: formData.isActive
   };
+  if (formData.slug) dbData.slug = formData.slug;
 
   const { error } = await supabase.from('estate_agents').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
   
   revalidatePath('/admin/agents');
   revalidatePath(`/agents/${formData.slug}`);
+  return { success: true };
+}
+
+export async function deleteAgent(id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('estate_agents').delete().eq('id', id);
+  if (error) return { success: false, error: error.message };
+  
+  revalidatePath('/admin/agents');
   return { success: true };
 }
 
@@ -119,7 +139,7 @@ export async function addMarketingLead(lead: { email: string; name?: string; sou
     .from('marketing_leads')
     .select('sources')
     .eq('email', lead.email)
-    .single();
+    .maybeSingle();
 
   const sources = existing ? Array.from(new Set([...(existing.sources || []), lead.source])) : [lead.source];
 
@@ -154,6 +174,8 @@ export async function addBlogPost(formData: any) {
     slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
     content: formData.content,
     excerpt: formData.excerpt,
+    category: formData.category,
+    author: formData.author,
     featured_image: formData.imageUrl || formData.featured_image,
     published: formData.published ?? true
   };
@@ -172,9 +194,12 @@ export async function updateBlogPost(id: string, formData: any) {
     title: formData.title,
     content: formData.content,
     excerpt: formData.excerpt,
+    category: formData.category,
+    author: formData.author,
     featured_image: formData.imageUrl || formData.featured_image,
     published: formData.published
   };
+  if (formData.slug) dbData.slug = formData.slug;
 
   const { error } = await supabase.from('blog_posts').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
@@ -190,14 +215,5 @@ export async function deleteBlogPost(id: string) {
   if (error) return { success: false, error: error.message };
   
   revalidatePath('/admin/blogs');
-  return { success: true };
-}
-
-export async function deleteAgent(id: string) {
-  const supabase = await createClient();
-  const { error } = await supabase.from('estate_agents').delete().eq('id', id);
-  if (error) return { success: false, error: error.message };
-  
-  revalidatePath('/admin/agents');
   return { success: true };
 }

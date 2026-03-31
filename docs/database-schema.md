@@ -35,6 +35,7 @@ CREATE TABLE public.estate_agents (
     email text NOT NULL,
     phone text,
     photo_url text,
+    role text DEFAULT 'Property Agent',
     bio text,
     is_active boolean DEFAULT true,
     created_at timestamptz DEFAULT now(),
@@ -50,6 +51,7 @@ CREATE TABLE public.properties (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     agent_id uuid REFERENCES public.estate_agents(id) ON DELETE SET NULL,
     title text NOT NULL,
+    slug text NOT NULL UNIQUE,
     description text NOT NULL,
     price numeric NOT NULL,
     status text CHECK (status IN ('for-sale', 'to-let', 'sold')),
@@ -57,8 +59,11 @@ CREATE TABLE public.properties (
     bedrooms integer NOT NULL DEFAULT 0,
     bathrooms numeric NOT NULL DEFAULT 0,
     location text NOT NULL,
-    features jsonb,
-    image_urls text[],
+    sqft integer DEFAULT 0,
+    erf_size integer DEFAULT 0,
+    year_built integer,
+    features jsonb DEFAULT '[]',
+    image_urls text[] DEFAULT '{}',
     on_show boolean DEFAULT false,
     is_favorite boolean DEFAULT false,
     video_url text,
@@ -76,6 +81,9 @@ CREATE TABLE public.blog_posts (
     title text NOT NULL,
     slug text NOT NULL UNIQUE,
     content text NOT NULL,
+    author text DEFAULT 'NC Properties',
+    category text DEFAULT 'General',
+    excerpt text,
     featured_image text,
     published boolean DEFAULT true,
     created_at timestamptz DEFAULT now(),
@@ -145,9 +153,9 @@ CREATE POLICY "Admin full access for valuations" ON public.valuation_requests US
 -- ==========================================
 
 -- Create public buckets for your assets
-INSERT INTO storage.buckets (id, name, public) VALUES ('property-images', 'property-images', true);
-INSERT INTO storage.buckets (id, name, public) VALUES ('agent-photos', 'agent-photos', true);
-INSERT INTO storage.buckets (id, name, public) VALUES ('blog-media', 'blog-media', true);
+INSERT INTO storage.buckets (id, name, public) VALUES ('property-images', 'property-images', true) ON CONFLICT (id) DO NOTHING;
+INSERT INTO storage.buckets (id, name, public) VALUES ('agent-photos', 'agent-photos', true) ON CONFLICT (id) DO NOTHING;
+INSERT INTO storage.buckets (id, name, public) VALUES ('blog-media', 'blog-media', true) ON CONFLICT (id) DO NOTHING;
 
 -- Enable public read access for the buckets
 CREATE POLICY "Public read property-images" ON storage.objects FOR SELECT USING (bucket_id = 'property-images');

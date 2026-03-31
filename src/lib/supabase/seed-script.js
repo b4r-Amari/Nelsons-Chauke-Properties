@@ -16,10 +16,10 @@ if (!supabaseUrl || !supabaseServiceKey) {
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 async function seed() {
-  console.log('Starting seed...');
+  console.log('Starting seed process...');
 
   // 1. Seed Agents
-  console.log('Seeding agents...');
+  console.log('Seeding estate_agents...');
   for (const agent of agentsData) {
     const { error } = await supabase.from('estate_agents').upsert({
       id: agent.id,
@@ -30,8 +30,9 @@ async function seed() {
       phone: agent.phone,
       photo_url: agent.imageUrl,
       bio: agent.bio,
+      role: agent.role,
       is_active: true
-    });
+    }, { onConflict: 'slug' });
     if (error) console.error(`Error seeding agent ${agent.name}:`, error.message);
   }
 
@@ -40,8 +41,9 @@ async function seed() {
   for (const prop of propertiesData) {
     const { error } = await supabase.from('properties').upsert({
       id: prop.id,
-      agent_id: prop.agentIds[0], // Use first agent from JSON
+      agent_id: prop.agentIds[0], 
       title: prop.address,
+      slug: prop.slug,
       description: prop.description,
       price: prop.price,
       status: prop.status,
@@ -55,14 +57,13 @@ async function seed() {
       features: prop.features,
       image_urls: [prop.imageUrl],
       is_favorite: prop.isFavorite,
-      on_show: prop.onShow,
-      published: true
-    });
+      on_show: prop.onShow
+    }, { onConflict: 'slug' });
     if (error) console.error(`Error seeding property ${prop.address}:`, error.message);
   }
 
   // 3. Seed Blogs
-  console.log('Seeding blogs...');
+  console.log('Seeding blog_posts...');
   for (const post of blogData) {
     const { error } = await supabase.from('blog_posts').upsert({
       id: post.id,
@@ -72,8 +73,9 @@ async function seed() {
       excerpt: post.excerpt,
       category: post.category,
       featured_image: post.imageUrl,
+      author: post.author,
       published: true
-    });
+    }, { onConflict: 'slug' });
     if (error) console.error(`Error seeding blog ${post.title}:`, error.message);
   }
 
