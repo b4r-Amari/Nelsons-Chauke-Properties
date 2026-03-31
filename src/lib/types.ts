@@ -2,20 +2,18 @@
 export type Property = {
   id: string;
   agentId?: string;
-  agentIds: string[]; // UI compatibility
   title: string;
   description: string;
   price: number;
   status: 'for-sale' | 'to-let' | 'sold';
   type: string;
-  beds: number;
-  baths: number;
+  bedrooms: number;
+  bathrooms: number;
   location: string;
-  features: string[];
+  features: any;
   imageUrls: string[];
   createdAt?: string;
   updatedAt?: string;
-  // Extra fields for app features (keeping them optional if missing in DB)
   slug?: string;
   sqft?: number;
   erfSize?: number;
@@ -32,13 +30,8 @@ export type Agent = {
   name: string;
   email: string;
   phone?: string;
-  imageUrl?: string;
   photoUrl?: string;
   updatedAt?: string;
-  // Extra fields for app features
-  role?: string;
-  bio?: string;
-  slug?: string;
 };
 
 export type BlogPost = {
@@ -49,10 +42,10 @@ export type BlogPost = {
   excerpt?: string;
   category?: string;
   author?: string;
-  date?: string;
   imageUrl?: string;
   published: boolean;
   createdAt?: string;
+  date?: string;
 };
 
 export type AdminUser = {

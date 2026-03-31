@@ -10,17 +10,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { ArrowLeft, X } from "lucide-react"
+import { ArrowLeft, X, UploadCloud, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 import type { Agent, Property } from "@/lib/types"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { updateProperty } from "@/lib/supabase/actions"
+import { updateProperty, uploadFile } from "@/lib/supabase/actions"
 
 const formSchema = z.object({
   title: z.string().min(5),
@@ -31,10 +28,10 @@ const formSchema = z.object({
   beds: z.coerce.number().int(),
   baths: z.coerce.number(),
   description: z.string().min(20),
-  features: z.array(z.string()),
+  features: z.any(),
   onShow: z.boolean(),
   agentId: z.string().min(1, "Assign an agent"),
-  imageUrls: z.array(z.string().url()),
+  imageUrls: z.array(z.string().url()).min(1),
   isFavorite: z.boolean(),
   videoUrl: z.string().url().optional().or(z.literal("")),
 });
@@ -42,7 +39,7 @@ const formSchema = z.object({
 export function EditPropertyForm({ initialData, allAgents }: { initialData: Property; allAgents: Agent[] }) {
   const { toast } = useToast();
   const router = useRouter();
-  const [newImageUrl, setNewImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,12 +49,12 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
       price: initialData.price,
       status: initialData.status,
       type: initialData.type,
-      beds: initialData.beds,
-      baths: initialData.baths,
+      beds: initialData.bedrooms,
+      baths: initialData.bathrooms,
       description: initialData.description,
-      features: initialData.features || [],
-      onShow: initialData.onShow,
-      isFavorite: initialData.isFavorite,
+      features: initialData.features || {},
+      onShow: initialData.onShow || false,
+      isFavorite: initialData.isFavorite || false,
       agentId: initialData.agentId || '',
       imageUrls: initialData.imageUrls || [],
       videoUrl: initialData.videoUrl || "",
@@ -77,6 +74,24 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
     }
   }
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    const newUrls = [...imageUrls];
+
+    for (let i = 0; i < files.length; i++) {
+      const result = await uploadFile('property-images', files[i]);
+      if (result.success && result.url) {
+        newUrls.push(result.url);
+      }
+    }
+
+    form.setValue("imageUrls", newUrls);
+    setIsUploading(false);
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -85,7 +100,7 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
                 <Button variant="outline" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
             </Link>
             <h1 className="flex-1 text-xl font-semibold">Edit Property</h1>
-            <Button type="submit" size="sm" className="bg-brand-bright" disabled={form.formState.isSubmitting}>
+            <Button type="submit" size="sm" className="bg-brand-bright" disabled={form.formState.isSubmitting || isUploading}>
               {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
             </Button>
         </div>
@@ -94,7 +109,7 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
             <Card>
               <CardContent className="space-y-4 pt-6">
                 <FormField control={form.control} name="title" render={({ field }) => (
-                    <FormItem><FormLabel>Property Title (Address)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Property Title / Address</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="description" render={({ field }) => (
                     <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea className="min-h-[150px]" {...field} /></FormControl><FormMessage /></FormItem>
@@ -102,19 +117,26 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>Images</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Property Images</CardTitle></CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {imageUrls.map((url, i) => (
-                    <div key={i} className="relative aspect-video rounded overflow-hidden">
+                    <div key={i} className="relative aspect-video rounded overflow-hidden border">
                       <Image src={url} alt="" fill className="object-cover" />
                       <Button type="button" variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6" onClick={() => form.setValue("imageUrls", imageUrls.filter((_, idx) => idx !== i))}><X className="h-3 w-3"/></Button>
                     </div>
                   ))}
                 </div>
-                <div className="flex gap-2">
-                  <Input placeholder="Image URL" value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} />
-                  <Button type="button" onClick={() => { if(newImageUrl) form.setValue("imageUrls", [...imageUrls, newImageUrl]); setNewImageUrl(""); }}>Add</Button>
+                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 bg-muted/20">
+                    <div className="text-center">
+                        {isUploading ? <Loader2 className="mx-auto h-12 w-12 text-brand-bright animate-spin" /> : <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />}
+                        <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
+                        <label className="relative cursor-pointer rounded-md bg-white font-semibold text-brand-bright hover:text-brand-deep px-2">
+                            <span>Upload more photos</span>
+                            <input type="file" className="sr-only" multiple accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
+                        </label>
+                        </div>
+                    </div>
                 </div>
               </CardContent>
             </Card>
@@ -147,7 +169,7 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
                       <FormControl><SelectTrigger><SelectValue placeholder="Select an agent" /></SelectTrigger></FormControl>
                       <SelectContent>
                         {allAgents.map(agent => (
-                          <SelectItem key={agent.id} value={agent.id}>{agent.name}</SelectItem>
+                          <SelectItem key={agent.id} value={agent.id}>{agent.firstName} {agent.lastName}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

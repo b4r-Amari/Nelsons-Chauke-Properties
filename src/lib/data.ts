@@ -5,18 +5,17 @@ import type { Property, Agent, BlogPost } from '@/lib/types';
 const mapDbProperty = (p: any): Property => ({
   id: String(p.id),
   agentId: p.agent_id,
-  agentIds: p.agent_id ? [String(p.agent_id)] : [],
   title: p.title || '',
   description: p.description || '',
   price: Number(p.price || 0),
   status: p.status || 'for-sale',
   type: p.type || '',
-  beds: p.bedrooms || 0,
-  baths: Number(p.bathrooms || 0),
+  bedrooms: p.bedrooms || 0,
+  bathrooms: Number(p.bathrooms || 0),
   location: p.location || '',
   sqft: p.sqft || 0,
   erfSize: p.erf_size || 0,
-  features: Array.isArray(p.features) ? p.features : (p.features ? Object.keys(p.features) : []),
+  features: p.features || {},
   imageUrls: Array.isArray(p.image_urls) ? p.image_urls : [],
   videoUrl: p.video_url || '',
   onShow: p.on_show || false,
@@ -34,11 +33,7 @@ const mapDbAgent = (a: any): Agent => ({
   name: `${a.first_name || ''} ${a.last_name || ''}`.trim(),
   email: a.email || '',
   phone: a.phone || '',
-  imageUrl: a.photo_url || '',
   photoUrl: a.photo_url || '',
-  role: a.role || 'Property Agent',
-  bio: a.bio || '',
-  slug: a.slug || String(a.id),
   updatedAt: a.updated_at
 });
 
@@ -69,23 +64,19 @@ export const getProperties = async (options: { featuredOnly?: boolean; status?: 
       query = query.eq('status', options.status);
     }
     
-    // In your schema, these might not exist yet, so we use optional filters
     if (options.featuredOnly) {
-      // query = query.eq('is_favorite', true); 
+      query = query.eq('is_favorite', true); 
     }
 
     if (options.onShow) {
-      // query = query.eq('on_show', true);
+      query = query.eq('on_show', true);
     }
 
     if (options.limit) query = query.limit(options.limit);
 
     const { data, error } = await query.order('created_at', { ascending: false });
     
-    if (error) {
-      console.error('Error fetching properties from Supabase:', error.message);
-      return [];
-    }
+    if (error) throw error;
     return (data || []).map(mapDbProperty);
   } catch (err: any) {
     console.error('Error in getProperties:', err.message);
@@ -125,18 +116,6 @@ export const getAgentById = async (id: string): Promise<Agent | null> => {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('estate_agents').select('*').eq('id', id).single();
-    if (error || !data) return null;
-    return mapDbAgent(data);
-  } catch (err: any) {
-    return null;
-  }
-};
-
-export const getAgentBySlug = async (slug: string): Promise<Agent | null> => {
-  try {
-    const supabase = await createClient();
-    // Since SQL schema might not have slug for agents, try ID as fallback
-    const { data, error } = await supabase.from('estate_agents').select('*').or(`id.eq.${slug},slug.eq.${slug}`).single();
     if (error || !data) return null;
     return mapDbAgent(data);
   } catch (err: any) {

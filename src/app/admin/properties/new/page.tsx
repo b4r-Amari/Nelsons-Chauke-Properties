@@ -22,7 +22,7 @@ import Image from "next/image"
 import { addProperty, uploadFile } from "@/lib/supabase/actions"
 
 const formSchema = z.object({
-  address: z.string().min(5, "Address is too short."),
+  title: z.string().min(5, "Title/Address is too short."),
   location: z.string().min(2, "Location is too short."),
   price: z.coerce.number().min(0, "Price must be a positive number."),
   status: z.enum(["for-sale", "to-let", "sold"]),
@@ -35,7 +35,7 @@ const formSchema = z.object({
   features: z.array(z.string()).optional().default([]),
   onShow: z.boolean().default(false),
   agentId: z.string().min(1, { message: "Assign an agent." }),
-  imageUrls: z.array(z.string().url()).min(1, "Provide at least one image URL."),
+  imageUrls: z.array(z.string().url()).min(1, "Provide at least one image."),
   slug: z.string().min(3, "Slug is required."),
   isFavorite: z.boolean().default(false),
   yearBuilt: z.coerce.number().int().min(1900).max(new Date().getFullYear()),
@@ -55,9 +55,9 @@ export default function NewPropertyPage() {
       if (!error && data) {
         setAgents(data.map((a: any) => ({
           id: String(a.id),
-          name: `${a.first_name} ${a.last_name}`,
           firstName: a.first_name,
           lastName: a.last_name,
+          name: `${a.first_name} ${a.last_name}`,
           email: a.email,
           photoUrl: a.photo_url
         })));
@@ -69,7 +69,7 @@ export default function NewPropertyPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      address: "",
+      title: "",
       location: "",
       price: 0,
       status: "for-sale",
@@ -79,13 +79,13 @@ export default function NewPropertyPage() {
       sqft: 180,
       erfSize: 500,
       description: "",
-      features: ["Swimming Pool", "Garden"],
+      features: [],
       onShow: false,
       agentId: "",
-      imageUrls: [placeholders.propertyDefault.url],
+      imageUrls: [],
       slug: "",
       isFavorite: false,
-      yearBuilt: 2024,
+      yearBuilt: new Date().getFullYear(),
       videoUrl: "",
     },
   })
@@ -95,7 +95,7 @@ export default function NewPropertyPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const result = await addProperty(values);
     if (result.success) {
-        toast({ title: "Property Created", description: `Property at ${values.address} added.` });
+        toast({ title: "Property Created", description: `Property added successfully.` });
         router.push("/admin/properties");
         router.refresh();
     } else {
@@ -119,13 +119,13 @@ export default function NewPropertyPage() {
       }
     }
 
-    form.setValue("imageUrls", newUrls.filter(url => url !== placeholders.propertyDefault.url));
+    form.setValue("imageUrls", newUrls);
     setIsUploading(false);
   };
 
   const removeImage = (index: number) => {
     const updated = imageUrls.filter((_, i) => i !== index);
-    form.setValue("imageUrls", updated.length > 0 ? updated : [placeholders.propertyDefault.url]);
+    form.setValue("imageUrls", updated);
   };
 
   return (
@@ -143,27 +143,26 @@ export default function NewPropertyPage() {
         <div className="grid gap-4 md:grid-cols-3">
           <div className="md:col-span-2 space-y-4">
             <Card>
-              <CardHeader><CardTitle>Details</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Property Details</CardTitle></CardHeader>
               <CardContent className="space-y-4">
-                <FormField control={form.control} name="address" render={({ field }) => (
-                    <FormItem><FormLabel>Address</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                <FormField control={form.control} name="title" render={({ field }) => (
+                    <FormItem><FormLabel>Address / Title</FormLabel><FormControl><Input placeholder="e.g. 123 Luxury Lane" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
-                <FormField control={form.control} name="slug" render={({ field }) => (
-                    <FormItem><FormLabel>Slug (URL Friendly)</FormLabel><FormControl><Input {...field} placeholder="e.g. luxury-villa-sandton" /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="location" render={({ field }) => (
-                    <FormItem><FormLabel>Location</FormLabel><FormControl><Input placeholder="Suburb, City" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
+                <div className="grid grid-cols-2 gap-4">
+                    <FormField control={form.control} name="slug" render={({ field }) => (
+                        <FormItem><FormLabel>Slug (URL Friendly)</FormLabel><FormControl><Input {...field} placeholder="e.g. luxury-villa-sandton" /></FormControl><FormMessage /></FormItem>
+                    )} />
+                    <FormField control={form.control} name="location" render={({ field }) => (
+                        <FormItem><FormLabel>Location</FormLabel><FormControl><Input placeholder="Suburb, City" {...field} /></FormControl><FormMessage /></FormItem>
+                    )} />
+                </div>
                 <FormField control={form.control} name="description" render={({ field }) => (
                     <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea className="min-h-[150px]" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="features" render={({ field }) => (
-                    <FormItem><FormLabel>Features (comma separated)</FormLabel><FormControl><Textarea onChange={(e) => field.onChange(e.target.value.split(',').map(s => s.trim()))} value={field.value.join(', ')} /></FormControl><FormMessage /></FormItem>
                 )} />
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>Media</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Media Gallery</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {imageUrls.map((url, i) => (
@@ -190,19 +189,15 @@ export default function NewPropertyPage() {
                         <p className="text-xs leading-5 text-gray-600">PNG, JPG up to 5MB</p>
                     </div>
                 </div>
-
-                <FormField control={form.control} name="videoUrl" render={({ field }) => (
-                    <FormItem><FormLabel>Video URL</FormLabel><FormControl><Input placeholder="YouTube or Vimeo link" {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
               </CardContent>
             </Card>
           </div>
           <div className="space-y-4">
             <Card>
-              <CardHeader><CardTitle>Status & Specs</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Pricing & Stats</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <FormField control={form.control} name="price" render={({ field }) => (
-                    <FormItem><FormLabel>Price</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                    <FormItem><FormLabel>Price (ZAR)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                 )} />
                 <FormField control={form.control} name="status" render={({ field }) => (
                     <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="for-sale">For Sale</SelectItem><SelectItem value="to-let">To Let</SelectItem><SelectItem value="sold">Sold</SelectItem></SelectContent></Select></FormItem>
@@ -215,18 +210,10 @@ export default function NewPropertyPage() {
                       <FormItem><FormLabel>Baths</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                   )} />
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <FormField control={form.control} name="sqft" render={({ field }) => (
-                      <FormItem><FormLabel>House Size (m²)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
-                  )} />
-                  <FormField control={form.control} name="erfSize" render={({ field }) => (
-                      <FormItem><FormLabel>Erf Size (m²)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
-                  )} />
-                </div>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>Assign Agent</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Agent Assignment</CardTitle></CardHeader>
               <CardContent>
                 <FormField control={form.control} name="agentId" render={({ field }) => (
                   <FormItem>

@@ -31,22 +31,22 @@ export async function addProperty(formData: any) {
   
   const propertyData = {
     agent_id: formData.agentId || null,
-    title: formData.address || formData.title,
+    title: formData.title,
     description: formData.description,
     price: Number(formData.price),
     status: formData.status,
     type: formData.type,
-    bedrooms: Number(formData.beds || formData.bedrooms || 0),
-    bathrooms: Number(formData.baths || formData.bathrooms || 0),
+    bedrooms: Number(formData.beds || 0),
+    bathrooms: Number(formData.baths || 0),
     location: formData.location,
     features: formData.features || {},
     image_urls: formData.imageUrls || [],
-    // Legacy fields if they exist in DB
     sqft: Number(formData.sqft || 0),
     erf_size: Number(formData.erfSize || 0),
     on_show: formData.onShow || false,
     is_favorite: formData.isFavorite || false,
-    year_built: formData.yearBuilt || null
+    year_built: formData.yearBuilt || null,
+    slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-')
   };
 
   const { data, error } = await supabase.from('properties').insert([propertyData]).select().single();
@@ -73,8 +73,6 @@ export async function updateProperty(id: string, formData: any) {
   if (formData.features !== undefined) dbData.features = formData.features;
   if (formData.imageUrls !== undefined) dbData.image_urls = formData.imageUrls;
   if (formData.agentId !== undefined) dbData.agent_id = formData.agentId || null;
-  
-  // Optional columns
   if (formData.onShow !== undefined) dbData.on_show = formData.onShow;
   if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
 
@@ -105,7 +103,7 @@ export async function addAgent(formData: any) {
     photo_url: formData.photoUrl,
   };
 
-  const { data, error } = await supabase.from('estate_agents').insert([dbData]).select();
+  const { data, error } = await supabase.from('estate_agents').insert([dbData]).select().single();
   if (error) return { success: false, error: error.message };
   
   revalidatePath('/admin/agents');
@@ -182,7 +180,10 @@ export async function addBlogPost(formData: any) {
     slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
     content: formData.content,
     featured_image: formData.imageUrl,
-    published: formData.published ?? true
+    published: formData.published ?? true,
+    author: formData.author,
+    category: formData.category,
+    excerpt: formData.excerpt
   };
 
   const { data, error } = await supabase.from('blog_posts').insert([dbData]).select().single();
@@ -199,7 +200,10 @@ export async function updateBlogPost(id: string, formData: any) {
     title: formData.title,
     content: formData.content,
     featured_image: formData.imageUrl,
-    published: formData.published
+    published: formData.published,
+    author: formData.author,
+    category: formData.category,
+    excerpt: formData.excerpt
   };
   if (formData.slug) dbData.slug = formData.slug;
 
