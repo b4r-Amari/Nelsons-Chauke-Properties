@@ -1,6 +1,9 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Refreshing styles to trigger manifest update */
 
 body {
   font-family: Arial, Helvetica, sans-serif;

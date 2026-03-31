@@ -88,8 +88,16 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Unified font class string to prevent hydration mismatch
+  const fontClasses = cn(
+    poppins.variable,
+    lato.variable,
+    roboto.variable,
+    "scroll-smooth"
+  );
+
   return (
-    <html lang="en" className={cn("scroll-smooth", poppins.variable, lato.variable, roboto.variable)} suppressHydrationWarning>
+    <html lang="en" className={fontClasses} suppressHydrationWarning>
       <body className="font-body antialiased text-foreground/90">
         <AuthProvider>
             <MainLayout>{children}</MainLayout>

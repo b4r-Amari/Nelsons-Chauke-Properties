@@ -14,8 +14,9 @@ const ContentSecurityPolicy = `
 `;
 
 const nextConfig: NextConfig = {
-  // Minor update to force rebuild
+  // Config refresh to resolve chunk loading issues
   reactStrictMode: true,
+  poweredByHeader: false,
   typescript: {
     ignoreBuildErrors: false,
   },

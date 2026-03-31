@@ -2,7 +2,7 @@
 "use client"
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import { PropertyCard, type Property } from "@/components/shared/property-card";
+import { PropertyCard } from "@/components/shared/property-card";
 import { PropertyFilter } from "@/components/shared/property-filter";
 import { Button } from "../ui/button";
 import { ArrowUpDown, ChevronLeft, ChevronRight } from "lucide-react";
@@ -10,7 +10,7 @@ import { useSearchParams } from "next/navigation";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Skeleton } from "../ui/skeleton";
 import { Card, CardFooter } from "../ui/card";
-import { type Filters, type SearchSuggestion } from "@/lib/types";
+import { type Property, type Filters, type SearchSuggestion } from "@/lib/types";
 
 type PropertyListingsProps = {
   pageDetails: {
@@ -125,11 +125,11 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
       if (locationsToFilter.length > 0) {
         const propertyMatchesLocation = locationsToFilter.some(sl => 
           p.location.toLowerCase().includes(sl.value.toLowerCase()) || 
-          p.address.toLowerCase().includes(sl.value.toLowerCase())
+          p.address?.toLowerCase().includes(sl.value.toLowerCase())
         );
         if (!propertyMatchesLocation) return false;
       } else if (newFilters.location) {
-          if (!p.location.toLowerCase().includes(newFilters.location.toLowerCase()) && !p.address.toLowerCase().includes(newFilters.location.toLowerCase())) return false;
+          if (!p.location.toLowerCase().includes(newFilters.location.toLowerCase()) && !p.address?.toLowerCase().includes(newFilters.location.toLowerCase())) return false;
       }
 
       return true;
