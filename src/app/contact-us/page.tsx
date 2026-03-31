@@ -6,11 +6,14 @@ import type { Metadata } from "next";
 import { ContactForm } from "@/components/shared/contact-form";
 
 export const metadata: Metadata = {
-    title: 'Contact NC Properties | Get In Touch',
-    description: 'Contact NC Properties for all your real estate needs. Send us a message, find our office, or give us a call. We are here to help you.',
+    title: 'Contact Us | Get In Touch with NC Properties',
+    description: 'Contact Nelson Chauke Properties for all your real estate needs. Send us a message, find our office in Pretoria, or give us a call. We are here to help you.',
+    alternates: {
+        canonical: '/contact-us',
+    },
     openGraph: {
         title: 'Contact NC Properties | Get In Touch',
-        description: 'Contact NC Properties for all your real estate needs. Send us a message, find our office, or give us a call. We are here to help you.',
+        description: 'Need help with property? Reach out to our expert team for inquiries, support, and professional advice.',
         type: 'website',
         url: '/contact-us',
     },
@@ -19,11 +22,25 @@ export const metadata: Metadata = {
 export default function ContactUsPage() {
   const contactPointSchema = {
     "@context": "https://schema.org",
-    "@type": "ContactPoint",
-    "telephone": "+1-123-456-7890",
-    "contactType": "customer service",
-    "areaServed": "ZA",
-    "availableLanguage": "en"
+    "@type": "Organization",
+    "name": "Nelson Chauke Properties",
+    "url": "https://nc-properties.vercel.app",
+    "logo": "https://nc-properties.vercel.app/images/logo.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+27-76-290-6426",
+      "contactType": "customer service",
+      "areaServed": "ZA",
+      "availableLanguage": "en"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 Property Avenue, Suite 100",
+      "addressLocality": "Pretoria",
+      "addressRegion": "Gauteng",
+      "postalCode": "0181",
+      "addressCountry": "ZA"
+    }
   };
 
   return (
@@ -65,7 +82,7 @@ export default function ContactUsPage() {
                     <MapPin className="h-6 w-6 text-brand-bright mt-1" />
                     <div>
                       <h4 className="font-semibold">Our Office</h4>
-                      <p className="text-muted-foreground">123 Property Avenue, Suite 100<br/>Realty City, RC 12345</p>
+                      <p className="text-muted-foreground">123 Property Avenue, Suite 100<br/>Pretoria East, Gauteng</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -79,7 +96,7 @@ export default function ContactUsPage() {
                     <Phone className="h-6 w-6 text-brand-bright mt-1" />
                     <div>
                       <h4 className="font-semibold">Call Us</h4>
-                      <a href="tel:+1234567890" className="text-muted-foreground hover:text-brand-bright transition-colors">(123) 456-7890</a>
+                      <a href="tel:+27762906426" className="text-muted-foreground hover:text-brand-bright transition-colors">076 290 6426</a>
                     </div>
                   </div>
                 </CardContent>

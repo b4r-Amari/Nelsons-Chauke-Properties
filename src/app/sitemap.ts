@@ -3,20 +3,10 @@ import { MetadataRoute } from 'next';
 import { getProperties, getAgents, getBlogPosts } from '@/lib/data';
 import type { Property, Agent, BlogPost } from '@/lib/types';
 
-// Helper function to convert Firestore Timestamps or date strings to ISO 8601 strings
 const toISOString = (timestamp: any): string => {
-  if (!timestamp) {
-    return new Date().toISOString();
-  }
-  if (typeof timestamp.toDate === 'function') {
-    return timestamp.toDate().toISOString();
-  }
-  // Attempt to parse if it's a string date
+  if (!timestamp) return new Date().toISOString();
   const date = new Date(timestamp);
-  if (!isNaN(date.getTime())) {
-    return date.toISOString();
-  }
-  return new Date().toISOString();
+  return isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -24,47 +14,49 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Define static pages
   const staticPages = [
-    '/',
+    '',
     '/about-us',
     '/properties',
     '/properties/sold',
+    '/properties/on-show',
     '/blog',
     '/calculators',
     '/contact-us',
     '/sell',
-    '/login',
   ];
 
   const staticUrls = staticPages.map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date().toISOString(),
-    changeFrequency: 'monthly' as 'monthly',
-    priority: path === '/' ? 1.0 : 0.8,
+    changeFrequency: 'monthly' as const,
+    priority: path === '' ? 1.0 : 0.8,
   }));
 
   // Fetch dynamic data
-  const properties = (await getProperties()) as Property[];
-  const agents = (await getAgents()) as Agent[];
-  const blogPosts = (await getBlogPosts()) as BlogPost[];
+  const [properties, agents, blogPosts] = await Promise.all([
+    getProperties(),
+    getAgents(),
+    getBlogPosts()
+  ]);
 
   const propertyUrls = properties.map((property) => ({
     url: `${baseUrl}/properties/${property.id}`,
-    lastModified: toISOString(property.updatedAt),
-    changeFrequency: 'weekly' as 'weekly',
+    lastModified: toISOString(property.updatedAt || property.createdAt),
+    changeFrequency: 'weekly' as const,
     priority: 0.9,
   }));
 
   const agentUrls = agents.map((agent) => ({
-    url: `${baseUrl}/agents/${agent.slug}`,
-    lastModified: toISOString(agent.updatedAt), // Defaults to now if updatedAt is missing
-    changeFrequency: 'monthly' as 'monthly',
+    url: `${baseUrl}/agents/${agent.slug || agent.id}`,
+    lastModified: toISOString(agent.updatedAt),
+    changeFrequency: 'monthly' as const,
     priority: 0.7,
   }));
 
   const blogPostUrls = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: toISOString(post.updatedAt || post.date), // Fallback to the post's date
-    changeFrequency: 'weekly' as 'weekly',
+    lastModified: toISOString(post.updatedAt || post.date),
+    changeFrequency: 'weekly' as const,
     priority: 0.7,
   }));
 

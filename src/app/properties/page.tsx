@@ -6,11 +6,14 @@ import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export const metadata: Metadata = {
-  title: 'Properties for Sale and To Let in South Africa | NC Properties',
-  description: 'Browse our exclusive listings of properties for sale and to rent. Find your next home, apartment, or villa in South Africa\'s most sought-after locations.',
+  title: 'Properties for Sale and To Let | South Africa Real Estate',
+  description: 'Browse our exclusive listings of properties for sale and to rent. Find your next home, apartment, or luxury villa in South Africa\'s most sought-after locations.',
+  alternates: {
+    canonical: '/properties',
+  },
   openGraph: {
     title: 'Properties for Sale and To Let in South Africa | NC Properties',
-    description: 'Browse our exclusive listings of properties for sale and to rent. Find your next home, apartment, or villa in South Africa\'s most sought-after locations.',
+    description: 'Explore curated real estate listings. Find your next home, apartment, or investment property with NC Properties.',
     type: 'website',
     url: '/properties',
   },

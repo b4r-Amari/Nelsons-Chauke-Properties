@@ -8,7 +8,6 @@ import { CtaTabsSection, NewsletterSection } from '@/components/sections/home-pa
 import { getProperties } from '@/lib/data';
 import { PropertyFilter } from '@/components/shared/property-filter';
 
-// Since this is a Server Component, we need to make it async to fetch data
 async function HeroSection() {
   const properties = await getProperties();
   const heroBanners = [
@@ -17,15 +16,13 @@ async function HeroSection() {
     '/images/backgrounds/hero-banner-3.webp',
     '/images/backgrounds/hero-banner-4.webp'
   ];
-  // Note: Math.random() is safe to use in a Server Component for this use case
-  // because it runs once at build time or request time, not on the client.
   const bannerImage = heroBanners[Math.floor(Math.random() * heroBanners.length)];
 
   return (
     <section className="relative h-[70vh] min-h-[550px] flex items-center justify-center text-white">
       <Image
         src={bannerImage}
-        alt="A beautiful, modern home interior, representing the quality properties offered by NC Properties."
+        alt="Modern and sophisticated home interior by NC Properties"
         data-ai-hint="modern home interior"
         fill
         className="object-cover"
@@ -49,16 +46,17 @@ async function HeroSection() {
   );
 }
 
-// Fetching featured properties on the server
 async function FeaturedPropertiesSection() {
   const allProperties = await getProperties();
   const featuredProperties = allProperties.filter(p => p.isFavorite);
+
+  if (featuredProperties.length === 0) return null;
 
   return (
     <section className="py-24 bg-background relative mt-32 md:mt-0">
       <div className="container">
         <h2 className="text-3xl font-bold text-center font-headline mb-4">Featured Properties</h2>
-        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties in South Africa, offering the perfect blend of luxury, comfort, and style.</p>
+        <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">Discover our curated selection of premier properties, offering the perfect blend of luxury, comfort, and style.</p>
         <Carousel
           opts={{
             align: "start",
@@ -93,8 +91,6 @@ function ShortAboutSection() {
           <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground space-y-4">
             <p>At NC Properties, we pride ourselves on offering a personalised and professional real estate experience tailored to your needs. Whether you're buying, selling, or renting, we are here to make your property journey seamless, rewarding, and stress-free.</p>
             <p>Our dedicated team brings extensive market knowledge, local expertise, and a genuine passion for property to every client we serve. We take the time to truly understand your goals, ensuring that each recommendation we make is aligned with your lifestyle and vision.</p>
-            <p>With a commitment to integrity, excellence, and outstanding customer care, NC Properties has become a trusted name in the industry. From first-time buyers to seasoned investors, we offer guidance, support, and top-tier service throughout the entire process.</p>
-            <p>Thank you for choosing NC Properties. We look forward to helping you discover your next home, investment, or dream property, with confidence and peace of mind.</p>
           </div>
         </article>
       </div>
@@ -106,10 +102,11 @@ export default async function Home() {
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "url": "https://nelson-chauke-prop.web.app/",
+    "name": "Nelson Chauke Properties",
+    "url": "https://nc-properties.vercel.app/",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://nelson-chauke-prop.web.app/properties?q={search_term_string}",
+      "target": "https://nc-properties.vercel.app/properties?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   };

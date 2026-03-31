@@ -28,15 +28,18 @@ const roboto = Roboto({
 // SEO Metadata
 export const metadata: Metadata = {
   title: {
-    default: 'Nelson Chauke Properties',
+    default: 'Nelson Chauke Properties | Premier Real Estate South Africa',
     template: '%s | NC Properties',
   },
-  description: 'Your trusted partner in finding the perfect property. Search homes for sale and rent, connect with expert agents, and discover your dream home with Nelson Chauke Properties.',
-  keywords: ['real estate', 'property', 'homes for sale', 'to-let', 'buy property', 'rent property', 'South Africa real estate', 'Nelson Chauke'],
+  description: 'Your trusted partner in finding the perfect property. Search luxury homes for sale, apartments to let, and connect with expert agents. Discover your dream home with Nelson Chauke Properties.',
+  keywords: ['real estate', 'property', 'homes for sale', 'to-let', 'buy property', 'rent property', 'South Africa real estate', 'Nelson Chauke', 'Pretoria property', 'Sandton real estate'],
   authors: [{ name: 'Nelson Chauke Properties', url: 'https://nc-properties.vercel.app' }],
   creator: 'Nelson Chauke',
   publisher: 'Nelson Chauke Properties',
   metadataBase: new URL('https://nc-properties.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
   openGraph: {
     title: 'Nelson Chauke Properties | Your Trusted Property Partner',
     description: 'Find your dream home with our expert real estate services. Browse listings, get market insights, and connect with top agents.',
@@ -44,10 +47,10 @@ export const metadata: Metadata = {
     siteName: 'NC Properties',
     images: [
       {
-        url: 'https://nc-properties.vercel.app/images/og-image.jpg',
+        url: '/images/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'A beautiful property managed by NC Properties',
+        alt: 'Nelson Chauke Properties - Redefining Real Estate',
       },
     ],
     locale: 'en_US',
@@ -57,7 +60,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'NC Properties | Premier Property Listings',
     description: 'Discover homes for sale, apartments for rent, and connect with the best real estate agents in the market.',
-    images: ['https://nc-properties.vercel.app/images/twitter-og-image.jpg'],
+    images: ['/images/twitter-og-image.jpg'],
   },
   robots: {
     index: true,
@@ -79,7 +82,7 @@ export const metadata: Metadata = {
 
 // Viewport Configuration
 export const viewport: Viewport = {
-  themeColor: '#ffffff',
+  themeColor: '#4B0000',
 };
 
 // Root Layout (Server Component)
@@ -88,7 +91,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Unified font class string to prevent hydration mismatch
   const fontClasses = cn(
     poppins.variable,
     lato.variable,
