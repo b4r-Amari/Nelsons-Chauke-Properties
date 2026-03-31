@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { addValuationRequest, addMarketingLead } from "@/lib/firebase/firestore"
+import { addValuationRequest, addMarketingLead } from "@/lib/supabase/actions"
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -35,10 +35,7 @@ export function SellForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // Add to the specific valuation requests collection
     const valuationResult = await addValuationRequest(values);
-    
-    // Also add them to the general marketing users list
     const marketingResult = await addMarketingLead({
       name: values.fullName,
       email: values.email,

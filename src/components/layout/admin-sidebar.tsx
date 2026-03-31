@@ -7,7 +7,7 @@ import { Home, Building, Users, LogOut, Settings, Newspaper } from "lucide-react
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
-import { logOut } from "@/lib/firebase/auth";
+import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 const sidebarLinks = [
@@ -21,10 +21,11 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { toast } = useToast();
+  const supabase = createClient();
 
   const handleLogout = async () => {
     try {
-      await logOut();
+      await supabase.auth.signOut();
       toast({
         title: "Logged Out",
         description: "You have been successfully logged out.",

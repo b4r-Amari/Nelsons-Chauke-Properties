@@ -6,11 +6,12 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { logOut } from "@/lib/firebase/auth";
+import { createClient } from "@/lib/supabase/client";
 
 export default function MyAccountPage() {
   const { user, isLoading } = useAuth();
   const router = useRouter();
+  const supabase = createClient();
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -19,12 +20,12 @@ export default function MyAccountPage() {
   }, [user, isLoading, router]);
 
   const handleLogout = async () => {
-    await logOut();
+    await supabase.auth.signOut();
     router.push('/');
   };
 
   if (isLoading || !user) {
-    return null; // Or a loading spinner
+    return null; 
   }
 
   return (
@@ -41,7 +42,7 @@ export default function MyAccountPage() {
           </div>
           <div>
             <h3 className="font-semibold">User ID</h3>
-            <p className="text-muted-foreground text-sm">{user.uid}</p>
+            <p className="text-muted-foreground text-sm">{user.id}</p>
           </div>
           <Button variant="destructive" onClick={handleLogout} className="mt-4">
             Log Out

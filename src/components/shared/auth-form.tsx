@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { signIn, signUp, signInWithGoogle, type User } from "@/lib/firebase/auth";
+import { createClient } from "@/lib/supabase/client";
 
 const authSchema = z.object({
   email: z.string().email("Please enter a valid email address."),
@@ -56,6 +56,7 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
   const [activeTab, setActiveTab] = useState<"signin" | "signup">(initialTab);
   const { toast } = useToast();
   const router = useRouter();
+  const supabase = createClient();
 
   const form = useForm<AuthFormData>({
     resolver: zodResolver(authSchema),
@@ -67,24 +68,22 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
     form.reset();
   };
 
-  const handleSuccessfulAuth = (user: User) => {
-    onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
-  };
-
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
     try {
-      const userCredential = await signInWithGoogle();
-      toast({ title: "Signed In", description: "Welcome!" });
-      handleSuccessfulAuth(userCredential.user);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
     } catch (error: any) {
-      if (error.code !== 'auth/popup-closed-by-user') {
         toast({
           variant: "destructive",
           title: "Authentication Failed",
           description: "Could not sign in with Google. Please try again.",
         });
-      }
     } finally {
       setIsLoading(false);
     }
@@ -94,40 +93,28 @@ export function AuthForm({ onAuthSuccess, initialTab = "signin" }: { onAuthSucce
     setIsLoading(true);
     try {
       if (activeTab === "signin") {
-        const userCredential = await signIn(values.email, values.password);
+        const { error } = await supabase.auth.signInWithPassword({
+          email: values.email,
+          password: values.password,
+        });
+        if (error) throw error;
         toast({ title: "Signed In", description: "Welcome back!" });
-        handleSuccessfulAuth(userCredential.user);
       } else {
-        const userCredential = await signUp(values.email, values.password);
-        toast({ title: "Account Created", description: "You have successfully signed up." });
-        handleSuccessfulAuth(userCredential.user);
+        const { error } = await supabase.auth.signUp({
+          email: values.email,
+          password: values.password,
+        });
+        if (error) throw error;
+        toast({ title: "Account Created", description: "Check your email for confirmation." });
       }
+      
+      onAuthSuccess ? onAuthSuccess() : router.push('/my-account');
       form.reset();
     } catch (error: any) {
-      const errorCode = error.code;
-      let errorMessage = "An unexpected error occurred. Please try again.";
-      
-      switch (errorCode) {
-        case "auth/user-not-found":
-        case "auth/wrong-password":
-        case "auth/invalid-credential":
-          errorMessage = "Invalid email or password. Please try again.";
-          break;
-        case "auth/email-already-in-use":
-          errorMessage = "This email address is already in use by another account.";
-          break;
-        case "auth/weak-password":
-          errorMessage = "The password is too weak. Please use at least 8 characters.";
-          break;
-        case "auth/invalid-email":
-          errorMessage = "The email address is not valid.";
-          break;
-      }
-      
       toast({
         variant: "destructive",
         title: "Authentication Failed",
-        description: errorMessage,
+        description: error.message || "An unexpected error occurred. Please try again.",
       });
     } finally {
       setIsLoading(false);

@@ -1,6 +1,6 @@
-// This file is no longer used as the project has migrated to Supabase.
+
+/**
+ * LEGACY FILE: Firebase authentication is no longer used.
+ * Project has migrated to Supabase Auth.
+ */
 export const auth = null;
-export const signInWithGoogle = async () => {};
-export const signUp = async () => {};
-export const signIn = async () => {};
-export const logOut = () => {};
