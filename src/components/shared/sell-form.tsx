@@ -1,4 +1,3 @@
-
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,6 +9,8 @@ import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { addValuationRequest, addMarketingLead } from "@/lib/supabase/actions"
+import { sendValuationEmail } from "@/lib/email-actions"
+import { Loader2 } from "lucide-react"
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -35,25 +36,39 @@ export function SellForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const valuationResult = await addValuationRequest(values);
-    const marketingResult = await addMarketingLead({
-      name: values.fullName,
-      email: values.email,
-      source: 'valuation-request'
-    });
+    try {
+      // 1. Send Email Notification
+      const emailResult = await sendValuationEmail({
+        name: values.fullName,
+        email: values.email,
+        phone: values.phone,
+        address: values.propertyAddress,
+        type: values.propertyType
+      });
 
-    if (valuationResult.success && marketingResult.success) {
-        toast({
-            title: "Valuation Request Submitted!",
-            description: "Thank you. An agent will contact you shortly to discuss your property valuation.",
-        });
-        form.reset();
-    } else {
-        toast({
-            variant: "destructive",
-            title: "Error",
-            description: valuationResult.error || marketingResult.error || "An unknown error occurred.",
-        });
+      // 2. Save to Supabase
+      const valuationResult = await addValuationRequest(values);
+      await addMarketingLead({
+        name: values.fullName,
+        email: values.email,
+        source: 'valuation-request'
+      });
+
+      if (emailResult.success && valuationResult.success) {
+          toast({
+              title: "Valuation Request Submitted!",
+              description: "Thank you. An expert agent will contact you shortly to discuss your property valuation.",
+          });
+          form.reset();
+      } else {
+          throw new Error(emailResult.error || valuationResult.error);
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Submission Error",
+        description: error.message || "An unexpected error occurred. Please try again.",
+      });
     }
   }
 
@@ -132,7 +147,12 @@ export function SellForm() {
         </fieldset>
         
         <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Submitting..." : "Request Valuation"}
+          {form.formState.isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Submitting...
+            </>
+          ) : "Request Valuation"}
         </Button>
       </form>
     </Form>

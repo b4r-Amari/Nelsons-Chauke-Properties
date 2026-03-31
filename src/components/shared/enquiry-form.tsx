@@ -1,4 +1,3 @@
-
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,6 +9,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import { sendEnquiryEmail } from "@/lib/email-actions"
+import { addMarketingLead } from "@/lib/supabase/actions"
+import { Loader2 } from "lucide-react"
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -32,12 +34,33 @@ export function EnquiryForm({ propertyId }: { propertyId: string }) {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Enquiry Submitted (Simulated):", { ...values, propertyId });
-    toast({
-      title: "Enquiry Sent!",
-      description: "An agent will be in touch with you shortly.",
-    })
-    form.reset()
+    try {
+      // 1. Send email via Resend
+      const emailResult = await sendEnquiryEmail({ ...values, propertyId });
+      
+      // 2. Save lead to Supabase
+      await addMarketingLead({
+        name: values.name,
+        email: values.email,
+        source: `property-enquiry-${propertyId}`
+      });
+
+      if (emailResult.success) {
+        toast({
+          title: "Enquiry Sent!",
+          description: "An agent will be in touch with you shortly.",
+        })
+        form.reset()
+      } else {
+        throw new Error(emailResult.error);
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Enquiry Failed",
+        description: error.message || "An unexpected error occurred.",
+      });
+    }
   }
 
   return (
@@ -101,7 +124,12 @@ export function EnquiryForm({ propertyId }: { propertyId: string }) {
               )}
             />
             <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? "Sending..." : "Send Enquiry"}
+                {form.formState.isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : "Send Enquiry"}
             </Button>
           </form>
         </Form>

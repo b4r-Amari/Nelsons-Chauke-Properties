@@ -1,4 +1,3 @@
-
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -9,6 +8,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
+import { sendContactEmail } from "@/lib/email-actions"
+import { addMarketingLead } from "@/lib/supabase/actions"
+import { Loader2 } from "lucide-react"
 
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
@@ -31,12 +33,33 @@ export function ContactForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("Contact Form Submitted (Simulated):", values);
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We will get back to you shortly.",
-    })
-    form.reset()
+    try {
+      // 1. Send email via Resend
+      const emailResult = await sendContactEmail(values);
+      
+      // 2. Add to marketing leads in Supabase
+      await addMarketingLead({
+        name: values.name,
+        email: values.email,
+        source: 'contact-page'
+      });
+
+      if (emailResult.success) {
+        toast({
+          title: "Message Sent!",
+          description: "Thank you for contacting us. We will get back to you shortly.",
+        })
+        form.reset()
+      } else {
+        throw new Error(emailResult.error);
+      }
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Error Sending Message",
+        description: error.message || "An unexpected error occurred. Please try again.",
+      });
+    }
   }
 
   return (
@@ -95,7 +118,12 @@ export function ContactForm() {
           )}
         />
         <Button type="submit" className="w-full bg-brand-bright hover:bg-brand-deep transition-colors" size="lg" disabled={form.formState.isSubmitting}>
-          {form.formState.isSubmitting ? "Submitting..." : "Submit Message"}
+          {form.formState.isSubmitting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Submitting...
+            </>
+          ) : "Submit Message"}
         </Button>
       </form>
     </Form>
