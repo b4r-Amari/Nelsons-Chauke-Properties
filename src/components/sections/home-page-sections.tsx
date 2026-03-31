@@ -11,13 +11,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 import { useToast } from '@/hooks/use-toast';
-import { PropertyFilter } from '../shared/property-filter';
-import type { Property } from '../shared/property-card';
+import type { Property } from '@/lib/types';
 import placeholders from '@/lib/placeholder-images.json';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Building, KeyRound, Handshake } from 'lucide-react';
-import { addMarketingLead } from '@/lib/firebase/firestore';
+import { addMarketingLead } from '@/lib/supabase/actions';
 
 
 const alertFormSchema = z.object({
@@ -120,7 +119,7 @@ function CtaTabCard({ id, title, description, buttonText, imageSrc, imageHint, h
         <h3 className="text-xl font-bold font-headline mb-2 text-brand-deep group-hover:text-brand-bright transition-colors">{title}</h3>
         <p className="text-muted-foreground flex-grow mb-6">{description}</p>
         {isAlertForm ? (
-          <PropertyAlertForm source={id} />
+          <PropertyAlertForm source={id!} />
         ) : (
           <Link href={href || '#'}><Button variant="outline" className="border-brand-bright text-brand-bright hover:bg-brand-bright hover:text-white transition-colors w-full mt-auto">
              {buttonText}

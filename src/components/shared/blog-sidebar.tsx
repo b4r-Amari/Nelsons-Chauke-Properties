@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from "next/image"
@@ -19,9 +18,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { Separator } from "../ui/separator"
 import { type BlogPost } from "./blog-card"
-import { addMarketingLead } from "@/lib/firebase/firestore"
+import { addMarketingLead } from "@/lib/supabase/actions"
 
 
 const newsletterFormSchema = z.object({

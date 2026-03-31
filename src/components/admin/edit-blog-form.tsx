@@ -1,4 +1,3 @@
-
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -10,27 +9,30 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { ArrowLeft, UploadCloud } from "lucide-react"
+import { ArrowLeft, UploadCloud, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { updateBlogPost } from "@/lib/supabase/actions"
+import { updateBlogPost, uploadFile } from "@/lib/supabase/actions"
 import { useRouter } from "next/navigation"
 import RichTextEditor from "@/components/shared/rich-text-editor"
 import type { BlogPost } from "@/lib/types"
+import { useState } from "react"
+import Image from "next/image"
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
   author: z.string().min(2, { message: "Author name must be at least 2 characters." }),
   category: z.string().min(3, { message: "Category is required." }),
   excerpt: z.string().min(20, { message: "Excerpt must be at least 20 characters." }).max(200, { message: "Excerpt must be less than 200 characters." }),
-  imageUrl: z.string().url({ message: "Please enter a valid URL." }),
+  imageUrl: z.string().url({ message: "Please upload an image." }),
   content: z.string().min(100, { message: "Content must be at least 100 characters." }),
 })
 
 export function EditBlogForm({ initialData }: { initialData: BlogPost }) {
   const { toast } = useToast()
   const router = useRouter()
+  const [isUploading, setIsUploading] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,6 +45,8 @@ export function EditBlogForm({ initialData }: { initialData: BlogPost }) {
       content: initialData.content,
     },
   })
+
+  const imageUrl = form.watch("imageUrl");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const result = await updateBlogPost(initialData.id, values);
@@ -62,6 +66,20 @@ export function EditBlogForm({ initialData }: { initialData: BlogPost }) {
     }
   }
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const result = await uploadFile('blog-media', file);
+    if (result.success && result.url) {
+      form.setValue("imageUrl", result.url);
+    } else {
+      toast({ variant: "destructive", title: "Upload Failed", description: result.error });
+    }
+    setIsUploading(false);
+  };
+
   return (
     <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -76,7 +94,7 @@ export function EditBlogForm({ initialData }: { initialData: BlogPost }) {
                     Edit Blog Post
                 </h1>
                 <div className="ml-auto flex items-center gap-2">
-                    <Button type="submit" size="sm" className="bg-brand-bright hover:bg-brand-deep" disabled={form.formState.isSubmitting}>
+                    <Button type="submit" size="sm" className="bg-brand-bright hover:bg-brand-deep" disabled={form.formState.isSubmitting || isUploading}>
                         {form.formState.isSubmitting ? "Saving..." : "Save Changes"}
                     </Button>
                 </div>
@@ -171,37 +189,25 @@ export function EditBlogForm({ initialData }: { initialData: BlogPost }) {
                             <CardTitle>Featured Image</CardTitle>
                         </CardHeader>
                         <CardContent className="grid gap-6">
-                             <FormField
-                                control={form.control}
-                                name="imageUrl"
-                                render={({ field }) => (
-                                    <FormItem>
-                                    <FormLabel>Image URL</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="https://example.com/image.png" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <Separator />
+                            {imageUrl && (
+                                <div className="relative aspect-video rounded-lg overflow-hidden border">
+                                    <Image src={imageUrl} alt="Featured Preview" fill className="object-cover" />
+                                </div>
+                            )}
                             <div>
-                                <Label>Upload Media</Label>
-                                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10">
+                                <Label>Change Featured Image</Label>
+                                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 bg-muted/20 hover:bg-muted/40 transition-colors cursor-pointer relative">
                                     <div className="text-center">
-                                        <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />
+                                        {isUploading ? <Loader2 className="mx-auto h-12 w-12 text-brand-bright animate-spin" /> : <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />}
                                         <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                                        <label
-                                            htmlFor="file-upload"
-                                            className="relative cursor-pointer rounded-md bg-white font-semibold text-brand-bright focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-deep focus-within:ring-offset-2 hover:text-brand-deep"
-                                        >
-                                            <span>Upload files</span>
-                                            <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple />
-                                        </label>
-                                        <p className="pl-1">or drag and drop</p>
+                                            <span className="relative rounded-md bg-white font-semibold text-brand-bright hover:text-brand-deep px-2">
+                                                Click to upload
+                                            </span>
+                                            <p className="pl-1">or drag and drop</p>
                                         </div>
-                                        <p className="text-xs leading-5 text-gray-600">PNG, JPG, MP4 up to 10MB</p>
+                                        <p className="text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
                                     </div>
+                                    <input type="file" className="absolute inset-0 opacity-0 cursor-pointer" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
                                 </div>
                             </div>
                         </CardContent>
