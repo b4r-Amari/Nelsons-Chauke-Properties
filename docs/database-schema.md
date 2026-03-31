@@ -16,28 +16,25 @@ END;
 $$ language 'plpgsql';
 
 -- ==========================================
--- 2. CUSTOM TYPES
--- ==========================================
-DO $$ BEGIN
-    CREATE TYPE property_status AS ENUM ('for-sale', 'to-let', 'sold');
-EXCEPTION
-    WHEN duplicate_object THEN null;
-END $$;
-
--- ==========================================
--- 3. TABLES
+-- 2. TABLES
 -- ==========================================
 
--- Users: Synced with Supabase Auth
+-- Standard Users Table (Sync with Supabase Auth)
 CREATE TABLE IF NOT EXISTS public.users (
     id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
     username TEXT UNIQUE,
-    password TEXT, -- For custom storage if needed, though Supabase Auth handles it securely
+    password TEXT, -- For custom tracking/legacy purposes, though Supabase handles auth
     display_name TEXT,
     photo_url TEXT,
-    is_admin BOOLEAN DEFAULT false,
     signup_sources TEXT[] DEFAULT ARRAY['web'], 
+    created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Admin Users Table (Single Source of Truth for Portal Access)
+CREATE TABLE IF NOT EXISTS public.admin_users (
+    id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
     created_at TIMESTAMPTZ DEFAULT now()
 );
 
@@ -64,7 +61,7 @@ CREATE TABLE IF NOT EXISTS public.properties (
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     price NUMERIC NOT NULL,
-    status property_status NOT NULL DEFAULT 'for-sale',
+    status TEXT CHECK (status IN ('for-sale', 'to-let', 'sold')) DEFAULT 'for-sale',
     type TEXT NOT NULL,
     bedrooms INTEGER NOT NULL DEFAULT 0,
     bathrooms NUMERIC NOT NULL DEFAULT 0,
@@ -72,7 +69,6 @@ CREATE TABLE IF NOT EXISTS public.properties (
     features JSONB DEFAULT '[]',
     image_urls TEXT[] DEFAULT '{}',
     on_show BOOLEAN DEFAULT false,
-    is_favorite BOOLEAN DEFAULT false,
     video_url TEXT,
     created_at TIMESTAMPTZ DEFAULT now(),
     updated_at TIMESTAMPTZ DEFAULT now()
@@ -120,19 +116,8 @@ CREATE TABLE IF NOT EXISTS public.valuation_requests (
 );
 
 -- ==========================================
--- 4. SECURITY & AUTH FUNCTIONS
+-- 3. AUTOMATION & SECURITY FUNCTIONS
 -- ==========================================
-
--- Check if current user is admin
-CREATE OR REPLACE FUNCTION public.is_admin()
-RETURNS BOOLEAN AS $$
-BEGIN
-  RETURN (
-    SELECT is_admin FROM public.users 
-    WHERE id = auth.uid()
-  );
-END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Trigger: Auto-create profile when a user signs up via Supabase Auth
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -157,10 +142,11 @@ CREATE TRIGGER on_auth_user_created
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
 -- ==========================================
--- 5. ROW LEVEL SECURITY (RLS)
+-- 4. ROW LEVEL SECURITY (RLS)
 -- ==========================================
 
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.estate_agents ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.properties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
@@ -172,6 +158,17 @@ CREATE POLICY "Allow public read properties" ON public.properties FOR SELECT USI
 CREATE POLICY "Allow public read agents" ON public.estate_agents FOR SELECT USING (true);
 CREATE POLICY "Allow public read blogs" ON public.blog_posts FOR SELECT USING (published = true);
 
+-- Admin Check Helper
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.admin_users 
+    WHERE id = auth.uid()
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 CREATE POLICY "Admin full access properties" ON public.properties FOR ALL USING (is_admin());
 CREATE POLICY "Admin full access agents" ON public.estate_agents FOR ALL USING (is_admin());
 CREATE POLICY "Admin full access blogs" ON public.blog_posts FOR ALL USING (is_admin());
@@ -180,4 +177,4 @@ CREATE POLICY "Public insert leads" ON public.marketing_leads FOR INSERT WITH CH
 CREATE POLICY "Public insert valuations" ON public.valuation_requests FOR INSERT WITH CHECK (true);
 
 CREATE POLICY "Users view own profile" ON public.users FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Admins view all profiles" ON public.users FOR SELECT USING (is_admin());
+CREATE POLICY "Admins view all status" ON public.admin_users FOR SELECT USING (auth.uid() = id OR is_admin());

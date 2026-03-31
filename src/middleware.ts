@@ -61,14 +61,14 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/admin')) {
     if (request.nextUrl.pathname === '/admin/login') {
       if (user) {
-        // Verify admin status in public.users
-        const { data: profile } = await supabase
-          .from('users')
-          .select('is_admin')
+        // Verify admin status in public.admin_users
+        const { data: adminProfile } = await supabase
+          .from('admin_users')
+          .select('id')
           .eq('id', user.id)
-          .single()
+          .maybeSingle()
         
-        if (profile?.is_admin) {
+        if (adminProfile) {
           return NextResponse.redirect(new URL('/admin/dashboard', request.url))
         }
       }
@@ -79,13 +79,13 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/admin/login', request.url))
     }
 
-    const { data: profile } = await supabase
-      .from('users')
-      .select('is_admin')
+    const { data: adminProfile } = await supabase
+      .from('admin_users')
+      .select('id')
       .eq('id', user.id)
-      .single()
+      .maybeSingle()
 
-    if (!profile?.is_admin) {
+    if (!adminProfile) {
       return NextResponse.redirect(new URL('/', request.url))
     }
   }

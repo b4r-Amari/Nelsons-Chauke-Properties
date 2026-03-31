@@ -56,8 +56,13 @@ export type User = {
   password?: string;
   displayName?: string;
   photoUrl?: string;
-  isAdmin: boolean;
   signupSources: string[];
+  createdAt: string;
+};
+
+export type AdminUser = {
+  id: string;
+  email: string;
   createdAt: string;
 };
 

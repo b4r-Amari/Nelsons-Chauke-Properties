@@ -8,7 +8,6 @@ interface UserProfile {
   id: string;
   email: string;
   username?: string;
-  is_admin: boolean;
 }
 
 interface AuthContextType {
@@ -31,30 +30,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        // Fetch profile from public.users which includes is_admin
+        // Fetch standard profile
         const { data: profile } = await supabase
           .from('users')
-          .select('id, email, username, is_admin')
+          .select('id, email, username')
           .eq('id', session.user.id)
           .single();
         
-        if (profile) {
-          setUser({
-            id: profile.id,
-            email: profile.email,
-            username: profile.username,
-            is_admin: profile.is_admin
-          });
-          setIsAdmin(!!profile.is_admin);
-        } else {
-          // Fallback if trigger hasn't finished yet
-          setUser({
-            id: session.user.id,
-            email: session.user.email!,
-            is_admin: false
-          });
-          setIsAdmin(false);
-        }
+        // Fetch admin status from public.admin_users
+        const { data: adminData } = await supabase
+          .from('admin_users')
+          .select('id')
+          .eq('id', session.user.id)
+          .maybeSingle();
+        
+        setUser(profile ? {
+          id: profile.id,
+          email: profile.email,
+          username: profile.username
+        } : {
+          id: session.user.id,
+          email: session.user.email!,
+        });
+        
+        setIsAdmin(!!adminData);
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -68,19 +67,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         const { data: profile } = await supabase
           .from('users')
-          .select('id, email, username, is_admin')
+          .select('id, email, username')
           .eq('id', session.user.id)
           .single();
         
-        if (profile) {
-          setUser({
-            id: profile.id,
-            email: profile.email,
-            username: profile.username,
-            is_admin: profile.is_admin
-          });
-          setIsAdmin(!!profile.is_admin);
-        }
+        const { data: adminData } = await supabase
+          .from('admin_users')
+          .select('id')
+          .eq('id', session.user.id)
+          .maybeSingle();
+
+        setUser(profile ? {
+          id: profile.id,
+          email: profile.email,
+          username: profile.username
+        } : {
+          id: session.user.id,
+          email: session.user.email!,
+        });
+        setIsAdmin(!!adminData);
       } else {
         setUser(null);
         setIsAdmin(false);
