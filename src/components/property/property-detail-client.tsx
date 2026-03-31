@@ -26,7 +26,6 @@ const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function PropertyDetailClient({ property, agents }: { property: Property, agents: Agent[] }) {
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const { toast } = useToast();
 
   const formatPrice = (price: number) => {
@@ -44,22 +43,16 @@ export function PropertyDetailClient({ property, agents }: { property: Property,
     return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
   };
 
-  const handleCopyToClipboard = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      toast({ title: "Link Copied", description: "Property link copied to clipboard." });
-    } catch (e) {
-      toast({ variant: "destructive", title: "Could not copy link" });
-    }
-  };
-
   const galleryImages = property.imageUrls.length > 0 ? property.imageUrls : [placeholders.propertyDefault.url];
+
+  const features = Array.isArray(property.features) ? property.features : [];
+  const isPetFriendly = features.some(f => typeof f === 'string' && f.toLowerCase().includes('pet friendly'));
 
   const propertyDetails = [
       { label: "Property Type", value: property.type, icon: Building },
       { label: "Floor Size", value: `${property.sqft} m²`, icon: Home },
       { label: "Rates & Taxes", value: formatSimpleCurrency((property.price / 1000) * 0.5), icon: null },
-      { label: "Pet Friendly", value: property.features.some(f => f.toLowerCase().includes('pet friendly')) ? 'Yes' : 'No', icon: null },
+      { label: "Pet Friendly", value: isPetFriendly ? 'Yes' : 'No', icon: null },
   ];
 
   return (
@@ -111,12 +104,12 @@ export function PropertyDetailClient({ property, agents }: { property: Property,
                      <div className="grid grid-cols-4 gap-4 text-center border rounded-lg p-4 md:p-6 bg-muted/50 mb-8">
                         <div className="flex flex-col items-center gap-1 md:gap-2">
                             <BedDouble className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
-                            <span className="font-semibold text-md md:text-lg">{property.beds}</span>
+                            <span className="font-semibold text-md md:text-lg">{property.bedrooms}</span>
                             <span className="text-xs md:text-sm text-muted-foreground">Bedrooms</span>
                         </div>
                         <div className="flex flex-col items-center gap-1 md:gap-2">
                             <Bath className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
-                            <span className="font-semibold text-md md:text-lg">{property.baths}</span>
+                            <span className="font-semibold text-md md:text-lg">{property.bathrooms}</span>
                             <span className="text-xs md:text-sm text-muted-foreground">Bathrooms</span>
                         </div>
                         <div className="flex flex-col items-center gap-1 md:gap-2">

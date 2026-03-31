@@ -15,7 +15,7 @@ const mapDbProperty = (p: any): Property => ({
   location: p.location || '',
   sqft: p.sqft || 0,
   erfSize: p.erf_size || 0,
-  features: p.features || {},
+  features: Array.isArray(p.features) ? p.features : [],
   imageUrls: Array.isArray(p.image_urls) ? p.image_urls : [],
   videoUrl: p.video_url || '',
   onShow: p.on_show || false,

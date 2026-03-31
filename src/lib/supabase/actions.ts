@@ -39,7 +39,7 @@ export async function addProperty(formData: any) {
     bedrooms: Number(formData.bedrooms || 0),
     bathrooms: Number(formData.bathrooms || 0),
     location: formData.location,
-    features: formData.features || {},
+    features: Array.isArray(formData.features) ? formData.features : [],
     image_urls: formData.imageUrls || [],
     sqft: Number(formData.sqft || 0),
     erf_size: Number(formData.erfSize || 0),
@@ -70,7 +70,7 @@ export async function updateProperty(id: string, formData: any) {
   if (formData.bedrooms !== undefined) dbData.bedrooms = Number(formData.bedrooms);
   if (formData.bathrooms !== undefined) dbData.bathrooms = Number(formData.bathrooms);
   if (formData.description !== undefined) dbData.description = formData.description;
-  if (formData.features !== undefined) dbData.features = formData.features;
+  if (formData.features !== undefined) dbData.features = Array.isArray(formData.features) ? formData.features : [];
   if (formData.imageUrls !== undefined) dbData.image_urls = formData.imageUrls;
   if (formData.agentId !== undefined) dbData.agent_id = formData.agentId || null;
   if (formData.onShow !== undefined) dbData.on_show = formData.onShow;

@@ -10,7 +10,7 @@ export type Property = {
   bedrooms: number;
   bathrooms: number;
   location: string;
-  features: any;
+  features: string[];
   imageUrls: string[];
   createdAt?: string;
   updatedAt?: string;

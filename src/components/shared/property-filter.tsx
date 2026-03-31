@@ -182,13 +182,16 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
         if (filters.maxFloorSize !== 'any' && p.sqft > parseInt(filters.maxFloorSize)) return false;
         if (filters.minErfSize !== 'any' && p.erfSize < parseInt(filters.minErfSize)) return false;
         if (filters.maxErfSize !== 'any' && p.erfSize > parseInt(filters.maxErfSize)) return false;
-        if (filters.features.petFriendly && !p.features.some(f => f.toLowerCase().includes('pet friendly'))) return false;
-        if (filters.features.garden && !p.features.some(f => f.toLowerCase().includes('garden'))) return false;
-        if (filters.features.pool && !p.features.some(f => f.toLowerCase().includes('pool'))) return false;
-        if (filters.features.flatlet && !p.features.some(f => f.toLowerCase().includes('flatlet'))) return false;
+        
+        const pFeatures = Array.isArray(p.features) ? p.features : [];
+        if (filters.features.petFriendly && !pFeatures.some(f => typeof f === 'string' && f.toLowerCase().includes('pet friendly'))) return false;
+        if (filters.features.garden && !pFeatures.some(f => typeof f === 'string' && f.toLowerCase().includes('garden'))) return false;
+        if (filters.features.pool && !pFeatures.some(f => typeof f === 'string' && f.toLowerCase().includes('pool'))) return false;
+        if (filters.features.flatlet && !pFeatures.some(f => typeof f === 'string' && f.toLowerCase().includes('flatlet'))) return false;
+        
         if (filters.other.onShow && !p.onShow) return false;
-        if (filters.other.retirement && !p.features.some(f => f.toLowerCase().includes('retirement'))) return false;
-        if (filters.other.securityEstate && !p.features.some(f => f.toLowerCase().includes('secure estate'))) return false;
+        if (filters.other.retirement && !pFeatures.some(f => typeof f === 'string' && f.toLowerCase().includes('retirement'))) return false;
+        if (filters.other.securityEstate && !pFeatures.some(f => typeof f === 'string' && f.toLowerCase().includes('secure estate'))) return false;
         return true;
     }).length
   }, [filters, properties, selectedLocations]);
@@ -217,7 +220,7 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
     debouncedFetchSuggestions(filters.location);
   }, [filters.location, debouncedFetchSuggestions]);
 
-  const isDarkBg = true; // Fixed for context as it was hardcoded relative to parent in original
+  const isDarkBg = true;
   const commonTabClass = "data-[state=active]:bg-transparent data-[state=active]:shadow-none text-lg font-bold pb-3 px-5 rounded-none border-b-4 data-[state=active]:border-brand-bright border-transparent";
   const textColorClass = "text-white/80 hover:text-white data-[state=active]:text-white";
   const selectTriggerClass = isDarkBg ? "bg-primary-foreground/10 text-white border-white/50" : "bg-background text-foreground border-input";
@@ -430,7 +433,7 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
                     <span className="mx-2">•</span>
                     <Button variant="link" className="text-white h-auto p-0" onClick={clearFilters}>Clear Filters</Button>
                 </div>
-            </Collapsible>
+              </Collapsible>
           </div>
         </Tabs>
       </div>
