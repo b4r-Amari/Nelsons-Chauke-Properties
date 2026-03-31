@@ -1,3 +1,4 @@
+
 "use client"
 
 import Image from "next/image"
@@ -18,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { useToast } from "@/hooks/use-toast"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import { type BlogPost } from "./blog-card"
+import { type BlogPost } from "@/lib/types"
 import { addMarketingLead } from "@/lib/supabase/actions"
 
 
@@ -61,12 +62,16 @@ export function BlogSidebar({ posts }: { posts: BlogPost[] }) {
                     {posts.slice(0, 3).map((post) => (
                         <Link key={post.slug} href={`/blog/${post.slug}`} className="group flex items-start gap-4">
                             <div className="relative w-16 h-16 rounded-md overflow-hidden shrink-0">
-                                <Image
-                                    src={post.imageUrl}
-                                    alt={post.title}
-                                    fill
-                                    className="object-cover transition-transform group-hover:scale-110"
-                                />
+                                {post.imageUrl ? (
+                                    <Image
+                                        src={post.imageUrl}
+                                        alt={post.title}
+                                        fill
+                                        className="object-cover transition-transform group-hover:scale-110"
+                                    />
+                                ) : (
+                                    <div className="w-full h-full bg-muted" />
+                                )}
                             </div>
                             <div>
                                 <h3 className="text-sm font-semibold leading-tight line-clamp-2 group-hover:text-brand-bright transition-colors">{post.title}</h3>

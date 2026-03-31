@@ -14,6 +14,8 @@ const ContentSecurityPolicy = `
 `;
 
 const nextConfig: NextConfig = {
+  // Minor update to force rebuild
+  reactStrictMode: true,
   typescript: {
     ignoreBuildErrors: false,
   },

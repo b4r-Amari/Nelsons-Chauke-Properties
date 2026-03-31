@@ -6,20 +6,7 @@ import Link from "next/link";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight } from "lucide-react";
-
-export type BlogPost = {
-  id: string;
-  slug: string;
-  title: string;
-  author: string;
-  date: string;
-  imageUrl: string;
-  imageHint: string;
-  excerpt: string;
-  content: string;
-  category: string;
-  updatedAt: any; // Or a more specific Timestamp type
-};
+import { type BlogPost } from "@/lib/types";
 
 type BlogCardProps = {
   post: BlogPost;
@@ -31,13 +18,19 @@ export function BlogCard({ post }: BlogCardProps) {
       <Card className="h-full flex flex-col shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden">
         <CardHeader className="p-0">
           <div className="relative aspect-video">
-            <Image
-              src={post.imageUrl}
-              alt={`Featured image for blog post titled: ${post.title}`}
-              data-ai-hint={post.imageHint}
-              fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-            />
+            {post.imageUrl ? (
+              <Image
+                src={post.imageUrl}
+                alt={`Featured image for blog post titled: ${post.title}`}
+                data-ai-hint={post.imageHint}
+                fill
+                className="object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+            ) : (
+              <div className="w-full h-full bg-muted flex items-center justify-center text-muted-foreground">
+                No Image
+              </div>
+            )}
           </div>
         </CardHeader>
         <CardContent className="p-6 flex-grow">

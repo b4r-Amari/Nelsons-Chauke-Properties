@@ -45,7 +45,8 @@ export type BlogPost = {
   excerpt?: string;
   category?: string;
   author?: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
+  imageHint?: string;
   published: boolean;
   createdAt?: string;
   updatedAt?: string;
