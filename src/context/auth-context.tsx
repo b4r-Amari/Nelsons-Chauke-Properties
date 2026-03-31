@@ -7,8 +7,6 @@ import { createClient } from "@/lib/supabase/client";
 interface UserProfile {
   id: string;
   email: string;
-  display_name?: string;
-  photo_url?: string;
   is_admin: boolean;
 }
 
@@ -32,24 +30,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        const { data: profile } = await supabase
-          .from('users')
-          .select('*')
+        // Check admin_users table for authorization
+        const { data: adminData } = await supabase
+          .from('admin_users')
+          .select('id')
           .eq('id', session.user.id)
           .single();
         
-        if (profile) {
-          setUser(profile as UserProfile);
-          setIsAdmin(profile.is_admin);
-        } else {
-          // If profile doesn't exist yet (unlikely with trigger), fallback to basic user info
-          setUser({
-            id: session.user.id,
-            email: session.user.email!,
-            is_admin: false
-          });
-          setIsAdmin(false);
-        }
+        const isUserAdmin = !!adminData;
+        setUser({
+          id: session.user.id,
+          email: session.user.email!,
+          is_admin: isUserAdmin
+        });
+        setIsAdmin(isUserAdmin);
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -61,16 +55,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        const { data: profile } = await supabase
-          .from('users')
-          .select('*')
+        const { data: adminData } = await supabase
+          .from('admin_users')
+          .select('id')
           .eq('id', session.user.id)
           .single();
         
-        if (profile) {
-          setUser(profile as UserProfile);
-          setIsAdmin(profile.is_admin);
-        }
+        const isUserAdmin = !!adminData;
+        setUser({
+          id: session.user.id,
+          email: session.user.email!,
+          is_admin: isUserAdmin
+        });
+        setIsAdmin(isUserAdmin);
       } else {
         setUser(null);
         setIsAdmin(false);

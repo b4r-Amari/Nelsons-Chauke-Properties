@@ -7,87 +7,56 @@ import { revalidatePath } from 'next/cache';
 export async function addProperty(formData: any) {
   const supabase = await createClient();
   
-  // 1. Insert property main data
   const propertyData = {
-    address: formData.address,
-    slug: formData.slug,
-    location: formData.location,
-    price: formData.price,
+    agent_id: formData.agentId || (formData.agentIds && formData.agentIds[0]),
+    title: formData.address || formData.title,
+    description: formData.description,
+    price: Number(formData.price),
     status: formData.status,
     type: formData.type,
-    beds: formData.beds,
-    baths: formData.baths,
-    sqft: formData.sqft,
-    erf_size: formData.erfSize,
-    year_built: formData.yearBuilt,
-    description: formData.description,
+    bedrooms: Number(formData.beds),
+    bathrooms: Number(formData.baths),
+    location: formData.location,
     features: formData.features,
     image_urls: formData.imageUrls,
-    is_favorite: formData.isFavorite,
     on_show: formData.onShow,
+    is_favorite: formData.isFavorite,
     video_url: formData.videoUrl
   };
 
-  const { data: prop, error: propError } = await supabase
-    .from('properties')
-    .insert([propertyData])
-    .select()
-    .single();
+  const { data, error } = await supabase.from('properties').insert([propertyData]).select().single();
 
-  if (propError) return { success: false, error: propError.message };
-
-  // 2. Insert Agent Assignments into property_agents join table
-  if (formData.agentIds && formData.agentIds.length > 0) {
-    const assignments = formData.agentIds.map((agentId: string) => ({
-      property_id: prop.id,
-      agent_id: agentId
-    }));
-    const { error: joinError } = await supabase.from('property_agents').insert(assignments);
-    if (joinError) console.error('Error assigning agents:', joinError.message);
-  }
+  if (error) return { success: false, error: error.message };
   
   revalidatePath('/admin/properties');
   revalidatePath('/properties');
-  return { success: true, data: prop };
+  return { success: true, data };
 }
 
 export async function updateProperty(id: string, formData: any) {
   const supabase = await createClient();
   
   const dbData: any = {};
-  if (formData.address !== undefined) dbData.address = formData.address;
-  if (formData.slug !== undefined) dbData.slug = formData.slug;
+  if (formData.address !== undefined || formData.title !== undefined) dbData.title = formData.address || formData.title;
   if (formData.location !== undefined) dbData.location = formData.location;
-  if (formData.price !== undefined) dbData.price = formData.price;
+  if (formData.price !== undefined) dbData.price = Number(formData.price);
   if (formData.status !== undefined) dbData.status = formData.status;
   if (formData.type !== undefined) dbData.type = formData.type;
-  if (formData.beds !== undefined) dbData.beds = formData.beds;
-  if (formData.baths !== undefined) dbData.baths = formData.baths;
-  if (formData.sqft !== undefined) dbData.sqft = formData.sqft;
-  if (formData.erfSize !== undefined) dbData.erf_size = formData.erfSize;
-  if (formData.yearBuilt !== undefined) dbData.year_built = formData.yearBuilt;
+  if (formData.beds !== undefined) dbData.bedrooms = Number(formData.beds);
+  if (formData.baths !== undefined) dbData.bathrooms = Number(formData.baths);
   if (formData.description !== undefined) dbData.description = formData.description;
   if (formData.features !== undefined) dbData.features = formData.features;
   if (formData.imageUrls !== undefined) dbData.image_urls = formData.imageUrls;
-  if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
   if (formData.onShow !== undefined) dbData.on_show = formData.onShow;
+  if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
   if (formData.videoUrl !== undefined) dbData.video_url = formData.videoUrl;
-
-  const { error: updateError } = await supabase.from('properties').update(dbData).eq('id', id);
-  if (updateError) return { success: false, error: updateError.message };
-
-  // Update Agent Assignments (Clear and Re-insert)
-  if (formData.agentIds) {
-    await supabase.from('property_agents').delete().eq('property_id', id);
-    if (formData.agentIds.length > 0) {
-      const assignments = formData.agentIds.map((agentId: string) => ({
-        property_id: id,
-        agent_id: agentId
-      }));
-      await supabase.from('property_agents').insert(assignments);
-    }
+  if (formData.agentId !== undefined || formData.agentIds !== undefined) {
+    dbData.agent_id = formData.agentId || (formData.agentIds && formData.agentIds[0]);
   }
-  
+
+  const { error } = await supabase.from('properties').update(dbData).eq('id', id);
+  if (error) return { success: false, error: error.message };
+
   revalidatePath('/admin/properties');
   revalidatePath(`/properties/${id}`);
   return { success: true };
@@ -105,12 +74,12 @@ export async function deleteProperty(id: string) {
 export async function addAgent(formData: any) {
   const supabase = await createClient();
   const dbData = {
-    name: formData.name || `${formData.firstName} ${formData.lastName}`,
+    first_name: formData.firstName,
+    last_name: formData.lastName,
     slug: formData.slug,
-    role: formData.role,
     email: formData.email,
     phone: formData.phone,
-    image_url: formData.photoUrl || formData.imageUrl,
+    photo_url: formData.photoUrl || formData.imageUrl,
     bio: formData.bio,
     is_active: formData.isActive ?? true
   };
@@ -123,22 +92,41 @@ export async function addAgent(formData: any) {
   return { success: true, data };
 }
 
+export async function updateAgent(id: string, formData: any) {
+  const supabase = await createClient();
+  const dbData: any = {
+    first_name: formData.firstName || formData.name?.split(' ')[0],
+    last_name: formData.lastName || formData.name?.split(' ').slice(1).join(' '),
+    email: formData.email,
+    phone: formData.phone,
+    photo_url: formData.photoUrl || formData.imageUrl,
+    bio: formData.bio,
+    is_active: formData.isActive
+  };
+
+  const { error } = await supabase.from('estate_agents').update(dbData).eq('id', id);
+  if (error) return { success: false, error: error.message };
+  
+  revalidatePath('/admin/agents');
+  revalidatePath(`/agents/${formData.slug}`);
+  return { success: true };
+}
+
 export async function addMarketingLead(lead: { email: string; name?: string; source: string }) {
   const supabase = await createClient();
   
-  // Fetch existing lead to append source
   const { data: existing } = await supabase
-    .from('users')
-    .select('signup_sources')
+    .from('marketing_leads')
+    .select('sources')
     .eq('email', lead.email)
     .single();
 
-  const sources = existing ? Array.from(new Set([...(existing.signup_sources || []), lead.source])) : [lead.source];
+  const sources = existing ? Array.from(new Set([...(existing.sources || []), lead.source])) : [lead.source];
 
-  const { error } = await supabase.from('users').upsert({
+  const { error } = await supabase.from('marketing_leads').upsert({
     email: lead.email,
-    display_name: lead.name,
-    signup_sources: sources
+    name: lead.name,
+    sources: sources
   }, { onConflict: 'email' });
   
   if (error) return { success: false, error: error.message };
@@ -151,10 +139,65 @@ export async function addValuationRequest(request: any) {
     name: request.fullName || request.name,
     email: request.email,
     phone: request.phone,
-    address: request.propertyAddress || request.address
+    property_details: request.propertyAddress || request.address || request.property_details
   };
 
   const { error } = await supabase.from('valuation_requests').insert([dbData]);
   if (error) return { success: false, error: error.message };
+  return { success: true };
+}
+
+export async function addBlogPost(formData: any) {
+  const supabase = await createClient();
+  const dbData = {
+    title: formData.title,
+    slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
+    content: formData.content,
+    excerpt: formData.excerpt,
+    featured_image: formData.imageUrl || formData.featured_image,
+    published: formData.published ?? true
+  };
+
+  const { data, error } = await supabase.from('blog_posts').insert([dbData]).select().single();
+  if (error) return { success: false, error: error.message };
+  
+  revalidatePath('/admin/blogs');
+  revalidatePath('/blog');
+  return { success: true, data };
+}
+
+export async function updateBlogPost(id: string, formData: any) {
+  const supabase = await createClient();
+  const dbData: any = {
+    title: formData.title,
+    content: formData.content,
+    excerpt: formData.excerpt,
+    featured_image: formData.imageUrl || formData.featured_image,
+    published: formData.published
+  };
+
+  const { error } = await supabase.from('blog_posts').update(dbData).eq('id', id);
+  if (error) return { success: false, error: error.message };
+  
+  revalidatePath('/admin/blogs');
+  revalidatePath(`/blog/${formData.slug}`);
+  return { success: true };
+}
+
+export async function deleteBlogPost(id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('blog_posts').delete().eq('id', id);
+  if (error) return { success: false, error: error.message };
+  
+  revalidatePath('/admin/blogs');
+  return { success: true };
+}
+
+export async function deleteAgent(id: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('estate_agents').delete().eq('id', id);
+  if (error) return { success: false, error: error.message };
+  
+  revalidatePath('/admin/agents');
   return { success: true };
 }

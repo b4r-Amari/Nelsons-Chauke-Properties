@@ -2,39 +2,37 @@
 export type Property = {
   id: string;
   slug: string;
-  agentIds: string[]; // Linked via property_agents join table
-  title: string; // Mapped from address
-  address: string;
+  agentId?: string; // Foreign key to estate_agents
+  agentIds: string[]; // For UI compatibility, derived from agentId
+  title: string;
   description: string;
   price: number;
   status: 'for-sale' | 'to-let' | 'sold';
   type: string;
-  bedrooms: number; // Mapped from beds
-  bathrooms: number; // Mapped from baths
+  beds: number; // Mapped from bedrooms
+  baths: number; // Mapped from bathrooms
   location: string;
   sqft: number;
-  erfSize: number; // Mapped from erf_size
-  yearBuilt?: number; // Mapped from year_built
-  features: string[]; // TEXT[]
-  imageUrls: string[]; // TEXT[]
+  erfSize: number;
+  yearBuilt?: number;
+  features: string[];
+  imageUrls: string[];
   isFavorite: boolean;
   onShow: boolean;
-  videoUrl?: string; // Mapped from video_url
-  latitude?: number;
-  longitude?: number;
+  videoUrl?: string;
   createdAt?: string;
   updatedAt?: string;
 };
 
 export type Agent = {
   id: string;
-  firstName: string; // Mapped from splitting name or similar
+  firstName: string;
   lastName: string;
-  name: string; 
+  name: string; // Derived: firstName + lastName
   slug: string;
   email: string;
   phone?: string;
-  imageUrl?: string; // Mapped from image_url
+  imageUrl?: string; // Mapped from photo_url
   photoUrl?: string; // Helper for legacy
   role?: string;
   bio?: string;
@@ -51,7 +49,8 @@ export type BlogPost = {
   category?: string;
   author?: string;
   date?: string;
-  imageUrl?: string; // Mapped from image_url
+  imageUrl?: string; // Mapped from featured_image
+  published: boolean;
   createdAt?: string;
 };
 

@@ -12,20 +12,28 @@ import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
-import { updateAgent } from "@/lib/firebase/firestore"
+import { updateAgent } from "@/lib/supabase/actions"
 import { useRouter, useParams } from "next/navigation"
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState } from "react"
 import { getAgentById } from "@/lib/data"
 import { Skeleton } from "@/components/ui/skeleton"
 
+// Utility to get agent by ID from client side
+async function fetchAgent(id: string) {
+  const { createClient } = await import('@/lib/supabase/client');
+  const supabase = createClient();
+  const { data } = await supabase.from('estate_agents').select('*').eq('id', id).single();
+  return data;
+}
+
 const formSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  role: z.string().min(2, { message: "Role must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email address." }),
-  phone: z.string().min(10, { message: "Please enter a valid phone number." }),
-  imageUrl: z.string().url({ message: "Please enter a valid URL." }),
-  imageHint: z.string().min(2, { message: "Image hint must be at least 2 characters." }),
-  bio: z.string().min(50, { message: "Bio must be at least 50 characters." }),
+  firstName: z.string().min(2),
+  lastName: z.string().min(2),
+  email: z.string().email(),
+  phone: z.string().min(10),
+  photoUrl: z.string().url(),
+  slug: z.string().min(2),
+  bio: z.string().min(10),
 })
 
 export default function EditAgentPage() {
@@ -43,9 +51,17 @@ export default function EditAgentPage() {
   useEffect(() => {
     if (!id) return;
     setIsLoading(true);
-    getAgentById(id).then(agentData => {
+    fetchAgent(id).then(agentData => {
       if (agentData) {
-        form.reset(agentData);
+        form.reset({
+          firstName: agentData.first_name,
+          lastName: agentData.last_name,
+          email: agentData.email,
+          phone: agentData.phone,
+          photoUrl: agentData.photo_url,
+          slug: agentData.slug,
+          bio: agentData.bio
+        });
       } else {
         toast({ variant: "destructive", title: "Error", description: "Agent not found." });
         router.push("/admin/agents");
@@ -59,7 +75,7 @@ export default function EditAgentPage() {
     if (result.success) {
         toast({
         title: "Agent Updated",
-        description: `The profile for ${values.name} has been updated.`,
+        description: `The profile for ${values.firstName} has been updated.`,
         });
         router.push('/admin/agents');
     } else {
@@ -73,25 +89,10 @@ export default function EditAgentPage() {
 
   if (isLoading) {
     return (
-        <div>
-          <div className="mb-4">
-              <Skeleton className="h-6 w-36" />
-          </div>
-        <Card>
-          <CardHeader>
-            <Skeleton className="h-8 w-48" />
-            <Skeleton className="h-4 w-64" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-10 w-full" />
-                <Skeleton className="h-24 w-full" />
-                <Skeleton className="h-10 w-24" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+        <div className="p-8">
+          <Skeleton className="h-10 w-full mb-4" />
+          <Skeleton className="h-[400px] w-full" />
+        </div>
     )
   }
 
@@ -114,12 +115,12 @@ export default function EditAgentPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
+                      <FormLabel>First Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Sarah Jones" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -127,12 +128,12 @@ export default function EditAgentPage() {
                 />
                 <FormField
                   control={form.control}
-                  name="role"
+                  name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Role</FormLabel>
+                      <FormLabel>Last Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g. Sales Agent" {...field} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -147,7 +148,7 @@ export default function EditAgentPage() {
                         <FormItem>
                         <FormLabel>Email Address</FormLabel>
                         <FormControl>
-                            <Input type="email" placeholder="agent@example.com" {...field} />
+                            <Input type="email" {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -160,7 +161,7 @@ export default function EditAgentPage() {
                         <FormItem>
                         <FormLabel>Phone Number</FormLabel>
                         <FormControl>
-                            <Input placeholder="(123) 456-7890" {...field} />
+                            <Input {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -170,12 +171,12 @@ export default function EditAgentPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                     control={form.control}
-                    name="imageUrl"
+                    name="photoUrl"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Image URL</FormLabel>
+                        <FormLabel>Photo URL</FormLabel>
                         <FormControl>
-                            <Input placeholder="https://example.com/image.png" {...field} />
+                            <Input {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -183,12 +184,12 @@ export default function EditAgentPage() {
                 />
                 <FormField
                     control={form.control}
-                    name="imageHint"
+                    name="slug"
                     render={({ field }) => (
                         <FormItem>
-                        <FormLabel>Image Hint</FormLabel>
+                        <FormLabel>Slug</FormLabel>
                         <FormControl>
-                            <Input placeholder="e.g. smiling man" {...field} />
+                            <Input {...field} />
                         </FormControl>
                         <FormMessage />
                         </FormItem>
@@ -202,7 +203,7 @@ export default function EditAgentPage() {
                   <FormItem>
                     <FormLabel>Agent Biography</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Write a short bio for the agent..." className="min-h-[150px]" {...field} />
+                      <Textarea className="min-h-[150px]" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

@@ -13,6 +13,8 @@ import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft, X } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import type { Agent, Property } from "@/lib/types"
 import { useState } from "react"
@@ -21,23 +23,19 @@ import Image from "next/image"
 import { updateProperty } from "@/lib/supabase/actions"
 
 const formSchema = z.object({
-  address: z.string().min(5),
+  title: z.string().min(5),
   location: z.string().min(2),
   price: z.coerce.number(),
   status: z.enum(["for-sale", "to-let", "sold"]),
   type: z.string().min(3),
   beds: z.coerce.number().int(),
-  baths: z.coerce.number().int(),
-  sqft: z.coerce.number().int(),
-  erfSize: z.coerce.number().int(),
+  baths: z.coerce.number(),
   description: z.string().min(20),
   features: z.array(z.string()),
   onShow: z.boolean(),
-  agentIds: z.array(z.string()).min(1),
+  agentId: z.string().min(1, "Assign an agent"),
   imageUrls: z.array(z.string().url()),
-  slug: z.string().min(3),
   isFavorite: z.boolean(),
-  yearBuilt: z.coerce.number().int(),
   videoUrl: z.string().url().optional().or(z.literal("")),
 });
 
@@ -49,10 +47,19 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ...initialData,
-      beds: initialData.bedrooms, // UI uses .bedrooms, form uses .beds
-      baths: initialData.bathrooms,
-      agentIds: initialData.agentIds || [],
+      title: initialData.title,
+      location: initialData.location,
+      price: initialData.price,
+      status: initialData.status,
+      type: initialData.type,
+      beds: initialData.beds,
+      baths: initialData.baths,
+      description: initialData.description,
+      features: initialData.features || [],
+      onShow: initialData.onShow,
+      isFavorite: initialData.isFavorite,
+      agentId: initialData.agentId || '',
+      imageUrls: initialData.imageUrls || [],
       videoUrl: initialData.videoUrl || "",
     },
   });
@@ -86,11 +93,8 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
           <div className="md:col-span-2 space-y-4">
             <Card>
               <CardContent className="space-y-4 pt-6">
-                <FormField control={form.control} name="address" render={({ field }) => (
-                    <FormItem><FormLabel>Address</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
-                )} />
-                <FormField control={form.control} name="slug" render={({ field }) => (
-                    <FormItem><FormLabel>Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                <FormField control={form.control} name="title" render={({ field }) => (
+                    <FormItem><FormLabel>Property Title (Address)</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="description" render={({ field }) => (
                     <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea className="min-h-[150px]" {...field} /></FormControl><FormMessage /></FormItem>
@@ -126,26 +130,30 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
                 )} />
                 <div className="grid grid-cols-2 gap-2">
                   <FormField control={form.control} name="beds" render={({ field }) => (
-                      <FormItem><FormLabel>Beds</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>Bedrooms</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                   )} />
                   <FormField control={form.control} name="baths" render={({ field }) => (
-                      <FormItem><FormLabel>Baths</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>Bathrooms</FormLabel><FormControl><Input type="number" step="0.5" {...field} /></FormControl></FormItem>
                   )} />
                 </div>
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>Assignments</CardTitle></CardHeader>
-              <CardContent className="space-y-2">
-                {allAgents.map(agent => (
-                  <div key={agent.id} className="flex items-center gap-2">
-                    <Checkbox checked={form.watch("agentIds").includes(agent.id)} onCheckedChange={(checked) => {
-                      const current = form.getValues("agentIds");
-                      form.setValue("agentIds", checked ? [...current, agent.id] : current.filter(id => id !== agent.id));
-                    }} />
-                    <Label className="font-normal">{agent.name}</Label>
-                  </div>
-                ))}
+              <CardHeader><CardTitle>Assign Agent</CardTitle></CardHeader>
+              <CardContent>
+                <FormField control={form.control} name="agentId" render={({ field }) => (
+                  <FormItem>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl><SelectTrigger><SelectValue placeholder="Select an agent" /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        {allAgents.map(agent => (
+                          <SelectItem key={agent.id} value={agent.id}>{agent.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
               </CardContent>
             </Card>
           </div>
