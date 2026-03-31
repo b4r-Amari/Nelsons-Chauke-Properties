@@ -13,6 +13,7 @@ const mapDbProperty = (p: any): Property => ({
   bedrooms: p.bedrooms || 0,
   bathrooms: Number(p.bathrooms || 0),
   location: p.location || '',
+  address: p.address || p.title || '',
   sqft: p.sqft || 0,
   erfSize: p.erf_size || 0,
   features: Array.isArray(p.features) ? p.features : [],
@@ -59,7 +60,7 @@ const mapDbBlogPost = (b: any): BlogPost => ({
   updatedAt: b.updated_at
 });
 
-export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number; onShow?: boolean } = {}): Promise<Property[]> => {
+export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number; onShow?: boolean; agentId?: string } = {}): Promise<Property[]> => {
   try {
     const supabase = await createClient();
     let query = supabase.from('properties').select('*');
@@ -74,6 +75,10 @@ export const getProperties = async (options: { featuredOnly?: boolean; status?: 
 
     if (options.onShow) {
       query = query.eq('on_show', true);
+    }
+
+    if (options.agentId) {
+      query = query.eq('agent_id', options.agentId);
     }
 
     if (options.limit) query = query.limit(options.limit);
@@ -119,13 +124,28 @@ export const getAgents = async (): Promise<Agent[]> => {
 export const getAgent = async (slugOrId: string): Promise<Agent | null> => {
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('estate_agents')
-      .select('*')
-      .or(`id.eq.${slugOrId},slug.eq.${slugOrId}`)
-      .maybeSingle();
+    
+    // Check if input is a valid UUID
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+    
+    let query = supabase.from('estate_agents').select('*');
+    
+    if (isUuid) {
+      query = query.eq('id', slugOrId);
+    } else {
+      query = query.eq('slug', slugOrId);
+    }
 
-    if (error || !data) return null;
+    const { data, error } = await query.maybeSingle();
+
+    if (error || !data) {
+      // Final fallback if name slug doesn't work but might be a numeric ID (legacy)
+      if (!isUuid && !isNaN(Number(slugOrId))) {
+        const { data: legacyData } = await supabase.from('estate_agents').select('*').eq('id', slugOrId).maybeSingle();
+        if (legacyData) return mapDbAgent(legacyData);
+      }
+      return null;
+    }
     return mapDbAgent(data);
   } catch (err: any) {
     return null;

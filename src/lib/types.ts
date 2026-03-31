@@ -21,6 +21,7 @@ export type Property = {
   isFavorite?: boolean;
   yearBuilt?: number;
   videoUrl?: string;
+  address?: string;
 };
 
 export type Agent = {
@@ -30,7 +31,7 @@ export type Agent = {
   name: string;
   email: string;
   phone?: string;
-  photoUrl?: string;
+  photoUrl?: string | null;
   updatedAt?: string;
   slug?: string;
   role?: string;
