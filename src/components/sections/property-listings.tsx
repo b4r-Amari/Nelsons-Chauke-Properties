@@ -11,7 +11,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Skeleton } from "../ui/skeleton";
 import { Card, CardFooter } from "../ui/card";
 import { type Filters, type SearchSuggestion } from "@/lib/types";
-import { getProperties } from "@/lib/data";
 
 type PropertyListingsProps = {
   pageDetails: {
@@ -53,27 +52,14 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
   const [filteredProperties, setFilteredProperties] = useState<Property[]>(initialProperties);
   const [sortOption, setSortOption] = useState('newest');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(initialProperties.length === 0);
   const propertiesPerPage = 12;
   const resultsRef = useRef<HTMLElement>(null);
   
+  // Sync state if initialProperties changes (from server)
   useEffect(() => {
-    if (initialProperties.length === 0) {
-      setIsLoading(true);
-      const fetchPageProperties = async () => {
-        let props;
-        if (pageDetails.title === "Properties On Show") {
-          props = await getProperties({ status: 'on-show' });
-        } else {
-          props = await getProperties();
-        }
-        setAllProperties(props);
-        setFilteredProperties(props);
-        setIsLoading(false);
-      };
-      fetchPageProperties();
-    }
-  }, [initialProperties, pageDetails.title]);
+    setAllProperties(initialProperties);
+    setFilteredProperties(initialProperties);
+  }, [initialProperties]);
 
   const initialFilters = useMemo(() => {
     const locationsParam = searchParams.get('locations');
@@ -84,7 +70,6 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
     const minPrice = searchParams.get('minPrice') || 'any';
     const maxPrice = searchParams.get('maxPrice') || 'any';
     
-    // Reconstruct selectedLocations from URL slugs
     let selectedLocations: SearchSuggestion[] = [];
     if (locationsParam && allProperties.length > 0) {
         const locationSlugs = locationsParam.split(',');
@@ -112,7 +97,6 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
     return { location, status, propertyType, minBeds, minPrice, maxPrice, selectedLocations } as Partial<Filters>;
   }, [searchParams, allProperties]);
 
-    // Auto-scroll logic moved to its own useEffect
     useEffect(() => {
         if (searchParams.get('autoscroll') === 'true' && resultsRef.current) {
             setTimeout(() => {
@@ -137,19 +121,7 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
       if (newFilters.minBaths !== 'any' && p.baths < parseInt(newFilters.minBaths)) return false;
       if (newFilters.minPrice !== 'any' && p.price < parseInt(newFilters.minPrice)) return false;
       if (newFilters.maxPrice !== 'any' && p.price > parseInt(newFilters.maxPrice)) return false;
-      if (newFilters.features.petFriendly && !p.features.some(f => f.toLowerCase().includes('pet friendly'))) return false;
-      if (newFilters.features.garden && !p.features.some(f => f.toLowerCase().includes('garden'))) return false;
-      if (newFilters.features.pool && !p.features.some(f => f.toLowerCase().includes('pool'))) return false;
-      if (newFilters.features.flatlet && !p.features.some(f => f.toLowerCase().includes('flatlet') || f.toLowerCase().includes('guest cottage'))) return false;
-      if (newFilters.other.onShow && !p.onShow) return false;
-      if (newFilters.other.retirement && !p.features.some(f => f.toLowerCase().includes('retirement'))) return false;
-      if (newFilters.other.securityEstate && !p.features.some(f => f.toLowerCase().includes('secure estate') || f.toLowerCase().includes('security estate'))) return false;
-      if (newFilters.minFloorSize !== 'any' && p.sqft < parseInt(newFilters.minFloorSize)) return false;
-      if (newFilters.maxFloorSize !== 'any' && p.sqft > parseInt(newFilters.maxFloorSize)) return false;
-      if (newFilters.minErfSize !== 'any' && p.erfSize < parseInt(newFilters.minErfSize)) return false;
-      if (newFilters.maxErfSize !== 'any' && p.erfSize > parseInt(newFilters.maxErfSize)) return false;
       
-      // Handle location filtering from both text input and badges
       if (locationsToFilter.length > 0) {
         const propertyMatchesLocation = locationsToFilter.some(sl => 
           p.location.toLowerCase().includes(sl.value.toLowerCase()) || 
@@ -163,7 +135,7 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
       return true;
     });
     setFilteredProperties(filtered);
-    setCurrentPage(1); // Reset to first page on new filter
+    setCurrentPage(1); 
   };
 
   const sortedAndFilteredProperties = useMemo(() => {
@@ -242,46 +214,38 @@ export function PropertyListings({ pageDetails, initialProperties = [] }: Proper
             </DropdownMenu>
           </div>
 
-          
-              {isLoading ? (
-                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {Array.from({ length: 6 }).map((_, i) => (
-                      <Skeleton key={i} className="h-[480px] w-full rounded-lg" />
-                    ))}
-                  </div>
-              ) : currentProperties.length > 0 ? (
-                <>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {currentProperties.map((prop) => (
-                      <PropertyCard key={prop.id} property={prop} />
-                    ))}
-                  </div>
-                   {totalPages > 1 && (
-                     <Card className="mt-12">
-                        <CardFooter className="flex-col sm:flex-row items-center justify-between py-4">
-                            <div className="text-sm text-muted-foreground mb-4 sm:mb-0">
-                                Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                                <Button variant="outline" size="sm" onClick={handlePrevPage} disabled={currentPage === 1}>
-                                    <ChevronLeft className="h-4 w-4" />
-                                    <span className="sm:inline ml-1">Previous</span>
-                                </Button>
-                                <Button variant="outline" size="sm" onClick={handleNextPage} disabled={currentPage === totalPages}>
-                                    <span className="sm:inline mr-1">Next</span>
-                                    <ChevronRight className="h-4 w-4" />
-                                </Button>
-                            </div>
-                        </CardFooter>
-                      </Card>
-                    )}
-                </>
-              ) : (
-                <div className="flex items-center justify-center h-full bg-card rounded-lg shadow-md p-12">
-                  <p className="text-xl text-muted-foreground text-center">No properties match your current filters. Try adjusting your search criteria.</p>
-                </div>
-              )}
-          
+          {currentProperties.length > 0 ? (
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentProperties.map((prop) => (
+                  <PropertyCard key={prop.id} property={prop} />
+                ))}
+              </div>
+               {totalPages > 1 && (
+                 <Card className="mt-12">
+                    <CardFooter className="flex-col sm:flex-row items-center justify-between py-4">
+                        <div className="text-sm text-muted-foreground mb-4 sm:mb-0">
+                            Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <Button variant="outline" size="sm" onClick={handlePrevPage} disabled={currentPage === 1}>
+                                <ChevronLeft className="h-4 w-4" />
+                                <span className="sm:inline ml-1">Previous</span>
+                            </Button>
+                            <Button variant="outline" size="sm" onClick={handleNextPage} disabled={currentPage === totalPages}>
+                                <span className="sm:inline mr-1">Next</span>
+                                <ChevronRight className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    </CardFooter>
+                  </Card>
+                )}
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-full bg-card rounded-lg shadow-md p-12">
+              <p className="text-xl text-muted-foreground text-center">No properties match your current filters. Try adjusting your search criteria.</p>
+            </div>
+          )}
         </div>
       </main>
     </>

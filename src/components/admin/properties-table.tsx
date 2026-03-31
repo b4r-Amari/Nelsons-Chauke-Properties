@@ -12,12 +12,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { type Property } from '@/components/shared/property-card';
-import { type Agent } from '@/components/shared/agent-card';
+import { type Property, type Agent } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
-import { deleteProperty, updateProperty } from '@/lib/firebase/firestore';
+import { deleteProperty, updateProperty } from '@/lib/supabase/actions';
 
 const formatPrice = (price: number, status: 'for-sale' | 'to-let' | 'sold') => {
     const isRental = status === 'to-let';
@@ -38,7 +37,6 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
   const propertiesPerPage = 10;
   const [sortConfig, setSortConfig] = useState<{ key: keyof Property, direction: 'asc' | 'desc' } | null>(null);
 
-  // This will handle updates if the parent component's props change
   useEffect(() => {
     setPropertyList(initialProperties);
     setAgents(allAgents);
@@ -88,16 +86,15 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
   };
 
   const handleAgentAssigned = async (propertyId: string, newAgentId: string) => {
-    const result = await updateProperty(propertyId, { agentIds: [newAgentId] });
+    const result = await updateProperty(propertyId, { agentId: newAgentId });
     if (result.success) {
         const agentName = agents.find(a => String(a.id) === newAgentId)?.name || 'The assigned agent';
-        const propertyAddress = propertyList.find(p => p.id === propertyId)?.address || 'the property';
+        const propertyAddress = propertyList.find(p => p.id === propertyId)?.title || 'the property';
       toast({
         title: "Agent Reassigned",
         description: `${agentName} has been assigned to ${propertyAddress}.`,
       });
-      // Optimistically update UI
-      setPropertyList(propertyList.map(p => p.id === propertyId ? {...p, agentIds: [newAgentId]} : p));
+      setPropertyList(propertyList.map(p => p.id === propertyId ? {...p, agentId: newAgentId, agentIds: [newAgentId]} : p));
     } else {
       toast({
         variant: "destructive",
@@ -115,7 +112,6 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
                 title: "Property Deleted",
                 description: `${address} has been successfully deleted.`,
             });
-            // Optimistically update UI
             setPropertyList(propertyList.filter(p => p.id !== id));
         } else {
              toast({
@@ -148,9 +144,9 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
                     </Button>
                 </TableHead>
                 <TableHead>
-                    <Button variant="ghost" onClick={() => requestSort('address')}>
+                    <Button variant="ghost" onClick={() => requestSort('title')}>
                         Address
-                        {getSortIndicator('address')}
+                        {getSortIndicator('title')}
                     </Button>
                 </TableHead>
                 <TableHead className="hidden lg:table-cell">Agent(s)</TableHead>
@@ -171,23 +167,22 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
             </TableHeader>
             <TableBody>
             {currentProperties.map((property) => {
-                const propertyAgents = agents.filter(agent => property.agentIds.includes(String(agent.id)));
+                const propertyAgent = agents.find(agent => String(agent.id) === String(property.agentId));
                 return (
                 <TableRow key={property.id}>
                     <TableCell className="font-mono text-xs hidden sm:table-cell">{String(property.id).substring(0, 5)}</TableCell>
-                    <TableCell className="font-medium">{property.address}</TableCell>
+                    <TableCell className="font-medium">{property.title}</TableCell>
                     <TableCell className="hidden lg:table-cell">
-                    {propertyAgents.length > 0 ? (
-                        <div className="flex items-center -space-x-2">
-                        {propertyAgents.map(agent => (
-                            <Avatar key={agent.id} className="h-8 w-8 border-2 border-white">
-                                <AvatarImage src={agent.imageUrl} alt={agent.name} />
-                                <AvatarFallback>{agent.name.charAt(0)}</AvatarFallback>
+                    {propertyAgent ? (
+                        <div className="flex items-center gap-2">
+                            <Avatar className="h-8 w-8 border-2 border-white">
+                                <AvatarImage src={propertyAgent.imageUrl} alt={propertyAgent.name} />
+                                <AvatarFallback>{propertyAgent.name?.charAt(0)}</AvatarFallback>
                             </Avatar>
-                        ))}
+                            <span className="text-sm">{propertyAgent.name}</span>
                         </div>
                     ) : (
-                        <span className="text-muted-foreground">Unassigned</span>
+                        <span className="text-muted-foreground text-xs italic">Unassigned</span>
                     )}
                     </TableCell>
                     <TableCell className="hidden md:table-cell">{formatPrice(property.price, property.status)}</TableCell>
@@ -218,7 +213,7 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
                                 <Pencil className="mr-2 h-4 w-4" /> Edit
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDelete(String(property.id), property.address)}>
+                            <DropdownMenuItem onClick={() => handleDelete(String(property.id), property.title)}>
                             <Trash2 className="mr-2 h-4 w-4" /> Delete
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
@@ -253,7 +248,7 @@ export function PropertiesTable({ initialProperties, allAgents }: { initialPrope
 
 function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Property; agents: Agent[]; onAgentAssigned: (propertyId: string, agentId: string) => void; }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(property.agentIds[0] || undefined);
+  const [selectedAgentId, setSelectedAgentId] = useState<string | undefined>(property.agentId || undefined);
 
   const handleSubmit = () => {
     if (selectedAgentId) {
@@ -273,7 +268,7 @@ function AssignAgentDialog({ property, agents, onAgentAssigned }: { property: Pr
         <DialogHeader>
           <DialogTitle>Reassign Agent</DialogTitle>
           <DialogDescription>
-            Assign a new agent to the property: <span className="font-semibold">{property.address}</span>
+            Assign a new agent to the property: <span className="font-semibold">{property.title}</span>
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">

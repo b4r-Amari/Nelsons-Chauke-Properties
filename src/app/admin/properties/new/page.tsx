@@ -10,17 +10,15 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { ArrowLeft, UploadCloud, X, Image as ImageIcon } from "lucide-react"
+import { ArrowLeft, X } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { getAgents } from "@/lib/data"
+import { createClient } from "@/lib/supabase/client"
 import type { Agent } from "@/lib/types"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import placeholders from "@/lib/placeholder-images.json";
-import { Separator } from "@/components/ui/separator"
-import { Label } from "@/components/ui/label"
 import Image from "next/image"
 import { addProperty } from "@/lib/supabase/actions"
 
@@ -37,7 +35,7 @@ const formSchema = z.object({
   description: z.string().min(20, "Description must be at least 20 characters."),
   features: z.array(z.string()).optional().default([]),
   onShow: z.boolean().default(false),
-  agentIds: z.array(z.string()).min(1, { message: "Assign at least one agent." }),
+  agentId: z.string().min(1, { message: "Assign an agent." }),
   imageUrls: z.array(z.string().url()).min(1, "Provide at least one image URL."),
   slug: z.string().min(3, "Slug is required."),
   isFavorite: z.boolean().default(false),
@@ -50,14 +48,25 @@ export default function NewPropertyPage() {
   const router = useRouter();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [newImageUrl, setNewImageUrl] = useState("");
+  const supabase = createClient();
 
   useEffect(() => {
     async function fetchAgents() {
-      const fetchedAgents = await getAgents();
-      setAgents(fetchedAgents);
+      const { data, error } = await supabase.from('estate_agents').select('*').eq('is_active', true);
+      if (!error && data) {
+        setAgents(data.map((a: any) => ({
+          id: String(a.id),
+          name: `${a.first_name} ${a.last_name}`,
+          firstName: a.first_name,
+          lastName: a.last_name,
+          slug: a.slug,
+          email: a.email,
+          isActive: a.is_active
+        })));
+      }
     }
     fetchAgents();
-  }, []);
+  }, [supabase]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,7 +83,7 @@ export default function NewPropertyPage() {
       description: "",
       features: ["Swimming Pool", "Garden"],
       onShow: false,
-      agentIds: [],
+      agentId: "",
       imageUrls: [placeholders.propertyDefault.url],
       slug: "",
       isFavorite: false,
@@ -90,6 +99,7 @@ export default function NewPropertyPage() {
     if (result.success) {
         toast({ title: "Property Created", description: `Property at ${values.address} added.` });
         router.push("/admin/properties");
+        router.refresh();
     } else {
         toast({ variant: "destructive", title: "Error", description: result.error });
     }
@@ -190,16 +200,21 @@ export default function NewPropertyPage() {
               </CardContent>
             </Card>
             <Card>
-              <CardHeader><CardTitle>Agents</CardTitle></CardHeader>
-              <CardContent className="space-y-2">
-                {agents.map(agent => (
-                  <FormField key={agent.id} control={form.control} name="agentIds" render={({ field }) => (
-                    <FormItem className="flex items-center gap-2 space-y-0">
-                      <Checkbox checked={field.value.includes(agent.id)} onCheckedChange={(checked) => field.onChange(checked ? [...field.value, agent.id] : field.value.filter(id => id !== agent.id))} />
-                      <FormLabel className="font-normal">{agent.name}</FormLabel>
-                    </FormItem>
-                  )} />
-                ))}
+              <CardHeader><CardTitle>Assign Agent</CardTitle></CardHeader>
+              <CardContent>
+                <FormField control={form.control} name="agentId" render={({ field }) => (
+                  <FormItem>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl><SelectTrigger><SelectValue placeholder="Select an agent" /></SelectTrigger></FormControl>
+                      <SelectContent>
+                        {agents.map(agent => (
+                          <SelectItem key={agent.id} value={agent.id}>{agent.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )} />
               </CardContent>
             </Card>
           </div>

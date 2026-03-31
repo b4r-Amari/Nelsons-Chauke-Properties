@@ -7,8 +7,8 @@ import { MoreHorizontal, Pencil, Trash2, ArrowUpDown } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { type Agent } from '@/components/shared/agent-card';
-import { deleteAgent } from '@/lib/firebase/firestore';
+import { type Agent } from '@/lib/types';
+import { deleteAgent } from '@/lib/supabase/actions';
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 
@@ -31,6 +31,9 @@ export function AgentsTable({ initialAgents }: { initialAgents: AgentWithCount[]
       sortableAgents.sort((a, b) => {
         const aValue = a[sortConfig.key];
         const bValue = b[sortConfig.key];
+
+        if (aValue === undefined || aValue === null) return 1;
+        if (bValue === undefined || bValue === null) return -1;
 
         if (aValue < bValue) {
           return sortConfig.direction === 'asc' ? -1 : 1;
@@ -114,7 +117,7 @@ export function AgentsTable({ initialAgents }: { initialAgents: AgentWithCount[]
               <div className="flex items-center gap-4">
                   <Avatar className="hidden h-9 w-9 sm:flex">
                     <AvatarImage src={agent.imageUrl} alt={agent.name} />
-                    <AvatarFallback>{agent.name.charAt(0)}</AvatarFallback>
+                    <AvatarFallback>{agent.name?.charAt(0)}</AvatarFallback>
                   </Avatar>
                   <div className="font-medium">{agent.name}</div>
               </div>

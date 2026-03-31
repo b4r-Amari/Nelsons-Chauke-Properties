@@ -8,9 +8,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import Image from 'next/image';
-import { type BlogPost } from '@/components/shared/blog-card';
+import { type BlogPost } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
-import { deleteBlogPost } from '@/lib/firebase/firestore';
+import { deleteBlogPost } from '@/lib/supabase/actions';
 import Link from 'next/link';
 
 export function BlogsTable({ initialPosts }: { initialPosts: BlogPost[] }) {
@@ -56,13 +56,17 @@ export function BlogsTable({ initialPosts }: { initialPosts: BlogPost[] }) {
         {blogPosts.map((post) => (
           <TableRow key={post.slug}>
             <TableCell className="hidden sm:table-cell">
-              <Image
-                alt={`Featured image for blog post titled: ${post.title}`}
-                className="aspect-square rounded-md object-cover"
-                height="64"
-                src={post.imageUrl}
-                width="64"
-              />
+              {post.imageUrl ? (
+                <Image
+                  alt={`Featured image for blog post titled: ${post.title}`}
+                  className="aspect-square rounded-md object-cover"
+                  height="64"
+                  src={post.imageUrl}
+                  width="64"
+                />
+              ) : (
+                <div className="h-16 w-16 bg-muted rounded-md" />
+              )}
             </TableCell>
             <TableCell className="font-medium">{post.title}</TableCell>
             <TableCell className="hidden md:table-cell">{post.author}</TableCell>
