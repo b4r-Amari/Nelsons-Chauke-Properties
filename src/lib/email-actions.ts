@@ -7,7 +7,7 @@
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || 'nelson.c@ncproperties.com';
+const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || 'tommychaukejr@gmail.com';
 const FROM_EMAIL = 'onboarding@resend.dev'; // Replace with your verified domain in production
 
 export async function sendContactEmail(data: { name: string; email: string; subject: string; message: string }) {
@@ -15,7 +15,7 @@ export async function sendContactEmail(data: { name: string; email: string; subj
     const { error } = await resend.emails.send({
       from: `NC Properties <${FROM_EMAIL}>`,
       to: ADMIN_EMAIL,
-      subject: `New Contact Form Submission: ${data.subject}`,
+      subject: `Contact Form Submission: ${data.subject}`,
       html: `
         <div style="font-family: sans-serif; padding: 20px; color: #333;">
           <h2 style="color: #000;">New Message from ${data.name}</h2>

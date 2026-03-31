@@ -2,12 +2,25 @@
 "use client"
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Logo } from "@/components/shared/logo";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, ChevronDown } from 'lucide-react';
+import { 
+  Menu, 
+  ChevronDown, 
+  Home, 
+  Building, 
+  Handshake, 
+  Eye, 
+  Calculator, 
+  Newspaper, 
+  Users, 
+  Mail, 
+  LogOut,
+  X
+} from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
@@ -15,6 +28,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -33,18 +48,23 @@ const navLinks = [
 ];
 
 const mobileNavLinks = [
-  { href: "/", label: "Home" },
-  { href: "/properties", label: "Buy" },
-  { href: "/sell", label: "Sell" },
-  { href: "/properties/on-show", label: "On Show" },
-  { href: "/calculators", label: "Calculators" },
-  { href: "/blog", label: "Property News" },
+  { href: "/", label: "Home", icon: Home },
+  { href: "/properties", label: "Buy", icon: Building },
+  { href: "/sell", label: "Sell", icon: Handshake },
+  { href: "/properties/on-show", label: "On Show", icon: Eye },
+  { href: "/calculators", label: "Calculators", icon: Calculator },
+  { href: "/blog", label: "Property News", icon: Newspaper },
+  { href: "/about-us", label: "Our Team", icon: Users },
+  { href: "/contact-us", label: "Contact Us", icon: Mail },
 ]
 
 
 export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetStateAction<boolean>> }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { toast } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const supabase = createClient();
 
   const isPropertiesActive = pathname.startsWith('/properties') || pathname === '/sell';
   const isCalculatorsActive = pathname.startsWith('/calculators');
@@ -52,6 +72,13 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
   const handleMobileMenuToggle = (open: boolean) => {
     setIsMobileMenuOpen(open);
     setMobileMenuOpen(open);
+  };
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({ title: "Logged Out", description: "You have been successfully logged out." });
+    handleMobileMenuToggle(false);
+    router.push('/');
   };
 
 
@@ -114,43 +141,6 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
         </div>
 
         <div className="ml-auto flex items-center space-x-4">
-          {/*
-          {user ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-9 w-9 rounded-full" aria-label="Open user menu">
-                  <Avatar className="h-9 w-9">
-                    <AvatarImage src={user.photoURL || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${user.uid}`} alt="User avatar" />
-                    <AvatarFallback>{getInitials(user.email)}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">My Account</p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user.email}
-                    </p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
-                  <Link href="/my-account"><LayoutDashboard className="mr-2 h-4 w-4" /> My Account</Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => logOut()}>
-                   <LogOut className="mr-2 h-4 w-4" />
-                   Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Button asChild>
-              <Link href="/login">Sign In</Link>
-            </Button>
-          )}
-          */}
-
           <div className="md:hidden">
              <Sheet open={isMobileMenuOpen} onOpenChange={handleMobileMenuToggle}>
               <SheetTrigger asChild>
@@ -158,35 +148,47 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                   <Menu className="h-6 w-6" />
                 </Button>
               </SheetTrigger>
-               <SheetContent side="left" className="w-full max-w-[320px] bg-background text-foreground p-0">
-                    <SheetHeader className="flex flex-row h-20 items-center justify-between border-b px-4">
+               <SheetContent side="left" className="w-full max-w-[320px] bg-background text-foreground p-0 flex flex-col">
+                    <SheetHeader className="flex flex-row h-20 items-center justify-between border-b px-6 shrink-0">
                         <Logo />
                         <SheetTitle className="sr-only">Mobile Navigation Menu</SheetTitle>
                         <SheetDescription className="sr-only">
                             A list of links to navigate the NC Properties website.
                         </SheetDescription>
                     </SheetHeader>
-                    <div className="flex flex-col h-full">
-                        <nav className="p-4" aria-label="Mobile Navigation">
-                            <ul className="space-y-2 w-full">
+                    
+                    <div className="flex-1 overflow-y-auto py-6 px-4">
+                        <nav aria-label="Mobile Navigation">
+                            <ul className="space-y-4">
                             {mobileNavLinks.map((link) => (
-                                <li key={link.href || link.label}>
+                                <li key={link.href}>
                                     <Link
-                                        href={link.href || '#'}
+                                        href={link.href}
                                         className={cn(
-                                        "block rounded-md px-3 py-2 text-lg font-headline transition-colors w-full text-left",
-                                        (pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href || '')))
-                                            ? "bg-muted text-foreground"
-                                            : "hover:bg-muted"
+                                        "flex items-center gap-4 rounded-lg px-4 py-2.5 text-base font-medium transition-colors w-full",
+                                        (pathname === link.href)
+                                            ? "text-brand-bright bg-muted/50"
+                                            : "text-foreground/80 hover:bg-muted hover:text-foreground"
                                         )}
                                         onClick={() => handleMobileMenuToggle(false)}
                                     >
+                                        <link.icon className="h-5 w-5 shrink-0" />
                                         {link.label}
                                     </Link>
                                 </li>
                             ))}
                             </ul>
                         </nav>
+                    </div>
+
+                    <div className="mt-auto border-t p-6 shrink-0">
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-4 px-4 py-2.5 w-full text-base font-medium text-foreground/80 hover:text-brand-bright hover:bg-muted rounded-lg transition-colors"
+                        >
+                            <LogOut className="h-5 w-5 shrink-0" />
+                            Logout
+                        </button>
                     </div>
               </SheetContent>
             </Sheet>
