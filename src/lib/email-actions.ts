@@ -7,7 +7,7 @@
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-const ADMIN_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || 'tommychaukejr@gmail.com';
+const ADMIN_EMAIL = 'tommychaukejr@gmail.com';
 const FROM_EMAIL = 'onboarding@resend.dev'; // Replace with your verified domain in production
 
 export async function sendContactEmail(data: { name: string; email: string; subject: string; message: string }) {
