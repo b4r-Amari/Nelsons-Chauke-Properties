@@ -27,6 +27,14 @@ export default function AdminLoginPage() {
   const { user, isAdmin, isLoading: isAuthLoading } = useAuth();
   const supabase = createClient();
 
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
   // Redirect if already logged in as an admin
   if (!isAuthLoading && user && isAdmin) {
     router.replace('/admin/dashboard');
