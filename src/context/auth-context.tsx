@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 interface UserProfile {
   id: string;
   email: string;
+  username?: string;
   is_admin: boolean;
 }
 
@@ -30,20 +31,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        // Check admin_users table for authorization
-        const { data: adminData } = await supabase
-          .from('admin_users')
-          .select('id')
+        // Fetch profile from public.users which includes is_admin
+        const { data: profile } = await supabase
+          .from('users')
+          .select('id, email, username, is_admin')
           .eq('id', session.user.id)
           .single();
         
-        const isUserAdmin = !!adminData;
-        setUser({
-          id: session.user.id,
-          email: session.user.email!,
-          is_admin: isUserAdmin
-        });
-        setIsAdmin(isUserAdmin);
+        if (profile) {
+          setUser({
+            id: profile.id,
+            email: profile.email,
+            username: profile.username,
+            is_admin: profile.is_admin
+          });
+          setIsAdmin(!!profile.is_admin);
+        } else {
+          // Fallback if trigger hasn't finished yet
+          setUser({
+            id: session.user.id,
+            email: session.user.email!,
+            is_admin: false
+          });
+          setIsAdmin(false);
+        }
       } else {
         setUser(null);
         setIsAdmin(false);
@@ -55,19 +66,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
-        const { data: adminData } = await supabase
-          .from('admin_users')
-          .select('id')
+        const { data: profile } = await supabase
+          .from('users')
+          .select('id, email, username, is_admin')
           .eq('id', session.user.id)
           .single();
         
-        const isUserAdmin = !!adminData;
-        setUser({
-          id: session.user.id,
-          email: session.user.email!,
-          is_admin: isUserAdmin
-        });
-        setIsAdmin(isUserAdmin);
+        if (profile) {
+          setUser({
+            id: profile.id,
+            email: profile.email,
+            username: profile.username,
+            is_admin: profile.is_admin
+          });
+          setIsAdmin(!!profile.is_admin);
+        }
       } else {
         setUser(null);
         setIsAdmin(false);
