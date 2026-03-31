@@ -14,8 +14,14 @@ const mapDbProperty = (p: any): Property => ({
   beds: p.bedrooms || 0,
   baths: Number(p.bathrooms || 0),
   location: p.location || '',
-  features: Array.isArray(p.features) ? p.features : (p.features ? Object.values(p.features) : []),
+  sqft: p.sqft || 0,
+  erfSize: p.erf_size || 0,
+  features: Array.isArray(p.features) ? p.features : [],
   imageUrls: Array.isArray(p.image_urls) ? p.image_urls : [],
+  videoUrl: p.video_url || '',
+  onShow: p.on_show || false,
+  isFavorite: p.is_favorite || false,
+  yearBuilt: p.year_built,
   createdAt: p.created_at,
   updatedAt: p.updated_at
 });
@@ -29,6 +35,9 @@ const mapDbAgent = (a: any): Agent => ({
   phone: a.phone || '',
   imageUrl: a.photo_url || '',
   photoUrl: a.photo_url || '',
+  role: a.role || 'Property Agent',
+  bio: a.bio || '',
+  slug: a.slug || String(a.id),
   updatedAt: a.updated_at
 });
 
@@ -50,13 +59,21 @@ const mapDbBlogPost = (b: any): BlogPost => ({
   createdAt: b.created_at
 });
 
-export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number } = {}): Promise<Property[]> => {
+export const getProperties = async (options: { featuredOnly?: boolean; status?: string; limit?: number; onShow?: boolean } = {}): Promise<Property[]> => {
   try {
     const supabase = await createClient();
     let query = supabase.from('properties').select('*');
 
     if (options.status && options.status !== 'any') {
       query = query.eq('status', options.status);
+    }
+    
+    if (options.featuredOnly) {
+      query = query.eq('is_favorite', true);
+    }
+
+    if (options.onShow) {
+      query = query.eq('on_show', true);
     }
 
     if (options.limit) query = query.limit(options.limit);
@@ -104,6 +121,17 @@ export const getAgentById = async (id: string): Promise<Agent | null> => {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase.from('estate_agents').select('*').eq('id', id).single();
+    if (error || !data) return null;
+    return mapDbAgent(data);
+  } catch (err: any) {
+    return null;
+  }
+};
+
+export const getAgentBySlug = async (slug: string): Promise<Agent | null> => {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.from('estate_agents').select('*').eq('slug', slug).single();
     if (error || !data) return null;
     return mapDbAgent(data);
   } catch (err: any) {

@@ -10,17 +10,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { ArrowLeft, X } from "lucide-react"
+import { ArrowLeft, X, UploadCloud, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Checkbox } from "@/components/ui/checkbox"
 import { createClient } from "@/lib/supabase/client"
 import type { Agent } from "@/lib/types"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import placeholders from "@/lib/placeholder-images.json";
 import Image from "next/image"
-import { addProperty } from "@/lib/supabase/actions"
+import { addProperty, uploadFile } from "@/lib/supabase/actions"
 
 const formSchema = z.object({
   address: z.string().min(5, "Address is too short."),
@@ -47,21 +46,20 @@ export default function NewPropertyPage() {
   const { toast } = useToast()
   const router = useRouter();
   const [agents, setAgents] = useState<Agent[]>([]);
-  const [newImageUrl, setNewImageUrl] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
     async function fetchAgents() {
-      const { data, error } = await supabase.from('estate_agents').select('*').eq('is_active', true);
+      const { data, error } = await supabase.from('estate_agents').select('*');
       if (!error && data) {
         setAgents(data.map((a: any) => ({
           id: String(a.id),
           name: `${a.first_name} ${a.last_name}`,
           firstName: a.first_name,
           lastName: a.last_name,
-          slug: a.slug,
           email: a.email,
-          isActive: a.is_active
+          photoUrl: a.photo_url
         })));
       }
     }
@@ -105,15 +103,29 @@ export default function NewPropertyPage() {
     }
   }
 
-  const handleAddImageUrl = () => {
-    if (newImageUrl && z.string().url().safeParse(newImageUrl).success) {
-      form.setValue("imageUrls", [...imageUrls, newImageUrl]);
-      setNewImageUrl("");
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsUploading(true);
+    const newUrls = [...imageUrls];
+
+    for (let i = 0; i < files.length; i++) {
+      const result = await uploadFile('property-images', files[i]);
+      if (result.success && result.url) {
+        newUrls.push(result.url);
+      } else {
+        toast({ variant: "destructive", title: "Upload Failed", description: result.error });
+      }
     }
+
+    form.setValue("imageUrls", newUrls.filter(url => url !== placeholders.propertyDefault.url));
+    setIsUploading(false);
   };
 
   const removeImage = (index: number) => {
-    form.setValue("imageUrls", imageUrls.filter((_, i) => i !== index));
+    const updated = imageUrls.filter((_, i) => i !== index);
+    form.setValue("imageUrls", updated.length > 0 ? updated : [placeholders.propertyDefault.url]);
   };
 
   return (
@@ -124,7 +136,7 @@ export default function NewPropertyPage() {
                 <Button variant="outline" size="icon" className="h-7 w-7"><ArrowLeft className="h-4 w-4" /></Button>
             </Link>
             <h1 className="flex-1 text-xl font-semibold">Add New Property</h1>
-            <Button type="submit" size="sm" className="bg-brand-bright" disabled={form.formState.isSubmitting}>
+            <Button type="submit" size="sm" className="bg-brand-bright" disabled={form.formState.isSubmitting || isUploading}>
               {form.formState.isSubmitting ? "Creating..." : "Create Property"}
             </Button>
         </div>
@@ -137,7 +149,7 @@ export default function NewPropertyPage() {
                     <FormItem><FormLabel>Address</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="slug" render={({ field }) => (
-                    <FormItem><FormLabel>Slug</FormLabel><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Slug (URL Friendly)</FormLabel><FormControl><Input {...field} placeholder="e.g. luxury-villa-sandton" /></FormControl><FormMessage /></FormItem>
                 )} />
                 <FormField control={form.control} name="location" render={({ field }) => (
                     <FormItem><FormLabel>Location</FormLabel><FormControl><Input placeholder="Suburb, City" {...field} /></FormControl><FormMessage /></FormItem>
@@ -153,20 +165,34 @@ export default function NewPropertyPage() {
             <Card>
               <CardHeader><CardTitle>Media</CardTitle></CardHeader>
               <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {imageUrls.map((url, i) => (
-                    <div key={i} className="relative aspect-video bg-muted rounded flex items-center justify-center overflow-hidden">
+                    <div key={i} className="relative aspect-video bg-muted rounded flex items-center justify-center overflow-hidden border">
                       <Image src={url} alt="" fill className="object-cover" />
                       <Button type="button" variant="destructive" size="icon" className="absolute top-1 right-1 h-6 w-6" onClick={() => removeImage(i)}><X className="h-3 w-3"/></Button>
                     </div>
                   ))}
                 </div>
-                <div className="flex gap-2">
-                  <Input placeholder="Image URL" value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} />
-                  <Button type="button" onClick={handleAddImageUrl}>Add</Button>
+                
+                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 bg-muted/20">
+                    <div className="text-center">
+                        {isUploading ? <Loader2 className="mx-auto h-12 w-12 text-brand-bright animate-spin" /> : <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />}
+                        <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
+                        <label
+                            htmlFor="file-upload"
+                            className="relative cursor-pointer rounded-md bg-white font-semibold text-brand-bright focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-deep focus-within:ring-offset-2 hover:text-brand-deep px-2"
+                        >
+                            <span>Upload files</span>
+                            <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                        </div>
+                        <p className="text-xs leading-5 text-gray-600">PNG, JPG up to 5MB</p>
+                    </div>
                 </div>
+
                 <FormField control={form.control} name="videoUrl" render={({ field }) => (
-                    <FormItem><FormLabel>Video URL</FormLabel><FormControl><Input placeholder="YouTube link" {...field} /></FormControl><FormMessage /></FormItem>
+                    <FormItem><FormLabel>Video URL</FormLabel><FormControl><Input placeholder="YouTube or Vimeo link" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
               </CardContent>
             </Card>
@@ -191,10 +217,10 @@ export default function NewPropertyPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <FormField control={form.control} name="sqft" render={({ field }) => (
-                      <FormItem><FormLabel>House Size</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>House Size (m²)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                   )} />
                   <FormField control={form.control} name="erfSize" render={({ field }) => (
-                      <FormItem><FormLabel>Erf Size</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                      <FormItem><FormLabel>Erf Size (m²)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                   )} />
                 </div>
               </CardContent>

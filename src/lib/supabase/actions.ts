@@ -4,21 +4,50 @@
 import { createClient } from './server';
 import { revalidatePath } from 'next/cache';
 
+/**
+ * Uploads a file to a Supabase storage bucket and returns the public URL.
+ */
+export async function uploadFile(bucket: string, file: File) {
+  const supabase = await createClient();
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+  const filePath = `${fileName}`;
+
+  const { data, error } = await supabase.storage
+    .from(bucket)
+    .upload(filePath, file);
+
+  if (error) return { success: false, error: error.message };
+
+  const { data: urlData } = supabase.storage
+    .from(bucket)
+    .getPublicUrl(filePath);
+
+  return { success: true, url: urlData.publicUrl };
+}
+
 export async function addProperty(formData: any) {
   const supabase = await createClient();
   
   const propertyData = {
     agent_id: formData.agentId || null,
     title: formData.address || formData.title,
+    slug: formData.slug || (formData.address || formData.title).toLowerCase().replace(/\s+/g, '-'),
     description: formData.description,
     price: Number(formData.price),
     status: formData.status,
     type: formData.type,
-    bedrooms: Number(formData.beds || formData.bedrooms),
-    bathrooms: Number(formData.baths || formData.bathrooms),
+    bedrooms: Number(formData.beds || formData.bedrooms || 0),
+    bathrooms: Number(formData.baths || formData.bathrooms || 0),
     location: formData.location,
-    features: formData.features,
-    image_urls: formData.imageUrls
+    sqft: Number(formData.sqft || 0),
+    erf_size: Number(formData.erfSize || 0),
+    features: formData.features || [],
+    image_urls: formData.imageUrls || [],
+    video_url: formData.videoUrl || null,
+    on_show: formData.onShow || false,
+    is_favorite: formData.isFavorite || false,
+    year_built: formData.yearBuilt || null
   };
 
   const { data, error } = await supabase.from('properties').insert([propertyData]).select().single();
@@ -45,6 +74,9 @@ export async function updateProperty(id: string, formData: any) {
   if (formData.features !== undefined) dbData.features = formData.features;
   if (formData.imageUrls !== undefined) dbData.image_urls = formData.imageUrls;
   if (formData.agentId !== undefined) dbData.agent_id = formData.agentId || null;
+  if (formData.onShow !== undefined) dbData.on_show = formData.onShow;
+  if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
+  if (formData.videoUrl !== undefined) dbData.video_url = formData.videoUrl;
 
   const { error } = await supabase.from('properties').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
@@ -70,7 +102,10 @@ export async function addAgent(formData: any) {
     last_name: formData.lastName,
     email: formData.email,
     phone: formData.phone,
-    photo_url: formData.photoUrl
+    photo_url: formData.photoUrl,
+    role: formData.role || 'Property Agent',
+    bio: formData.bio || null,
+    slug: formData.slug || `${formData.firstName}-${formData.lastName}`.toLowerCase()
   };
 
   const { data, error } = await supabase.from('estate_agents').insert([dbData]).select();
@@ -90,6 +125,8 @@ export async function updateAgent(id: string, formData: any) {
     phone: formData.phone,
     photo_url: formData.photoUrl
   };
+  if (formData.role) dbData.role = formData.role;
+  if (formData.bio) dbData.bio = formData.bio;
 
   const { error } = await supabase.from('estate_agents').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
@@ -181,7 +218,7 @@ export async function updateBlogPost(id: string, formData: any) {
   if (error) return { success: false, error: error.message };
   
   revalidatePath('/admin/blogs');
-  revalidatePath(`/blog/${formData.slug}`);
+  revalidatePath(`/blog/${formData.slug || id}`);
   return { success: true };
 }
 
