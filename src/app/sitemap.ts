@@ -1,4 +1,3 @@
-
 import { MetadataRoute } from 'next';
 import { getProperties, getAgents, getBlogPosts } from '@/lib/data';
 import type { Property, Agent, BlogPost } from '@/lib/types';
@@ -10,7 +9,7 @@ const toISOString = (timestamp: any): string => {
 };
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://nc-properties.vercel.app';
+  const baseUrl = 'https://nelsonchaukeproperties.co.za';
 
   // Define static pages
   const staticPages = [

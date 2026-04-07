@@ -1,4 +1,3 @@
-
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { AuthProvider } from '@/context/auth-context';
@@ -33,17 +32,17 @@ export const metadata: Metadata = {
   },
   description: 'Your trusted partner in finding the perfect property. Search luxury homes for sale, apartments to let, and connect with expert agents. Discover your dream home with Nelson Chauke Properties.',
   keywords: ['real estate', 'property', 'homes for sale', 'to-let', 'buy property', 'rent property', 'South Africa real estate', 'Nelson Chauke', 'Pretoria property', 'Sandton real estate'],
-  authors: [{ name: 'Nelson Chauke Properties', url: 'https://nc-properties.vercel.app' }],
+  authors: [{ name: 'Nelson Chauke Properties', url: 'https://nelsonchaukeproperties.co.za' }],
   creator: 'Nelson Chauke',
   publisher: 'Nelson Chauke Properties',
-  metadataBase: new URL('https://nc-properties.vercel.app'),
+  metadataBase: new URL('https://nelsonchaukeproperties.co.za'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
     title: 'Nelson Chauke Properties | Your Trusted Property Partner',
     description: 'Find your dream home with our expert real estate services. Browse listings, get market insights, and connect with top agents.',
-    url: 'https://nc-properties.vercel.app',
+    url: 'https://nelsonchaukeproperties.co.za',
     siteName: 'NC Properties',
     images: [
       {
