@@ -79,17 +79,10 @@ export default function ContactUsPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-start gap-4">
-                    <MapPin className="h-6 w-6 text-brand-bright mt-1" />
-                    <div>
-                      <h4 className="font-semibold">Our Office</h4>
-                      <p className="text-muted-foreground">123 Property Avenue, Suite 100<br/>Pretoria East, Gauteng</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-4">
                     <Mail className="h-6 w-6 text-brand-bright mt-1" />
                     <div>
                       <h4 className="font-semibold">Email Us</h4>
-                      <a href="mailto:contact@ncproperties.com" className="text-muted-foreground hover:text-brand-bright transition-colors">contact@ncproperties.com</a>
+                      <a href="mailto:contact@ncproperties.co.za" className="text-muted-foreground hover:text-brand-bright transition-colors">contact@ncproperties.com</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
