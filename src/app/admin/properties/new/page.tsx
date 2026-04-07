@@ -21,6 +21,7 @@ import { addProperty, uploadFile } from "@/lib/supabase/actions"
 import { cn } from "@/lib/utils"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title/Address is too short."),
@@ -306,7 +307,7 @@ export default function NewPropertyPage() {
                         <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
                         <label
                             htmlFor="file-upload"
-                            className="relative cursor-pointer rounded-md bg-white font-semibold text-brand-bright focus-within:outline-none focus-within:ring-2 focus-within:ring-brand-deep focus-within:ring-offset-2 hover:text-brand-deep px-2"
+                            className="relative cursor-pointer rounded-md bg-white font-semibold text-brand-bright focus-within:outline-none focus-visible:ring-2 focus-within:ring-brand-deep focus-within:ring-offset-2 hover:text-brand-deep px-2"
                         >
                             <span>Upload files</span>
                             <input id="file-upload" name="file-upload" type="file" className="sr-only" multiple accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
