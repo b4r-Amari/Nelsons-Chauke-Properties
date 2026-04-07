@@ -2,6 +2,11 @@
 import { createClient } from './supabase/server';
 import type { Property, Agent, BlogPost } from '@/lib/types';
 
+/**
+ * Validates if a string is a valid UUID to prevent Postgres query errors.
+ */
+const isValidUuid = (id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
 const mapDbProperty = (p: any): Property => ({
   id: String(p.id),
   agentId: p.agent_id,
@@ -77,7 +82,7 @@ export const getProperties = async (options: { featuredOnly?: boolean; status?: 
       query = query.eq('on_show', true);
     }
 
-    if (options.agentId) {
+    if (options.agentId && isValidUuid(options.agentId)) {
       query = query.eq('agent_id', options.agentId);
     }
 
@@ -95,6 +100,18 @@ export const getProperties = async (options: { featuredOnly?: boolean; status?: 
 
 export const getProperty = async (id: string): Promise<Property | null> => {
   try {
+    if (!isValidUuid(id)) {
+        // Fallback: try finding by slug if the ID isn't a valid UUID
+        const supabase = await createClient();
+        const { data, error } = await supabase
+          .from('properties')
+          .select('*')
+          .eq('slug', id)
+          .maybeSingle();
+        if (error || !data) return null;
+        return mapDbProperty(data);
+    }
+
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('properties')
@@ -124,9 +141,7 @@ export const getAgents = async (): Promise<Agent[]> => {
 export const getAgent = async (slugOrId: string): Promise<Agent | null> => {
   try {
     const supabase = await createClient();
-    
-    // Check if input is a valid UUID
-    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+    const isUuid = isValidUuid(slugOrId);
     
     let query = supabase.from('estate_agents').select('*');
     
@@ -138,14 +153,7 @@ export const getAgent = async (slugOrId: string): Promise<Agent | null> => {
 
     const { data, error } = await query.maybeSingle();
 
-    if (error || !data) {
-      // Final fallback if name slug doesn't work but might be a numeric ID (legacy)
-      if (!isUuid && !isNaN(Number(slugOrId))) {
-        const { data: legacyData } = await supabase.from('estate_agents').select('*').eq('id', slugOrId).maybeSingle();
-        if (legacyData) return mapDbAgent(legacyData);
-      }
-      return null;
-    }
+    if (error || !data) return null;
     return mapDbAgent(data);
   } catch (err: any) {
     return null;
@@ -154,6 +162,7 @@ export const getAgent = async (slugOrId: string): Promise<Agent | null> => {
 
 export const getAgentById = async (id: string): Promise<Agent | null> => {
   try {
+    if (!isValidUuid(id)) return null;
     const supabase = await createClient();
     const { data, error } = await supabase.from('estate_agents').select('*').eq('id', id).single();
     if (error || !data) return null;
@@ -191,6 +200,7 @@ export const getBlogPost = async (slug: string): Promise<BlogPost | null> => {
 
 export const getBlogPostById = async (id: string): Promise<BlogPost | null> => {
   try {
+    if (!isValidUuid(id)) return null;
     const supabase = await createClient();
     const { data, error } = await supabase.from('blog_posts').select('*').eq('id', id).single();
     if (error || !data) return null;
