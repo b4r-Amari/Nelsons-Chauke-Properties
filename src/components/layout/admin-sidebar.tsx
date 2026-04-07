@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Building, Users, LogOut, Settings, Newspaper, User } from "lucide-react";
+import { Home, Building, Users, LogOut, Settings, Newspaper } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
@@ -21,14 +21,12 @@ const sidebarLinks = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { toast } = useToast();
   const { user } = useAuth();
   const supabase = createClient();
 
   const handleLogout = async () => {
     try {
-      // Clear the session via Supabase
       const { error } = await supabase.auth.signOut();
       
       if (error) throw error;
@@ -38,7 +36,6 @@ export function AdminSidebar() {
         description: "You have been successfully logged out of the portal.",
       });
       
-      // Force a full page reload to clear all local states and trigger middleware redirects
       window.location.href = '/admin/login';
     } catch (error: any) {
       toast({
@@ -48,7 +45,6 @@ export function AdminSidebar() {
       });
     }
   };
-
 
   return (
     <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[220px] flex-col border-r bg-muted/40 md:flex lg:w-[280px]">
@@ -105,11 +101,11 @@ export function AdminSidebar() {
                 <Button 
                   variant="ghost" 
                   type="button"
-                  className="w-full justify-start px-3 text-muted-foreground hover:bg-destructive hover:text-white transition-colors group" 
+                  className="w-full justify-start px-3 text-muted-foreground hover:bg-destructive hover:text-white transition-all duration-200 group" 
                   onClick={handleLogout}
                 >
-                  <LogOut className="mr-3 h-4 w-4 transition-colors group-hover:text-white" />
-                  Logout
+                  <LogOut className="mr-3 h-4 w-4 text-muted-foreground group-hover:text-white transition-colors" />
+                  <span className="group-hover:text-white transition-colors">Logout</span>
                 </Button>
               </div>
           </div>
