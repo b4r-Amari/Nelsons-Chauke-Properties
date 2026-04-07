@@ -1,4 +1,3 @@
-
 'use server';
 
 import { createClient } from './server';
@@ -52,7 +51,10 @@ export async function addProperty(formData: any) {
 
   const { data, error } = await supabase.from('properties').insert([propertyData]).select().single();
 
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    console.error('Error adding property:', error);
+    return { success: false, error: error.message };
+  }
   
   revalidatePath('/admin/properties');
   revalidatePath('/properties');
@@ -82,7 +84,10 @@ export async function updateProperty(id: string, formData: any) {
   if (formData.yearBuilt !== undefined) dbData.year_built = formData.yearBuilt ? Number(formData.yearBuilt) : null;
 
   const { error } = await supabase.from('properties').update(dbData).eq('id', id);
-  if (error) return { success: false, error: error.message };
+  if (error) {
+    console.error('Error updating property:', error);
+    return { success: false, error: error.message };
+  }
 
   revalidatePath('/admin/properties');
   revalidatePath(`/properties/${id}`);

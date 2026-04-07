@@ -1,4 +1,3 @@
-
 import { createClient } from './supabase/server';
 import type { Property, Agent, BlogPost } from '@/lib/types';
 
