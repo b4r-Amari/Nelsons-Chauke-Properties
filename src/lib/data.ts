@@ -172,11 +172,17 @@ export const getAgentById = async (id: string): Promise<Agent | null> => {
   }
 };
 
-export const getBlogPosts = async (options: { limit?: number } = {}): Promise<BlogPost[]> => {
+export const getBlogPosts = async (options: { limit?: number; publishedOnly?: boolean } = {}): Promise<BlogPost[]> => {
+  const { limit, publishedOnly = true } = options;
   try {
     const supabase = await createClient();
-    let query = supabase.from('blog_posts').select('*').eq('published', true);
-    if (options.limit) query = query.limit(options.limit);
+    let query = supabase.from('blog_posts').select('*');
+    
+    if (publishedOnly) {
+      query = query.eq('published', true);
+    }
+    
+    if (limit) query = query.limit(limit);
     
     const { data, error } = await query.order('created_at', { ascending: false });
     if (error) throw error;

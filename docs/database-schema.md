@@ -46,18 +46,18 @@ CREATE TABLE public.properties (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     agent_id uuid REFERENCES public.estate_agents(id) ON DELETE SET NULL,
     title text NOT NULL,
-    slug text UNIQUE,
+    slug text UNIQUE NOT NULL,
     description text NOT NULL,
     price numeric NOT NULL,
-    status text CHECK (status IN ('for-sale', 'to-let', 'sold')) DEFAULT 'for-sale',
+    status text NOT NULL CHECK (status IN ('for-sale', 'to-let', 'sold')) DEFAULT 'for-sale',
     type text NOT NULL,
     bedrooms integer NOT NULL DEFAULT 0,
     bathrooms numeric NOT NULL DEFAULT 0,
-    sqft integer DEFAULT 0,
+    floor_size integer DEFAULT 0,
     erf_size integer DEFAULT 0,
     location text NOT NULL,
     address text,
-    features jsonb DEFAULT '[]'::jsonb,
+    features jsonb NOT NULL DEFAULT '[]'::jsonb,
     image_urls text[] DEFAULT '{}'::text[],
     video_url text,
     on_show boolean DEFAULT false,
@@ -75,8 +75,8 @@ CREATE TABLE public.blog_posts (
     title text NOT NULL,
     slug text NOT NULL UNIQUE,
     content text NOT NULL,
-    excerpt text,
-    category text DEFAULT 'Buying Guide',
+    excerpt text NOT NULL,
+    category text DEFAULT 'Property News',
     author text DEFAULT 'NC Properties',
     featured_image text,
     published boolean DEFAULT true,
@@ -113,13 +113,32 @@ ALTER TABLE public.blog_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.marketing_leads ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.valuation_requests ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Public read agents" ON public.estate_agents FOR SELECT USING (true);
-CREATE POLICY "Public read properties" ON public.properties FOR SELECT USING (true);
-CREATE POLICY "Public read blog_posts" ON public.blog_posts FOR SELECT USING (published = true);
+-- Admin Users Policies
+CREATE POLICY "Admins can view admin list" ON public.admin_users FOR SELECT USING (id = auth.uid());
 
-CREATE POLICY "Admin full access agents" ON public.estate_agents USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
-CREATE POLICY "Admin full access properties" ON public.properties USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
-CREATE POLICY "Admin full access blog_posts" ON public.blog_posts USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+-- Estate Agents Policies
+CREATE POLICY "Public read agents" ON public.estate_agents FOR SELECT USING (true);
+CREATE POLICY "Admin full access agents" ON public.estate_agents FOR ALL 
+USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()))
+WITH CHECK (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+
+-- Properties Policies
+CREATE POLICY "Public read properties" ON public.properties FOR SELECT USING (true);
+CREATE POLICY "Admin full access properties" ON public.properties FOR ALL 
+USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()))
+WITH CHECK (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+
+-- Blog Posts Policies
+CREATE POLICY "Public read published blog_posts" ON public.blog_posts FOR SELECT USING (published = true);
+CREATE POLICY "Admin full access blog_posts" ON public.blog_posts FOR ALL 
+USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()))
+WITH CHECK (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+
+-- Leads and Requests (Service Role / Admin only)
+CREATE POLICY "Public insert leads" ON public.marketing_leads FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public insert valuations" ON public.valuation_requests FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admin view leads" ON public.marketing_leads FOR SELECT USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+CREATE POLICY "Admin view valuations" ON public.valuation_requests FOR SELECT USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
 
 -- 4. BUCKETS
--- property-images, agent-photos, blog-media (Ensure these exist in Supabase Dashboard)
+-- property-images, agent-photos, blog-media (Ensure these exist in Supabase Dashboard with Public access)

@@ -5,10 +5,10 @@ import { PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 import { getBlogPosts } from '@/lib/data';
 import { BlogsTable } from '@/components/admin/blogs-table';
-import { type BlogPost } from '@/lib/types';
 
 export default async function AdminBlogsPage() {
-  const blogPosts = await getBlogPosts();
+  // Pass publishedOnly: false to see drafts in the admin panel
+  const blogPosts = await getBlogPosts({ publishedOnly: false });
 
   return (
     <div>
