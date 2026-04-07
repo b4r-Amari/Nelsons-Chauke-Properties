@@ -43,26 +43,31 @@ export function PropertyDetailClient({ property, agents }: { property: Property,
     return new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
   };
 
-  const galleryImages = property.imageUrls.length > 0 ? property.imageUrls : [placeholders.propertyDefault.url];
+  // Ensure imageUrls is an array of strings and filter out any empties
+  const galleryImages = Array.isArray(property.imageUrls) 
+    ? property.imageUrls.filter(url => typeof url === 'string' && url.length > 0)
+    : [];
+    
+  const finalGalleryImages = galleryImages.length > 0 ? galleryImages : [placeholders.propertyDefault.url];
 
   const features = Array.isArray(property.features) ? property.features : [];
   const isPetFriendly = features.some(f => typeof f === 'string' && f.toLowerCase().includes('pet friendly'));
 
   const propertyDetails = [
       { label: "Property Type", value: property.type, icon: Building },
-      { label: "Floor Size", value: `${property.floorSize} m²`, icon: Home },
+      { label: "Floor Size", value: `${property.floorSize || 0} m²`, icon: Home },
       { label: "Rates & Taxes", value: formatSimpleCurrency((property.price / 1000) * 0.5), icon: null },
       { label: "Pet Friendly", value: isPetFriendly ? 'Yes' : 'No', icon: null },
   ];
 
   return (
-    <div className="bg-white">
+    <div className="bg-white pb-20 md:pb-0">
         <div className="container py-4">
           <BackButton>Back to listings</BackButton>
         </div>
         
         <PropertyImageGallery 
-            images={galleryImages} 
+            images={finalGalleryImages} 
             mainImageHint={property.title} 
             isOnShow={property.onShow}
             isOpen={isGalleryOpen}
@@ -71,12 +76,14 @@ export function PropertyDetailClient({ property, agents }: { property: Property,
 
         <div className="flex justify-around items-center bg-card text-center border-y p-2 md:hidden">
           <Button variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground" onClick={() => setIsGalleryOpen(true)}>
-            <Camera className="h-5 w-5" />Photos
+            <Camera className="h-5 w-5" />
+            <span className="text-xs">Photos</span>
           </Button>
           {property.videoUrl && (
             <Button asChild variant="ghost" className="flex flex-col h-auto items-center gap-1 text-muted-foreground">
               <a href={property.videoUrl} target="_blank" rel="noopener noreferrer">
-                <Video className="h-5 w-5" />Video
+                <Video className="h-5 w-5" />
+                <span className="text-xs">Video</span>
               </a>
             </Button>
           )}
@@ -114,12 +121,12 @@ export function PropertyDetailClient({ property, agents }: { property: Property,
                         </div>
                         <div className="flex flex-col items-center gap-1 md:gap-2">
                             <Home className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
-                            <span className="font-semibold text-md md:text-lg">{property.floorSize} m²</span>
+                            <span className="font-semibold text-md md:text-lg">{property.floorSize || 0} m²</span>
                             <span className="text-xs md:text-sm text-muted-foreground">House Size</span>
                         </div>
                         <div className="flex flex-col items-center gap-1 md:gap-2">
                             <LandPlot className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
-                            <span className="font-semibold text-md md:text-lg">{property.erfSize} m²</span>
+                            <span className="font-semibold text-md md:text-lg">{property.erfSize || 0} m²</span>
                             <span className="text-xs md:text-sm text-muted-foreground">Erf Size</span>
                         </div>
                     </div>
@@ -127,8 +134,8 @@ export function PropertyDetailClient({ property, agents }: { property: Property,
                      <article>
                          <section className="mb-8">
                             <h2 className="text-2xl font-bold font-headline mb-4 text-brand-deep">Property Description</h2>
-                            <div className="prose prose-lg dark:prose-invert max-w-none">
-                                <p>{property.description}</p>
+                            <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground leading-relaxed whitespace-pre-line">
+                                {property.description}
                             </div>
                         </section>
                         <Separator className="my-8" />
