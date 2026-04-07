@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -74,7 +75,7 @@ export function SellForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} method="POST" className="space-y-6">
         <fieldset className="space-y-4">
           <legend className="text-xl font-headline font-semibold sr-only">Your Contact Information</legend>
             <div className="grid md:grid-cols-2 gap-4">
