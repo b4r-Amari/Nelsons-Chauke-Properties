@@ -3,12 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Refreshing styles to trigger manifest update */
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 @layer base {
   :root {
     --background: 0 0% 96%; /* whitesmoke */

@@ -81,7 +81,7 @@ export function AdminSidebar() {
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold truncate">{user.email}</p>
+                    <p className="text-xs font-semibold truncate text-foreground">{user.email}</p>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Admin</p>
                   </div>
                 </div>
