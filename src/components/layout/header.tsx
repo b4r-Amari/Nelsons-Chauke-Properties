@@ -193,11 +193,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              <Button asChild className="bg-brand-bright hover:bg-brand-deep text-white">
-                <Link href="/login">Login</Link>
-              </Button>
-            )}
+            ) : null}
           </div>
 
           <div className="md:hidden">
