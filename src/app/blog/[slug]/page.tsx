@@ -1,4 +1,3 @@
-
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -47,8 +46,33 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   const otherPosts = allPosts.filter((p: BlogPost) => p.slug !== slug);
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.excerpt,
+    "image": post.imageUrl,
+    "datePublished": post.createdAt,
+    "author": {
+      "@type": "Person",
+      "name": post.author
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "NC Properties",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://nc-properties.vercel.app/images/logo.png"
+      }
+    }
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="bg-white">
         <div className="container py-12 md:py-16">
           <div className="mb-8">

@@ -1,4 +1,3 @@
-
 import { notFound } from 'next/navigation';
 import { getProperty, getAgents } from '@/lib/data';
 import { type Property } from '@/lib/types';
@@ -35,10 +34,50 @@ export default async function PropertyDetailPage({ params }: Props) {
   }
   
   const allAgents = await getAgents();
-  // Fixed: Filter using the single agentId field from the Supabase schema
   const propertyAgents = allAgents.filter(a => String(a.id) === String(property.agentId));
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    "name": property.title,
+    "description": property.description,
+    "url": `https://nc-properties.vercel.app/properties/${property.id}`,
+    "image": property.imageUrls,
+    "datePosted": property.createdAt,
+    "itemOffered": {
+      "@type": property.type === 'Apartment' ? 'Apartment' : 'House',
+      "name": property.title,
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": property.address || property.title,
+        "addressLocality": property.location.split(',')[0].trim(),
+        "addressRegion": "Gauteng",
+        "addressCountry": "ZA"
+      },
+      "numberOfBedrooms": property.bedrooms,
+      "numberOfBathroomsTotal": property.bathrooms,
+      "floorSize": {
+        "@type": "QuantitativeValue",
+        "value": property.sqft,
+        "unitCode": "MTK"
+      }
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": property.price,
+      "priceCurrency": "ZAR",
+      "availability": property.status === 'sold' ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+      "url": `https://nc-properties.vercel.app/properties/${property.id}`
+    }
+  };
+
   return (
-    <PropertyDetailClient property={property} agents={propertyAgents} />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <PropertyDetailClient property={property} agents={propertyAgents} />
+    </>
   );
 }
