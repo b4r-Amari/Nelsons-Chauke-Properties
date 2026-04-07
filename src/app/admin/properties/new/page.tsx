@@ -1,4 +1,3 @@
-
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -6,11 +5,11 @@ import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useToast } from "@/hooks/use-toast"
-import { ArrowLeft, X, UploadCloud, Loader2 } from "lucide-react"
+import { ArrowLeft, X, UploadCloud, Loader2, Plus } from "lucide-react"
 import Link from "next/link"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { createClient } from "@/lib/supabase/client"
@@ -20,6 +19,8 @@ import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { addProperty, uploadFile } from "@/lib/supabase/actions"
 import { cn } from "@/lib/utils"
+import { Switch } from "@/components/ui/switch"
+import { Badge } from "@/components/ui/badge"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title/Address is too short."),
@@ -48,6 +49,7 @@ export default function NewPropertyPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [featureInput, setFeatureInput] = useState("");
   const supabase = createClient();
 
   useEffect(() => {
@@ -77,8 +79,8 @@ export default function NewPropertyPage() {
       type: "House",
       bedrooms: 3,
       bathrooms: 2,
-      sqft: 180,
-      erfSize: 500,
+      sqft: 0,
+      erfSize: 0,
       description: "",
       features: [],
       onShow: false,
@@ -92,6 +94,7 @@ export default function NewPropertyPage() {
   })
 
   const imageUrls = form.watch("imageUrls");
+  const currentFeatures = form.watch("features");
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const result = await addProperty(values);
@@ -138,6 +141,25 @@ export default function NewPropertyPage() {
     form.setValue("imageUrls", updated);
   };
 
+  const addFeature = () => {
+    if (!featureInput.trim()) return;
+    const newFeatures = featureInput.split(',').map(f => f.trim()).filter(f => f && !currentFeatures.includes(f));
+    form.setValue("features", [...currentFeatures, ...newFeatures]);
+    setFeatureInput("");
+  };
+
+  const removeFeature = (feature: string) => {
+    form.setValue("features", currentFeatures.filter(f => f !== feature));
+  };
+
+  const toggleQuickFeature = (feature: string) => {
+    if (currentFeatures.includes(feature)) {
+      removeFeature(feature);
+    } else {
+      form.setValue("features", [...currentFeatures, feature]);
+    }
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} method="POST">
@@ -169,8 +191,95 @@ export default function NewPropertyPage() {
                 <FormField control={form.control} name="description" render={({ field }) => (
                     <FormItem><FormLabel>Description</FormLabel><FormControl><Textarea className="min-h-[150px]" {...field} /></FormControl><FormMessage /></FormItem>
                 )} />
+                <FormField control={form.control} name="videoUrl" render={({ field }) => (
+                    <FormItem><FormLabel>Video Tour URL (Optional)</FormLabel><FormControl><Input placeholder="e.g. https://www.youtube.com/watch?v=..." {...field} /></FormControl><FormDescription>Link to a YouTube or Vimeo property tour.</FormDescription><FormMessage /></FormItem>
+                )} />
               </CardContent>
             </Card>
+
+            <Card>
+              <CardHeader><CardTitle>Property Specifications</CardTitle></CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <FormField control={form.control} name="bedrooms" render={({ field }) => (
+                        <FormItem><FormLabel>Bedrooms</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={form.control} name="bathrooms" render={({ field }) => (
+                        <FormItem><FormLabel>Bathrooms</FormLabel><FormControl><Input type="number" step="0.5" {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={form.control} name="sqft" render={({ field }) => (
+                        <FormItem><FormLabel>Floor Size (m²)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={form.control} name="erfSize" render={({ field }) => (
+                        <FormItem><FormLabel>Erf Size (m²)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                    )} />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <FormField control={form.control} name="yearBuilt" render={({ field }) => (
+                        <FormItem><FormLabel>Year Built</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
+                    )} />
+                    <FormField control={form.control} name="type" render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Property Type</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                                <SelectContent>
+                                    <SelectItem value="House">House</SelectItem>
+                                    <SelectItem value="Apartment">Apartment</SelectItem>
+                                    <SelectItem value="Townhouse">Townhouse</SelectItem>
+                                    <SelectItem value="Cluster">Cluster</SelectItem>
+                                    <SelectItem value="Duplex">Duplex</SelectItem>
+                                    <SelectItem value="Villa">Villa</SelectItem>
+                                    <SelectItem value="Vacant Land">Vacant Land</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </FormItem>
+                    )} />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader><CardTitle>Features & Amenities</CardTitle></CardHeader>
+              <CardContent className="space-y-6">
+                <div className="flex flex-wrap gap-2">
+                    {["Swimming Pool", "Garden", "Pet Friendly", "Secure Estate", "Double Garage", "Backup Generator", "Solar Panels", "Staff Quarters"].map(feature => (
+                        <Button 
+                            key={feature}
+                            type="button"
+                            variant={currentFeatures.includes(feature) ? "default" : "outline"}
+                            size="sm"
+                            className={cn(currentFeatures.includes(feature) ? "bg-brand-bright" : "")}
+                            onClick={() => toggleQuickFeature(feature)}
+                        >
+                            {feature}
+                        </Button>
+                    ))}
+                </div>
+                <div className="space-y-2">
+                    <FormLabel>Add Custom Features</FormLabel>
+                    <div className="flex gap-2">
+                        <Input 
+                            placeholder="e.g. Borehole, Fireplace, etc." 
+                            value={featureInput}
+                            onChange={(e) => setFeatureInput(e.target.value)}
+                            onKeyDown={(e) => { if(e.key === 'Enter') { e.preventDefault(); addFeature(); }}}
+                        />
+                        <Button type="button" variant="secondary" onClick={addFeature}><Plus className="h-4 w-4 mr-2" /> Add</Button>
+                    </div>
+                    <FormDescription>Separate multiple features with commas.</FormDescription>
+                </div>
+                <div className="flex flex-wrap gap-2 pt-2">
+                    {currentFeatures.map(f => (
+                        <Badge key={f} variant="secondary" className="pl-3 pr-1 py-1 text-sm font-normal">
+                            {f}
+                            <button type="button" onClick={() => removeFeature(f)} className="ml-2 hover:bg-muted p-0.5 rounded-full"><X className="h-3 w-3" /></button>
+                        </Badge>
+                    ))}
+                </div>
+              </CardContent>
+            </Card>
+
             <Card>
               <CardHeader><CardTitle>Media Gallery</CardTitle></CardHeader>
               <CardContent className="space-y-4">
@@ -185,7 +294,7 @@ export default function NewPropertyPage() {
                 
                 <div 
                   className={cn(
-                    "mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 transition-colors",
+                    "mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 transition-colors cursor-pointer",
                     isDragging ? "bg-brand-bright/10 border-brand-bright" : "bg-muted/20"
                   )}
                   onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
@@ -212,22 +321,33 @@ export default function NewPropertyPage() {
           </div>
           <div className="space-y-4">
             <Card>
-              <CardHeader><CardTitle>Pricing & Stats</CardTitle></CardHeader>
+              <CardHeader><CardTitle>Pricing & Status</CardTitle></CardHeader>
               <CardContent className="space-y-4">
                 <FormField control={form.control} name="price" render={({ field }) => (
                     <FormItem><FormLabel>Price (ZAR)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                 )} />
                 <FormField control={form.control} name="status" render={({ field }) => (
-                    <FormItem><FormLabel>Status</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="for-sale">For Sale</SelectItem><SelectItem value="to-let">To Let</SelectItem><SelectItem value="sold">Sold</SelectItem></SelectContent></Select></FormItem>
+                    <FormItem><FormLabel>Listing Status</FormLabel><Select onValueChange={field.onChange} defaultValue={field.value}><FormControl><SelectTrigger><SelectValue/></SelectTrigger></FormControl><SelectContent><SelectItem value="for-sale">For Sale</SelectItem><SelectItem value="to-let">To Let</SelectItem><SelectItem value="sold">Sold</SelectItem></SelectContent></Select></FormItem>
                 )} />
-                <div className="grid grid-cols-2 gap-2">
-                  <FormField control={form.control} name="bedrooms" render={({ field }) => (
-                      <FormItem><FormLabel>Beds</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
-                  )} />
-                  <FormField control={form.control} name="bathrooms" render={({ field }) => (
-                      <FormItem><FormLabel>Baths</FormLabel><FormControl><Input type="number" step="0.5" {...field} /></FormControl></FormItem>
-                  )} />
-                </div>
+                <Separator />
+                <FormField control={form.control} name="onShow" render={({ field }) => (
+                    <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                            <FormLabel>On Show</FormLabel>
+                            <FormDescription>Mark as open for viewing this weekend.</FormDescription>
+                        </div>
+                        <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                    </FormItem>
+                )} />
+                <FormField control={form.control} name="isFavorite" render={({ field }) => (
+                    <FormItem className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                            <FormLabel>Featured Property</FormLabel>
+                            <FormDescription>Highlight on the homepage carousel.</FormDescription>
+                        </div>
+                        <FormControl><Switch checked={field.value} onCheckedChange={field.onChange} /></FormControl>
+                    </FormItem>
+                )} />
               </CardContent>
             </Card>
             <Card>
