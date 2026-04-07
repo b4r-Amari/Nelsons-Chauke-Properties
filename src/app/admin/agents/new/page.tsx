@@ -15,6 +15,7 @@ import { addAgent, uploadFile } from "@/lib/supabase/actions"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
   firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
@@ -28,6 +29,7 @@ export default function NewAgentPage() {
   const { toast } = useToast()
   const router = useRouter()
   const [isUploading, setIsUploading] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,8 +54,8 @@ export default function NewAgentPage() {
     }
   }
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFiles = async (files: FileList | null) => {
+    const file = files?.[0];
     if (!file) return;
 
     setIsUploading(true);
@@ -64,6 +66,16 @@ export default function NewAgentPage() {
       toast({ variant: "destructive", title: "Upload Failed", description: result.error });
     }
     setIsUploading(false);
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFiles(e.target.files);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFiles(e.dataTransfer.files);
   };
 
   return (
@@ -81,7 +93,7 @@ export default function NewAgentPage() {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} method="POST" className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
@@ -152,10 +164,18 @@ export default function NewAgentPage() {
                         </div>
                     )}
                     <div className="flex-1 max-w-sm">
-                        <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-muted/20 hover:bg-muted/40 transition-colors">
+                        <label 
+                          className={cn(
+                            "flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+                            isDragging ? "bg-brand-bright/10 border-brand-bright" : "bg-muted/20 hover:bg-muted/40"
+                          )}
+                          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                          onDragLeave={() => setIsDragging(false)}
+                          onDrop={handleDrop}
+                        >
                             <div className="flex flex-col items-center justify-center pt-5 pb-6">
                                 {isUploading ? <Loader2 className="h-8 w-8 animate-spin text-brand-bright" /> : <UploadCloud className="h-8 w-8 text-gray-400 mb-2" />}
-                                <p className="text-sm text-gray-500">Click to upload photo</p>
+                                <p className="text-sm text-gray-500">Click or drag photo to upload</p>
                             </div>
                             <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} disabled={isUploading} />
                         </label>

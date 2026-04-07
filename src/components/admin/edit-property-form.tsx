@@ -18,6 +18,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { updateProperty, uploadFile } from "@/lib/supabase/actions"
+import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
   title: z.string().min(5),
@@ -40,6 +41,7 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
   const { toast } = useToast();
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,8 +76,7 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
     }
   }
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
     setIsUploading(true);
@@ -92,9 +93,19 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
     setIsUploading(false);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFiles(e.target.files);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFiles(e.dataTransfer.files);
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} method="POST">
         <div className="flex items-center gap-4 mb-8">
             <Link href="/admin/properties">
                 <Button variant="outline" size="icon"><ArrowLeft className="h-4 w-4" /></Button>
@@ -127,7 +138,15 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
                     </div>
                   ))}
                 </div>
-                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 bg-muted/20">
+                <div 
+                  className={cn(
+                    "mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 transition-colors",
+                    isDragging ? "bg-brand-bright/10 border-brand-bright" : "bg-muted/20"
+                  )}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleDrop}
+                >
                     <div className="text-center">
                         {isUploading ? <Loader2 className="mx-auto h-12 w-12 text-brand-bright animate-spin" /> : <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />}
                         <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
@@ -182,5 +201,5 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
         </div>
       </form>
     </Form>
-  )
+  );
 }

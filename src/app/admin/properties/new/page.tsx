@@ -19,6 +19,7 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { addProperty, uploadFile } from "@/lib/supabase/actions"
+import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
   title: z.string().min(5, "Title/Address is too short."),
@@ -46,6 +47,7 @@ export default function NewPropertyPage() {
   const router = useRouter();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
@@ -102,8 +104,7 @@ export default function NewPropertyPage() {
     }
   }
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
+  const handleFiles = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
     setIsUploading(true);
@@ -122,6 +123,16 @@ export default function NewPropertyPage() {
     setIsUploading(false);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFiles(e.target.files);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFiles(e.dataTransfer.files);
+  };
+
   const removeImage = (index: number) => {
     const updated = imageUrls.filter((_, i) => i !== index);
     form.setValue("imageUrls", updated);
@@ -129,7 +140,7 @@ export default function NewPropertyPage() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} method="POST">
         <div className="flex items-center gap-4 mb-8">
             <Link href="/admin/properties">
                 <Button variant="outline" size="icon" className="h-7 w-7"><ArrowLeft className="h-4 w-4" /></Button>
@@ -172,7 +183,15 @@ export default function NewPropertyPage() {
                   ))}
                 </div>
                 
-                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 bg-muted/20">
+                <div 
+                  className={cn(
+                    "mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 transition-colors",
+                    isDragging ? "bg-brand-bright/10 border-brand-bright" : "bg-muted/20"
+                  )}
+                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                  onDragLeave={() => setIsDragging(false)}
+                  onDrop={handleDrop}
+                >
                     <div className="text-center">
                         {isUploading ? <Loader2 className="mx-auto h-12 w-12 text-brand-bright animate-spin" /> : <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />}
                         <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">

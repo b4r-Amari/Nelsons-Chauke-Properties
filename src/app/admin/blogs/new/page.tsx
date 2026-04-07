@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -19,6 +20,7 @@ import { useRouter } from "next/navigation"
 import RichTextEditor from "@/components/shared/rich-text-editor"
 import { useState } from "react"
 import Image from "next/image"
+import { cn } from "@/lib/utils"
 
 const formSchema = z.object({
   title: z.string().min(5, { message: "Title must be at least 5 characters." }),
@@ -33,6 +35,7 @@ export default function NewBlogPage() {
   const { toast } = useToast()
   const router = useRouter()
   const [isUploading, setIsUploading] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,8 +69,8 @@ export default function NewBlogPage() {
     }
   }
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFiles = async (files: FileList | null) => {
+    const file = files?.[0];
     if (!file) return;
 
     setIsUploading(true);
@@ -80,9 +83,19 @@ export default function NewBlogPage() {
     setIsUploading(false);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFiles(e.target.files);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragging(false);
+    handleFiles(e.dataTransfer.files);
+  };
+
   return (
     <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form onSubmit={form.handleSubmit(onSubmit)} method="POST">
             <div className="flex items-center gap-4 mb-8">
                 <Link href="/admin/blogs">
                     <Button variant="outline" size="icon" className="h-7 w-7">
@@ -196,14 +209,21 @@ export default function NewBlogPage() {
                             )}
                             <div>
                                 <Label>Upload Featured Image</Label>
-                                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 bg-muted/20 hover:bg-muted/40 transition-colors cursor-pointer relative">
+                                <div 
+                                  className={cn(
+                                    "mt-2 flex justify-center rounded-lg border border-dashed border-input px-6 py-10 transition-colors cursor-pointer relative",
+                                    isDragging ? "bg-brand-bright/10 border-brand-bright" : "bg-muted/20 hover:bg-muted/40"
+                                  )}
+                                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                                  onDragLeave={() => setIsDragging(false)}
+                                  onDrop={handleDrop}
+                                >
                                     <div className="text-center">
                                         {isUploading ? <Loader2 className="mx-auto h-12 w-12 text-brand-bright animate-spin" /> : <UploadCloud className="mx-auto h-12 w-12 text-gray-400" />}
                                         <div className="mt-4 flex text-sm leading-6 text-gray-600">
                                             <span className="relative rounded-md bg-white font-semibold text-brand-bright hover:text-brand-deep px-2">
-                                                Click to upload
+                                                Click or drag to upload
                                             </span>
-                                            <p className="pl-1">or drag and drop</p>
                                         </div>
                                         <p className="text-xs leading-5 text-gray-600">PNG, JPG up to 10MB</p>
                                     </div>
