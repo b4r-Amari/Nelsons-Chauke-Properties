@@ -4,7 +4,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Logo } from '@/components/shared/logo';
-import { Facebook, Twitter, Instagram } from 'lucide-react';
+import { Facebook, Instagram } from 'lucide-react';
+import { SiTiktok } from 'react-icons/si';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -110,9 +111,9 @@ export function Footer() {
         <div className="mt-8 pt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center text-sm">
           <p className="text-gray-400">&copy; {year} NC Properties. All rights reserved.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Facebook className="h-5 w-5" /></a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Twitter className="h-5 w-5" /></a>
-            <a href="#" className="text-gray-400 hover:text-white transition-colors"><Instagram className="h-5 w-5" /></a>
+            <a href="https://www.facebook.com/p/Nelson-Chauke-Properties-100081578797830/" className="text-gray-400 hover:text-white transition-colors"><Facebook className="h-5 w-5" /></a>
+            <a href="#" className="text-gray-400 hover:text-white transition-colors"><SiTiktok className="h-5 w-5" /></a>
+            <a href="https://www.instagram.com/nelsonchaukeproperties/" className="text-gray-400 hover:text-white transition-colors"><Instagram className="h-5 w-5" /></a>
           </div>
         </div>
       </div>
