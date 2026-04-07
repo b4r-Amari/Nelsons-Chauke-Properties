@@ -50,7 +50,7 @@ export function PropertyDetailClient({ property, agents }: { property: Property,
 
   const propertyDetails = [
       { label: "Property Type", value: property.type, icon: Building },
-      { label: "Floor Size", value: `${property.sqft} m²`, icon: Home },
+      { label: "Floor Size", value: `${property.floorSize} m²`, icon: Home },
       { label: "Rates & Taxes", value: formatSimpleCurrency((property.price / 1000) * 0.5), icon: null },
       { label: "Pet Friendly", value: isPetFriendly ? 'Yes' : 'No', icon: null },
   ];
@@ -114,7 +114,7 @@ export function PropertyDetailClient({ property, agents }: { property: Property,
                         </div>
                         <div className="flex flex-col items-center gap-1 md:gap-2">
                             <Home className="h-7 w-7 md:h-8 md:w-8 text-brand-bright"/>
-                            <span className="font-semibold text-md md:text-lg">{property.sqft} m²</span>
+                            <span className="font-semibold text-md md:text-lg">{property.floorSize} m²</span>
                             <span className="text-xs md:text-sm text-muted-foreground">House Size</span>
                         </div>
                         <div className="flex flex-col items-center gap-1 md:gap-2">

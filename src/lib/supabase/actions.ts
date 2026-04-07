@@ -1,3 +1,4 @@
+
 'use server';
 
 import { createClient } from './server';
@@ -40,7 +41,7 @@ export async function addProperty(formData: any) {
     location: formData.location,
     features: Array.isArray(formData.features) ? formData.features : [],
     image_urls: formData.imageUrls || [],
-    sqft: Number(formData.sqft || 0),
+    floor_size: Number(formData.floorSize || 0),
     erf_size: Number(formData.erfSize || 0),
     on_show: formData.onShow || false,
     is_favorite: formData.isFavorite || false,
@@ -79,7 +80,7 @@ export async function updateProperty(id: string, formData: any) {
   if (formData.onShow !== undefined) dbData.on_show = formData.onShow;
   if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
   if (formData.videoUrl !== undefined) dbData.video_url = formData.videoUrl;
-  if (formData.sqft !== undefined) dbData.sqft = Number(formData.sqft || 0);
+  if (formData.floorSize !== undefined) dbData.floor_size = Number(formData.floorSize || 0);
   if (formData.erfSize !== undefined) dbData.erf_size = Number(formData.erfSize || 0);
   if (formData.yearBuilt !== undefined) dbData.year_built = formData.yearBuilt ? Number(formData.yearBuilt) : null;
 

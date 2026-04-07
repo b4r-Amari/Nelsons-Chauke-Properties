@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -31,7 +32,7 @@ const formSchema = z.object({
   type: z.string().min(3, "Type is required."),
   bedrooms: z.coerce.number().int().min(0),
   bathrooms: z.coerce.number().min(0),
-  sqft: z.coerce.number().int().min(0),
+  floorSize: z.coerce.number().int().min(0),
   erfSize: z.coerce.number().int().min(0),
   description: z.string().min(20, "Description must be at least 20 characters."),
   features: z.array(z.string()).optional().default([]),
@@ -80,7 +81,7 @@ export default function NewPropertyPage() {
       type: "House",
       bedrooms: 3,
       bathrooms: 2,
-      sqft: 0,
+      floorSize: 0,
       erfSize: 0,
       description: "",
       features: [],
@@ -208,7 +209,7 @@ export default function NewPropertyPage() {
                     <FormField control={form.control} name="bathrooms" render={({ field }) => (
                         <FormItem><FormLabel>Bathrooms</FormLabel><FormControl><Input type="number" step="0.5" {...field} /></FormControl></FormItem>
                     )} />
-                    <FormField control={form.control} name="sqft" render={({ field }) => (
+                    <FormField control={form.control} name="floorSize" render={({ field }) => (
                         <FormItem><FormLabel>Floor Size (m²)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                     )} />
                     <FormField control={form.control} name="erfSize" render={({ field }) => (

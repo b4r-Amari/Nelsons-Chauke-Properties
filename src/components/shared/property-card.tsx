@@ -70,7 +70,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
                 </div>
                 <div className="text-center flex flex-col items-center gap-1">
                     <Home className="h-5 w-5 text-brand-bright"/>
-                    <span className="text-sm text-gray-600">{property.sqft} m²</span>
+                    <span className="text-sm text-gray-600">{property.floorSize} m²</span>
                      <span className="text-xs text-gray-500">House</span>
                 </div>
                  <div className="text-center flex flex-col items-center gap-1">

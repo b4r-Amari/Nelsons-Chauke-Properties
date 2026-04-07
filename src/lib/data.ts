@@ -1,3 +1,4 @@
+
 import { createClient } from './supabase/server';
 import type { Property, Agent, BlogPost } from '@/lib/types';
 
@@ -18,7 +19,7 @@ const mapDbProperty = (p: any): Property => ({
   bathrooms: Number(p.bathrooms || 0),
   location: p.location || '',
   address: p.address || p.title || '',
-  sqft: p.sqft || 0,
+  floorSize: p.floor_size || 0,
   erfSize: p.erf_size || 0,
   features: Array.isArray(p.features) ? p.features : [],
   imageUrls: Array.isArray(p.image_urls) ? p.image_urls.filter((url: any) => typeof url === 'string' && url.trim().length > 0) : [],

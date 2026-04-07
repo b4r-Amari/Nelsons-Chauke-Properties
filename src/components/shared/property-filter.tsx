@@ -178,8 +178,8 @@ export function PropertyFilter({ properties, onFilterChange, initial, showSearch
         if (filters.minBaths !== 'any' && p.bathrooms < parseInt(filters.minBaths)) return false;
         if (filters.minPrice !== 'any' && p.price < parseInt(filters.minPrice)) return false;
         if (filters.maxPrice !== 'any' && p.price > parseInt(filters.maxPrice)) return false;
-        if (filters.minFloorSize !== 'any' && (p.sqft || 0) < parseInt(filters.minFloorSize)) return false;
-        if (filters.maxFloorSize !== 'any' && (p.sqft || 0) > parseInt(filters.maxFloorSize)) return false;
+        if (filters.minFloorSize !== 'any' && (p.floorSize || 0) < parseInt(filters.minFloorSize)) return false;
+        if (filters.maxFloorSize !== 'any' && (p.floorSize || 0) > parseInt(filters.maxFloorSize)) return false;
         if (filters.minErfSize !== 'any' && (p.erfSize || 0) < parseInt(filters.minErfSize)) return false;
         if (filters.maxErfSize !== 'any' && (p.erfSize || 0) > parseInt(filters.maxErfSize)) return false;
         

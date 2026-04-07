@@ -15,7 +15,7 @@ export type Property = {
   createdAt?: string;
   updatedAt?: string;
   slug?: string;
-  sqft?: number;
+  floorSize?: number;
   erfSize?: number;
   onShow?: boolean;
   isFavorite?: boolean;

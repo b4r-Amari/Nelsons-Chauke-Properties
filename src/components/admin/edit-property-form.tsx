@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -30,7 +31,7 @@ const formSchema = z.object({
   type: z.string().min(3),
   bedrooms: z.coerce.number().int(),
   bathrooms: z.coerce.number(),
-  sqft: z.coerce.number().int().min(0),
+  floorSize: z.coerce.number().int().min(0),
   erfSize: z.coerce.number().int().min(0),
   description: z.string().min(20),
   features: z.array(z.string()).optional().default([]),
@@ -59,7 +60,7 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
       type: initialData.type,
       bedrooms: initialData.bedrooms,
       bathrooms: initialData.bathrooms,
-      sqft: initialData.sqft || 0,
+      floorSize: initialData.floorSize || 0,
       erfSize: initialData.erfSize || 0,
       description: initialData.description,
       features: Array.isArray(initialData.features) ? initialData.features : [],
@@ -175,7 +176,7 @@ export function EditPropertyForm({ initialData, allAgents }: { initialData: Prop
                     <FormField control={form.control} name="bathrooms" render={({ field }) => (
                         <FormItem><FormLabel>Bathrooms</FormLabel><FormControl><Input type="number" step="0.5" {...field} /></FormControl></FormItem>
                     )} />
-                    <FormField control={form.control} name="sqft" render={({ field }) => (
+                    <FormField control={form.control} name="floorSize" render={({ field }) => (
                         <FormItem><FormLabel>Floor Size (m²)</FormLabel><FormControl><Input type="number" {...field} /></FormControl></FormItem>
                     )} />
                     <FormField control={form.control} name="erfSize" render={({ field }) => (

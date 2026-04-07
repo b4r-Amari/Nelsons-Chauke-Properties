@@ -68,7 +68,7 @@ async function seed() {
       bedrooms: prop.beds || prop.bedrooms || 0,
       bathrooms: prop.baths || prop.bathrooms || 0,
       location: prop.location,
-      sqft: prop.sqft || 0,
+      floor_size: prop.sqft || prop.floorSize || 0,
       erf_size: prop.erfSize || 0,
       year_built: prop.yearBuilt,
       features: prop.features || [],
