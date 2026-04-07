@@ -14,7 +14,7 @@ const ContentSecurityPolicy = `
 `;
 
 const nextConfig: NextConfig = {
-  // Config refresh to resolve chunk loading issues
+  // Config refresh to resolve intermittent chunk loading/webpack issues
   reactStrictMode: true,
   poweredByHeader: false,
   typescript: {

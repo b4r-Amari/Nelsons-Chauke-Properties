@@ -105,10 +105,10 @@ export function AdminSidebar() {
                 <Button 
                   variant="ghost" 
                   type="button"
-                  className="w-full justify-start px-3 text-muted-foreground hover:bg-destructive hover:text-white transition-colors" 
+                  className="w-full justify-start px-3 text-muted-foreground hover:bg-destructive hover:text-white transition-colors group" 
                   onClick={handleLogout}
                 >
-                  <LogOut className="mr-3 h-4 w-4" />
+                  <LogOut className="mr-3 h-4 w-4 transition-colors group-hover:text-white" />
                   Logout
                 </Button>
               </div>
