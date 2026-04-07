@@ -58,7 +58,7 @@ export default async function PropertyDetailPage({ params }: Props) {
       "numberOfBathroomsTotal": property.bathrooms,
       "floorSize": {
         "@type": "QuantitativeValue",
-        "value": property.sqft,
+        "value": property.floorSize,
         "unitCode": "MTK"
       }
     },
