@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from "next/image";
@@ -121,7 +120,7 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, 
       </div>
 
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-6xl w-[95vw] h-[90vh] p-0 bg-black border-none overflow-hidden sm:rounded-xl">
+        <DialogContent className="max-w-[98vw] w-[98vw] h-[95vh] p-0 bg-black border-none overflow-hidden sm:rounded-none">
           <DialogHeader className="sr-only">
             <DialogTitle>Property Image Viewer</DialogTitle>
           </DialogHeader>
@@ -129,10 +128,10 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, 
           <div className="flex flex-col h-full">
             <div className="flex-1 relative">
               <Carousel setApi={setApi} className="w-full h-full">
-                <CarouselContent className="h-full">
+                <CarouselContent className="h-full" viewportClassName="h-full">
                   {displayImages.map((img, i) => (
-                    <CarouselItem key={i} className="basis-full h-full flex items-center justify-center">
-                      <div className="relative w-full h-full p-4 md:p-12">
+                    <CarouselItem key={i} className="basis-full h-full flex items-center justify-center p-0">
+                      <div className="relative w-full h-full">
                         <Image
                           src={img}
                           alt={`Gallery image ${i + 1}`}
