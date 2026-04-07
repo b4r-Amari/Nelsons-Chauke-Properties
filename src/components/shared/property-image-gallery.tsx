@@ -38,7 +38,6 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, 
   
   const handleImageClick = (index: number) => {
     onOpenChange(true);
-    // Use a slight delay to ensure Embla is ready if the dialog just opened
     setTimeout(() => {
       if(api) {
         api.scrollTo(index, true);
@@ -112,7 +111,6 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, 
           </div>
         )}
         
-        {/* Mobile view trigger overlay */}
         <div
           className="md:hidden absolute inset-0 cursor-pointer"
           onClick={() => handleImageClick(0)}
@@ -120,7 +118,7 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, 
       </div>
 
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[98vw] w-[98vw] h-[95vh] p-0 bg-black border-none overflow-hidden sm:rounded-none">
+        <DialogContent className="max-w-none w-screen h-screen p-0 bg-black border-none overflow-hidden rounded-none [&>button]:text-white [&>button]:opacity-100 [&>button]:hover:bg-white/20">
           <DialogHeader className="sr-only">
             <DialogTitle>Property Image Viewer</DialogTitle>
           </DialogHeader>
@@ -144,16 +142,15 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, 
                   ))}
                 </CarouselContent>
                 <div className="hidden md:block">
-                  <CarouselPrevious className="left-4 bg-white/10 hover:bg-white/20 border-none text-white h-12 w-12" />
-                  <CarouselNext className="right-4 bg-white/10 hover:bg-white/20 border-none text-white h-12 w-12" />
+                  <CarouselPrevious className="left-8 bg-white/10 hover:bg-white/20 border-none text-white h-14 w-14" />
+                  <CarouselNext className="right-8 bg-white/10 hover:bg-white/20 border-none text-white h-14 w-14" />
                 </div>
               </Carousel>
             </div>
             
-            {/* Gallery Navigation Footer */}
-            <div className="bg-black/80 backdrop-blur-md p-4 text-center shrink-0">
-              <p className="text-white/80 text-sm font-medium">
-                {current} of {count}
+            <div className="bg-black/80 backdrop-blur-md p-6 text-center shrink-0 border-t border-white/10">
+              <p className="text-white/90 text-sm font-bold tracking-widest uppercase">
+                {current} / {count}
               </p>
             </div>
           </div>
