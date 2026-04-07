@@ -46,7 +46,8 @@ export async function addProperty(formData: any) {
     on_show: formData.onShow || false,
     is_favorite: formData.isFavorite || false,
     year_built: formData.yearBuilt || null,
-    slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-')
+    slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
+    video_url: formData.videoUrl || null
   };
 
   const { data, error } = await supabase.from('properties').insert([propertyData]).select().single();
@@ -76,6 +77,9 @@ export async function updateProperty(id: string, formData: any) {
   if (formData.onShow !== undefined) dbData.on_show = formData.onShow;
   if (formData.isFavorite !== undefined) dbData.is_favorite = formData.isFavorite;
   if (formData.videoUrl !== undefined) dbData.video_url = formData.videoUrl;
+  if (formData.sqft !== undefined) dbData.sqft = Number(formData.sqft || 0);
+  if (formData.erfSize !== undefined) dbData.erf_size = Number(formData.erfSize || 0);
+  if (formData.yearBuilt !== undefined) dbData.year_built = formData.yearBuilt ? Number(formData.yearBuilt) : null;
 
   const { error } = await supabase.from('properties').update(dbData).eq('id', id);
   if (error) return { success: false, error: error.message };
