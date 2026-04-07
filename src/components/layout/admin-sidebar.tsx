@@ -3,12 +3,14 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Home, Building, Users, LogOut, Settings, Newspaper } from "lucide-react";
+import { Home, Building, Users, LogOut, Settings, Newspaper, User } from "lucide-react";
 import { Logo } from "@/components/shared/logo";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/auth-context";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const sidebarLinks = [
   { href: "/admin/dashboard", label: "Dashboard", icon: Home },
@@ -21,6 +23,7 @@ export function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useAuth();
   const supabase = createClient();
 
   const handleLogout = async () => {
@@ -28,9 +31,10 @@ export function AdminSidebar() {
       await supabase.auth.signOut();
       toast({
         title: "Logged Out",
-        description: "You have been successfully logged out.",
+        description: "You have been successfully logged out of the portal.",
       });
-      router.push('/admin/login');
+      // Force a full page reload to clear all states and trigger middleware
+      window.location.href = '/admin/login';
     } catch (error) {
       toast({
         variant: "destructive",
@@ -67,21 +71,37 @@ export function AdminSidebar() {
             )})}
             </nav>
           </div>
-           <div className="mt-auto p-4 border-t border-border">
-              <Link
-                href="/admin/settings"
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
-                  pathname === "/admin/settings" && "bg-muted text-primary"
-                )}
-              >
-                <Settings className="h-4 w-4" />
-                Settings
-              </Link>
-            <Button variant="ghost" className="w-full justify-start px-3 text-muted-foreground" onClick={handleLogout}>
-               <LogOut className="mr-3 h-4 w-4" />
-               Logout
-            </Button>
+           <div className="mt-auto p-4 border-t border-border space-y-4">
+              {user && (
+                <div className="px-3 py-2 flex items-center gap-3 bg-background/50 rounded-lg border border-border/50">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-brand-deep text-white text-xs">
+                      {user.email?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold truncate">{user.email}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-bold">Admin</p>
+                  </div>
+                </div>
+              )}
+              
+              <div className="grid gap-1">
+                <Link
+                  href="/admin/settings"
+                  className={cn(
+                    "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-all hover:text-primary",
+                    pathname === "/admin/settings" && "bg-muted text-primary"
+                  )}
+                >
+                  <Settings className="h-4 w-4" />
+                  Settings
+                </Link>
+                <Button variant="ghost" className="w-full justify-start px-3 text-muted-foreground hover:text-destructive" onClick={handleLogout}>
+                  <LogOut className="mr-3 h-4 w-4" />
+                  Logout
+                </Button>
+              </div>
           </div>
         </div>
     </aside>

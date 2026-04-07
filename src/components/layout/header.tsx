@@ -19,7 +19,9 @@ import {
   Users, 
   Mail, 
   LogOut,
-  X
+  X,
+  User,
+  LayoutDashboard
 } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import {
@@ -27,9 +29,13 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/auth-context";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -63,6 +69,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
   const router = useRouter();
   const { toast } = useToast();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user, isAdmin, isLoading } = useAuth();
   const supabase = createClient();
 
   const isPropertiesActive = pathname.startsWith('/properties') || pathname === '/sell';
@@ -78,6 +85,7 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
     toast({ title: "Logged Out", description: "You have been successfully logged out." });
     handleMobileMenuToggle(false);
     router.push('/');
+    router.refresh();
   };
 
 
@@ -139,7 +147,59 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
             </nav>
         </div>
 
-        <div className="ml-auto flex items-center space-x-4">
+        <div className="ml-auto flex items-center space-x-2 md:space-x-4">
+          <div className="hidden md:flex items-center">
+            {isLoading ? (
+              <div className="h-10 w-10 bg-muted animate-pulse rounded-full" />
+            ) : user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10 border-2 border-brand-bright/20">
+                      <AvatarFallback className="bg-brand-bright text-white">
+                        {user.email?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">Account</p>
+                      <p className="text-xs leading-none text-muted-foreground truncate">
+                        {user.email}
+                      </p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/my-account" className="cursor-pointer">
+                      <User className="mr-2 h-4 w-4" />
+                      <span>My Profile</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin/dashboard" className="cursor-pointer font-bold text-brand-bright">
+                        <LayoutDashboard className="mr-2 h-4 w-4" />
+                        <span>Admin Portal</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Log out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button asChild className="bg-brand-bright hover:bg-brand-deep text-white">
+                <Link href="/login">Login</Link>
+              </Button>
+            )}
+          </div>
+
           <div className="md:hidden">
              <Sheet open={isMobileMenuOpen} onOpenChange={handleMobileMenuToggle}>
               <SheetTrigger asChild>
@@ -180,7 +240,24 @@ export function Header({ setMobileMenuOpen }: { setMobileMenuOpen: Dispatch<SetS
                         </nav>
                     </div>
 
-                    <div className="mt-auto border-t p-6 shrink-0">
+                    <div className="mt-auto border-t p-6 shrink-0 space-y-4">
+                        {user && (
+                          <div className="grid gap-2">
+                             {isAdmin && (
+                                <Button asChild variant="outline" className="w-full justify-start border-brand-bright text-brand-bright" onClick={() => handleMobileMenuToggle(false)}>
+                                  <Link href="/admin/dashboard">
+                                    <LayoutDashboard className="mr-2 h-4 w-4" />
+                                    Admin Portal
+                                  </Link>
+                                </Button>
+                             )}
+                             <Button onClick={handleLogout} variant="destructive" className="w-full justify-start">
+                                <LogOut className="mr-2 h-4 w-4" />
+                                Logout
+                             </Button>
+                          </div>
+                        )}
+                        
                         <Link
                             href="/contact-us"
                             className={cn(
