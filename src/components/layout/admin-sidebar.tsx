@@ -28,18 +28,23 @@ export function AdminSidebar() {
 
   const handleLogout = async () => {
     try {
-      await supabase.auth.signOut();
+      // Clear the session via Supabase
+      const { error } = await supabase.auth.signOut();
+      
+      if (error) throw error;
+
       toast({
         title: "Logged Out",
         description: "You have been successfully logged out of the portal.",
       });
-      // Force a full page reload to clear all states and trigger middleware
+      
+      // Force a full page reload to clear all local states and trigger middleware redirects
       window.location.href = '/admin/login';
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Logout Failed",
-        description: "An error occurred while logging out. Please try again.",
+        description: error.message || "An error occurred while logging out. Please try again.",
       });
     }
   };
@@ -97,7 +102,12 @@ export function AdminSidebar() {
                   <Settings className="h-4 w-4" />
                   Settings
                 </Link>
-                <Button variant="ghost" className="w-full justify-start px-3 text-muted-foreground hover:text-destructive" onClick={handleLogout}>
+                <Button 
+                  variant="ghost" 
+                  type="button"
+                  className="w-full justify-start px-3 text-muted-foreground hover:bg-destructive hover:text-white transition-colors" 
+                  onClick={handleLogout}
+                >
                   <LogOut className="mr-3 h-4 w-4" />
                   Logout
                 </Button>
