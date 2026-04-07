@@ -8,6 +8,8 @@ import { CtaTabsSection, NewsletterSection } from '@/components/sections/home-pa
 import { getProperties } from '@/lib/data';
 import { PropertyFilter } from '@/components/shared/property-filter';
 
+export const dynamic = 'force-dynamic';
+
 async function HeroSection() {
   const properties = await getProperties();
   const heroBanners = [

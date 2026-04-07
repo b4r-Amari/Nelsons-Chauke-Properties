@@ -1,6 +1,7 @@
 
 import type { NextConfig } from 'next';
 
+// Build refresh trigger: v1.0.2 - Resolving moduleId chunk errors
 const ContentSecurityPolicy = `
   default-src 'self';
   script-src 'self' 'unsafe-eval' 'unsafe-inline' *.youtube.com *.google.com;
@@ -14,7 +15,6 @@ const ContentSecurityPolicy = `
 `;
 
 const nextConfig: NextConfig = {
-  // Trigger config refresh to resolve intermittent chunk loading/webpack issues
   reactStrictMode: true,
   poweredByHeader: false,
   typescript: {

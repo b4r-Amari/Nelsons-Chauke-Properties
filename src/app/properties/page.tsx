@@ -5,6 +5,8 @@ import { getProperties } from '@/lib/data';
 import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Properties for Sale and To Let | South Africa Real Estate',
   description: 'Browse our exclusive listings of properties for sale and to rent. Find your next home, apartment, or luxury villa in South Africa\'s most sought-after locations.',

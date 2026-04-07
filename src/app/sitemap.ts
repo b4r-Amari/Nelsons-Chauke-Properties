@@ -1,6 +1,9 @@
+
 import { MetadataRoute } from 'next';
 import { getProperties, getAgents, getBlogPosts } from '@/lib/data';
 import type { Property, Agent, BlogPost } from '@/lib/types';
+
+export const dynamic = 'force-dynamic';
 
 const toISOString = (timestamp: any): string => {
   if (!timestamp) return new Date().toISOString();

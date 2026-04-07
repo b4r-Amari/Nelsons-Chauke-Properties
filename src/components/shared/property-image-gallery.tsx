@@ -44,7 +44,7 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, 
       if(api) {
         api.scrollTo(index, true);
       }
-    }, 50);
+    }, 100);
   };
 
   const displayImages = images.length > 0 ? images : ["https://picsum.photos/seed/placeholder/1200/800"];
@@ -121,27 +121,25 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, 
       </div>
 
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-6xl w-[95vw] h-[85vh] p-0 bg-black border-none overflow-hidden sm:rounded-xl">
+        <DialogContent className="max-w-6xl w-[95vw] h-[90vh] p-0 bg-black border-none overflow-hidden sm:rounded-xl">
           <DialogHeader className="sr-only">
             <DialogTitle>Property Image Viewer</DialogTitle>
           </DialogHeader>
           
-          <div className="relative w-full h-full flex flex-col">
-            <div className="flex-1 min-h-0 relative">
+          <div className="flex flex-col h-full">
+            <div className="flex-1 relative">
               <Carousel setApi={setApi} className="w-full h-full">
-                <CarouselContent className="h-full ml-0">
+                <CarouselContent className="h-full">
                   {displayImages.map((img, i) => (
-                    <CarouselItem key={i} className="h-full pl-0 basis-full">
-                      <div className="relative w-full h-full flex items-center justify-center p-4 md:p-8">
-                        <div className="relative w-full h-full">
-                          <Image
-                            src={img}
-                            alt={`Gallery image ${i + 1}`}
-                            fill
-                            className="object-contain"
-                            priority={i === 0}
-                          />
-                        </div>
+                    <CarouselItem key={i} className="basis-full h-full flex items-center justify-center">
+                      <div className="relative w-full h-full p-4 md:p-12">
+                        <Image
+                          src={img}
+                          alt={`Gallery image ${i + 1}`}
+                          fill
+                          className="object-contain"
+                          priority={i === 0}
+                        />
                       </div>
                     </CarouselItem>
                   ))}
@@ -154,7 +152,7 @@ export function PropertyImageGallery({ images, mainImageHint, isOnShow, isOpen, 
             </div>
             
             {/* Gallery Navigation Footer */}
-            <div className="bg-black/80 backdrop-blur-md p-4 text-center">
+            <div className="bg-black/80 backdrop-blur-md p-4 text-center shrink-0">
               <p className="text-white/80 text-sm font-medium">
                 {current} of {count}
               </p>
