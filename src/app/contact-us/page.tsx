@@ -82,7 +82,7 @@ export default function ContactUsPage() {
                     <Mail className="h-6 w-6 text-brand-bright mt-1" />
                     <div>
                       <h4 className="font-semibold">Email Us</h4>
-                      <a href="mailto:contact@ncproperties.co.za" className="text-muted-foreground hover:text-brand-bright transition-colors">contact@ncproperties.com</a>
+                      <a href="mailto:contact@nelsonchaukeproperties.co.za" className="text-muted-foreground hover:text-brand-bright transition-colors">contact@nelsonchaukeproperties.co.za</a>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
