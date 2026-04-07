@@ -228,6 +228,9 @@ export async function addBlogPost(formData: any) {
       title: formData.title,
       slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
       content: formData.content,
+      excerpt: formData.excerpt,
+      category: formData.category,
+      author: formData.author,
       featured_image: formData.imageUrl,
       published: formData.published ?? true,
     };
@@ -249,6 +252,9 @@ export async function updateBlogPost(id: string, formData: any) {
     const dbData: any = {
       title: formData.title,
       content: formData.content,
+      excerpt: formData.excerpt,
+      category: formData.category,
+      author: formData.author,
       featured_image: formData.imageUrl,
       published: formData.published,
     };
