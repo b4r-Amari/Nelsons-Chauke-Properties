@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'dzuknytfpjappykyuoxe.supabase.co' },
     ],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb',
+    },
+  },
   async headers() {
     return [
       {
