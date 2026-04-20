@@ -1,4 +1,3 @@
-
 "use client"
 
 import Image from "next/image"
@@ -24,6 +23,7 @@ import { addMarketingLead } from "@/lib/supabase/actions"
 
 
 const newsletterFormSchema = z.object({
+    fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
     email: z.string().email({ message: "Please enter a valid email address." }),
 });
 
@@ -32,11 +32,11 @@ export function BlogSidebar({ posts }: { posts: BlogPost[] }) {
 
     const form = useForm<z.infer<typeof newsletterFormSchema>>({
         resolver: zodResolver(newsletterFormSchema),
-        defaultValues: { email: "" },
+        defaultValues: { fullName: "", email: "" },
     });
 
     async function onSubmit(values: z.infer<typeof newsletterFormSchema>) {
-        const result = await addMarketingLead({ email: values.email, source: 'blog-sidebar-newsletter' });
+        const result = await addMarketingLead({ name: values.fullName, email: values.email, source: 'blog-sidebar-newsletter' });
         if (result.success) {
             toast({
                 title: "Subscribed!",
@@ -95,6 +95,21 @@ export function BlogSidebar({ posts }: { posts: BlogPost[] }) {
                 <CardContent className="p-0 mt-4">
                      <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                            <FormField
+                            control={form.control}
+                            name="fullName"
+                            render={({ field }) => (
+                                <FormItem>
+                                <FormControl>
+                                    <Input 
+                                    placeholder="Your full name" 
+                                    aria-label="Full name for newsletter"
+                                    {...field} />
+                                </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                            )}
+                            />
                             <FormField
                             control={form.control}
                             name="email"

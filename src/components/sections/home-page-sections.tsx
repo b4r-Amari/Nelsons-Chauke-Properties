@@ -190,6 +190,7 @@ export function CtaTabsSection() {
 }
 
 const newsletterFormSchema = z.object({
+  fullName: z.string().min(2, { message: "Name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
 });
 
@@ -206,7 +207,7 @@ export function NewsletterSection() {
 
   const form = useForm<z.infer<typeof newsletterFormSchema>>({
     resolver: zodResolver(newsletterFormSchema),
-    defaultValues: { email: "" },
+    defaultValues: { fullName: "", email: "" },
   });
 
   useEffect(() => {
@@ -217,7 +218,7 @@ export function NewsletterSection() {
   }, []);
 
   async function onSubmit(values: z.infer<typeof newsletterFormSchema>) {
-    const result = await addMarketingLead({ email: values.email, source: 'newsletter' });
+    const result = await addMarketingLead({ name: values.fullName, email: values.email, source: 'newsletter' });
     if (result.success) {
       toast({
         title: "Subscribed!",
@@ -254,20 +255,34 @@ export function NewsletterSection() {
           </CardHeader>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col sm:flex-row gap-4">
-                 <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="flex-grow">
-                      <FormControl>
-                        <Input type="email" placeholder="Enter your email address" className="h-12" aria-label="Email for newsletter" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" size="lg" className="h-12 bg-brand-bright hover:bg-brand-deep transition-colors" disabled={form.formState.isSubmitting}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <FormField
+                    control={form.control}
+                    name="fullName"
+                    render={({ field }) => (
+                      <FormItem className="flex-grow">
+                        <FormControl>
+                          <Input placeholder="Enter your full name" className="h-12" aria-label="Full name for newsletter" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem className="flex-grow">
+                        <FormControl>
+                          <Input type="email" placeholder="Enter your email address" className="h-12" aria-label="Email for newsletter" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <Button type="submit" size="lg" className="h-12 bg-brand-bright hover:bg-brand-deep transition-colors w-full" disabled={form.formState.isSubmitting}>
                   {form.formState.isSubmitting ? "Subscribing..." : "Subscribe"}
                 </Button>
               </form>
