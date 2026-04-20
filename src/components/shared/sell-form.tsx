@@ -1,3 +1,4 @@
+
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -33,8 +34,8 @@ export function SellForm() {
         phone: "",
         propertyAddress: "",
         propertyType: "",
-        bathrooms: "",
-        bedrooms: "",
+        bedrooms: 3,
+        bathrooms: 2,
     },
   })
 
@@ -51,8 +52,10 @@ export function SellForm() {
         bathrooms: Number(values.bathrooms),
       });
 
-      // 2. Save to Supabase
+      // 2. Save to Supabase (uses specific columns: address, bedrooms, bathrooms)
       const valuationResult = await addValuationRequest(values);
+      
+      // 3. Add to general marketing list
       await addMarketingLead({
         name: values.fullName,
         email: values.email,

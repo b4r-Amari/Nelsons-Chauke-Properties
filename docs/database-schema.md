@@ -88,13 +88,15 @@ CREATE TABLE IF NOT EXISTS public.marketing_leads (
     created_at timestamptz DEFAULT now()
 );
 
--- Valuation Requests
+-- Valuation Requests (Updated Schema)
 CREATE TABLE IF NOT EXISTS public.valuation_requests (
     id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
     name text NOT NULL,
     email text NOT NULL,
     phone text NOT NULL,
-    property_details text,
+    address text NOT NULL,
+    bedrooms integer DEFAULT 0,
+    bathrooms integer DEFAULT 0,
     created_at timestamptz DEFAULT now()
 );
 

@@ -1,3 +1,4 @@
+
 'use server';
 
 import { createClient } from './server';
@@ -48,8 +49,8 @@ export async function addProperty(formData: any) {
       image_urls: formData.imageUrls || [],
       floor_size: Number(formData.floorSize || 0),
       erf_size: Number(formData.erfSize || 0),
-      on_show: formData.onShow || false,
-      is_favorite: formData.isFavorite || false,
+      on_show: formData.on_show || false,
+      is_favorite: formData.is_favorite || false,
       year_built: formData.yearBuilt || null,
       slug: formData.slug || formData.title.toLowerCase().replace(/\s+/g, '-'),
       video_url: formData.videoUrl || null
@@ -181,8 +182,6 @@ export async function addMarketingLead(lead: { email: string; name?: string; sou
   try {
     const supabase = await createClient();
     
-    // Simplifed insert logic similar to addValuationRequest to avoid RLS Select/Update conflicts.
-    // We only have INSERT permission for public in RLS.
     const { error } = await supabase.from('marketing_leads').insert({
       email: lead.email,
       name: lead.name,
@@ -190,8 +189,6 @@ export async function addMarketingLead(lead: { email: string; name?: string; sou
     });
     
     if (error) {
-      // 23505 is the PostgreSQL error code for unique_violation (email is already in the table).
-      // Since the goal is just to capture the lead, we can consider a duplicate as a success.
       if (error.code === '23505') {
         return { success: true };
       }
@@ -209,19 +206,13 @@ export async function addValuationRequest(request: any) {
   try {
     const supabase = await createClient();
     
-    // Construct a detailed property string to save more info in the single text field
-    const details = [
-      `Address: ${request.propertyAddress || request.address}`,
-      `Type: ${request.propertyType || 'N/A'}`,
-      `Bedrooms: ${request.bedrooms || 0}`,
-      `Bathrooms: ${request.bathrooms || 0}`
-    ].join(' | ');
-
     const dbData = {
       name: request.fullName || request.name,
       email: request.email,
       phone: request.phone,
-      property_details: details
+      address: request.propertyAddress || request.address,
+      bedrooms: Number(request.bedrooms || 0),
+      bathrooms: Number(request.bathrooms || 0)
     };
 
     const { error } = await supabase.from('valuation_requests').insert([dbData]);
