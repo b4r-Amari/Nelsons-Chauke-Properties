@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -13,6 +14,8 @@ import { Home, Calculator, Handshake, TrendingUp, Lightbulb, ArrowRight, Buildin
 import Link from 'next/link';
 
 export default function CalculatorsPage() {
+    const [activeTab, setActiveTab] = useState("repayment");
+
     return (
         <>
             <section className="bg-brand-deep text-white py-16 md:py-24">
@@ -27,7 +30,7 @@ export default function CalculatorsPage() {
             <main className="py-12 md:py-24 bg-background">
                 <div className="container max-w-5xl">
                     
-                    <Tabs defaultValue="repayment" className="w-full">
+                    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                         <div className="flex justify-center mb-12">
                             <TabsList className="grid grid-cols-2 md:grid-cols-4 w-full h-auto p-1 bg-muted rounded-xl">
                                 <TabsTrigger value="repayment" className="py-3 px-4 rounded-lg data-[state=active]:bg-brand-bright data-[state=active]:text-white">
@@ -63,19 +66,19 @@ export default function CalculatorsPage() {
                                             <p>Understanding your monthly repayment helps you budget effectively and compare different property price ranges.</p>
                                         </div>
                                         <div>
-                                            <h3 className="font-bold text-foreground">Inputs</h3>
-                                            <ul className="list-disc pl-5 space-y-1">
-                                                <li>Property Price</li>
-                                                <li>Deposit</li>
-                                                <li>Interest Rate</li>
-                                                <li>Loan Term (years)</li>
-                                            </ul>
+                                            <h3 className="font-bold text-foreground">Learn more</h3>
+                                            <button 
+                                                onClick={() => setActiveTab('bond-transfer')}
+                                                className="text-brand-bright font-semibold flex items-center hover:underline text-left"
+                                            >
+                                                View bond and transfer cost breakdown <ArrowRight className="ml-2 h-4 w-4" />
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                                 <Card className="lg:col-span-3 shadow-xl">
                                     <CardContent className="p-6 md:p-8">
-                                        <HomeLoanCalculator />
+                                        <HomeLoanCalculator onTabChange={setActiveTab} />
                                     </CardContent>
                                 </Card>
                             </div>
@@ -105,9 +108,12 @@ export default function CalculatorsPage() {
                                         </div>
                                         <div>
                                             <h3 className="font-bold text-foreground">Learn more</h3>
-                                            <Link href="/blog" className="text-brand-bright font-semibold flex items-center hover:underline">
+                                            <button 
+                                                onClick={() => setActiveTab('affordability')}
+                                                className="text-brand-bright font-semibold flex items-center hover:underline text-left"
+                                            >
                                                 What do I qualify for based on my income? <ArrowRight className="ml-2 h-4 w-4" />
-                                            </Link>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>

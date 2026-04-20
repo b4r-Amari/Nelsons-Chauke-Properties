@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useCallback } from "react";
@@ -48,7 +47,7 @@ const calculateTransferDuty = (price: number) => {
 const calculateAttorneyFee = (amount: number) => (amount * 0.0075) + 5000;
 
 
-export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { purchasePrice?: number }) {
+export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice, onTabChange }: { purchasePrice?: number; onTabChange?: (tab: string) => void }) {
   const [result, setResult] = useState({
     monthlyPayment: 0,
     onceOffCosts: 0,
@@ -241,7 +240,12 @@ export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { pu
                         </span>
                         <span>{formatCurrency(result.propertyTransfer)}</span>
                     </div>
-                    <a href="#" className="text-sm text-brand-bright hover:underline pl-4">View bond and transfer cost breakdown</a>
+                    <button 
+                        onClick={() => onTabChange?.('bond-transfer')}
+                        className="text-sm text-brand-bright hover:underline pl-4 text-left"
+                    >
+                        View bond and transfer cost breakdown
+                    </button>
                 </div>
 
                  <div className="py-4">
@@ -249,7 +253,12 @@ export function HomeLoanCalculator({ purchasePrice: initialPurchasePrice }: { pu
                         <span className="font-semibold text-lg">Gross Monthly Income Required</span>
                         <span className="font-bold text-2xl text-brand-bright">{formatCurrency(result.grossIncomeRequired)}</span>
                     </div>
-                    <a href="#" className="text-sm text-brand-bright hover:underline">What do I qualify for based on my income?</a>
+                    <button 
+                        onClick={() => onTabChange?.('affordability')}
+                        className="text-sm text-brand-bright hover:underline text-left"
+                    >
+                        What do I qualify for based on my income?
+                    </button>
                 </div>
             </div>
         </div>
