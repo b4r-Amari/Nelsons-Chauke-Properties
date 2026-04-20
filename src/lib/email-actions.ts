@@ -69,7 +69,7 @@ export async function sendEnquiryEmail(data: { name: string; email: string; phon
   }
 }
 
-export async function sendValuationEmail(data: { name: string; email: string; phone: string; address: string; type: string }) {
+export async function sendValuationEmail(data: { name: string; email: string; phone: string; address: string; type: string; bedrooms: number; bathrooms: number }) {
   try {
     const { error } = await resend.emails.send({
       from: `NC Properties <${FROM_EMAIL}>`,
@@ -83,6 +83,8 @@ export async function sendValuationEmail(data: { name: string; email: string; ph
           <p><strong>Phone:</strong> ${data.phone}</p>
           <p><strong>Property Address:</strong> ${data.address}</p>
           <p><strong>Property Type:</strong> ${data.type}</p>
+          <p><strong>Bedrooms:</strong> ${data.bedrooms}</p>
+          <p><strong>Bathrooms:</strong> ${data.bathrooms}</p>
         </div>
       `,
     });

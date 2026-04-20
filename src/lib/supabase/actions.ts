@@ -1,4 +1,3 @@
-
 'use server';
 
 import { createClient } from './server';
@@ -209,11 +208,20 @@ export async function addMarketingLead(lead: { email: string; name?: string; sou
 export async function addValuationRequest(request: any) {
   try {
     const supabase = await createClient();
+    
+    // Construct a detailed property string to save more info in the single text field
+    const details = [
+      `Address: ${request.propertyAddress || request.address}`,
+      `Type: ${request.propertyType || 'N/A'}`,
+      `Bedrooms: ${request.bedrooms || 0}`,
+      `Bathrooms: ${request.bathrooms || 0}`
+    ].join(' | ');
+
     const dbData = {
       name: request.fullName || request.name,
       email: request.email,
       phone: request.phone,
-      property_details: request.propertyAddress || request.address
+      property_details: details
     };
 
     const { error } = await supabase.from('valuation_requests').insert([dbData]);

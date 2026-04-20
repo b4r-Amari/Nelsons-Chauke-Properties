@@ -1,4 +1,3 @@
-
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -33,6 +32,9 @@ export function SellForm() {
         email: "",
         phone: "",
         propertyAddress: "",
+        propertyType: "",
+        bathrooms: "",
+        bedrooms: "",
     },
   })
 
@@ -44,7 +46,9 @@ export function SellForm() {
         email: values.email,
         phone: values.phone,
         address: values.propertyAddress,
-        type: values.propertyType
+        type: values.propertyType,
+        bedrooms: Number(values.bedrooms),
+        bathrooms: Number(values.bathrooms),
       });
 
       // 2. Save to Supabase
