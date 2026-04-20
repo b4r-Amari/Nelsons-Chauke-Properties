@@ -1,8 +1,8 @@
-
 'use server';
 
 import { createClient } from './server';
 import { revalidatePath } from 'next/cache';
+import { sendNewsletterNotification } from '../email-actions';
 
 /**
  * Uploads a file to a Supabase storage bucket and returns the public URL.
@@ -195,6 +195,13 @@ export async function addMarketingLead(lead: { email: string; name?: string; sou
       console.error('Marketing lead error:', error);
       return { success: false, error: error.message };
     }
+
+    // Notify Admin of new subscriber
+    await sendNewsletterNotification({
+      name: lead.name || 'Anonymous Subscriber',
+      email: lead.email,
+      source: lead.source
+    });
     
     return { success: true };
   } catch (err: any) {
