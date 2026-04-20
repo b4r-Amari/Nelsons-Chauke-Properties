@@ -134,10 +134,14 @@ CREATE POLICY "Admin full access blog_posts" ON public.blog_posts FOR ALL
 USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()))
 WITH CHECK (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
 
--- Leads and Requests (Service Role / Admin only)
+-- Marketing Leads Policies (Allow public deduplication/upsert)
 CREATE POLICY "Public insert leads" ON public.marketing_leads FOR INSERT WITH CHECK (true);
-CREATE POLICY "Public insert valuations" ON public.valuation_requests FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public update leads" ON public.marketing_leads FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "Public select leads" ON public.marketing_leads FOR SELECT USING (true);
 CREATE POLICY "Admin view leads" ON public.marketing_leads FOR SELECT USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
+
+-- Valuation Requests Policies
+CREATE POLICY "Public insert valuations" ON public.valuation_requests FOR INSERT WITH CHECK (true);
 CREATE POLICY "Admin view valuations" ON public.valuation_requests FOR SELECT USING (EXISTS (SELECT 1 FROM public.admin_users WHERE id = auth.uid()));
 
 -- 4. BUCKETS
