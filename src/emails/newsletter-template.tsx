@@ -25,27 +25,41 @@ export const NewsletterTemplate = ({
 }: NewsletterTemplateProps) => (
   <Html>
     <Head />
-    <Preview>New Newsletter Subscriber: {name}</Preview>
+    <Preview>New Subscriber: {name}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Section style={header}>
-          <Heading style={h1}>NC Properties</Heading>
-          <Text style={tagline}>Newsletter Subscription</Text>
+        <Section style={headerSection}>
+          <Text style={brandLabel}>NC PROPERTIES</Text>
+          <Heading style={h1}>New Subscriber</Heading>
         </Section>
+        
         <Section style={content}>
-          <Text style={paragraph}>Hello Admin,</Text>
-          <Text style={paragraph}>
-            You have a new subscriber to your marketing list!
-          </Text>
-          <Section style={detailsSection}>
-            <Text style={detailText}><strong>Name:</strong> {name}</Text>
-            <Text style={detailText}><strong>Email:</strong> <Link href={`mailto:${email}`} style={link}>{email}</Link></Text>
-            <Text style={detailText}><strong>Source:</strong> {source}</Text>
-            <Text style={detailText}><strong>Date:</strong> {new Date().toLocaleDateString('en-ZA', { dateStyle: 'full' })}</Text>
+          <Section style={welcomeBadge}>
+            <Text style={badgeText}>MARKETING LEAD</Text>
           </Section>
+
+          <Text style={paragraph}>
+            A new user has joined the Nelson Chauke Properties newsletter list.
+          </Text>
+          
+          <Section style={infoCard}>
+            <Text style={infoLabel}>NAME</Text>
+            <Text style={infoValue}>{name}</Text>
+            
+            <Text style={infoLabel}>EMAIL ADDRESS</Text>
+            <Link href={`mailto:${email}`} style={link}>{email}</Link>
+            
+            <Text style={infoLabel}>SIGNUP SOURCE</Text>
+            <Text style={infoValue}>{source}</Text>
+            
+            <Text style={infoLabel}>DATE</Text>
+            <Text style={infoValue}>{new Date().toLocaleDateString('en-ZA', { dateStyle: 'long' })}</Text>
+          </Section>
+
           <Hr style={hr} />
+          
           <Text style={footer}>
-            Nelson Chauke Properties Marketing • Pretoria, South Africa
+            Nelson Chauke Properties • Real Estate Excellence
           </Text>
         </Section>
       </Container>
@@ -54,77 +68,109 @@ export const NewsletterTemplate = ({
 );
 
 const main = {
-  backgroundColor: "#f5f5f5",
-  fontFamily: 'Lato, "Helvetica Neue", Helvetica, Arial, sans-serif',
+  backgroundColor: "#fbfbfd",
+  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
 };
 
 const container = {
-  margin: "40px auto",
-  width: "600px",
-  backgroundColor: "#ffffff",
-  borderRadius: "8px",
-  overflow: "hidden",
-  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+  margin: "0 auto",
+  padding: "20px 0 48px",
+  width: "580px",
 };
 
-const header = {
-  backgroundColor: "#BB0000", // Accent color for newsletter
-  padding: "40px 20px",
+const headerSection = {
+  padding: "32px",
   textAlign: "center" as const,
 };
 
-const h1 = {
-  color: "#ffffff",
-  fontSize: "28px",
-  fontWeight: "bold",
-  margin: "0",
-  textTransform: "uppercase" as const,
+const brandLabel = {
+  color: "#BB0000",
+  fontSize: "12px",
+  fontWeight: "700",
   letterSpacing: "1px",
+  margin: "0 0 8px",
+  textTransform: "uppercase" as const,
 };
 
-const tagline = {
-  color: "#ffffff",
-  fontSize: "14px",
-  opacity: "0.8",
-  marginTop: "5px",
+const h1 = {
+  color: "#1d1d1f",
+  fontSize: "32px",
+  fontWeight: "700",
+  lineHeight: "1.1",
+  margin: "0",
 };
 
 const content = {
-  padding: "30px 40px",
+  backgroundColor: "#ffffff",
+  borderRadius: "12px",
+  border: "1px solid #d2d2d7",
+  padding: "40px",
+};
+
+const welcomeBadge = {
+  backgroundColor: "#BB0000",
+  borderRadius: "20px",
+  padding: "4px 12px",
+  width: "fit-content",
+  margin: "0 auto 24px",
+};
+
+const badgeText = {
+  color: "#ffffff",
+  fontSize: "10px",
+  fontWeight: "700",
+  letterSpacing: "0.5px",
+  margin: "0",
 };
 
 const paragraph = {
+  fontSize: "17px",
+  lineHeight: "1.5",
+  color: "#1d1d1f",
+  textAlign: "center" as const,
+  margin: "0 0 32px",
+};
+
+const infoCard = {
+  backgroundColor: "#f5f5f7",
+  borderRadius: "8px",
+  padding: "24px",
+};
+
+const infoLabel = {
+  color: "#86868b",
+  fontSize: "11px",
+  fontWeight: "600",
+  letterSpacing: "0.5px",
+  margin: "0 0 4px",
+  textTransform: "uppercase" as const,
+};
+
+const infoValue = {
+  color: "#1d1d1f",
   fontSize: "16px",
-  lineHeight: "26px",
-  color: "#333333",
-};
-
-const detailsSection = {
-  backgroundColor: "#f9f9f9",
-  padding: "20px",
-  borderRadius: "4px",
-  marginTop: "20px",
-};
-
-const detailText = {
-  fontSize: "14px",
-  margin: "8px 0",
-  color: "#555555",
+  fontWeight: "500",
+  margin: "0 0 20px",
 };
 
 const link = {
   color: "#BB0000",
-  textDecoration: "underline",
+  fontSize: "16px",
+  fontWeight: "500",
+  textDecoration: "none",
+  display: "block",
+  margin: "0 0 20px",
 };
 
 const hr = {
-  borderColor: "#e6e6e6",
-  margin: "30px 0",
+  borderColor: "#d2d2d7",
+  margin: "32px 0 24px",
 };
 
 const footer = {
-  color: "#8898aa",
+  color: "#86868b",
   fontSize: "12px",
+  lineHeight: "1.4",
   textAlign: "center" as const,
 };
 

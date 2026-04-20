@@ -27,29 +27,39 @@ export const ContactTemplate = ({
 }: ContactTemplateProps) => (
   <Html>
     <Head />
-    <Preview>New Message from {name}</Preview>
+    <Preview>Message from {name}: {subject}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Section style={header}>
-          <Heading style={h1}>NC Properties</Heading>
-          <Text style={tagline}>Contact Form Submission</Text>
+        <Section style={headerSection}>
+          <Text style={brandLabel}>NC PROPERTIES</Text>
+          <Heading style={h1}>Contact Inquiry</Heading>
         </Section>
+        
         <Section style={content}>
-          <Text style={paragraph}>Hello Admin,</Text>
           <Text style={paragraph}>
-            You have received a new message through the website contact form:
+            You have received a new message from <strong>{name}</strong>.
           </Text>
-          <Section style={detailsSection}>
-            <Text style={detailText}><strong>Name:</strong> {name}</Text>
-            <Text style={detailText}><strong>Email:</strong> <Link href={`mailto:${email}`} style={link}>{email}</Link></Text>
-            <Text style={detailText}><strong>Subject:</strong> {subject}</Text>
+          
+          <Section style={infoCard}>
+            <Text style={infoLabel}>SENDER</Text>
+            <Text style={infoValue}>{name}</Text>
+            
+            <Text style={infoLabel}>EMAIL</Text>
+            <Link href={`mailto:${email}`} style={link}>{email}</Link>
+            
+            <Text style={infoLabel}>SUBJECT</Text>
+            <Text style={infoValue}>{subject}</Text>
           </Section>
+
+          <Text style={infoLabel}>MESSAGE</Text>
+          <Section style={messageBox}>
+            <Text style={messageText}>{message}</Text>
+          </Section>
+
           <Hr style={hr} />
-          <Text style={messageHeading}>Message:</Text>
-          <Text style={messageContent}>{message}</Text>
-          <Hr style={hr} />
+          
           <Text style={footer}>
-            Nelson Chauke Properties • South Africa
+            This notification was sent from the Nelson Chauke Properties administration portal.
           </Text>
         </Section>
       </Container>
@@ -58,91 +68,103 @@ export const ContactTemplate = ({
 );
 
 const main = {
-  backgroundColor: "#f5f5f5",
-  fontFamily: 'Lato, "Helvetica Neue", Helvetica, Arial, sans-serif',
+  backgroundColor: "#fbfbfd",
+  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
 };
 
 const container = {
-  margin: "40px auto",
-  width: "600px",
-  backgroundColor: "#ffffff",
-  borderRadius: "8px",
-  overflow: "hidden",
-  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+  margin: "0 auto",
+  padding: "20px 0 48px",
+  width: "580px",
 };
 
-const header = {
-  backgroundColor: "#4B0000",
-  padding: "40px 20px",
+const headerSection = {
+  padding: "32px",
   textAlign: "center" as const,
 };
 
-const h1 = {
-  color: "#ffffff",
-  fontSize: "28px",
-  fontWeight: "bold",
-  margin: "0",
-  textTransform: "uppercase" as const,
+const brandLabel = {
+  color: "#4B0000",
+  fontSize: "12px",
+  fontWeight: "700",
   letterSpacing: "1px",
+  margin: "0 0 8px",
+  textTransform: "uppercase" as const,
 };
 
-const tagline = {
-  color: "#ffffff",
-  fontSize: "14px",
-  opacity: "0.8",
-  marginTop: "5px",
+const h1 = {
+  color: "#1d1d1f",
+  fontSize: "32px",
+  fontWeight: "700",
+  lineHeight: "1.1",
+  margin: "0",
 };
 
 const content = {
-  padding: "30px 40px",
+  backgroundColor: "#ffffff",
+  borderRadius: "12px",
+  border: "1px solid #d2d2d7",
+  padding: "40px",
 };
 
 const paragraph = {
-  fontSize: "16px",
-  lineHeight: "26px",
-  color: "#333333",
+  fontSize: "17px",
+  lineHeight: "1.5",
+  color: "#1d1d1f",
+  margin: "0 0 24px",
 };
 
-const detailsSection = {
-  backgroundColor: "#f9f9f9",
+const infoCard = {
+  backgroundColor: "#f5f5f7",
+  borderRadius: "8px",
   padding: "20px",
-  borderRadius: "4px",
-  marginTop: "20px",
+  margin: "0 0 24px",
 };
 
-const detailText = {
-  fontSize: "14px",
-  margin: "5px 0",
-  color: "#555555",
+const infoLabel = {
+  color: "#86868b",
+  fontSize: "11px",
+  fontWeight: "600",
+  letterSpacing: "0.5px",
+  margin: "0 0 4px",
+  textTransform: "uppercase" as const,
+};
+
+const infoValue = {
+  color: "#1d1d1f",
+  fontSize: "15px",
+  margin: "0 0 16px",
 };
 
 const link = {
   color: "#BB0000",
-  textDecoration: "underline",
-};
-
-const messageHeading = {
-  fontSize: "14px",
-  fontWeight: "bold",
-  color: "#4B0000",
-  marginTop: "20px",
-};
-
-const messageContent = {
   fontSize: "15px",
-  lineHeight: "24px",
-  color: "#333333",
+  textDecoration: "none",
+  display: "block",
+  margin: "0 0 16px",
+};
+
+const messageBox = {
+  margin: "8px 0 24px",
+};
+
+const messageText = {
+  fontSize: "16px",
+  lineHeight: "1.6",
+  color: "#1d1d1f",
   whiteSpace: "pre-wrap" as const,
+  margin: "0",
 };
 
 const hr = {
-  borderColor: "#e6e6e6",
-  margin: "30px 0",
+  borderColor: "#d2d2d7",
+  margin: "32px 0 24px",
 };
 
 const footer = {
-  color: "#8898aa",
+  color: "#86868b",
   fontSize: "12px",
+  lineHeight: "1.4",
   textAlign: "center" as const,
 };
 

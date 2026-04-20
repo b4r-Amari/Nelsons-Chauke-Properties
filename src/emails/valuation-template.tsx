@@ -35,43 +35,60 @@ export const ValuationTemplate = ({
 }: ValuationTemplateProps) => (
   <Html>
     <Head />
-    <Preview>New Valuation Request from {name}</Preview>
+    <Preview>New Valuation: {address}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Section style={header}>
-          <Heading style={h1}>NC Properties</Heading>
-          <Text style={tagline}>Free Property Valuation Request</Text>
+        <Section style={headerSection}>
+          <Text style={brandLabel}>NC PROPERTIES</Text>
+          <Heading style={h1}>Valuation Request</Heading>
         </Section>
+        
         <Section style={content}>
-          <Text style={paragraph}>Hello Agent,</Text>
           <Text style={paragraph}>
-            A new property valuation request has been submitted. Please contact the owner as soon as possible.
+            A property owner is requesting a professional valuation.
           </Text>
           
-          <Heading style={sectionTitle}>Owner Details</Heading>
-          <Section style={detailsSection}>
-            <Text style={detailText}><strong>Name:</strong> {name}</Text>
-            <Text style={detailText}><strong>Email:</strong> <Link href={`mailto:${email}`} style={link}>{email}</Link></Text>
-            <Text style={detailText}><strong>Phone:</strong> <Link href={`tel:${phone}`} style={link}>{phone}</Link></Text>
-          </Section>
-
-          <Heading style={sectionTitle}>Property Details</Heading>
-          <Section style={detailsSection}>
-            <Text style={detailText}><strong>Address:</strong> {address}</Text>
-            <Text style={detailText}><strong>Property Type:</strong> {type}</Text>
-            <Row style={{ marginTop: "10px" }}>
+          <Text style={sectionTitle}>OWNER DETAILS</Text>
+          <Section style={infoCard}>
+            <Row>
               <Column>
-                <Text style={detailText}><strong>Bedrooms:</strong> {bedrooms}</Text>
+                <Text style={infoLabel}>NAME</Text>
+                <Text style={infoValue}>{name}</Text>
               </Column>
               <Column>
-                <Text style={detailText}><strong>Bathrooms:</strong> {bathrooms}</Text>
+                <Text style={infoLabel}>PHONE</Text>
+                <Link href={`tel:${phone}`} style={link}>{phone}</Link>
+              </Column>
+            </Row>
+            <Text style={infoLabel}>EMAIL</Text>
+            <Link href={`mailto:${email}`} style={link}>{email}</Link>
+          </Section>
+
+          <Text style={sectionTitle}>PROPERTY DETAILS</Text>
+          <Section style={infoCard}>
+            <Text style={infoLabel}>ADDRESS</Text>
+            <Text style={infoValue}>{address}</Text>
+            
+            <Row style={{ marginTop: "12px" }}>
+              <Column>
+                <Text style={infoLabel}>TYPE</Text>
+                <Text style={infoValue}>{type}</Text>
+              </Column>
+              <Column>
+                <Text style={infoLabel}>BEDS</Text>
+                <Text style={infoValue}>{bedrooms}</Text>
+              </Column>
+              <Column>
+                <Text style={infoLabel}>BATHS</Text>
+                <Text style={infoValue}>{bathrooms}</Text>
               </Column>
             </Row>
           </Section>
 
           <Hr style={hr} />
+          
           <Text style={footer}>
-            This is an automated notification from the Nelson Chauke Properties Portal.
+            This is an automated priority notification for NC Properties agents.
           </Text>
         </Section>
       </Container>
@@ -80,87 +97,101 @@ export const ValuationTemplate = ({
 );
 
 const main = {
-  backgroundColor: "#f5f5f5",
-  fontFamily: 'Lato, "Helvetica Neue", Helvetica, Arial, sans-serif',
+  backgroundColor: "#fbfbfd",
+  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
 };
 
 const container = {
-  margin: "40px auto",
-  width: "600px",
-  backgroundColor: "#ffffff",
-  borderRadius: "8px",
-  overflow: "hidden",
-  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+  margin: "0 auto",
+  padding: "20px 0 48px",
+  width: "580px",
 };
 
-const header = {
-  backgroundColor: "#4B0000",
-  padding: "40px 20px",
+const headerSection = {
+  padding: "32px",
   textAlign: "center" as const,
 };
 
-const h1 = {
-  color: "#ffffff",
-  fontSize: "28px",
-  fontWeight: "bold",
-  margin: "0",
-  textTransform: "uppercase" as const,
+const brandLabel = {
+  color: "#4B0000",
+  fontSize: "12px",
+  fontWeight: "700",
   letterSpacing: "1px",
+  margin: "0 0 8px",
+  textTransform: "uppercase" as const,
 };
 
-const tagline = {
-  color: "#ffffff",
-  fontSize: "14px",
-  opacity: "0.8",
-  marginTop: "5px",
+const h1 = {
+  color: "#1d1d1f",
+  fontSize: "32px",
+  fontWeight: "700",
+  lineHeight: "1.1",
+  margin: "0",
 };
 
 const content = {
-  padding: "30px 40px",
-};
-
-const sectionTitle = {
-  fontSize: "18px",
-  fontWeight: "bold",
-  color: "#4B0000",
-  marginTop: "25px",
-  marginBottom: "10px",
-  borderBottom: "2px solid #f0f0f0",
-  paddingBottom: "5px",
+  backgroundColor: "#ffffff",
+  borderRadius: "12px",
+  border: "1px solid #d2d2d7",
+  padding: "40px",
 };
 
 const paragraph = {
-  fontSize: "16px",
-  lineHeight: "26px",
-  color: "#333333",
+  fontSize: "17px",
+  lineHeight: "1.5",
+  color: "#1d1d1f",
+  margin: "0 0 32px",
 };
 
-const detailsSection = {
-  backgroundColor: "#f9f9f9",
-  padding: "15px",
-  borderRadius: "4px",
+const sectionTitle = {
+  color: "#86868b",
+  fontSize: "11px",
+  fontWeight: "700",
+  letterSpacing: "1px",
+  margin: "0 0 12px",
 };
 
-const detailText = {
-  fontSize: "14px",
-  margin: "5px 0",
-  color: "#555555",
+const infoCard = {
+  backgroundColor: "#f5f5f7",
+  borderRadius: "8px",
+  padding: "20px",
+  margin: "0 0 24px",
+};
+
+const infoLabel = {
+  color: "#86868b",
+  fontSize: "11px",
+  fontWeight: "600",
+  letterSpacing: "0.5px",
+  margin: "0 0 4px",
+  textTransform: "uppercase" as const,
+};
+
+const infoValue = {
+  color: "#1d1d1f",
+  fontSize: "15px",
+  fontWeight: "500",
+  margin: "0 0 12px",
 };
 
 const link = {
   color: "#BB0000",
+  fontSize: "15px",
+  fontWeight: "500",
   textDecoration: "none",
-  fontWeight: "bold",
+  display: "block",
+  margin: "0 0 12px",
 };
 
 const hr = {
-  borderColor: "#e6e6e6",
-  margin: "30px 0",
+  borderColor: "#d2d2d7",
+  margin: "32px 0 24px",
 };
 
 const footer = {
-  color: "#8898aa",
+  color: "#86868b",
   fontSize: "12px",
+  lineHeight: "1.4",
   textAlign: "center" as const,
 };
 
