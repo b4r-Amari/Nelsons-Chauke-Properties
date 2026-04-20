@@ -1,18 +1,18 @@
 import {
   Body,
   Container,
+  Column,
   Head,
   Heading,
+  Hr,
   Html,
+  Link,
   Preview,
+  Row,
   Section,
   Text,
-  Hr,
-  Link,
-  Column,
-  Row,
-} from "@react-email/components";
-import * as React from "react";
+} from '@react-email/components';
+import * as React from 'react';
 
 interface ValuationTemplateProps {
   name: string;
@@ -25,174 +25,223 @@ interface ValuationTemplateProps {
 }
 
 export const ValuationTemplate = ({
-  name,
-  email,
-  phone,
-  address,
-  type,
-  bedrooms,
-  bathrooms,
-}: ValuationTemplateProps) => (
-  <Html>
-    <Head />
-    <Preview>New Valuation: {address}</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Section style={headerSection}>
-          <Text style={brandLabel}>NC PROPERTIES</Text>
-          <Heading style={h1}>Valuation Request</Heading>
-        </Section>
-        
-        <Section style={content}>
+  name = 'Alex Appleseed',
+  email = 'alex@example.com',
+  phone = '012 345 6789',
+  address = '123 Property Lane, Pretoria',
+  type = 'House',
+  bedrooms = 3,
+  bathrooms = 2,
+}: ValuationTemplateProps) => {
+  return (
+    <Html>
+      <Head />
+      <Preview>New Valuation Request: {address}</Preview>
+      <Body style={main}>
+        <Container style={container}>
+          <Section style={header}>
+            <Text style={brandLabel}>NC PROPERTIES</Text>
+          </Section>
+
+          <Heading style={heading}>New Valuation Request</Heading>
+
+          <Text style={paragraph}>Hello Team,</Text>
           <Text style={paragraph}>
-            A property owner is requesting a professional valuation.
+            A new professional property valuation has been requested through the website. Please review the details below and contact the owner.
           </Text>
-          
-          <Text style={sectionTitle}>OWNER DETAILS</Text>
-          <Section style={infoCard}>
-            <Row>
-              <Column>
-                <Text style={infoLabel}>NAME</Text>
-                <Text style={infoValue}>{name}</Text>
+
+          <Section style={informationBox}>
+             <Text style={sectionTitle}>Owner Information</Text>
+            <Row style={informationRow}>
+              <Column style={labelColumn}>
+                <Text style={label}>Name</Text>
               </Column>
-              <Column>
-                <Text style={infoLabel}>PHONE</Text>
-                <Link href={`tel:${phone}`} style={link}>{phone}</Link>
+              <Column style={valueColumn}>
+                <Text style={value}>{name}</Text>
               </Column>
             </Row>
-            <Text style={infoLabel}>EMAIL</Text>
-            <Link href={`mailto:${email}`} style={link}>{email}</Link>
-          </Section>
-
-          <Text style={sectionTitle}>PROPERTY DETAILS</Text>
-          <Section style={infoCard}>
-            <Text style={infoLabel}>ADDRESS</Text>
-            <Text style={infoValue}>{address}</Text>
+            <Hr style={divider} />
+            <Row style={informationRow}>
+              <Column style={labelColumn}>
+                <Text style={label}>Phone</Text>
+              </Column>
+              <Column style={valueColumn}>
+                <Text style={value}>
+                  <Link href={`tel:${phone}`} style={link}>
+                    {phone}
+                  </Link>
+                </Text>
+              </Column>
+            </Row>
+            <Hr style={divider} />
+            <Row style={informationRow}>
+              <Column style={labelColumn}>
+                <Text style={label}>Email</Text>
+              </Column>
+              <Column style={valueColumn}>
+                <Text style={value}>
+                  <Link href={`mailto:${email}`} style={link}>
+                    {email}
+                  </Link>
+                </Text>
+              </Column>
+            </Row>
             
-            <Row style={{ marginTop: "12px" }}>
-              <Column>
-                <Text style={infoLabel}>TYPE</Text>
-                <Text style={infoValue}>{type}</Text>
+            <Text style={{ ...sectionTitle, marginTop: '24px' }}>Property Details</Text>
+            <Row style={informationRow}>
+              <Column style={labelColumn}>
+                <Text style={label}>Address</Text>
               </Column>
-              <Column>
-                <Text style={infoLabel}>BEDS</Text>
-                <Text style={infoValue}>{bedrooms}</Text>
+              <Column style={valueColumn}>
+                <Text style={value}>{address}</Text>
               </Column>
-              <Column>
-                <Text style={infoLabel}>BATHS</Text>
-                <Text style={infoValue}>{bathrooms}</Text>
+            </Row>
+            <Hr style={divider} />
+            <Row style={informationRow}>
+              <Column style={labelColumn}>
+                <Text style={label}>Type</Text>
+              </Column>
+              <Column style={valueColumn}>
+                <Text style={value}>{type}</Text>
+              </Column>
+            </Row>
+            <Hr style={divider} />
+            <Row style={informationRow}>
+              <Column style={labelColumn}>
+                <Text style={label}>Beds / Baths</Text>
+              </Column>
+              <Column style={valueColumn}>
+                <Text style={value}>{bedrooms} Bedrooms, {bathrooms} Bathrooms</Text>
               </Column>
             </Row>
           </Section>
 
-          <Hr style={hr} />
-          
-          <Text style={footer}>
-            This is an automated priority notification for NC Properties agents.
+          <Text style={paragraph}>
+            This is a priority lead generated from the "Sell" page.
           </Text>
-        </Section>
-      </Container>
-    </Body>
-  </Html>
-);
 
-const main = {
-  backgroundColor: "#fbfbfd",
-  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
-};
+          <Hr style={footerDivider} />
 
-const container = {
-  margin: "0 auto",
-  padding: "20px 0 48px",
-  width: "580px",
-};
-
-const headerSection = {
-  padding: "32px",
-  textAlign: "center" as const,
-};
-
-const brandLabel = {
-  color: "#4B0000",
-  fontSize: "12px",
-  fontWeight: "700",
-  letterSpacing: "1px",
-  margin: "0 0 8px",
-  textTransform: "uppercase" as const,
-};
-
-const h1 = {
-  color: "#1d1d1f",
-  fontSize: "32px",
-  fontWeight: "700",
-  lineHeight: "1.1",
-  margin: "0",
-};
-
-const content = {
-  backgroundColor: "#ffffff",
-  borderRadius: "12px",
-  border: "1px solid #d2d2d7",
-  padding: "40px",
-};
-
-const paragraph = {
-  fontSize: "17px",
-  lineHeight: "1.5",
-  color: "#1d1d1f",
-  margin: "0 0 32px",
-};
-
-const sectionTitle = {
-  color: "#86868b",
-  fontSize: "11px",
-  fontWeight: "700",
-  letterSpacing: "1px",
-  margin: "0 0 12px",
-};
-
-const infoCard = {
-  backgroundColor: "#f5f5f7",
-  borderRadius: "8px",
-  padding: "20px",
-  margin: "0 0 24px",
-};
-
-const infoLabel = {
-  color: "#86868b",
-  fontSize: "11px",
-  fontWeight: "600",
-  letterSpacing: "0.5px",
-  margin: "0 0 4px",
-  textTransform: "uppercase" as const,
-};
-
-const infoValue = {
-  color: "#1d1d1f",
-  fontSize: "15px",
-  fontWeight: "500",
-  margin: "0 0 12px",
-};
-
-const link = {
-  color: "#BB0000",
-  fontSize: "15px",
-  fontWeight: "500",
-  textDecoration: "none",
-  display: "block",
-  margin: "0 0 12px",
-};
-
-const hr = {
-  borderColor: "#d2d2d7",
-  margin: "32px 0 24px",
-};
-
-const footer = {
-  color: "#86868b",
-  fontSize: "12px",
-  lineHeight: "1.4",
-  textAlign: "center" as const,
+          <Text style={footerText}>
+            Copyright © {new Date().getFullYear()} NC Properties. All rights reserved. <br />
+            Nelson Chauke Properties • Real Estate Excellence
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+  );
 };
 
 export default ValuationTemplate;
+
+const main = {
+  backgroundColor: '#ffffff',
+  fontFamily:
+    '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif',
+};
+
+const container = {
+  margin: '0 auto',
+  padding: '40px 20px',
+  maxWidth: '600px',
+};
+
+const header = {
+  paddingBottom: '24px',
+  textAlign: 'center' as const,
+};
+
+const brandLabel = {
+  fontSize: '14px',
+  fontWeight: '700',
+  color: '#4B0000',
+  letterSpacing: '2px',
+  margin: '0',
+};
+
+const heading = {
+  fontSize: '32px',
+  lineHeight: '1.2',
+  fontWeight: '600',
+  color: '#1d1d1f',
+  textAlign: 'center' as const,
+  letterSpacing: '-0.022em',
+  paddingBottom: '16px',
+};
+
+const paragraph = {
+  fontSize: '15px',
+  lineHeight: '1.47059',
+  fontWeight: '400',
+  color: '#1d1d1f',
+  letterSpacing: '-0.022em',
+  margin: '0 0 16px',
+};
+
+const sectionTitle = {
+    fontSize: '12px',
+    fontWeight: '700',
+    color: '#86868b',
+    textTransform: 'uppercase' as const,
+    letterSpacing: '1px',
+    marginBottom: '12px',
+};
+
+const informationBox = {
+  backgroundColor: '#f5f5f7',
+  borderRadius: '12px',
+  padding: '24px',
+  marginTop: '32px',
+  marginBottom: '32px',
+};
+
+const informationRow = {
+  display: 'flex',
+  padding: '8px 0',
+};
+
+const labelColumn = {
+  width: '30%',
+};
+
+const valueColumn = {
+  width: '70%',
+  textAlign: 'right' as const,
+};
+
+const label = {
+  fontSize: '14px',
+  color: '#86868b',
+  margin: '0',
+  fontWeight: '400',
+};
+
+const value = {
+  fontSize: '14px',
+  color: '#1d1d1f',
+  margin: '0',
+  fontWeight: '500',
+};
+
+const divider = {
+  borderColor: '#d2d2d7',
+  margin: '8px 0',
+};
+
+const link = {
+  color: '#BB0000',
+  textDecoration: 'none',
+};
+
+const footerDivider = {
+  borderColor: '#d2d2d7',
+  margin: '40px 0 20px',
+};
+
+const footerText = {
+  fontSize: '12px',
+  lineHeight: '1.33333',
+  color: '#86868b',
+  textAlign: 'center' as const,
+  margin: '0',
+};
