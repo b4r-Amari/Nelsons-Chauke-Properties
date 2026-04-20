@@ -182,24 +182,27 @@ export async function addMarketingLead(lead: { email: string; name?: string; sou
   try {
     const supabase = await createClient();
     
-    const { data: existing } = await supabase
-      .from('marketing_leads')
-      .select('sources')
-      .eq('email', lead.email)
-      .maybeSingle();
-
-    const sources = existing ? Array.from(new Set([...(existing.sources || []), lead.source])) : [lead.source];
-
-    const { error } = await supabase.from('marketing_leads').upsert({
+    // Simplifed insert logic similar to addValuationRequest to avoid RLS Select/Update conflicts.
+    // We only have INSERT permission for public in RLS.
+    const { error } = await supabase.from('marketing_leads').insert({
       email: lead.email,
       name: lead.name,
-      sources: sources
-    }, { onConflict: 'email' });
+      sources: [lead.source]
+    });
     
-    if (error) return { success: false, error: error.message };
+    if (error) {
+      // 23505 is the PostgreSQL error code for unique_violation (email is already in the table).
+      // Since the goal is just to capture the lead, we can consider a duplicate as a success.
+      if (error.code === '23505') {
+        return { success: true };
+      }
+      console.error('Marketing lead error:', error);
+      return { success: false, error: error.message };
+    }
+    
     return { success: true };
   } catch (err: any) {
-    return { success: false, error: err.message };
+    return { success: false, error: err.message || 'Failed to add lead.' };
   }
 }
 
